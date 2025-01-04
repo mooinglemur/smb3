@@ -12,6 +12,9 @@
 ; Distribution package date: Fri Apr  6 23:46:16 UTC 2012
 ;---------------------------------------------------------------------------
 
+.ifdef NES
+.segment "PRG028"
+.endif
 Sound_Engine_Begin:
 	LDA #$ff	 ; 
 	STA FRAMECTR_CTL ; Resets the frame counter clock (sync sound hardware), disables IRQ generation

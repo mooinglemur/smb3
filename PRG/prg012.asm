@@ -11,6 +11,9 @@
 ; This source file last updated: 2011-11-18 21:50:34.000000000 -0600
 ; Distribution package date: Fri Apr  6 23:46:16 UTC 2012
 ;---------------------------------------------------------------------------
+.ifdef NES
+.segment "PRG012"
+.endif
 Tile_Layout_TS0:
 	; This defines the individual 8x8 blocks used to construct one of the tiles
 	; Referenced by Address_Per_Tileset, addressed by Level_Tileset

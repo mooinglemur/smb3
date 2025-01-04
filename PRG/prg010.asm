@@ -11,6 +11,9 @@
 ; This source file last updated: 2011-11-18 21:50:33.000000000 -0600
 ; Distribution package date: Fri Apr  6 23:46:16 UTC 2012
 ;---------------------------------------------------------------------------
+.ifdef NES
+.segment "PRG010"
+.endif
 Video_DoWXMario00:
 	vaddr $2908
 	.byte $01, $A0

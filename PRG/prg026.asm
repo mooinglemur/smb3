@@ -12,6 +12,9 @@
 ; Distribution package date: Fri Apr  6 23:46:16 UTC 2012
 ;---------------------------------------------------------------------------
 
+.ifdef NES
+.segment "PRG026"
+.endif
 ; FIXME: Appears to be unused Video_Upd_Table format data??
 	.byte $20, $E6, $05, $F1, $FC, $9D, $9C, $9E, $21, $26, $05, $F2, $FC, $9D, $9C, $9E ; $0000 - $000F
 	.byte $21, $66, $05, $F3, $FC, $9D, $9C, $9E, $21, $A6, $05, $F4, $FC, $9D, $9C, $9E ; $0010 - $001F

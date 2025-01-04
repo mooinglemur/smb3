@@ -14,6 +14,9 @@
 ; DMC sounds are here!
 ; Note that due to limitation of the register, these sounds must be aligned on 64-byte ($40) boundaries
 
+.ifdef NES
+.segment "PRG031"
+.endif
 DMC01:	.byte $55, $55, $55, $95, $AA, $2A, $95, $E0, $7F, $FC, $C0, $F1, $03, $28, $FE, $FF 
 	.byte $FF, $F1, $5F, $3F, $00, $00, $00, $00, $00, $00, $08, $80, $C0, $F1, $FF, $C7 
 	.byte $8B, $1F, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $AB, $6A, $9B, $AA, $92, $52, $25 

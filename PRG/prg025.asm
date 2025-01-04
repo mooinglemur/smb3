@@ -14,6 +14,9 @@
 
 	; Ending Sprite list continued from PRG024 ...
 
+.ifdef NES
+.segment "PRG025"
+.endif
 	.byte           $01, $28
 	.byte $4F, $B7, $01, $20
 	.byte $57, $B5, $01, $18

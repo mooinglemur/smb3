@@ -21,7 +21,9 @@
 	; position on banks 1 - 5 and didn't use a LUT this time...
 
 	; Object group $02 (i.e. objects starting at ID $48) State 1 jump table
-
+.ifdef NES
+.segment "PRG003"
+.endif
 	.org ObjectGroup_InitJumpTable	; <-- help enforce this table *here*
 ObjectGroup02_InitJumpTable:
 	.word ObjInit_TinyCheepCheep	; Object $48 - OBJ_TINYCHEEPCHEEP

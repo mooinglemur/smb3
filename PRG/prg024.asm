@@ -21,6 +21,9 @@ FALLRATE_TAILWAGMAX	= 8	; Maximum Y velocity falling rate when wagging raccoon t
 FALLRATE_MAX		= $40	; Maximum Y velocity falling rate
 FALLRATE_OBJECTMAX	= $60	; Maximum Y velocity falling rate of an object
 
+.ifdef NES
+.segment "PRG024"
+.endif
 Cinematic_ToadAndKing:
 	LDA Cine_ToadKing
 	LSR A

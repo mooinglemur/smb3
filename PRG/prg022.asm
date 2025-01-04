@@ -208,7 +208,9 @@
 ; What a drag"
 ; -- Possible in-joke no one got after all these years? :P
 
-
+.ifdef NES
+.segment "PRG022"
+.endif
 Tile_Layout_TS15_TS16_TS17:
 	; This defines the individual 8x8 blocks used to construct one of the tiles
 	; Referenced by Address_Per_Tileset, addressed by Level_Tileset

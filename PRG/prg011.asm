@@ -11,6 +11,9 @@
 ; This source file last updated: 2011-11-18 21:50:36.000000000 -0600
 ; Distribution package date: Fri Apr  6 23:46:16 UTC 2012
 ;---------------------------------------------------------------------------
+.ifdef NES
+.segment "PRG011"
+.endif
 PRG011_A000:
 	.byte $00, $01, $02, $03, $04, $05, $06, $07
 

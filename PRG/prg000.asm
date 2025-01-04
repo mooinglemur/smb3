@@ -25,6 +25,10 @@
 	;	5) If tile is in range, it is subtracted, so using the Hills example:
 	;	   Tile $25 -- first table, index 0.  Tile $26 -- first table, index 1.
 	;	   Tile $5F -- second table, index 0.  Etc...
+.ifdef NES
+.segment "PRG000"
+.endif
+
 Level_SlopeSetByQuad:
 	.word Level_SlopeQuad00	; Tile quad $00
 	.word Level_SlopeQuad40	; Tile quad $40

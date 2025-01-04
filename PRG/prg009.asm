@@ -11,7 +11,9 @@
 ; This source file last updated: 2011-11-18 21:50:36.000000000 -0600
 ; Distribution package date: Fri Apr  6 23:46:16 UTC 2012
 ;---------------------------------------------------------------------------
-
+.ifdef NES
+.segment "PRG009"
+.endif
 	; Number of lives per card combination; mainly to give the 2, 3, 5
 Vs_LivesReward:
 	.byte $00, $02, $03, $01, $05, $01, $01, $01	; None, Mushroom, Flower, Mix, Star, Mix, Mix, Mix

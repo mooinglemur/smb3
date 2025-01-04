@@ -11,6 +11,9 @@
 ; This source file last updated: 2012-03-05 22:51:55.464428532 -0600
 ; Distribution package date: Fri Apr  6 23:46:16 UTC 2012
 ;---------------------------------------------------------------------------
+.ifdef NES
+.segment "PRG008"
+.endif
 Level_TilesetIdx_ByTileset:
 	; Basically Level_TilesetIdx is just Level_Tileset - 1
 	.byte $FF	;  0 Map (UNUSED)

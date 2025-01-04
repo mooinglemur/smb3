@@ -11,6 +11,9 @@
 ; This source file last updated: 2011-11-18 21:50:36.000000000 -0600
 ; Distribution package date: Fri Apr  6 23:46:16 UTC 2012
 
+.ifdef NES
+.segment "PRG006"
+.endif
 _C000:		.include "PRG/objects/C000.asm"
 W2UNO:		.include "PRG/objects/EmptyW2.asm"	; Unused/empty object set linked to World 2 Start Panel
 _C004:		.include "PRG/objects/C004.asm"

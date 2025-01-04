@@ -21,7 +21,9 @@
 	; position on banks 1 - 5 and didn't use a LUT this time...
 
 	; Object group $03 (i.e. objects starting at ID $6C) State 1 jump table
-
+.ifdef NES
+.segment "PRG004"
+.endif
 	.org ObjectGroup_InitJumpTable	; <-- help enforce this table *here*
 ObjectGroup03_InitJumpTable:
 	.word ObjInit_GroundTroop	; Object $6C - OBJ_GREENTROOPA

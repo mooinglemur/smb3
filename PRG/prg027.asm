@@ -11,6 +11,9 @@
 ; This source file last updated: 2012-03-12 22:48:10.385348943 -0500
 ; Distribution package date: Fri Apr  6 23:46:16 UTC 2012
 ;---------------------------------------------------------------------------
+.ifdef NES
+.segment "PRG027"
+.endif
 CineKing_DoWandReturn:
 	LDA CineKing_Timer2
 	BEQ PRG027_A008	 ; If CineKing_Timer2 = 0, jump to PRG027_A008

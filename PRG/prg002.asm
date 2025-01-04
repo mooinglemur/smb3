@@ -22,6 +22,9 @@
 
 	; Object group $01 (i.e. objects starting at ID $24) State 1 jump table
 
+.ifdef NES
+.segment "PRG002"
+.endif
 	.org ObjectGroup_InitJumpTable	; <-- help enforce this table *here*
 ObjectGroup01_InitJumpTable:
 	.word ObjInit_CloudPlatFast	; Object $24 - OBJ_CLOUDPLATFORM_FAST

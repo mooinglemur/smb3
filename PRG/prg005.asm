@@ -22,6 +22,9 @@
 
 	; Object group $04 (i.e. objects starting at ID $90) State 1 jump table
 
+.ifdef NES
+.segment "PRG005"
+.endif
 	.org ObjectGroup_InitJumpTable	; <-- help enforce this table *here*
 ObjectGroup04_InitJumpTable:
 	.word ObjInit_RotatePlatform	; Object $90 - OBJ_TILTINGPLATFORM

@@ -23,6 +23,9 @@
 
 	; Object group $00 (i.e. objects starting at ID $00) State 1 jump table
 
+.ifdef NES
+.segment "PRG001"
+.endif
 	.org ObjectGroup_InitJumpTable	; <-- help enforce this table *here*
 ObjectGroup00_InitJumpTable:
 	.word ObjInit_DoNothing	; Object $00
