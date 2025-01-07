@@ -183,7 +183,7 @@ SPR_DMA		= $4014 ; Sprite DMA Register -- DMA from CPU memory at $100 x n to SPR
 ;                   *  Bit 3 - Indicates whether Zapper is pointing at a sprite.
 ;                   *  Bit 4 - Cleared when Zapper trigger is released.
 ;                   Only bit 0 is involved in writing.
-JOYPAD		= $4016		
+JOYPAD		= $4016
 
 ; Frame counter control
 ; Changes the frame counter that changes updates on sound; any write resets
@@ -241,6 +241,7 @@ MMC3_IRQLATCH	= $C001 ; Store a temp val to be copied to MMC3_IRQCNT later
 MMC3_IRQDISABLE	= $E000 ; Disables IRQ generation and copies MMC3_IRQLATCH to MMC3_IRQCNT
 MMC3_IRQENABLE	= $E001 ; Enables IRQ generation
 
+
 PAD_A		= $80
 PAD_B		= $40
 PAD_SELECT	= $20
@@ -249,3 +250,170 @@ PAD_UP		= $08
 PAD_DOWN	= $04
 PAD_LEFT	= $02
 PAD_RIGHT	= $01
+
+
+PLAYERSUIT_SMALL	= 0
+PLAYERSUIT_BIG		= 1
+PLAYERSUIT_FIRE		= 2
+PLAYERSUIT_RACCOON	= 3
+PLAYERSUIT_FROG		= 4
+PLAYERSUIT_TANOOKI	= 5
+PLAYERSUIT_HAMMER	= 6
+PLAYERSUIT_SUPERSUITBEGIN = PLAYERSUIT_FROG	; Marker for when "Super Suits" begin
+PLAYERSUIT_LAST		= PLAYERSUIT_HAMMER	; Marker for "last" suit (Debug cycler needs it)
+
+
+SPR_PAL0	= %00000000
+SPR_PAL1	= %00000001
+SPR_PAL2	= %00000010
+SPR_PAL3	= %00000011
+SPR_BEHINDBG	= %00100000
+SPR_HFLIP	= %01000000
+SPR_VFLIP	= %10000000
+
+
+UPDATERASTER_32PIXPART	= 1	; 32 pixel partition; common use is for levels with water along the bottom
+UPDATERASTER_SPADEGAME	= 2	; Spade game sliders
+UPDATERASTER_WATERLINE	= 3	; "Water line" mode (described at ObjHorzAutoScroller_Init)
+UPDATERASTER_32PIXSHOWSPR= $80	; If NOT set, hides sprites that fall beneath the partition (i.e. for fixed water effect)
+
+
+; The "unused" ones are just guesses (where even possible) based on the
+; semi-translated "greetings" for the sake of tracking...
+BONUS_UNUSED_KEYCOIN	= 0
+BONUS_SPADE		= 1	; Line up images Spade game
+BONUS_NSPADE		= 2	; Card matching N-Spade game
+BONUS_UNUSED_CCCC	= 3
+BONUS_UNUSED_DDDD	= 4	; Unused placeholder (I think), but does actually set something when it exits!
+BONUS_UNUSED_ODDROULETTE= 5
+BONUS_UNUSED_EVENCARD	= 6
+BONUS_UNUSED_2RETURN	= 7	; MAY have been Koopa Troopa's "Prize" Game...
+
+
+; Queue Player sound effects
+SND_PLAYERJUMP	= $01	; Jump
+SND_PLAYERBUMP	= $02	; Bump
+SND_PLAYERSWIM	= $04	; Swim / Squish
+SND_PLAYERKICK	= $08	; Kick
+SND_PLAYERPIPE	= $10 	; Pipe / shrink
+SND_PLAYERFIRE	= $20 	; Fireball
+SND_PLAYERPOWER	= $40	; Full power ringing (must be constantly set or you don't hear it)
+SND_PLAYERFROG	= $80 	; frog hop
+
+
+; Queue Level sound effects 1
+SND_LEVELCOIN	= $01	; Coin
+SND_LEVELRISE	= $02 	; Powerup rising from block
+SND_LEVELVINE	= $04 	; Vine rising
+SND_LEVELBABOOM	= $08 	; Cannon fire
+SND_LEVELBLIP	= $10 	; Text "type" sound / card select
+SND_LEVELPOWER	= $20 	; Power up
+SND_LEVEL1UP	= $40 	; 1-up
+SND_LEVELPOOF	= $80 	; Lost suit / wand shot
+SND_LEVELUNK	= $90	; Unknown / lost sound
+SND_LEVELSHOE	= $A0	; Lost Kuirbo's Shoe
+SND_LEVELTAILWAG= $B0	; Tail wag
+
+
+; Queue Level sound effects 2
+SND_LEVELCRUMBLE= $01	; Crumbling brick
+SND_LEVELFLAME	= $02 	; Flame jet
+SND_BOOMERANG	= $04 	; Boomerang
+SND_LEVELAIRSHIP= $08	; Airship fly
+SND_LEVELMARCH	= $10 	; Hammer Bros. march around
+; $20 - Unused
+; $40 - Unused
+SND_LEVELSKID	= $80 	; Skid
+
+
+; Queue music request 1
+; The following I've grouped into "Set 1" (which play song index 0-7):
+MUS1_PLAYERDEATH	= $01	; Player death
+MUS1_GAMEOVER		= $02	; Game over
+MUS1_BOSSVICTORY	= $04	; Victory normal
+MUS1_WORLDVICTORY	= $08	; Victory super (King reverted, Bowser defeated, etc.)
+MUS1_BOWSERFALL		= $10	; Bowser dramatic falling
+MUS1_COURSECLEAR	= $20	; Course Clear
+MUS1_TIMEWARNING	= $40	; Time Warning (attempts to speed up song playing)
+MUS1_STOPMUSIC		= $80	; Stops playing any music
+
+
+; Queue music request 2
+; The following I've grouped into "Set 2A":
+MUS2A_WORLD1		= $01	; World 1
+MUS2A_WORLD2		= $02	; World 2
+MUS2A_WORLD3		= $03	; World 3
+MUS2A_WORLD4		= $04	; World 4
+MUS2A_WORLD5		= $05	; World 5
+MUS2A_WORLD6		= $06	; World 6
+MUS2A_WORLD7		= $07	; World 7
+MUS2A_WORLD8		= $08	; World 8
+MUS2A_SKY		= $09	; Coin Heaven / Sky World / Warp Zone (World 9)
+MUS2A_INVINCIBILITY	= $0A	; Invincibility
+MUS2A_WARPWHISTLE	= $0B	; Warp whistle
+MUS2A_MUSICBOX		= $0C	; Music box
+MUS2A_THRONEROOM	= $0D	; King's room
+MUS2A_BONUSGAME		= $0E	; Bonus game
+MUS2A_ENDING		= $0F	; Ending music
+
+
+; The following I've grouped into "Set 2B":
+MUS2B_OVERWORLD		= $10	; Overworld 1
+MUS2B_UNDERGROUND	= $20	; Underground
+MUS2B_UNDERWATER	= $30	; Water
+MUS2B_FORTRESS		= $40	; Fortress
+MUS2B_BOSS		= $50	; Boss
+MUS2B_AIRSHIP		= $60	; Airship
+MUS2B_BATTLE		= $70	; Hammer Bros. battle
+MUS2B_TOADHOUSE		= $80	; Toad House
+MUS2B_ATHLETIC		= $90	; Overworld 2
+MUS2B_PSWITCH		= $A0	; P-Switch
+MUS2B_BOWSER		= $B0	; Bowser
+MUS2B_WORLD8LETTER	= $C0	; Bowser's World 8 Letter
+MUS2B_MASK		= $F0	; Not intended for use in code, readability/traceability only
+
+
+; Queue map sound effects
+SND_MAPENTERWORLD	= $01	; World begin starry entrance sound
+SND_MAPPATHMOVE		= $02	; Path move
+SND_MAPENTERLEVEL	= $04	; Enter level
+SND_MAPINVENTORYFLIP	= $08	; Flip inventory
+SND_MAPBONUSAPPEAR	= $10	; Bonus appears
+; $20: ?? unused ?
+; $40: ?? unused ?
+SND_MAPDENY		= $80	; Denied
+
+
+; Queue pause sound
+PAUSE_STOPMUSIC		= $01	; Pause sound effect (like pressing START, pauses music!)
+PAUSE_RESUMEMUSIC	= $02	; Resume sound (resumes music)
+
+
+CHNGTILE_DELETECOIN	= $01
+CHNGTILE_DELETETOBG	= $02
+CHNGTILE_TOGNOTEBLOCK	= $03	; miscolored note block
+CHNGTILE_TOBOUNCEWOOD	= $04
+CHNGTILE_TONOTEBLOCK	= $05
+CHNGTILE_COINHEAVEN	= $06
+CHNGTILE_TOBRICK	= $07
+CHNGTILE_TOMETALPLATE	= $08	; i.e. "plate" that appears after ? block is hit
+CHNGTILE_PSWITCHSTOMP	= $09
+CHNGTILE_TOBRICKCOIN	= $0B	; brick containing coin
+CHNGTILE_DELETETOBGALT	= $0C
+CHNGTILE_PIPEJCT	= $0E	; UNUSED replaces the unused TILE9_PIPEWORKS_JCT tile!
+CHNGTILE_DELETEDONUT	= $0F
+CHNGTILE_FROZENMUNCHER	= $10
+CHNGTILE_FROZENCOIN	= $11
+CHNGTILE_PSWITCHAPPEAR	= $12
+CHNGTILE_DOORAPPEAR	= $13
+CHNGTILE_TOADBOXOPEN	= $14
+CHNGTILE_4WAYCANNON	= $15
+CHNGTILE_GIANTBRICKBUST	= $16	; Giant World brick bust
+CHNGTILE_GIANTBLOCKHIT	= $17	; Giant World [?] block hit to metal
+CHNGTILE_GIANTBRICKFIX	= $18	; Giant World brick restore (small Mario hit giant brick)
+
+
+; NOTE: Since Level_AScrlConfig checks are generally implemented as "BEQ/BNE", technically ANY
+; value enables auto scroll adjustments, but officially ASCONFIG_ENABLE is used to enable it
+ASCONFIG_ENABLE		= $01	; Enables auto scroll coordinate adjustments of any sort
+ASCONFIG_HDISABLE	= $80	; Disables horizontal auto scroll coordinate adjustment (generally if Horz Auto Scroll is not in use)
