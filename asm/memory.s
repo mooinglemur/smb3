@@ -1964,3 +1964,372 @@ CannonFire_Timer:     ; $06E3-$06EA Cannon Fire timer, decrements to zero
 	.res 8
 Objects_QSandCtr:     ; $06EB-$06F2 When enemy has fallen into quicksand, increments until $90 which deletes it
 	.res 8
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; $07xx RAM
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.segment "GENBSS2"
+
+TileAddr_Off:         ; During level loading, specifies an offset into the current Mem_Tile_Addr setting
+	.res 1
+
+; LevLoad_Unused1-4 are initialized when about to load a level, 
+; but never used.  May have been reserved or intended or 
+; even debugging, but who knows now...
+LevLoad_Unused1:
+	.res 1
+LevLoad_Unused2:
+	.res 1
+LevLoad_Unused3:
+	.res 1
+LevLoad_Unused4:
+	.res 1
+
+; unused ($705)
+	.res 1
+
+LL_ShapeDef:          ; During level loading, defines a shape of something (context-specific)
+	.res 1
+
+Scroll_UpdAttrFlag:   ; Set when it is time to update attributes
+	.res 1
+
+; unused ($708-$709)
+	.res 2
+
+; Tileset values:
+; 00 = On map
+; 01 = Plains style; bushes, zigzag ground, blocks (includes blue-block bonus area)
+; 02 = Mini fortress style; gray blocks, lava (and king's room)
+; 03 = Hills style; green grass, bushes (works in desert like 2-2 also)
+; 04 = High-Up style; "cliffside" grass, swirly clouds, wooden block style ground
+; 05 = pipe world plant infestation
+; 06 = Water world
+; 07 = Toad House
+; 08 = Vertical pipe maze
+; 09 = desert level, sand, pyramids (and desert fortress)
+; 10 = Airship
+; 11 = Giant World
+; 12 = Ice level, frozen "1" style
+; 13 = Coin heaven / Sky level
+; 14 = Underground
+; 15 = Bonus game intro and N-Spade
+; 16 = Spade game sliders
+; 17 = N-Spade
+; 18 = 2P vs
+Level_Tileset:        ; Different tilesets which changes the detection and meaning in levels
+	.res 1
+
+Bonus_UnusedVH:       ; VRAM High address ?? Seems to only be part of an unused routine
+ToadTalk_VH:          ; Cinematic Toad & King / "Toad House" Toad VRAM Address High
+	.res 1
+
+Bonus_UnusedVL:       ; VRAM Low address ?? Seems to only be part of an unused routine
+ToadTalk_VL:          ; Cinematic Toad & King / "Toad House" Toad VRAM Address Low
+	.res 1
+
+BonusText_CPos:
+ToadTalk_CPos:        ; Cinematic Toad & King / "Toad House" Toad Character Position
+	.res 1
+
+BonusText_CharPause:  ; Counter that decrements to zero between letters
+	.res 1
+Bonus_UnusedFlag:     ; Doesn't do much besides block an unused subroutine
+	.res 1
+
+Map_Pan_Count:        ; Map is panning, counts to zero (Scroll_LastDir sets which direction we're panning)
+	.res 1
+
+; NOTE sharing
+CineKing_Timer2:      ; Timer; decrements to zero
+Bonus_Timer:          ; Decrements to zero
+Map_Intro_Tick:       ; Counts down to zero while displaying the "World X" intro
+	.res 1
+
+; unused ($712)
+	.res 1
+
+Map_ReturnStatus:     ; When 0, level panel is cleared; otherwise, Player is considered to have died (decrements life!)
+	.res 1
+MaxPower_Tick:        ; When Player has maximum "power" charge, this counts for the flashing [P]
+	.res 1
+Player_Score:         ; $0715 (H)-$0717 (L) treated as 3-byte integer, with least significant zero on display not part of this value 
+	.res 3
+
+; unused ($718)
+	.res 1
+
+; Each byte of PatTable_BankSel sets the VROM available at
+; 0000 (first half BG), 0800 (second half BG, typ animated), 
+; 1000 (1/4 sprites), 1400 (2/4 sprites), 1800 (3/4 sprites),
+; and 1C00 (4/4 sprites), respectively
+PatTable_BankSel:     ; $0719-$071E  Provides an array of 6 pages to set the entire Pattern Table [BG_Full_CHRROM_Switch]
+	.res 6
+PAGE_C000:            ; Page to set PRG ROM C000 (PRGROM_Change_Both)
+	.res 1
+PAGE_A000:            ; Page to set PRG ROM A000 (PRGROM_Change_Both)
+	.res 1
+PAGE_CMD:             ; When using PRGROM_Change_Both2 or PRGROM_Change_A000, this value stores the MMC3 command
+	.res 1
+Map_Prev_XOff:        ; $0722-$0723 (Mario/Luigi) Stores previous scroll X offset on map
+	.res 2
+Map_Prev_XHi:         ; $0724-$0725 (Mario/Luigi) Stores previous "hi byte" of map X
+	.res 2
+Player_Current:       ; Which Player is currently up (0 = Mario, 1 = Luigi)
+	.res 1
+World_Num:            ; Current world index (0-8, where 0 = World 1, 7 = World 8, 8 = World 9 / Warp Zone)
+	.res 1
+
+; NOTE: sharing
+World_EnterState:     ; State variable during "world X" intro entrance, set to 3 when entering a level; overlaps GameOver_State
+CineKing_State:       ; State of King-got-his-wand-back sequence
+GameOver_State:       ; State variable used during "Gameover!" sequence only; overlaps World_EnterState
+	.res 1
+
+Map_Operation:        ; Map_Operation: Current "operation" happening on map (See Map_DoOperation in PRG010)
+	.res 1
+
+; unused ($72A)
+	.res 1
+
+Total_Players:        ; Total players (0 = 1P, 1 = 2P)
+	.res 1
+Map_Unused72C:        ; No apparent use; only assigned to, but never read back
+	.res 1
+Bonus_DDDD:           ; ?? Set to '1' if you exit the unused bonus game BONUS_UNUSED_DDDD
+	.res 1
+Map_HandState:        ; Hand trap state
+	.res 1
+
+; unused ($72F)
+	.res 1
+
+Map_WW_Backup_Y:      ; Warp Whistle wind backs up the Player's map Y
+	.res 1
+
+Map_WW_Backup_XH:     ; Warp Whistle wind backs up the Player's map X Hi byte
+	.res 1
+Map_WW_Backup_X:      ; Warp Whistle wind backs up the Player's map X
+	.res 1
+Map_WW_Backup_UPV2:   ; Warp Whistle wind backs up Map_UnusedPlayerVal2
+	.res 1
+
+; unused ($734-$735)
+	.res 2
+
+Player_Lives:         ; $0736-$0737 (Mario/Luigi) Player's lives
+	.res 2
+Map_Unused738:        ; Index used in some dead code in PRG011; sometimes index of unused array Map_Unused7DC6
+	.res 1
+ClearPattern:         ; Set by ClearPattern_ByTileset for use in Clear_Nametable_Short
+	.res 1
+PalSel_Tile_Colors:   ; Stores value to index which tile color set to use when palette loading routine is called
+	.res 1
+PalSel_Obj_Colors:    ; Stores value to index which object color set to use when palette loading routine is called
+	.res 1
+Player_FallToKing:    ; $073C-$073D (Mario/Luigi) Player will fall to king when Level_ExitToMap is nonzero (instead of map)
+	.res 2
+Map_Player_SkidBack:  ; $073E-$073F (Mario/Luigi) Set to '1' if Player died last turn or otherwise ejected (that is, they DID skid from their last turn, not necessarily currently skidding)
+	.res 2
+
+Map_NSpadeMatches:    ; Keeps count of N-Spade matches of active session (9 means game is done)
+	.res 1
+Map_NSpadeInProg:     ; If set, there's an N-Spade game "in progress" (so if you lose, you pick it up later)
+	.res 1
+
+Map_Airship_Trav:     ; Airship's current travel-table offset (randomly offset by 0-2, spices up life)
+	.res 1
+
+; unknown ($743-$744)
+	.res 2
+
+Map_DoFortressFX:     ; Bust locks, build bridges, whatever after Mini-Fortress is toppled
+	.res 1
+
+World_Map_Power:      ; $0746-$0747 (Mario/Luigi) MAP Power up # (1 - big, 2 - Fire, 3 - Leaf, 4 - Frog, 5 - Tanooki, 6 - Hammer, 7 - Judgems, 8 - Pwing, 9 - Star)
+	.res 2
+
+; unused ($748)
+	.res 1
+
+Map_Unused749:        ; $0749-$074A (Mario/Luigi) ? Another value just set once and never read back!
+	.res 2
+
+; unused ($74B)
+	.res 1
+
+Object_VelCarry:      ; '1' when last Object Velocity fraction accumulation rolled over
+	.res 1
+
+; WARNING: The distance between Player/Objects_XVelFrac and Player/Objects_YVelFrac must be same as Player/Objects_X/YVel!
+Player_XVelFrac:      ; X velocity fractional accumulator
+	.res 1
+Objects_XVelFrac:     ; $074E-$0755 Other object's X velocity fractional accumulator
+	.res 8
+
+; unused ($756)
+	.res 1
+
+THouse_UnusedFlag:    ; Cleared when Toad House gives you an item, but never used otherwise
+	.res 1
+
+; unused ($758-$75E)
+; WARNING: Though unused, this is required for the consistent padding between XVel(Frac) and YVel(Frac)
+; So use it if you want, but maintain the distance!!
+	.res 7
+
+; WARNING: The distance between Player/Objects_XVelFrac and Player/Objects_YVelFrac must be same as Player/Objects_X/YVel!
+Player_YVelFrac:      ; Y velocity fractional accumulator
+	.res 1
+Objects_YVelFrac:     ; $0760-$0767 Other object's Y velocity fractional accumulator
+	.res 8
+
+Objects_ColorCycle:   ; $0768-$076F Cycles colors of object and decrements to zero (e.g. "Melting" ice block, starman, etc.)
+	.res 8
+
+; Objects_Var6: Special hardcoded behavior for the following objects ONLY:
+; OBJ_FIRECHOMP, OBJ_CHAINCHOMPFREE, OBJ_BLOOPERCHILDSHOOT, 
+; OBJ_BLOOPERWITHKIDS, or OBJ_FIRESNAKE
+; ... as the X/Y buffer slot they occupy (see Object_Delete)
+Objects_Var6:         ; $0770-$0774 General purpose variable 6 (except as noted above)
+	.res 5
+Objects_TargetingXVal: ; $0775-$0779 X velocity result of Object_CalcHomingVels for this object OR some other X pixel target
+	.res 5
+
+King_Y:               ; Y position (NOTE: shared with Objects_TargetingYVal)
+Objects_TargetingYVal: ; $077A-$077E Y velocity result of Object_CalcHomingVels for this object OR some other Y pixel target
+	.res 5
+
+Pipe_TransYDelta:     ; In-level transit pipe Y delta value (WARNING: Shared with Level_ScrollDiffV)
+Level_ScrollDiffV:    ; Difference between desired vertical and the current Vert_Scroll (WARNING: Shared with Pipe_TransYDelta)
+	.res 1
+Level_ScrollDiffH:    ; Difference between desired horizontal and the current Horz_Scroll
+	.res 1
+
+Random_Pool:          ; $0781-$078A (or $0789?) Data pool for pseudo-random number generator algorithm
+	.res 10
+RandomN := Random_Pool+1 ; Pull a random number from the sequence (NOTE: RandomN+1 is also good; If you need multiple random numbers, call Randomize)
+
+
+Map_PlayerLost2PVs:   ; When > 0, (1=Mario, 2=Luigi) doesn't lose a life for "death" exiting to map, but does lose their turn
+	.res 1
+
+; unused ($78C)
+	.res 1
+
+Player_RescuePrincess: ; Player will jump to the princess rescue when Level_ExitToMap is nonzero (instead of map)
+	.res 1
+
+; unused ($78E-$795)
+	.res 8
+
+; Objects_PlayerHitStat:
+;	Bit 0 - Set if Player's bbox bottom is HIGHER than object's bbox bottom
+;	Bit 1 - Set if Player's bbox left edge is to the LEFT of object's bbox left edge
+;	Bit 4 - Set if Player tail attacked an object
+Objects_PlayerHitStat: ; $0796-$079D Player hit status
+	.res 8
+
+; Up to five "scores" can be displayed at once
+Scores_Value:         ; $079E-$07A2 score "value"; '0' none, (10, 20, 40, 80, 100, 200, 400, 800, 1000, 2000, 4000, 8000, 1-up)
+	.res 5
+Scores_Counter:       ; $07A3-$07A7 "counter" until score disappears
+	.res 5
+Scores_Y:             ; $07A8-$07AC Score's Y
+	.res 5
+Scores_X:             ; $07AD-$07B1 Score's X
+	.res 5
+
+LRBounce_Y:           ; Left/right bouncer as sprite Y ($FF is disabled)
+	.res 1
+LRBounce_X:           ; Left/right bouncer as sprite X
+	.res 1
+LRBounce_Vel:         ; Left/right bouncer absolute value of X velocity
+	.res 1
+
+; NOTE!! These object vars are OBJECT SLOT 0 - 4 ONLY!
+Objects_Slope:        ; $07B5-$07B9 Absolute slope calc value
+	.res 5
+
+; unused ($7BA)
+	.res 1
+
+World3_Bridge:        ; 0 - Bridges are down, 1 - Bridges are up
+	.res 1
+
+ArrowPlat_IsActive:   ; Set if arrow platform is active
+	.res 1
+
+Level_GetWandState:   ; See Koopaling code in PRG001
+	.res 1
+
+; ********************************************************************************
+; The Palette_* vars here form a graphics buffer to be committed in the
+; style of the Video_Upd_Table; see "Video_Upd_Table" in PRG030 for format.
+Video_DoPalUpd:       ; Name consistent with Video_Upd_Table
+Palette_AddrHi:       ; Stores high part of palette address when committing palettes
+	.res 1
+Palette_AddrLo:       ; Stores low part of palette address when committing palettes
+	.res 1
+Palette_BufCnt:       ; 32 for updating entire palette
+	.res 1
+Palette_Buffer:       ; $07C1-$07E0 Buffer of palette bytes to commit, used for fade in/out
+	.res 32
+Palette_Term:         ; Set to zero as terminator, per requirement of the Video_Upd_Table format
+	.res 1
+; ********************************************************************************
+
+; BigQBlock_GotIt: 
+;	Big ? Blocks can only be retrieved once; this is a bitfield that marks which
+;	ones you've gotten by setting a bit per screen space in the Big ? Block area.
+;	Basically, if you reenter a Big ? Block area after opening it, it won't reappear!
+;	See ObjInit_BigQBlock and ObjNorm_BigQBlock for usage...
+;	NOTE: This is cleared completely upon Player death which works since levels
+;	are not re-enterable, but still seems a bit extreme...
+BigQBlock_GotIt:
+	.res 1
+
+; unused ($7E3-$7EF)
+	.res 13
+
+DMC_Queue:            ; Stores value to play on DMC
+	.res 1
+DMC_Current:          ; Currently playing DMC sound
+	.res 1
+
+Sound_Sq1_CurFL:      ; Holds current "low" frequency of Square Wave 1 (Warning: Must be +4 to Sound_Sq2_CurFL, see PRG031_E808)
+	.res 1
+
+Music_NseStart:       ; Holds the starting offset of the noise track (CHECK: Reuse of $07F3, is this bad??)
+	.res 1
+
+; unused ($7F4)
+; required for padding
+	.res 1
+
+Music2_Hold:          ; A very little used feature, Music Set 1 overrides Music Set 2, but after a M1 song finishes, it restarts the M2 song
+	.res 1
+Sound_Sq2_CurFL:      ; Holds current "low" frequency of Square Wave 1 (Warning: Must be +4 from Sound_Sq1_CurFL, see PRG031_E808)
+	.res 1
+
+Music_Sq2Patch:       ; Current "instrument patch" for Square 2 (only upper 4 bits stored, 0ppp 0000)
+	.res 1
+Music_Sq1Patch:       ; Current "instrument patch" for Square 1 (only upper 4 bits stored, 0ppp 0000)
+	.res 1
+
+; unused ($7F9)
+	.res 1
+
+Sound_Map_L2Hld:      ; Same as Sound_Map_LHold, used for the secondary track (Warning: Will be affected by triangle, see PRG031_E808)
+	.res 1
+Sound_Map_Len2:       ; Same as Sound_Map_Len, used for the secondary track
+	.res 1
+Sound_Map_LHold:      ; Current length setting, used as delay after each byte of map sound (changed by special bytes in range $80-$FF)
+	.res 1
+Sound_Map_Len:        ; Countdown tick for current note/rest that map sound effect is on
+	.res 1
+Sound_Map_Off2:       ; Same as Sound_Map_Off, used for the secondary track
+	.res 1
+Sound_Unused7FF:      ; Cleared once, never used otherwise
+	.res 1
+
