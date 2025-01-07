@@ -1774,3 +1774,193 @@ AScrlURDiag_WrapState_Copy: ; Copy of AScrlURDiag_WrapState
 	.res 1
 AScrlURDiag_WrapState:
 	.res 1
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; $06xx RAM
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+.segment "GENBSS1"
+; DURING ENDING ONLY (reuses 192 bytes of this segment)
+Ending_CmdBuffer:     ; $0600-$06C0 Buffer used during ending sequence
+
+; Normal purpose $06xx RAM...
+; unused ($600-$601)
+	.res 2
+
+Level_Tile_Head:      ; Tile at Player's head 
+	.res 1
+Level_Tile_GndL:      ; Tile at Player's feet left
+	.res 1
+Level_Tile_GndR:      ; Tile at Player's feet right
+	.res 1
+Level_Tile_InFL:      ; Tile "in front" of Player ("lower", at feet)
+	.res 1
+Level_Tile_InFU:      ; Tile "in front" of Player ("upper", at face)
+	.res 1
+Level_Tile_Whack:     ; Tile last hit by tail attack or shell
+	.res 1
+Level_Tile_Quad:      ; $0608-$060B Quadrant of tile for each of the positions above
+	.res 4
+
+; unused ($60C)
+	.res 1
+
+; Level_Tile_Slope: Slope of tile for each of the positions above (first byte also used by objects)
+; 0: Slope shape at feet
+; 1: Slope shape at head
+; 2: "in front" of Player ("lower", at feet)
+; 3: "in front" of Player ("upper", at face)
+Level_Tile_Slope:     ; $060D-$0610
+	.res 6
+
+; unused ($611)
+	.res 1
+
+Scroll_Cols2Upd:      ; Number of 8x8 columns to update (typically set to 32 for a full dirty update)
+	.res 1
+
+; unused ($613-$618)
+	.res 6
+
+Bonus_CoinsYVel:      ; $0619-$061E UNUSED Bonus game coins Y velocity
+	.res 6
+Bonus_CoinsY:         ; $061F-$0624 UNUSED Bonus game coins Y
+	.res 6
+Bonus_CoinsXVel:      ; $0625-$062A UNUSED Bonus game coins X velocity
+	.res 6
+Bonus_CoinsX:         ; $062B-$0630 UNUSED Bonus game coins X
+	.res 6
+Bonus_CoinsYVelFrac:  ; $0631-$0636 UNUSED Bonus game coins Y velocity fractional accumulator
+	.res 6
+
+; unused ($637-$63C)
+	.res 6
+
+
+Bonus_CoinsXVelFrac:  ; $063D-$0642 UNUSED Bonus game coins X velocity fractional accumulator
+	.res 6
+
+; unused ($643-$64A)
+	.res 8
+
+Object_TileFeet:      ; Object tile detected at "feet" of object
+	.res 1
+Object_TileWall:      ; Object tile detected in front of object, i.e. a wall
+	.res 1
+
+; unused ($64D)
+	.res 1
+
+
+Object_AttrFeet:      ; Object tile quadrant of Object_TileFeet
+	.res 1
+Object_AttrWall:      ; Object tile quadrant of Object_TileWall
+	.res 1
+
+; unused ($650)
+	.res 1
+
+
+Objects_SprHVis:      ; $0651-$0658 Flags; Bits 7-2 set when each 8x16 sprite is horizontally off-screen (left-to-right from MSb)
+	.res 8
+Objects_SpawnIdx:     ; $0659-$0660 Holds the index into level data that this object was spawned from
+	.res 8
+
+Objects_State:
+	.res 8
+
+Objects_Frame:        ; $0669-$0670 "Frame" of object (see ObjectGroup_PatternSets)
+	.res 8
+
+Level_ObjectID:       ; $0671-$0678 All active actor IDs
+	.res 8
+
+Objects_FlipBits:     ; $0679-$0680 Applied sprite attributes for this object (usually just horizontal/vertical flip)
+	.res 8
+
+Objects_SprVVis:      ; $0681-$0688 Flags; Bits 3-0 set when each 8x16 sprite is vertically off-screen (top-to-bottom from MSb)
+	.res 8
+Objects_Var1:         ; $0689-$0690 Generic variable 1 for objects
+	.res 8
+Objects_Var2:         ; $0691-$0698 Generic variable 2 for objects
+	.res 8
+
+Unused699:            ; Absolutely no idea, it is set once in one place and never used again... MAY be lost bonus game related?
+	.res 1
+
+; UNUSED Bonus Game Die counter
+; While the die is rotating, just used as a counter 0 to 3 to time the rolling animation.
+; After Player would press 'A', this value is immediately set to 0.
+; In the case of the odd/even game, if the Player "won", it is set to 5 or 6.
+Bonus_DieCnt:
+	.res 1
+
+; unused ($69B)
+	.res 1
+
+Score_Earned:         ; $069C-$069D (16-bit value) A "buffer" of score earned to be added to your total, total score stored in Player_Score
+	.res 2
+Score_Temp:           ; Temp used when figuring out to display a 3-byte integer worth of score
+	.res 1
+
+; unused ($69F-$6A3)
+	.res 5
+
+Player_IsHolding:     ; Set when Player is holding something (animation effect only)
+	.res 1
+Player_ISHolding_OLD: ; Holds onto whether Player WAS holding onto something (so we can be sure to clear Player_IsHolding)
+	.res 1
+
+; NOTE!! These object vars are OBJECT SLOT 0 - 4 ONLY!
+
+; Objects_Timer3: Used as the "wake up" out of shell timer
+; If timer is less than $60, it decrements normally, otherwise...
+;	If object is in state 2, timer decrements normally
+;	If object is in state 4 (being held), timer only decrements every 4 ticks
+;	In all other states, timer decrements every 2 ticks
+Objects_Timer3:       ; $06A6-$06AA Used as the "wake up" out of shell timer
+	.res 5
+Objects_Timer4:       ; $06AB-$06AF "Timer" values; automatically decrements to zero (used in "shakin' awake" effect)
+	.res 5
+
+; unused ($6B0-$6B2)
+	.res 3
+
+Object_SlopeHeight:   ; Object calculated slope height
+	.res 1
+Buffer_Occupied:      ; $06B4-$06B5 Set if respective Object_BufferX/Y buffer is already taken by an object
+	.res 2
+
+Player_UphillSpeedIdx: ; Override when Player_UphillFlag is set (shared with Player_Microgoomba)
+Player_Microgoomba:   ; Microgoomba stuck to Player
+	.res 1
+Objects_InWater:      ; $06B7-$06BB Set when object is in water
+	.res 5
+
+; unused ($6BC)
+	.res 1
+
+SpecialObj_Var1:      ; $06BD-$06C4 General purpose variable 1
+	.res 8
+
+; unused ($6C5-$6C6)
+	.res 2
+
+SpecialObj_Data:      ; $06C7-$06CE Special object "data" field, defined by object
+	.res 8
+
+; unused ($6CF-$6D0)
+	.res 2
+
+SpecialObj_Timer:     ; $06D1-$06D8 "Timer" values; automatically decrements to zero
+	.res 8
+
+; unused ($6D9-$6DA)
+	.res 2
+
+CannonFire_Var:       ; $06DB-$06E2
+	.res 8
+CannonFire_Timer:     ; $06E3-$06EA Cannon Fire timer, decrements to zero
+	.res 8
+Objects_QSandCtr:     ; $06EB-$06F2 When enemy has fallen into quicksand, increments until $90 which deletes it
+	.res 8

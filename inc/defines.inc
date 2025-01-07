@@ -417,3 +417,15 @@ CHNGTILE_GIANTBRICKFIX	= $18	; Giant World brick restore (small Mario hit giant 
 ; value enables auto scroll adjustments, but officially ASCONFIG_ENABLE is used to enable it
 ASCONFIG_ENABLE		= $01	; Enables auto scroll coordinate adjustments of any sort
 ASCONFIG_HDISABLE	= $80	; Disables horizontal auto scroll coordinate adjustment (generally if Horz Auto Scroll is not in use)
+
+
+; Objects_State
+OBJSTATE_DEADEMPTY	= 0	; Dead/Empty
+OBJSTATE_INIT		= 1	; Init
+OBJSTATE_NORMAL		= 2	; Normal (typical operation)
+OBJSTATE_SHELLED	= 3	; Shelled (shelled enemy post-stomp)
+OBJSTATE_HELD		= 4	; Held (held by Player)
+OBJSTATE_KICKED		= 5	; Kicked (kicked by Player / spinning shell)
+OBJSTATE_KILLED		= 6	; Killed (flipped over and falling off screen)
+OBJSTATE_SQUASHED	= 7	; Squashed (generally Goomba only)
+OBJSTATE_POOFDEATH	= 8	; "Poof" Death (e.g. Piranha death)
