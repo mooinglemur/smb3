@@ -382,3 +382,219 @@ EndText_State:        ; Princess speech state variable
 .segment "ENDINGZP3": zeropage
 Ending2_IntCmd:       ; used during ending to buffer out the ending picture data on the interrupt.  Triggers "Do_Ending2_IntCmd" in PRG024 in interrupt context.
 	.res 1
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; ZERO PAGE RAM: WORLD MAP CONTEXT
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.segment "WORLDMAPZP": zeropage
+
+World_Map_Y:          ; $75-$76 (Mario/Luigi) Y pixel coordinate position of Mario on world map
+	.res 2
+World_Map_XHi:        ; $77-$78 (Mario/Luigi) X pixel (hi byte) coordinate position of Mario on world map
+	.res 2
+World_Map_X:          ; $79-$7A (Mario/Luigi) X pixel (lo byte) coordinate position of Mario on world map
+	.res 2
+World_Map_Move:       ; $7B-$7C (Mario/Luigi) Movement left in specified direction (even numbers only!)
+	.res 2
+World_Map_Dir:        ; $7D-$7E (Mario/Luigi) Specified travel direction (8=Up, 4=Down, 2=Left, 1=Right)
+	.res 2
+
+Map_UnusedPlayerVal:  ; $7F-$80 (Mario/Luigi) Set for each Player to $20 when returning to map, but apparently unused otherwise!
+	.res 2
+
+; unused ($81-$83)
+	.res 3
+
+Map_UnusedPlayerVal2: ; $84-$85 (Mario/Luigi) Apparently unused at all, but backed up and persisted on the world map
+	.res 2
+
+; All the WarpWind vars are shared with the HandTrap; they share code, too...
+Map_WWOrHT_Y:         ; Warp Whistle wind or Hand Trap Y position
+	.res 1
+Map_HandTrap_XHi:     ; Hand Trap X Hi (most vars are shared with warp wind, but technically not this one!)
+	.res 1
+Map_WWOrHT_X:         ; Warp Whistle wind or Hand Trap X position
+	.res 1
+Map_WWOrHT_Cnt:       ; Warp Whistle wind or Hand Trap counter 
+	.res 1
+Map_WWOrHT_Dir:       ; Direction the Warp Whistle wind travels (0 = right, 1 = left)
+	.res 1
+
+; Double use
+Map_WarpWind_FX:      ; 1 - 4 is the warp whistle effect
+Map_StarFX_State:     ; 0 - 2 NOTE: Shared with Map_WarpWind_FX
+	.res 1
+
+World_Map_Twirl:      ; If set, Mario is "twirling"
+	.res 1
+
+; unused ($8D)
+	.res 1
+
+; When Player is "skidding" backward (from death or "twirling" from game over continuation)
+Map_Skid_DeltaY:      ; Delta applied directly to Y
+	.res 1
+Map_Skid_DeltaFracY:  ; Fractional delta Y
+	.res 1
+Map_Skid_FracY:       ; Fractional Y accumulator
+	.res 1
+
+; unused ($91)
+	.res 1
+
+Map_Skid_DeltaX:      ; Delta applied directly to X
+	.res 1
+Map_Skid_DeltaFracX:  ; Fractional delta X
+	.res 1
+Map_Skid_FracX:       ; Fractional X accumulator
+	.res 1
+Map_Skid_FracCarry:   ; Fractional carry over accumulator (I think?)
+	.res 1
+Map_Skid_Count:       ; Just a ticker controlling the display frame of the twirl
+	.res 1
+Map_Skid_Counter:
+	.res 1
+
+; Map_Skid_TravDirs -- specifies which way Player must "twirl" to get to the destination
+; Bit 0 Set = Player must travel to the right versus the left
+; Bit 1 Set = Player must travel downward versus upward
+Map_Skid_TravDirs:
+	.res 1
+
+; unused ($99-$9A)
+	.res 2
+
+Map_StarsX:           ; $9B-$A2 During World Intro, X position of each star
+	.res 8
+Map_StarsY:           ; $A3-$AA During World Intro, Y position of each star
+	.res 8
+Map_StarsOutRad:      ; During World Intro, stars take off radius (0 = smallest, increments for larger)
+	.res 1
+
+; unused ($AC-$AE)
+	.res 3
+
+Map_StarsXSteps:      ; During World Intro, number of "steps" remaining in the X position adjustment
+	.res 1
+Map_StarsRadCnt:      ; During World Intro, adds $70 per display frame and adds 1 to the radius when it overflows
+	.res 1
+Map_StarsCenterX:     ; During World Intro, X center of stars 
+	.res 1
+Map_StarsCenterY:     ; During World Intro, Y center of stars
+	.res 1
+Map_StarsDeltaR:      ; During World Intro, delta to the star radii
+	.res 1
+Map_StarsConst9:      ; During World Intro, ... Constant 9?
+	.res 1
+
+; unused ($B5)
+	.res 1
+
+Map_StarsAnimCnt:     ; During World Intro, a simple counter that adds 32 per frame and toggles Map_StarsFrame when it overflows
+	.res 1
+Map_StarsFrame:       ; During World Intro, "frame" of stars (0/1)
+	.res 1
+Map_StarsPattern:     ; During World Intro, stars current VROM pattern
+	.res 1
+Map_StarsLandRad:     ; During World Intro, stars landing radius (0 = largest, increments for smaller)
+	.res 1
+Map_StarsYSteps:      ; During World Intro, number of "steps" remaining in the Y position adjustment
+	.res 1
+
+; unused ($BB)
+	.res 1
+
+Map_StarsRadius:      ; $BC-$C3 During World Intro, each star's "radius" position (each radius position is 0-31)
+	.res 8
+Map_StarsState:       ; 0 = Stars coming out from center, 1 = Stars moving in towards Player start
+	.res 1
+Map_SkidBack:         ; Player is skidding back (Map_Player_SkidBack stores whether they skidded on their last turn at all)
+	.res 1
+
+; unused ($C6)
+	.res 1
+
+Map_UnusedGOFlag:     ; Set at map initialization or if Player gets Game Over and selects CONTINUE/END, no apparent purpose
+	.res 1
+
+; unused ($C8-$CB)
+	.res 4
+
+Map_Intro_CurStripe:  ; Current stripe of the "World X" intro box to be erased (0 - 7)
+	.res 1
+Map_Intro_NTOff:      ; Offset into nametable for erasing the "World X" intro box
+	.res 1
+Map_Intro_ATOff:      ; Offset into the attribute table for erasing the "World X" intro box
+	.res 1
+
+Map_Airship_DC:       ; set to 1 when the Airship knows where it's going
+	.res 1
+Map_Airship_DY:       ; Airship delta between current and target Y coordinate
+	.res 1
+Map_Airship_YNib:     ; Map_Airship_DY shifts out its lower 4 bits as upper 4 bits to this value
+	.res 1
+Map_Airship_YAcc:     ; Additional Y accumulator when traveling
+	.res 1
+Map_Airship_DXHi:     ; Airship delta between current and target X Hi coordinate
+	.res 1
+Map_Airship_DX:       ; Airship delta between current and target X coordinate
+	.res 1
+Map_Airship_XNib:     ; Map_Airship_DXHi/Map_Airship_DX shifts out its lower 4 bits as upper 4 bits to this value
+	.res 1
+Map_Airship_Dir:      ; Airship horizontal travel direction in bit 0, vertical direction in bit 1
+	.res 1
+Map_HideObj:          ; used for completion)
+	.res 1
+
+MapPoof_Y:            ; When using a power-up, "poof" appears at this Y coordinate
+	.res 1
+MapPoof_X:            ; When using a power-up, "poof" appears at this X coordinate
+	.res 1
+Map_UseItem:          ; Flag to signal that item is to be used
+	.res 1
+
+; unused ($DB-$E4)
+	.res 10
+
+World_Map_Tile:      ; Current tile index Mario is standing on
+	.res 1
+
+; unused ($E6-$E8)
+	.res 3
+
+Scroll_Temp:         ; Scroll hold value
+	.res 1
+
+; unused ($EA-$EB)
+	.res 2
+
+Player_WalkFrame:    ; relative, not the same as Player_Frame
+	.res 1
+
+; unused ($ED-$F3)
+	.res 7
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; ZERO PAGE RAM: BONUS GAME CONTEXT (see PRG022 for lots more info)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.segment "BONUSGAMEZP": zeropage
+; unused ($75-$8A)
+	.res 22
+
+BonusCoins_State:
+	.res 1
+
+; unused ($8C-$C6)
+	.res 59
+
+BonusDie_Y:           ; UNUSED Bonus Game Die (1-6) Y position
+	.res 1
+BonusDie_X:           ; UNUSED Bonus Game Die (1-6) X position
+	.res 1
+BonusDie_YVel:        ; UNUSED Bonus Game Die Y Velocity (when it departs)
+	.res 1
+BonusDie_YVelFrac:    ; UNUSED Bonus Game Die Y Velocity fractional accumulator
+	.res 1
+
+; unused ($CB-$F3)
+	.res 41
