@@ -2333,3 +2333,277 @@ Sound_Map_Off2:       ; Same as Sound_Map_Off, used for the secondary track
 Sound_Unused7FF:      ; Cleared once, never used otherwise
 	.res 1
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; $68xx SRAM for 2P Vs ONLY
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; NOTE: $6000-$67FF is still in considered tile grid memory (see next section)
+; 2P Vs just utilizes a chunk where no tiles will ever exist in 2P Mode
+.segment "VS2PSRAM"
+
+; 2P Vs Only
+Vs_MemStart:          ; Should be at "top"; this point and 512 bytes forward are cleared at start of 2P Vs
+
+; Vs_PlayerFrame
+; 0/1: Standing (0) / walking (0/1) / falling-not-jumped (1) frames
+; 2: Skidding turnaround
+; 3: Jumping/Falling-jumped
+; 4: Dizzy
+; 5: Kicking
+; 6: Dying
+; 7: Climbing
+Vs_PlayerFrame:       ; $6800-$6801 Mario/Luigi Frame
+	.res 2
+Vs_PlayerState:       ; $6802-$6803 Mario/Luigi State (0=Init, 1=Normal, 2=Dying, 3=Ladder climbing)
+	.res 2
+Vs_ObjectState:       ; $6804-$680F Objects State (0=Dead/empty, 1=Normal, 2=Flipped over, 3=Dying)
+	.res 12
+
+; unused ($6810)
+	.res 1
+
+Vs_PlayerBlkHitCnt:   ; $6811-$6812 Mario/Luigi Hit block counter value
+	.res 2
+Vs_PlayerY:           ; $6813-$6814 Mario/Luigi Y
+	.res 2
+Vs_ObjectsY:          ; $6815-$6820 Objects Y
+	.res 12
+
+; unused ($6821)
+	.res 1
+
+Vs_PlayerBlkHitY:     ; $6822-$6823 Mario/Luigi Aligned Y position where block was hit
+	.res 2
+Vs_PlayerX:           ; $6824-$6825 Mario/Luigi X
+	.res 2
+Vs_ObjectsX:          ; $6826-$6831 Objects X
+	.res 12
+
+; unused ($6832)
+	.res 1
+
+Vs_PlayerBlkHitX:     ; $6833-$6834 Mario/Luigi Aligned Y position where block was hit
+	.res 2
+Vs_PlayerYVel:        ; $6835-$6836 Mario/Luigi Y Velocity
+	.res 2
+Vs_ObjectYVel:        ; $6837-$6842 Objects Y Velocity
+	.res 12
+
+; unused ($6843)
+	.res 1
+
+Vs_PlayerBlkHitYVel:  ; $6844-$6845 Mario/Luigi Hit block Y velocity
+	.res 2
+Vs_PlayerXVel:        ; $6846-$6847 Mario/Luigi X Velocity
+	.res 2
+Vs_ObjectXVel:        ; $6848-$6853 Objects X Velocity
+	.res 12
+
+; unused ($6854-$6856)
+	.res 3
+
+Vs_PlayerClimbFrame:  ; $6857-$6858 incremented as Player climbs
+	.res 2
+Vs_ObjectAnimCnt:     ; $6859-$6864 A continuous counter per object for animating (typically 2 frames)
+	.res 12
+
+; unused ($6865)
+	.res 1
+
+Vs_PlayerDir:         ; $6866-$6867 Mario/Luigi direction (1=Right, 2=Left)
+	.res 2
+Vs_ObjectDir:         ; $6868-$6873 Objects direction (1=Right, 2=Left)
+	.res 12
+
+; unused ($6874)
+	.res 1
+
+Vs_PlayerYVelFrac:    ; $6875-$6876 Mario/Luigi Y velocity fractional accumulator
+	.res 2
+Vs_ObjectYVelFrac:    ; $6877-$6882
+	.res 12
+
+; unused ($6883-$6885)
+	.res 3
+
+Vs_PlayerXVelFrac:    ; $6886-$6887 Mario/Luigi X velocity fractional accumulator
+	.res 2
+Vs_ObjectXVelFrac:    ; $6888-$6893
+	.res 12
+
+; unused ($6894-$6896)
+	.res 3
+
+Vs_PlayerDetStat:     ; $6897-$6898 Mario/Luigi detection status
+	.res 2
+Vs_ObjectDetStat:     ; $6899-$68A4 Objects detection status
+	.res 12
+
+; unused ($68A5-$68A7)
+	.res 3
+
+Vs_ObjectVar1:        ; $68A8-$68B3 General variable 1
+	.res 12
+
+; unused ($68B4)
+	.res 1
+
+Vs_PlayerKick:        ; $68B5-$68B6 Mario/Luigi Player is kicking until decrements to zero
+	.res 2
+Vs_PlayerDizzy:       ; $68B7-$68B8 Mario/Luigi Player "dizzy" face until decrements to zero
+	.res 2
+Vs_PlayerStick:       ; $68B9-$68BA Mario/Luigi Mario/Luigi Player "sticking" to ceiling; decrements to zero
+	.res 2
+Vs_PlayerBumpTimer:   ; Mario/Luigi Players bumped off eachother (and can't again until zero); decrements to zero
+	.res 1
+Vs_POWBlockCnt:       ; POW block counter; decrements to zero; until then, POW shaking!
+	.res 1
+
+Vs_ObjectId:          ; $68BD-$68C8 Objects ID
+	.res 12
+
+; unused ($68C9)
+	.res 1
+
+Vs_ObjectSprRAMOff:   ; Current object Sprite RAM offset
+	.res 1
+Vs_ObjectSprRAMSel:   ; Counter that runs $D to $0 (inclusive) and helps distribute Sprite RAM offsets among the objects
+	.res 1
+Vs_EnemyCount:        ; Number of spawned enemies (in the typical game)
+	.res 1
+Vs_PlayerHaltTimer:   ; $68CD-$68CE Mario/Luigi timer which halts gameplay; decrements to zero
+	.res 2
+Vs_ObjHaltTimer:      ; $68CF-$68DA Object timer which halts object when greater than zero; decrements to zero
+	.res 12
+
+; unused ($68DB)
+	.res 1
+
+Vs_ObjectTimer3:      ; $68DC-$68E7
+	.res 12
+
+; unused ($68E8)
+	.res 1
+
+Vs_PlayerCnt:         ; $68E9-$68EA Mario/Luigi "counter" value; decrements to zero
+	.res 2
+Vs_EnemyGetUpTimer:   ; $68EB-$68F6 Timer for flipped-over enemy; decrements to zero
+	.res 12
+
+; unused ($68F7)
+	.res 1
+
+Vs_PlayerJumped:      ; $68F8-$68F9 Set to 1 if Player jumped; prevents Player from jumping again until they hit floor
+	.res 2
+Vs_PlayerTileL:       ; $68FA-$68FB Mario/Luigi Tile detected at Player's feet
+	.res 2
+Vs_ObjectTileL:       ; $68FC-$6907
+	.res 12
+
+; unused ($6908-$6909)
+	.res 2
+
+Vs_PlayerBlkHit:      ; $690A-$690B Mario/Luigi Holds Tile_Mem offset to bounce block they hit
+	.res 2
+Vs_PlayerFlashInv:    ; $690C-$690D Mario/Luigi Flashing invicibility (?)
+	.res 2
+Vs_SpawnCnt2:         ; FIXME describe better
+	.res 1
+Vs_TooLongCnt:        ; Increments after each round of spawning; if it overflows, "game ender" fireballs are spawned 
+	.res 1
+Vs_CurIndex:          ; Current index (Player or object)
+	.res 1
+Vs_PlayerTileU:       ; $6911-$6912 Mario/Luigi Tile detected above Player's feet
+	.res 2
+
+; unused ($6913-$691F)
+	.res 13
+
+Vs_ObjectPipeTimer:   ; $6920-$692B Timer used for enemies to exit and emerge from pipes; decrements to zero
+	.res 12
+
+; unused ($692C)
+	.res 1
+
+Vs_Random:            ; $692D-$692F Random generator for 2P Vs mode
+	.res 3
+Vs_PlayerCoins:       ; $6930-$6931 Player's coins (in 2P Vs); 5 wins the match
+	.res 2
+Vs_TimeToExit:        ; Decrements to zero then exits the 2P Vs
+	.res 1
+Vs_ObjectIsLast:      ; $6933-$693E Set if this is the last object (turns blue, move fast)
+	.res 12
+
+; unused ($693F)
+	.res 1
+
+Vs_POWHits:           ; Number of times POW block has been hit (disabled on 3)
+	.res 1
+Vs_PlayerYOff:        ; $6941-$6942 Mario/Luigi Y offset applied
+	.res 2
+Vs_UNKGAMECnt:        ; Unknown "game" counter; after overflow, we exit
+	.res 1
+Vs_PlayerYHi:         ; $6944-$6945 Mario/Luigi Y Hi
+	.res 2
+Vs_ObjectYHi:         ; $6946-$6951 Object Y Hi
+	.res 12
+
+; unused ($6952-$6954)
+	.res 3
+Vs_ObjectIsAngry:     ; $6955-$6960 Set when Sidestepper is angry (not used for anything else)
+	.res 12
+
+; unused ($6961)
+	.res 1
+
+Vs_AngrySidesteppers: ; When greater than zero, and spawning a Sidestepper, next one is an "angry" Sidestepper (then decrement)
+	.res 1
+
+; unused ($6963)
+	.res 1
+
+Vs_ObjectVDir:        ; $6964-$696F Objects vertical direction (4=Down, 8=Up)
+	.res 12
+
+; unused ($6970)
+	.res 1
+
+Vs_ObjectRestoreXVel: ; $6971-$697C Flipped over object restore X velocity
+	.res 12
+
+; unused ($697D)
+	.res 1
+
+Vs_ObjTimer2:         ; $697E-$6989 Object timer; decrements to zero
+	.res 12
+
+; unused ($698A)
+	.res 1
+
+Vs_CardFlash:         ; $698B-$698C Mario/Luigi Cycles color for card (when picked up from another Player)
+	.res 2
+Vs_HaltTimerBackup:   ; $698D-$699B Backs up all halt timers
+	.res 15
+Vs_EnemySet:          ; Specifies an index of active enemy set, selecting one of the quintuples from Vs_5EnemySets
+	.res 1
+Vs_ObjectXOff:        ; A one-shot X offset for display of object FIXME: When?
+	.res 1
+Vs_PlayerWalkCnt:     ; $699E-$699F Mario/Luigi counts up and overflows to toggle walk frames
+	.res 2
+Vs_PlayerWalkFrame:   ; $69A0-$69A1 Mario/Luigi incremented when Vs_PlayerWalkCnt overflows
+	.res 2
+Vs_NextObjectIsLast:  ; If there are 5 enemies and this is set, next enemy out is the "last" (turns blue, moves fast)
+	.res 1
+
+; Display of "x Up" after getting 3 cards
+Vs_xUpCnt:            ; $69A3-$69A4 Mario/Luigi "x Up" counter
+	.res 2
+Vs_xUpY:              ; $69A5-$69A6 Mario/Luigi "x Up" Y pos
+	.res 2
+Vs_xUpX:              ; $69A7-$69A8 Mario/Luigi "x Up" X pos
+	.res 2
+Vs_xUpLives:          ; $69A9-$69AA Mario/Luigi "x Up" Lives amount (1, 2, 3, 5)
+	.res 2
+Vs_SpawnCnt:          ; Spawn counter; increments and triggers spawning
+	.res 1

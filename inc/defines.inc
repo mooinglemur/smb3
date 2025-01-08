@@ -429,3 +429,17 @@ OBJSTATE_KICKED		= 5	; Kicked (kicked by Player / spinning shell)
 OBJSTATE_KILLED		= 6	; Killed (flipped over and falling off screen)
 OBJSTATE_SQUASHED	= 7	; Squashed (generally Goomba only)
 OBJSTATE_POOFDEATH	= 8	; "Poof" Death (e.g. Piranha death)
+
+
+; 2P Vs Object IDs
+VSOBJID_SPINY		= 0	; Spiny
+VSOBJID_SIDESTEPPER	= 2	; Sidestepper
+VSOBJID_FIGHTERFLY	= 3	; Fighter Fly
+VSOBJID_FIREBALL_HORZ	= 4	; Horizontal Fireball that spawns to keep Players from hiding down at the bottom
+VSOBJID_FIREBALL_ENDER	= 5	; Game Ender Fireball (bounces around, attempts to kill Players who've stuck around too long!)
+VSOBJID_FIREBALL_FOUNTAIN= 6	; Fountain Fireball
+VSOBJID_COIN		= 7	; Coin (from [?] block)
+VSOBJID_MUSHROOMCARD	= 8	; Mushroom card
+VSOBJID_FLOWERCARD	= 9	; Flower card
+VSOBJID_STARCARD	= 10	; Star card
+VSOBJID_KICKEDBLOCK	= 11	; Kicked block (from [?] block match)
