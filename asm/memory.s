@@ -1,3 +1,165 @@
+; COMMONZP
+.exportzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var8
+.exportzp Temp_Var9, Temp_Var10, Temp_Var11, Temp_Var12, Temp_Var13, Temp_Var14, Temp_Var15, Temp_Var16
+.exportzp VBlank_Tick, Horz_Scroll_Hi, PPU_CTL1_Mod, Vert_Scroll_Hi, Level_ExitToMap, Counter_1, PPU_CTL2_Copy, Pad_Holding
+.exportzp Pad_Input, Roulette_RowIdx, Pal_Force_Set12, PlantInfest_ACnt, VBlank_TickEn, Map_Enter2PFlag, Map_EnterViaID, Map_EnterLevelFX
+.exportzp Map_IntBoxErase, Map_ClearLevelFXCnt, Map_ScrollOddEven, Level_Width, Scroll_ColumnR, Scroll_ColumnL, Scroll_VOffsetT, Scroll_VOffsetB
+.exportzp Scroll_ColorStrip, Scroll_LastDir, Scroll_RightUpd, Scroll_VertUpd, Scroll_LeftUpd, Graphics_Queue, Level_LayPtr_AddrL, Level_LayPtr_AddrH
+.exportzp Map_Tile_AddrL, Map_Tile_AddrH, BonusText_BaseL, BonusText_BaseH, Level_ObjPtr_AddrL, Level_ObjPtr_AddrH, Video_Upd_AddrL, Video_Upd_AddrH
+.exportzp Music_Base_L, Music_Base_H, Sound_Sqr_FreqL, Sound_Sqr_FreqH, Sound_Map_EntrV, Sound_Map_EntV2, Music_PatchAdrL, Music_PatchAdrH
+.exportzp Sound_Map_Off
+; COMMONHIZP
+.exportzp Scroll_OddEven, Controller1Press, Controller2Press, Controller1, Controller2, Vert_Scroll, Horz_Scroll, PPU_CTL1_Copy
+; TITLEZP
+.exportzp Title_XPosHi, Title_YPosHi, Title_ObjX, Title_ObjY, Title_ObjXVel, Title_ObjYVel, Title_XPosFrac, Title_YPosFrac
+.exportzp Title_ObjYVelChng, Title_ObjMLFlags, Title_ObjMLMoveDir, Title_ObjMLAnimFrame, Title_ObjMLDirTicks, Title_ObjMLSprite, Title_ObjMLPower
+.exportzp Title_ObjMLSprRAMOff, Title_ObjMLSprVis, Title_ObjMLTailTick, Title_ObjMLHold, Title_ObjMLBonkTick, Title_ObjMLKickTick, Title_ObjMPowerDown
+.exportzp Title_ObjMLStop, Title_CurMLIndex, Ending_Timer, Title_ObjFlags, EndText_Timer , EndText_CPos, Title_ObjStates, EndText_State , Title_State
+.exportzp Title_ResetCnt, Title_ResetCnt2, Title_ResetTrig, Title_UnusedFlag, Title_Ticker, Title_MActScriptPos, Title_LActScriptPos, Title_MActScriptDelay
+.exportzp Title_LActScriptDelay, Title_MActScriptDirSet, Title_LActScriptDirSet, Title_ObjMLDir, Title_ObjMLQueue, Title_EventIndex, Title_EventGrafX
+.exportzp Title_ObjInitIdx, Title_ObjInitDly, Title_3GlowFlag, Title_3GlowIndex, Ending2_IntCmd
+; ENDINGZP
+.exportzp Ending2_PicState, Ending2_ClearLen, Ending2_ClearPat, Ending2_PicVRAMH, Ending2_PicVRAML, Ending2_QCmdEnd, Ending2_FadeTimer, Ending2_QueueCmd
+.exportzp Ending2_TimerH, Ending2_TimerL, Ending2_CurWorld
+; WORLDMAPZP
+.exportzp World_Map_Y, World_Map_XHi, World_Map_X, World_Map_Move, World_Map_Dir, Map_UnusedPlayerVal, Map_UnusedPlayerVal2, Map_WWOrHT_Y, Map_HandTrap_XHi
+.exportzp Map_WWOrHT_X, Map_WWOrHT_Cnt, Map_WWOrHT_Dir, Map_WarpWind_FX, Map_StarFX_State, World_Map_Twirl, Map_Skid_DeltaY, Map_Skid_DeltaFracY
+.exportzp Map_Skid_FracY, Map_Skid_DeltaX, Map_Skid_DeltaFracX, Map_Skid_FracX, Map_Skid_FracCarry, Map_Skid_Count, Map_Skid_Counter, Map_Skid_TravDirs
+.exportzp Map_StarsX, Map_StarsY, Map_StarsOutRad, Map_StarsXSteps, Map_StarsRadCnt, Map_StarsCenterX, Map_StarsCenterY, Map_StarsDeltaR, Map_StarsConst9
+.exportzp Map_StarsAnimCnt, Map_StarsFrame, Map_StarsPattern, Map_StarsLandRad, Map_StarsYSteps, Map_StarsRadius, Map_StarsState, Map_SkidBack
+.exportzp Map_UnusedGOFlag, Map_Intro_CurStripe, Map_Intro_NTOff, Map_Intro_ATOff, Map_Airship_DC, Map_Airship_DY, Map_Airship_YNib, Map_Airship_YAcc
+.exportzp Map_Airship_DXHi, Map_Airship_DX, Map_Airship_XNib, Map_Airship_Dir, Map_HideObj, MapPoof_Y, MapPoof_X, Map_UseItem, World_Map_Tile, Scroll_Temp
+.exportzp Player_WalkFrame
+; BONUSGAMEZP
+.exportzp BonusCoins_State, BonusDie_Y, BonusDie_X, BonusDie_YVel, BonusDie_YVelFrac
+; VSZP
+.exportzp Vs_State, Vs_IsPaused
+; GAMEPLAYZP
+.exportzp Player_XHi, Objects_XHi, CineKing_DialogState, Objects_Var4, Pipe_PlayerX, Pipe_PlayerY, Level_GndLUT_Addr, Player_YHi, Objects_YHi, Player_X
+.exportzp Objects_X, CineKing_Var, Objects_Var5, Player_Y, Objects_Y, Player_SpriteX, Objects_SpriteX, Player_SpriteY, Objects_SpriteY, Player_XVel
+.exportzp Objects_XVel, Objects_VarBSS, SlotIndexBackup, Player_HaltGame, Player_YVel, Objects_YVel, Player_InAir, CineKing_Frame2, Objects_DetStat
+.exportzp Player_SprWorkL, Player_SprWorkH, Level_TileOff, Level_Tile, Player_Slopes, Player_XStart, Player_Suit, Player_Frame, Player_FlipBits
+.exportzp Player_WagCount, Player_IsDying, Obj01_Flag
+; ONEPAGE
+.export Update_Select, Raster_Effect, Debug_Flag
+; OAMSHADOW
+.export Sprite_RAM
+; GFXBSS
+.export Graphics_BufCnt, Graphics_Buffer, TileChng_VRAM_H, TileChng_VRAM_L, TileChng_Pats, Level_SizeOrig, Level_PipeExitDir, Level_7VertCopy
+.export Level_PipeNotExit, Level_PauseFlag, Level_SkipStatusBarUpd, Raster_State, Scroll_ToVRAMHi, Scroll_LastCol8, Scroll_LastOff8, Scroll_PatStrip
+.export Scroll_ToVRAMHA, Scroll_LastAttr, Scroll_AttrStrip, World_Num_Debug, Map_StarsDeltaX, Map_StarsDeltaY, Map_Stars_PRelX, Map_Stars_PRelY
+.export Player_Power, Level_JctCtl, Level_JctFlag, Map_DrawPanState, ObjGroupRel_Idx, InvFlip_VAddrHi, InvFlip_Frame, InvFlip_Counter, InvStart_Item
+.export InvHilite_X, InvHilite_Item, THouse_ID, THouse_Treasure, Coins_Earned, Map_Powerup_Poof, Level_FreeVertScroll, Level_7Vertical, Level_SelXStart
+.export Update_Request, Map_Starman, Map_Power_Disp, Map_Warp_PrevWorld
+; WORLDMAPBSS
+.export Map_EntTran_VLHalf, Map_EntTran_TBCnt, Map_EntTran_LRCnt, Map_W8D_VAddrH, Map_EntTran_BVAddrH, Map_W8D_VAddrL, Map_EntTran_BVAddrL
+.export Map_EntTran_BorderLoop, Map_EntTran_Cnt, Map_W8D_VAddrH2, Map_EntTran_VAddrH, Map_EntTran_VAddrHAdj, Map_W8D_VAddrL2, Map_EntTran_VAddrL
+.export Map_EntTran_TileOff, Map_W8D_TileOff, Map_EntTran_Tile8x8, Map_EntTran_VRAMGap, Map_W8D_YOff, Map_W8D_XOff, Map_W8D_RC, Map_W8D_Dir, Map_W8D_X
+.export Map_W8D_Y, Map_W8D_Idx, Map_EntTran_Temp, Map_EntTran_InitValIdx
+; BONUSGAMEBSS
+.export Roulette_Pos, Roulette_PosHi, Roulette_ShapeLock, Roulette_ConfigRun, Roulette_ConfigState, Roulette_RunState, Roulette_StopState, Roulette_xUpY
+.export Roulette_LivesToGive, Roulette_Speed, Roulette_StopCnt, Roulette_PosFrac, Roulette_Turns, Card_SelectX, Bonus_PrizeX, Card_SelectY, Bonus_PrizeY
+.export Card_Index, Bonus_CurBufOffset, Card_FirstIndex, Bonus_Round2, Card_SelectXOrig, Card_MoveDelay, Card_SprRAMOff, Card_AnimTick, Card_VRAM_L
+.export Card_VRAM_H, Card_FlipCount, Card_MatchCard, Card_UnusedVL, Card_UnusedVH, Bonus_GameHost, Card_GameState, Card_TurnsRemain, Card_FlipFrame
+.export Card_UnusedArray, Card_UnusedAttr, Card_UnusedArrIdx, Card_Matches, Card_CoinsToGive, Bonus_GameState, Card_InitState, Bonus_GameType, Bonus_KTPrize
+; GAMEPLAYBSS
+.export Fade_State, Fade_Tick, Fade_Level, FadeOut_Cancel, Player_AllowAirJump, Player_XVelAdj, CineKing_Frame, Objects_Var7
+; MUSICQBSS
+.export Level_MusicQueue, Level_MusicQueueRestore
+; SOUNDENGINEBSS
+.export Music_TriTrkPos, Music_NseTrkPos, Music_PCMTrkPos, Music_Sq2RestH, Music_Sq2Rest, Music_Sq2NoteLen, Music_Sq1Rest, Music_Sq1NoteLen
+.export Music_TriRestH, Music_TriRest, Music_NoiseRest, Music_NseRestH, Music_DMCRest, Music_DMCRestH, Music_PCMStart, Music_NextIndex, SFX_Counter1
+.export SndCur_Player, SndCur_Level1, SndCur_Level2, SndCur_Music1, SndCur_Music2, SndCur_Map, SndCur_Pause, SFX_Counter2, SFX_Counter3, SFX_Counter4
+.export Sound_IsPaused, Sound_QPlayer, Sound_QLevel1, Sound_QLevel2, Sound_QMusic1, Sound_QMusic2, Sound_QMap, Sound_QPause, DMC_Time, Music_Sq1RestH
+.export Music_Sq1AltRamp, Music_LOST4FB, Music_LOST4FC, Music_RestH_Base, Music_Sq2TrkOff, Music_Sq1TrkOff
+; TITLEBSS
+.export Title_MLAccelCnt, Title_MarioPoof, Title_MLHoldTick, Title_ObjVar, Title_ObjVar2, Title_ObjFrame
+; WORLDMAPBSS2
+.export Map_Object_ActY, Map_Object_ActX, Map_Object_ActXH, Map_Object_Data, Map_March_Count, Map_Objects_Vis, Map_MarchInit, Map_InCanoe_Flag
+.export World_8_Dark, World_Map_AnimF, World_Map_AnimT
+; BONUSGAMEBSS2
+.export BonusText_VH, BonusText_VL
+; GAMEPLAYBSS2
+.export Event_Countdown, Player_TailCount, Player_InAir_OLD, Player_FireCount, Player_FrogHopCnt, Player_PMeterCnt, B10Coin_Timer, Player_TailAttack
+.export CineKing_Timer, Objects_Timer, Objects_Timer2, Level_BlockChgXHi, Level_BlockChgXLo, Level_BlockChgYHi, Level_BlockChgYLo, Level_BlkBump_Pos
+.export Level_BlkBump, Level_BlkBump_XHi, Level_BlkBump_XLo, Level_BlkBump_YHi, Level_BlkBump_YLo, Level_VertScrollH, Level_VertScroll, Player_AboveTop
+.export Level_InitAction, Player_Slide, Player_UphillFlag, Player_Flip, Level_AirshipH, Player_KuriboDir, Player_Grow, Player_FlashInv, Player_StarInv
+.export Player_SuitLost, Player_StarOff, Player_HaltTick, Player_Kick, Player_PipeFace, Player_EndLevel, Level_AirshipCtl, Counter_Wiggly, Counter_7to0
+.export LevelPartialInit, Level_TilesetIdx, Level_ChangeReset, Level_UnusedFlag, Level_SlopeEn, Level_ChgTileEvent, Level_NoStopCnt, Level_Event
+.export Level_PSwitchCnt, Player_SlideRate, Player_IsClimbing, Player_FlipBits_OLD, Player_HitCeiling, Player_FlyTime, Player_IsDucking, Player_WhiteBlkCnt
+.export Level_PipeMove, Level_CoinHeav, Player_MoveLR, Player_WalkAnimTicks, Player_InWater, Player_SwimCnt, Player_Kuribo, Player_QueueSuit, Player_mGoomba
+.export Player_Statue, Player_RunFlag, Player_Bounce, Player_BounceDir, Player_BounceObj, Counter_ByPlayerSpd, Level_HAutoScroll, B10Coin_Count, B10Coin_ID
+.export Player_OffScreen, FloatLevel_PlayerWaterStat, Player_LowClearance, PUp_StarManFlash, Player_Behind_En, Player_Behind, Player_Slippery
+.export Player_SandSink, Player_PartDetEn, Player_InPipe, Player_MushFall, Player_SprOff, Object_SprRAM, SpecialObj_Var2, SpecialObj_YVelFrac
+.export SpecialObj_XVelFrac, SpecialObj_Var3, SpecialObj_YLo, SpecialObj_XLo, SpecialObj_YVel, SpecialObj_XVel, Misc_Counter, Level_TimerMSD
+.export Level_TimerMid, Level_TimerLSD, Level_TimerTick, Inventory_Open, Level_TimerEn, Kill_Tally, Objects_KillTally, PlayerProj_YHi, Level_AScrlConfig
+.export Cine_ToadKing, AScrlURDiag_WrapState_Copy, AScrlURDiag_WrapState
+; GENBSS1
+.export Ending_CmdBuffer, Level_Tile_Head, Level_Tile_GndL, Level_Tile_GndR, Level_Tile_InFL, Level_Tile_InFU, Level_Tile_Whack, Level_Tile_Quad
+.export Level_Tile_Slope, Scroll_Cols2Upd, Bonus_CoinsYVel, Bonus_CoinsY, Bonus_CoinsXVel, Bonus_CoinsX, Bonus_CoinsYVelFrac, Bonus_CoinsXVelFrac
+.export Object_TileFeet, Object_TileWall, Object_AttrFeet, Object_AttrWall, Objects_SprHVis, Objects_SpawnIdx, Objects_State, Objects_Frame
+.export Level_ObjectID, Objects_FlipBits, Objects_SprVVis, Objects_Var1, Objects_Var2, Unused699, Bonus_DieCnt, Score_Earned, Score_Temp
+.export Player_IsHolding, Player_ISHolding_OLD, Objects_Timer3, Objects_Timer4, Object_SlopeHeight, Buffer_Occupied, Player_UphillSpeedIdx
+.export Player_Microgoomba, Objects_InWater, SpecialObj_Var1, SpecialObj_Data, SpecialObj_Timer, CannonFire_Var, CannonFire_Timer, Objects_QSandCtr
+; GENBSS2
+.export TileAddr_Off, LevLoad_Unused1, LevLoad_Unused2, LevLoad_Unused3, LevLoad_Unused4, LL_ShapeDef, Scroll_UpdAttrFlag, Level_Tileset, Bonus_UnusedVH
+.export ToadTalk_VH, Bonus_UnusedVL, ToadTalk_VL, BonusText_CPos, ToadTalk_CPos, BonusText_CharPause, Bonus_UnusedFlag, Map_Pan_Count, CineKing_Timer2
+.export Bonus_Timer, Map_Intro_Tick, Map_ReturnStatus, MaxPower_Tick, Player_Score, PatTable_BankSel, PAGE_C000, PAGE_A000, PAGE_CMD, Map_Prev_XOff
+.export Map_Prev_XHi, Player_Current, World_Num, World_EnterState, CineKing_State, GameOver_State, Map_Operation, Total_Players, Map_Unused72C, Bonus_DDDD
+.export Map_HandState, Map_WW_Backup_Y, Map_WW_Backup_XH, Map_WW_Backup_X, Map_WW_Backup_UPV2, Player_Lives, Map_Unused738, ClearPattern
+.export PalSel_Tile_Colors, PalSel_Obj_Colors, Player_FallToKing, Map_Player_SkidBack, Map_NSpadeMatches, Map_NSpadeInProg, Map_Airship_Trav
+.export Map_DoFortressFX, World_Map_Power, Map_Unused749, Object_VelCarry, Player_XVelFrac, Objects_XVelFrac, THouse_UnusedFlag, Player_YVelFrac
+.export Objects_YVelFrac, Objects_ColorCycle, Objects_Var6, Objects_TargetingXVal, King_Y, Objects_TargetingYVal, Pipe_TransYDelta, Level_ScrollDiffV
+.export Level_ScrollDiffH, Random_Pool, RandomN, Map_PlayerLost2PVs, Player_RescuePrincess, Objects_PlayerHitStat, Scores_Value, Scores_Counter, Scores_Y
+.export Scores_X, LRBounce_Y, LRBounce_X, LRBounce_Vel, Objects_Slope, World3_Bridge, ArrowPlat_IsActive, Level_GetWandState, Video_DoPalUpd
+.export Palette_AddrHi, Palette_AddrLo, Palette_BufCnt, Palette_Buffer, Palette_Term, BigQBlock_GotIt, DMC_Queue, DMC_Current, Sound_Sq1_CurFL
+.export Music_NseStart, Music2_Hold, Sound_Sq2_CurFL, Music_Sq2Patch, Music_Sq1Patch, Sound_Map_L2Hld, Sound_Map_Len2, Sound_Map_LHold, Sound_Map_Len
+.export Sound_Map_Off2, Sound_Unused7FF
+; VS2PSRAM
+.export Vs_MemStart, Vs_PlayerFrame, Vs_PlayerState, Vs_ObjectState, Vs_PlayerBlkHitCnt, Vs_PlayerY, Vs_ObjectsY, Vs_PlayerBlkHitY, Vs_PlayerX
+.export Vs_ObjectsX, Vs_PlayerBlkHitX, Vs_PlayerYVel, Vs_ObjectYVel, Vs_PlayerBlkHitYVel, Vs_PlayerXVel, Vs_ObjectXVel, Vs_PlayerClimbFrame
+.export Vs_ObjectAnimCnt, Vs_PlayerDir, Vs_ObjectDir, Vs_PlayerYVelFrac, Vs_ObjectYVelFrac, Vs_PlayerXVelFrac, Vs_ObjectXVelFrac, Vs_PlayerDetStat
+.export Vs_ObjectDetStat, Vs_ObjectVar1, Vs_PlayerKick, Vs_PlayerDizzy, Vs_PlayerStick, Vs_PlayerBumpTimer, Vs_POWBlockCnt, Vs_ObjectId
+.export Vs_ObjectSprRAMOff, Vs_ObjectSprRAMSel, Vs_EnemyCount, Vs_PlayerHaltTimer, Vs_ObjHaltTimer, Vs_ObjectTimer3, Vs_PlayerCnt
+.export Vs_EnemyGetUpTimer, Vs_PlayerJumped, Vs_PlayerTileL, Vs_ObjectTileL, Vs_PlayerBlkHit, Vs_PlayerFlashInv, Vs_SpawnCnt2, Vs_TooLongCnt
+.export Vs_CurIndex, Vs_PlayerTileU, Vs_ObjectPipeTimer, Vs_Random, Vs_PlayerCoins, Vs_TimeToExit, Vs_ObjectIsLast, Vs_POWHits, Vs_PlayerYOff
+.export Vs_UNKGAMECnt, Vs_PlayerYHi, Vs_ObjectYHi, Vs_ObjectIsAngry, Vs_AngrySidesteppers, Vs_ObjectVDir, Vs_ObjectRestoreXVel, Vs_ObjTimer2
+.export Vs_CardFlash, Vs_HaltTimerBackup, Vs_EnemySet, Vs_ObjectXOff, Vs_PlayerWalkCnt, Vs_PlayerWalkFrame, Vs_NextObjectIsLast, Vs_xUpCnt, Vs_xUpY
+.export Vs_xUpX, Vs_xUpLives, Vs_SpawnCnt
+; GENSRAM
+.export Tile_Mem, Map_MoveRepeat, AScrlURDiag_OffsetX, AScrlURDiag_OffsetY, StatusBar_UpdFl, UpdSel_Disable, Map_Objects_Itm, Level_TreasureItem
+.export Reset_Latch, Map_BonusType, Map_BonusCoinsReqd, Coins_ThisLevel, Map_NSpade_NextScore, Map_BonusAppY, Map_BonusAppXHi, Map_BonusAppX
+.export Map_NoLoseTurn, Map_Got13Warp, Map_Anchored, Map_WhiteHouse, Map_CoinShip, Map_WasInPipeway, EndCard_Flag, Map_PlyrSprOvrY, Map_Entered_Y
+.export Map_Entered_XHi, Map_Entered_X, Map_Previous_UnusedPVal2, Map_Previous_Y, Map_Previous_XHi, Map_Previous_X, Map_Unused7984, Map_Prev_XOff2
+.export Map_Prev_XHi2, Map_Unused798A, Level_Jct_HSHi, Level_Jct_HS, Level_Jct_VSHi, Level_Jct_VS, Map_Unused7992, Bonus_DiePos, Map_Previous_Dir
+.export Map_Unused7995, Player_NoSlopeStick, AScroll_Anchor, Level_AScrlSelect, Level_AScrlLimitSel, Level_AScrlVar, Level_AScrlLoopSel
+.export Level_AScrlMoveRepeat, Level_AScrlLoopCurMove, Level_AScrlSclLastDir, Level_AScrlMoveTicks, Level_AScrlTimer, Level_AScrlPosHHi, Level_AScrlPosH
+.export Level_AScrlPosV, Level_AScrlHVel, Level_AScrlVVel, Level_AScrlHVelFrac, Level_AScrlVVelFrac, Level_AScrlHVelCarry, Level_AScrlVVelCarry
+.export World8Tank_OnTank, CannonFire_ID, CannonFire_YHi, CannonFire_Y, CannonFire_XHi, CannonFire_X, CannonFire_Parent, Splash_DisTimer
+.export ShellKillFlash_Cnt, ShellKillFlash_Y, ShellKillFlash_X, Objects_DisPatChng, ObjSplash_DisTimer, PlayerProj_XVelFrac, CannonFire_Timer2
+.export Roulette_Unused7A5F, Roulette_Unused7A5F_Delta, Bowser_Tiles, Bowser_Counter1, Bowser_Counter2, Bowser_Counter3, CoinShip_CoinGlowIdx
+.export CoinShip_CoinGlowCnt, SObjBlooperKid_OutOfWater, Object_SplashAlt, Music_Start, Music_End, Music_Loop, Sound_Octave, Music_Sq1Bend
+.export Music_Sq2Bend, Music_RestH_Off, PAPU_MODCTL_Copy, Level_ObjIdxStartByScreen, Level_ObjectsSpawned, Level_Objects, Object_BufferX, Object_BufferY
+.export ChainChomp_ChainX1, ChainChomp_ChainX2, ChainChomp_ChainX3, ChainChomp_ChainX4, ChainChomp_ChainY1, ChainChomp_ChainY2, ChainChomp_ChainY3
+.export ChainChomp_ChainY4, Objects_Var10, Objects_Var11, Objects_Var12, Objects_Var13, Objects_Var14, PlayerProj_ID, PlayerProj_Y, PlayerProj_X
+.export PlayerProj_YVel, PlayerProj_XVel, Fireball_HitChkPass, PlayerProj_Cnt, Temp_VarNP0, Lakitu_Active, LevelEvent_Cnt, Vert_Scroll_Off
+.export Level_Vibration, Player_VibeDisable, Player_TwisterSpin, Objects_HitCount, RotatingColor_Cnt, Wand_FrameCnt, Wand_Frame, Wand_BounceFlag
+.export Player_DebugNoHitFlag, Map_Completions, Inventory_Items, Inventory_Cards, Inventory_Score, Inventory_Coins, Inventory_Items2, Inventory_Cards2
+.export Inventory_Score2, Inventory_Coins2, Map_Unused7DC6, Map_GameOver_CursorY, Map_PrevMoveDir, Pal_Data, Level_AltLayout, Level_AltObjects
+.export Level_BlockGrabHitMem, Card_ActiveSet, Tile_AttrTable, Level_UnusedSlopesTS5, PlantInfest_ACnt_Max, LevelJctBQ_Flag, Level_JctBackupTileset
+.export Level_AltTileset, Level_LayPtrOrig_AddrL, Level_LayPtrOrig_AddrH, Level_ObjPtrOrig_AddrL, Level_ObjPtrOrig_AddrH, Level_BG_Page1_2
+.export Map_BorderAttrFromTiles, Map_Unused7EEA, Map_Objects_Y, Map_Objects_XLo, Map_Objects_XHi, Map_Objects_IDs, Map_SprRAMOffDistr, Map_2PVsGame
+.export Map_Airship_Dest, THouse_OpenByID, StatusBar_PMT, StatusBar_CoinH, StatusBar_CoinL, StatusBar_LivesH, StatusBar_LivesL, StatusBar_Score
+.export StatusBar_Time, Map_MusicBox_Cnt, Level_JctYLHStart, Level_JctXLHStart, Object_TileFeet2, Object_TileWall2, ObjTile_DetYHi, ObjTile_DetYLo
+.export ObjTile_DetXHi, ObjTile_DetXLo, Bubble_Cnt, WatrHit_IsSetFlag, Bubble_YHi, Object_WatrHitYHi, Bubble_Y, Object_WatrHitY, Bubble_XHi
+.export Object_WatrHitXHi, Bubble_X, Object_WatrHitX, Splash_Counter, Splash_Y, Splash_X, Splash_NoScrollY, BrickBust_En, BrickBust_YUpr, BrickBust_X
+.export BrickBust_YVel, BrickBust_XDist, BrickBust_YLwr, BrickBust_HEn, CoinPUp_State, CoinPUp_Y, CoinPUp_X, CoinPUp_YVel, CoinPUp_Counter
+.export SpecialObj_ID, Objects_Var3, SpecialObj_YHi, Objects_LastTile, Objects_SprAttr, Objects_UseShortHTest, Roulette_Lives, Objects_IsGiant
+; WANDSRAM
+.export CineKing_WandState, CineKing_WandFrame, CineKing_ToadFrame, CineKing_DiagHi, CineKing_TimerT, CineKing_Timer3, CineKing_WandX, CineKing_WandY
+.export CineKing_WandXVel, CineKing_WandYVel, CineKing_WandXVel_Frac, CineKing_WandYVel_Frac
+
+
 .segment "COMMONZP": zeropage
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -290,10 +452,20 @@ Title_ObjMLStop:      ; Flag used briefly to "hold" Mario/Luigi from moving so t
 	.res 1
 Title_CurMLIndex:     ; 0 for Mario, 1 for Luigi
 	.res 1
+Ending_Timer:         ; $D2-$D3 Twin ending timers, generally one for Mario and one for Princess
 Title_ObjFlags:       ; $D2-$D7 Minor objects' sprite flags
 	.res 6
+
+EndText_Timer := Ending_Timer+2        ; Timer used for the ending text display
+Ending_State  := Ending_Timer+3        ; Current state value for initial part of ending (the princess, prior to curtain)
+EndText_VL    := Ending_Timer+4        ; Princess speech VRAM Address Low
+EndText_VH    := Ending_Timer+5        ; Princess speech VRAM Address High
+
+EndText_CPos:         ; Princess speech Character Position
 Title_ObjStates:      ; $D8-$DD Title screen array of states for the individual objects (NOT including Mario/Luigi)
 	.res 6
+EndText_State := EndText_CPos+1       ; Princess speech state variable
+
 Title_State:          ; 00 = Prior to red curtain rise, 01 = Rising curtain...
 	.res 1
 Title_ResetCnt:       ; Title reset counter -- when on the menu, once this hits zero, the title sequence restarts
@@ -334,11 +506,13 @@ Title_3GlowFlag:      ; When non-zero, begins the "glowing" effect for the big '
 	.res 1
 Title_3GlowIndex:     ; Index into an array of colors to cause the big '3' on the title screen to glow
 	.res 1
+Ending2_IntCmd:       ; used during ending to buffer out the ending picture data on the interrupt.  Triggers "Do_Ending2_IntCmd" in PRG024 in interrupt context.
+	.res 1
 
 ; Ending-specific vars -- NOTE that Ending system uses some of the Title Screen code, so these variables overlap some of the above
 ; Basically don't assume anything here is free space without consulting above as well...
 
-.segment "ENDINGZP1": zeropage
+.segment "ENDINGZP": zeropage
 Ending2_PicState:     ; Ending part 2 picture loader state
 	.res 1
 Ending2_ClearLen:     ; Length of clear run
@@ -360,27 +534,6 @@ Ending2_TimerH:       ; Ending part 2 timer "high" part
 Ending2_TimerL:       ; Ending part 2 timer "low" part
 	.res 1
 Ending2_CurWorld:     ; Current world we're showing (8 = THE END)
-	.res 1
-
-.segment "ENDINGZP2": zeropage
-Ending_Timer:         ; $D2-$D3 Twin ending timers, generally one for Mario and one for Princess
-	.res 2
-EndText_Timer:        ; Timer used for the ending text display
-	.res 1
-Ending_State:         ; Current state value for initial part of ending (the princess, prior to curtain)
-	.res 1
-
-EndText_VL:           ; Princess speech VRAM Address Low
-	.res 1
-EndText_VH:           ; Princess speech VRAM Address High
-	.res 1
-EndText_CPos:         ; Princess speech Character Position
-	.res 1
-EndText_State:        ; Princess speech state variable
-	.res 1
-
-.segment "ENDINGZP3": zeropage
-Ending2_IntCmd:       ; used during ending to buffer out the ending picture data on the interrupt.  Triggers "Do_Ending2_IntCmd" in PRG024 in interrupt context.
 	.res 1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
