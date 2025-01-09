@@ -3329,3 +3329,43 @@ Objects_UseShortHTest: ; $7FEF-$7FF6 If set, object will use a short horizontal 
 Roulette_Lives:       ; Number of lives you are rewarded from winning the Roulette (NOTE: Shared with first byte of Objects_IsGiant)
 Objects_IsGiant:      ; $7FF7-$7FFE Set mainly for World 4 "Giant" enemies (but some others, like Bowser, also use it)
 	.res 8
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; $7A01-$7A11 MMC3 SRAM as Cinematic for Wand Return (Post-Airship)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.segment "WANDSRAM"
+; This uses the same space as most of the Auto Scroll data
+
+; After the wand is returned ONLY
+CineKing_WandState:   ; Wand state; 0 = falling, 1 = spinning, 2 = held
+	.res 1
+CineKing_WandFrame:   ; Wand frame; 0 to 7
+	.res 1
+CineKing_ToadFrame:   ; Toad's frame
+	.res 1
+CineKing_DiagHi:      ; Text high address value
+	.res 1
+
+; unused in this context ($7A05-$7A07)
+	.res 3
+
+CineKing_TimerT:      ; Cheering Toad animation Timer
+	.res 1
+CineKing_Timer3:      ; Timer decremented every 4 ticks (does not appear to be used!)
+	.res 1
+
+; unused in this context ($7A0A-$7A0B)
+	.res 2
+
+CineKing_WandX:       ; Wand X position
+	.res 1
+CineKing_WandY:       ; Wand Y position
+	.res 1
+CineKing_WandXVel:    ; Wand X velocity (4.4FP)
+	.res 1
+CineKing_WandYVel:    ; Wand Y velocity (4.4FP)
+	.res 1
+CineKing_WandXVel_Frac: ; Wand X velocity fractional accumulator
+	.res 1
+CineKing_WandYVel_Frac: ; Wand Y velocity fractional accumulator
+	.res 1
