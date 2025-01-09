@@ -443,3 +443,86 @@ VSOBJID_MUSHROOMCARD	= 8	; Mushroom card
 VSOBJID_FLOWERCARD	= 9	; Flower card
 VSOBJID_STARCARD	= 10	; Star card
 VSOBJID_KICKEDBLOCK	= 11	; Kicked block (from [?] block match)
+
+
+; "Cannon Fire" are sort of objects that exist to repeatedly fire off cannon balls
+; or other such armaments.  They are created by
+
+CFIRE_BULLETBILL	= $01	; Bullet Bill cannon
+CFIRE_MISSILEBILL	= $02	; Missile Bill (homing Bullet Bill)
+CFIRE_ROCKYWRENCH	= $03	; (Re-)Creates Rocky Wrench on timer
+CFIRE_4WAY		= $04	; 4-way cannon
+CFIRE_GOOMBAPIPE_L	= $05	; Goomba pipe (left output)
+CFIRE_GOOMBAPIPE_R	= $06	; Goomba pipe (right output)
+CFIRE_HLCANNON		= $07	; Fires cannonballs horizontally left
+CFIRE_HLBIGCANNON	= $08	; Fires BIG cannonballs horizontally left
+CFIRE_ULCANNON		= $09	; Fires cannonballs diagonally, upper left
+CFIRE_URCANNON		= $0A	; Fires cannonballs diagonally, upper right
+CFIRE_LLCANNON		= $0B	; Fires cannonballs diagonally, lower left
+CFIRE_LRCANNON		= $0C	; Fires cannonballs diagonally, lower right
+CFIRE_HLCANNON2		= $0D	; ?? Same as CFIRE_HLCANNON?
+CFIRE_ULCANNON2		= $0E	; ?? Same as CFIRE_ULCANNON?
+CFIRE_URCANNON2		= $0F	; ?? Same as CFIRE_URCANNON?
+CFIRE_LLCANNON2		= $10	; ?? Same as CFIRE_LLCANNON?
+CFIRE_HRCANNON		= $11	; Fires cannonballs horizontally right
+CFIRE_HRBIGCANNON	= $12	; Fires BIG cannonballs horizontally right
+CFIRE_LBOBOMBS		= $13	; Launches fused Bob-ombs to the left
+CFIRE_RBOBOMBS		= $14	; Launches fused Bob-ombs to the right
+CFIRE_LASER		= $15	; Laser fire
+
+
+CARD_MUSHROOM	= 0
+CARD_FLOWER	= 1
+CARD_STAR	= 2
+CARD_1UP	= 3
+CARD_10COIN	= 4
+CARD_20COIN	= 5
+CARD_WILD	= 8	; UNUSED Wild card (can match any other!)
+
+
+; Map_Objects_IDs: ID of all 8 map objects
+MAPOBJ_EMPTY		= $00	; None
+MAPOBJ_HELP		= $01	; HELP
+MAPOBJ_AIRSHIP		= $02	; Airship
+MAPOBJ_HAMMERBRO	= $03	; Hammer Bro
+MAPOBJ_BOOMERANGBRO	= $04	; Boomerang Bro
+MAPOBJ_HEAVYBRO		= $05	; Heavy Bro
+MAPOBJ_FIREBRO		= $06	; Fire Bro
+MAPOBJ_W7PLANT		= $07	; World 7 Plant
+MAPOBJ_UNK08		= $08	; Unknown marching glitch object
+MAPOBJ_NSPADE		= $09 	; N-Spade
+MAPOBJ_WHITETOADHOUSE	= $0A	; White Toad House
+MAPOBJ_COINSHIP		= $0B	; Coin Ship
+MAPOBJ_UNK0C		= $0C	; Unknown white colorization of $0F (goes to World 7 level??)
+MAPOBJ_BATTLESHIP	= $0D	; World 8 Battleship
+MAPOBJ_TANK		= $0E	; World 8 Tank
+MAPOBJ_W8AIRSHIP	= $0F	; World 8 Airship
+MAPOBJ_CANOE		= $10	; Canoe
+
+MAPOBJ_TOTALINIT	= $08	; Total number of map objects initialized per world
+MAPOBJ_TOTAL		= $0E	; Total POSSIBLE map objects
+
+
+	; Special Object IDs:
+SOBJ_HAMMER		= $01	; Hammer Bro hammer
+SOBJ_BOOMERANG		= $02	; Boomerangs
+SOBJ_UNKNOWN		= $03	; ??? Floats around, back and forth, some other strange movements (uses bits of boomerang code)
+SOBJ_NIPPERFIREBALL	= $04 	; Nipper fireball (falls)
+SOBJ_PIRANHAFIREBALL	= $05	; Piranha fireball
+SOBJ_MICROGOOMBA	= $06 	; Micro goombas
+SOBJ_SPIKEBALL		= $07 	; Spike's or Patooie's spike ball
+SOBJ_WANDBLAST		= $08 	; Koopaling wand blast
+SOBJ_KURIBOSHOE		= $09 	; Lost Kuribo shoe that "flies off" (NOTE: In Japanese original, this also featured super suits)
+SOBJ_WRENCH		= $0A 	; Rocky's Wrench
+SOBJ_CANNONBALL		= $0B 	; Cannonball
+SOBJ_FIREBROFIREBALL	= $0C	; Fire bro bouncing fireball
+SOBJ_EXPLOSIONSTAR	= $0D 	; Explosion star
+SOBJ_BUBBLE		= $0E 	; Bubble
+SOBJ_LAVALOTUSFIRE	= $0F	; Lava Lotus fire
+SOBJ_RECOVEREDWAND	= $10 	; Recovered wand
+SOBJ_POPPEDOUTCOIN	= $11 	; Popped out coin
+SOBJ_FIRECHOMPFIRE	= $12 	; Fire Chomp's fire
+SOBJ_BRICKDEBRIS	= $13 	; Brick debris (used for busting e.g. Piledriver Microgroomba, OR giant world brick busting)
+SOBJ_BLOOPERKID		= $14 	; Blooper kid
+SOBJ_LASER		= $15 	; Laser
+SOBJ_POOF		= $16 	; Poof
