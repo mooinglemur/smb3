@@ -1,0 +1,4 @@
+*.NES
+*.PRG
+./obj
+./asm/chr*.s

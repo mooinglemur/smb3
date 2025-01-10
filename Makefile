@@ -11,20 +11,22 @@ LDFLAGS	:= -C $(CONFIG)
 SRC		:= ./asm
 INC		:= ./inc
 OBJ		:= ./obj
-SRCS	:= $(wildcard $(SRC)/*.s)
-OBJS    := $(patsubst $(SRC)/%.s,$(OBJ)/%.o,$(SRCS))
-EXE		:= $(call UC,$(PROJECT).PRG)
+CHRS    = $(addprefix $(SRC)/chr, $(addsuffix .s, $(shell seq -w 0 127)))
+SRCS	= $(wildcard $(SRC)/*.s)
+OBJS    = $(sort $(patsubst $(SRC)/%.s,$(OBJ)/%.o,$(SRCS) $(CHRS)))
+EXE		:= $(call UC,$(PROJECT).NES)
 MAPFILE := ./$(PROJECT).map
 SYMFILE := ./$(PROJECT).sym
-CHRSRC  := $(addprefix ./asm/chr, $(addsuffix .s, $(printf "%03d" $(seq 0 127))))
-
 
 default: all
 
 all: $(EXE)
 
-$(EXE): $(OBJS) $(CONFIG)
+$(EXE): $(CHRS) $(OBJS) $(CONFIG)
 	$(LD) $(LDFLAGS) $(OBJS) -m $(MAPFILE) -Ln $(SYMFILE) -o $@
+
+$(SRC)/chr%.s:
+	./scripts/pcx2ppu.py ./CHR/chr$*.pcx $@ CHR$*
 
 $(OBJ)/%.o: $(SRC)/%.s $(INC)/*.inc | $(OBJ)
 	$(AS) $(ASFLAGS) $< -o $@
@@ -34,4 +36,4 @@ $(OBJ):
 
 .PHONY: clean
 clean:
-	$(RM) $(EXE) $(OBJS) $(MAPFILE) $(SYMFILE)
+	$(RM) $(EXE) $(OBJS) $(MAPFILE) $(SYMFILE) $(CHRS)
