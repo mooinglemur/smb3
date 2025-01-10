@@ -1,4 +1,6 @@
 *.NES
 *.PRG
-./obj
-./asm/chr*.s
+*.map
+*.sym
+obj/
+asm/chr*.s
