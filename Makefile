@@ -25,8 +25,8 @@ all: $(EXE)
 $(EXE): $(CHRS) $(OBJS) $(CONFIG)
 	$(LD) $(LDFLAGS) $(OBJS) -m $(MAPFILE) -Ln $(SYMFILE) -o $@
 
-$(SRC)/chr%.s:
-	./scripts/pcx2ppu.py ./CHR/chr$*.pcx $@ CHR$*
+$(SRC)/chr%.s: ./CHR/chr%.pcx
+	./scripts/pcx2ppu.py $< $@ CHR$*
 
 $(OBJ)/%.o: $(SRC)/%.s $(INC)/*.inc | $(OBJ)
 	$(AS) $(ASFLAGS) $< -o $@
