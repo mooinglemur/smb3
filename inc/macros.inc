@@ -43,3 +43,13 @@
 .macro BoundCheck arg1, arg2, arg3
 	.assert arg1 <= arg2, error, arg3
 .endmacro
+
+; The address are $C000 | (value << 6)
+.macro MADR arg1
+	.byte <(((arg1) & $3FFF) >> 6)
+.endmacro
+
+; The length is (value << 4) + 1 (minimum 1 byte long to $FF1 bytes long)
+.macro MLEN arg1, arg2
+	.byte <((arg2 - arg1) >> 4)
+.endmacro
