@@ -326,7 +326,7 @@ BonusText_BaseH := Map_Tile_AddrH ; Instruction text base address high
 Level_ObjPtr_AddrL:   ; Low byte of address to object set (ORIGINAL stored in Level_ObjPtrOrig_AddrL)
 	.res 1
 Level_ObjPtr_AddrH:   ; High byte of address to object set (ORIGINAL stored in Level_ObjPtrOrig_AddrH)
-	.res 2
+	.res 1
 
 ; unused ($67-68)
 	.res 2
@@ -358,6 +358,7 @@ Sound_Map_Off:        ; Current "offset" within a map sound effect
 
 .segment "COMMONHIZP": zeropage
 
+Ending2_IntCmd:       ; used during ending to buffer out the ending picture data on the interrupt.  Triggers "Do_Ending2_IntCmd" in PRG024 in interrupt context.  Shared with Scroll_OddEven
 Scroll_OddEven:       ; 0 or 1, depending on what part of 8 pixels has crossed (need better description)
 	.res 1
 
@@ -505,8 +506,6 @@ Title_ObjInitDly:     ; Timer count before next object init
 Title_3GlowFlag:      ; When non-zero, begins the "glowing" effect for the big '3'
 	.res 1
 Title_3GlowIndex:     ; Index into an array of colors to cause the big '3' on the title screen to glow
-	.res 1
-Ending2_IntCmd:       ; used during ending to buffer out the ending picture data on the interrupt.  Triggers "Do_Ending2_IntCmd" in PRG024 in interrupt context.
 	.res 1
 
 ; Ending-specific vars -- NOTE that Ending system uses some of the Title Screen code, so these variables overlap some of the above
@@ -2771,7 +2770,7 @@ Vs_SpawnCnt:          ; Spawn counter; increments and triggers spawning
 ;	Vertical level max size is 	15 rows * 16 columns * 16 screens = 3840 ($0F00) bytes
 ;	Non-vertical level max size is 	27 rows * 16 columns * 15 screens = 6480 ($1950) bytes
 Tile_Mem:             ; $6000-$794F Space used to store the 16x16 "tiles" that make up the World Map or Level
-	.res 6840
+	.res 6480
 
 Map_MoveRepeat:       ; $7950-$7951 (Mario/Luigi) counts up to $18 and then you keep moving without pause
 	.res 2
