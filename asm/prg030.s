@@ -63,19 +63,33 @@
 .import Level_ObjPtrOrig_AddrL, Level_ObjPtrOrig_AddrH, Level_BG_Page1_2, Map_Objects_IDs, Map_2PVsGame
 .import Map_Airship_Dest, Map_MusicBox_Cnt
 ; imports from PRG000
-.import Level_SlopeSetByQuad
+.import Level_SlopeSetByQuad, Video_3CMFlowBot, Video_3CMMushBot, Video_3CMFlowStem
+.import Video_3CMMushRight, Video_3CMFlowMid, Video_3CMMushMid, Video_3CMFlowDiag
+.import Video_3CMMushLeft, Video_3CMFlowTop, Video_3CMMushTop
+; imports from PRG006
+.import TOADO
+; imports from PRG007
+.import Gameplay_UpdateAndDrawMisc, Scores_GiveAndDraw
+; imports from PRG008
+.import Player_DoGameplay
 ; imports from PRG009
-.import Vs_2PVsPauseHandler
+.import Vs_2PVsPauseHandler, AutoScroll_Do
+; imports from PRG010
+.import GameOver_Loop, GameOver_PatchPlayerName, Map_DoMap, WorldMap_UpdateAndDraw
+.import World5_Sky_AddCloudDeco, Map_ConfigWorldIntro, Map_IntroAttrSave, Map_DrawAndPan
+.import Map_W8DarknessFill, Scroll_Map_SpriteBorder, Video_DoW2WZ, Video_DoGameOver80
+.import Video_DoGameOver00, Video_DoWXLuigi80, Video_DoWXMario80, Video_DoWXLuigi00
+.import Video_DoWXMario00
 ; imports from PRG011
-.import LT0B, LT0
+.import LT0B, LT0, Map_DoAnimations, Map_Init
 ; imports from PRG012
-.import Tile_Layout_TS0, Tile_Attributes_TS0
+.import Tile_Layout_TS0, Tile_Attributes_TS0, Map_PrepareLevel, Map_Reload_with_Completions
 ; imports from PRG013
 .import LeveLoad_FixedSizeGen_TS14, LoadLevel_Generator_TS14, LevelLoad_TS14
 .import Tile_Layout_TS14, Tile_Attributes_TS14
 ; imports from PRG014
 .import LeveLoad_FixedSizeGen_TS18, LoadLevel_Generator_TS18, LevelLoad_TS18
-.import Tile_Layout_TS18, LoadLevel_StoreJctStart, Tile_Attributes_TS18
+.import Tile_Layout_TS18, LoadLevel_StoreJctStart, Tile_Attributes_TS18, Vs_Battlefields
 ; imports from PRG015
 .import LeveLoad_FixedSizeGen_TS1, LoadLevel_Generator_TS1, LevelLoad_TS1, Tile_Layout_TS1
 .import Tile_Attributes_TS1
@@ -99,15 +113,31 @@
 .import Tile_Attributes_TS2
 ; imports from PRG022
 .import LeveLoad_FixedSizeGen_TS151617, LoadLevel_Generator_TS151617, LevelLoad_TS15_TS16_TS17
-.import Tile_Layout_TS15_TS16_TS17
+.import Tile_Layout_TS15_TS16_TS17, Bonus_Return2_SetMapPos, BonusGame_Do, Card_InitGame
+.import NSpade_DoGame, Roulette_DrawBorderSprites, Roulette_DrawShapes, Video_NSpadeBG
+.import Bonus_InstBoxBot, Bonus_InstBoxLine1, Bonus_InstBoxLine2, Bonus_InstBoxLine3
+.import Bonus_InstBoxTop, Video_RoulBordAttr
 ; imports from PRG023
 .import LeveLoad_FixedSizeGen_TS10, LoadLevel_Generator_TS10, LevelLoad_TS10
 .import Tile_Layout_TS10, Tile_Attributes_TS10
+; imports from PRG024
+.import Do_Title_Screen
 ; imports from PRG026
-.import Scroll_ToVRAM_Apply, Scroll_Commit_Column, Video_Misc_Updates
+.import Scroll_ToVRAM_Apply, Scroll_Commit_Column, Video_Misc_Updates, HandleLevelJunction
+.import StatusBar_Fill_Score, LevelLoad_CopyObjectList, Palette_FadeOut
+.import Map_DoInventory_And_PoofFX, Palette_FadeIn, StatusBar_Fill_World
+.import StatusBar_Fill_MorL, StatusBar_UpdateValues
+; imports from PRG027
+.import CineKing_DoWandReturn, EndWorldLetter_GenerateText, Rescue_Princess, Setup_PalData
+; imports from PRG029
+.import BlockChange_Do
+; imports from PRG030
+.import Objects_HandleScrollAndUpdate
 ; imports from PRG031
 .import IntIRQ_32PixelPartition_Part3, IntIRQ_32PixPart_HideSprites, PRG031_FA3C, PRG031_F499
-.import DynJump
+.import DynJump, PRGROM_Change_C000, Clear_Nametable_Short, Reset_PPU_Clear_Nametables2
+.import StatusBar_Update_Cards, PRGROM_Change_A000, PRGROM_Change_Both2, Reset_PPU_Clear_Nametables
+.import Scroll_PPU_Reset, Sprite_RAM_Clear
 
 .ifdef NES
 .segment "PRG030"
@@ -666,10 +696,10 @@ PRG030_84D7:
 	JSR SetPages_ByTileset	 ;	A000 = Page 11, C000 = Page 10
 
 	LDX Player_Current	; X = Player_Current
-	LDA #(Inventory_Score - Inventory_Items)	; Base offset to score from Inventory_Items
+	LDA #<(Inventory_Score - Inventory_Items)	; Base offset to score from Inventory_Items
 	CPX #$00	 	; 
 	BEQ PRG030_853F	 	; If X = 0 (Player is Mario), jump to PRG030_853F
-	ADD #(Inventory_Score2 - Inventory_Score)	 ; Otherwise, add $23
+	ADD #<(Inventory_Score2 - Inventory_Score)	 ; Otherwise, add $23
 
 PRG030_853F:
 	TAY		 ; Y = $1F (Mario) or $42 (Luigi)
@@ -2766,11 +2796,11 @@ PRG030_9062:
 
 	LDX Player_Current	 ; X = current Player index
 
-	LDA #(Inventory_Score - Inventory_Items)	; Mario's score
+	LDA #<(Inventory_Score - Inventory_Items)	; Mario's score
 
 	CPX #$00
 	BEQ PRG030_907D	 ; If Player is Mario, jump to PRG030_907D
-	ADD #(Inventory_Score2 - Inventory_Score)	; offset to Luigi's score
+	ADD #<(Inventory_Score2 - Inventory_Score)	; offset to Luigi's score
 PRG030_907D:
 	TAY		 ; Y = offset to score
 
@@ -2806,12 +2836,12 @@ PRG030_9097:
 
 	LDX Player_Current	; X = Player_Current
 
-	LDA #(Inventory_Score - Inventory_Items)	; Offset to Mario's Score
+	LDA #<(Inventory_Score - Inventory_Items)	; Offset to Mario's Score
 
 	CPX #$00
 	BEQ PRG030_90AD	 ; If Player is Mario, jump to PRG030_90AD
 
-	ADD #(Inventory_Items2 - Inventory_Items)	; Offset to Luigi's Score
+	ADD #<(Inventory_Items2 - Inventory_Items)	; Offset to Luigi's Score
 
 PRG030_90AD:
 	TAY		 ; -> 'Y'
@@ -3209,15 +3239,15 @@ PRG030_92B6:
 	STA Map_GameOver_CursorY
 	STA BigQBlock_GotIt	; Didn't get any Big ? Blocks
 
-	LDY #(Inventory_Coins - Inventory_Cards)	; Y = offset to Mario's coins
+	LDY #<(Inventory_Coins - Inventory_Cards)	; Y = offset to Mario's coins
 
 	CPX #$00
 	BEQ PRG030_92FE	 ; If Player is Mario, jump to PRG030_92FE
 
-	LDY #(Inventory_Coins2 - Inventory_Cards)	; Y = offset to Luigi's coins
+	LDY #<(Inventory_Coins2 - Inventory_Cards)	; Y = offset to Luigi's coins
 
 PRG030_92FE:
-	LDA #(Inventory_Coins - Inventory_Cards)
+	LDA #<(Inventory_Coins - Inventory_Cards)
 	STA Temp_Var1		 ; Temp_Var1 = total bytes to clear
 
 	LDA #$00	 ; A = 0
@@ -3394,12 +3424,12 @@ PRG030_93B1:
 	JMP PRG030_946C	 ; Jump to PRG030_946C
 
 PRG030_93E7:
-	LDA #(Inventory_Score - Inventory_Items)	; Offset to Mario's score
+	LDA #<(Inventory_Score - Inventory_Items)	; Offset to Mario's score
 
 	LDX Player_Current
 	BEQ PRG030_93F1	 ; If current Player is Mario, jump to PRG030_93F1
 
-	ADD #(Inventory_Score2 - Inventory_Score)	; Offset to Luigi's score
+	ADD #<(Inventory_Score2 - Inventory_Score)	; Offset to Luigi's score
 
 PRG030_93F1:
 	TAY		 ; Y = offset to Player's score
@@ -3850,7 +3880,7 @@ Bonus_Prize1:
 PRG030_9622:
 	; Offset to Luigi's Inventory
 	LDA Temp_Var16
-	ADD #(Inventory_Items2 - Inventory_Items)
+	ADD #<(Inventory_Items2 - Inventory_Items)
 	STA Temp_Var16
 
 	DEY		 ; Y will equal 1 here, so this just makes Y zero
