@@ -2177,3 +2177,14 @@ TILE18_QBLOCK           = $BC
 TILE18_LADDER           = $C0   ; Ladder (used in final variation)
 TILE18_BOUNCEBLOCK      = $C1   ; Block that bounces when Player hits underneath it
 TILE18_BOUNCEDBLOCK     = $C2   ; Temporary tile for when block has been bounced
+
+BANK_Tile_Layout_TS0           = 12
+BANK_Tile_Layout_TS1           = 15
+BANK_Tile_Layout_TS2           = 21
+BANK_Tile_Layout_TS3           = 16
+BANK_Tile_Layout_TS4_TS12      = 17
+BANK_Tile_Layout_TS5_TS11_TS13 = 19
+BANK_Tile_Layout_TS6_TS7_TS8   = 18
+BANK_Tile_Layout_TS9           = 20
+BANK_Tile_Layout_TS10          = 23
+BANK_Tile_Layout_TS14          = 13
