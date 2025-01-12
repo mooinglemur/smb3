@@ -12,15 +12,6 @@
 ; Distribution package date: Fri Apr  6 23:46:16 UTC 2012
 ;---------------------------------------------------------------------------
 
-; Some constants specific to title screen; they don't really match up with the gameplay
-FALL_NORMAL		= 5	; Normal fall rate added to 'Y'
-FALL_TAILWAG		= 1	; Adjusted fall rate for when wagging raccoon tail
-FALL_OBJECT		= 4	; Fall rate for objects
-
-FALLRATE_TAILWAGMAX	= 8	; Maximum Y velocity falling rate when wagging raccoon tail
-FALLRATE_MAX		= $40	; Maximum Y velocity falling rate
-FALLRATE_OBJECTMAX	= $60	; Maximum Y velocity falling rate of an object
-
 .ifdef NES
 .segment "PRG024"
 .endif

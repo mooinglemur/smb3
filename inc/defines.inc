@@ -1096,12 +1096,12 @@ PLAYER_TOPWALKSPEED     = $18   ; Highest X velocity considered as Player "walki
 PLAYER_TOPRUNSPEED      = $28   ; Highest X velocity when Player runs
 PLAYER_TOPPOWERSPEED    = $38   ; Highest X velocity hit when Player is at full "power"
 PLAYER_MAXSPEED         = $40   ; Player's maximum speed
-PLAYER_JUMP             = -$38  ; Player's root Y velocity for jumping (further adjusted a bit by Player_SpeedJumpInc)
+PLAYER_JUMP             = <-$38  ; Player's root Y velocity for jumping (further adjusted a bit by Player_SpeedJumpInc)
 PLAYER_TAILWAG_YVEL     = $10   ; The Y velocity that the tail wag attempts to lock you at
-PLAYER_FLY_YVEL         = -$18  ; The Y velocity the Player flies at
-PLAYER_SWIMSTART_YVEL   = -$20  ; The Y velocity the Player starts swimming at (or applied when sinking too fast)
+PLAYER_FLY_YVEL         = <-$18  ; The Y velocity the Player flies at
+PLAYER_SWIMSTART_YVEL   = <-$20  ; The Y velocity the Player starts swimming at (or applied when sinking too fast)
 PLAYER_SWIM_YVEL        = $20   ; The swim Y velocity the rest of the time
-PLAYER_FROG_MAXYVEL     = -$20
+PLAYER_FROG_MAXYVEL     = <-$20
 
 ; Applies only to objects following Object_Move's standard movements, but most write their own physics
 OBJECT_FALL             = $03
@@ -2188,3 +2188,12 @@ BANK_Tile_Layout_TS6_TS7_TS8   = 18
 BANK_Tile_Layout_TS9           = 20
 BANK_Tile_Layout_TS10          = 23
 BANK_Tile_Layout_TS14          = 13
+
+; Some constants specific to title screen; they don't really match up with the gameplay
+FALL_NORMAL                    = 5 ; Normal fall rate added to 'Y'
+FALL_TAILWAG                   = 1 ; Adjusted fall rate for when wagging raccoon tail
+FALL_OBJECT                    = 4 ; Fall rate for objects
+
+FALLRATE_TAILWAGMAX            = 8 ; Maximum Y velocity falling rate when wagging raccoon tail
+FALLRATE_MAX                   = $40 ; Maximum Y velocity falling rate
+FALLRATE_OBJECTMAX             = $60 ; Maximum Y velocity falling rate of an object
