@@ -770,7 +770,8 @@ Score_Get100PlusPtsY:
 
 	; Get at least 100 pts based on value in 'A'
 Score_Get100PlusPts:
-	ADD #$05	; Base at 100 points
+	CLC
+	ADC #$05	; Base at 100 points
 	JSR Score_PopUp
 	LDX SlotIndexBackup	 ; X = object slot index
 	RTS		 ; Return
@@ -794,7 +795,8 @@ Score_PopUp:
 	STA Scores_Value,Y	; Store input value
 
 	LDA Objects_SpriteY,X
-	SUB #16
+	SEC
+	SBC #16
 	CMP #192
 	BLT PRG000_C47D	 ; If (sprite's Y - 16) < 192, jump to PRG000_C47D
 
@@ -860,12 +862,14 @@ PRG000_C4A7:
 	STA CoinPUp_State,Y	; Set coin state to 1
 
 	LDA Temp_Var1		; Get input Y
-	SUB Level_VertScroll	; Make relative to vertical scroll
+	SEC
+	SBC Level_VertScroll	; Make relative to vertical scroll
 	SBC #24	 		; Subtract 24
 	STA CoinPUp_Y,Y	 	; Store as coin's Y
 
 	LDA Temp_Var2		; Get input X
-	SUB Horz_Scroll	; Make relative to horizontal scroll
+	SEC
+	SBC Horz_Scroll	; Make relative to horizontal scroll
 	STA CoinPUp_X,Y	 	; Store as coin's X
 
 	LDA #<-5
@@ -888,7 +892,8 @@ Object_HandleConveyorCarry:
 	BNE PRG000_C4F5	 ; If object has hit a wall, jump to PRG000_C4F5 (RTS)
 
 	LDA Object_TileFeet2
-	SUB #TILE2_CONVEYORL
+	SEC
+	SBC #TILE2_CONVEYORL
 	CMP #$02
 	BGE PRG000_C4F5	 ; If object is not standing on a conveyor belt, jump to PRG000_C4F5 (RTS)
 
@@ -913,7 +918,8 @@ Object_HandleConveyorBounceVel:
 	BNE PRG000_C4F5	 ; If P-Switch is active, jump to PRG000_C4F5
 
 	LDA Object_TileFeet2
-	SUB #TILE2_CONVEYORL
+	SEC
+	SBC #TILE2_CONVEYORL
 	CMP #$02
 	BGE PRG000_C4F5	 ; If object is not standing on a conveyor belt, jump to PRG000_C4F5 (RTS)
  
@@ -949,10 +955,13 @@ Object_HitGround:
 	; Object is touching the "32 pixel partition" floor...
 
 	LDA Objects_Y,X
-	SUB Level_VertScroll
+	SEC
+	SBC Level_VertScroll
 	AND #$f0
-	ADD #$01
-	ADD Level_VertScroll
+	CLC
+	ADC #$01
+	CLC
+	ADC Level_VertScroll
 	STA Objects_Y,X	 ; Aligns to grid and adds 1
 
 	LDA #$00	 
@@ -964,7 +973,8 @@ Object_HitGround:
 PRG000_C533:
 	LDA Objects_Y,X
 	AND #$f0
-	ADD Object_SlopeHeight
+	CLC
+	ADC Object_SlopeHeight
 	STA Objects_Y,X	 ; Align to tile and apply slope
 
 PRG000_C53D:
@@ -1143,7 +1153,8 @@ PRG000_C5EC:
 	ASL A
 	ASL A
 	ASL A		 ; A = slope value << 4 (16 bytes per slope "shape" index)
-	ADD Temp_Var16	 ; Add the tile-relative horizontal position (offset to pixel specific height on this slope)
+	CLC
+	ADC Temp_Var16	 ; Add the tile-relative horizontal position (offset to pixel specific height on this slope)
 	TAY		 ; -> 'Y'
 
 	LDA Slope_LUT,Y
@@ -1292,7 +1303,8 @@ PRG000_C67F:
 
 	LDA Objects_Y,X
 	AND #$f0
-	SUB #$01
+	SEC
+	SBC #$01
 	STA Objects_Y,X	; Align object to one pixel above the tile
 
 	LDA Objects_YHi,X
@@ -1340,7 +1352,8 @@ Object_GetAttrAndMoveTiles:
 	LDA Level_TilesetIdx
 	ASL A	
 	ASL A		 ; Offset to beginning of underwater-by-quad table
-	ADD Temp_Var1	 ; Add quadrant offset
+	CLC
+	ADC Temp_Var1	 ; Add quadrant offset
 	TAY		 ; -> 'Y' 
 	LDA Level_MinTileUWByQuad,Y	; Get the starting underwater tile
 	CMP Level_Tile	
@@ -1567,7 +1580,8 @@ PRG000_C7B1:
 	LDA Objects_Y,X
 	CLC
 	ADC Object_TileDetectOffsets,Y	; Adding tile detection offset to Object's Y
-	SUB Level_VertScroll	; Make relative to scroll
+	SEC
+	SBC Level_VertScroll	; Make relative to scroll
 	CMP #160
 	BLT PRG000_C7D9	 	; If Y < 160, jump to PRG000_C7D9
 
@@ -1801,9 +1815,11 @@ PRG000_C8BE:
 
 	; Set appropriate splash Y
 	LDA Objects_Y,X
-	SUB #$04
+	SEC
+	SBC #$04
 	AND #$f0
-	ADD Temp_Var1
+	CLC
+	ADC Temp_Var1
 	STA Splash_Y,Y
 
 	; Set appropriate splash X
@@ -1980,7 +1996,8 @@ PRG000_C9B3:
 
 PRG000_C9B6:
 	TXA		 ; Object index -> 'A'
-	ADD Counter_7to0 ; Add current value of Counter_7to0
+	CLC
+	ADC Counter_7to0 ; Add current value of Counter_7to0
 	TAY		 ; -> 'Y' (anywhere from 0 to 14)
 
 	LDA SprRamOffsets,Y
@@ -2188,7 +2205,8 @@ PRG000_CAAE:
 	STA Sprite_RAM+$04,Y	
 	LDA Objects_SpriteX,X	
 	STA Sprite_RAM+$03,Y	
-	ADD #$08	 
+	CLC
+	ADC #$08	 
 	STA Sprite_RAM+$07,Y
 
 	LDA Objects_Timer,X
@@ -2398,7 +2416,8 @@ PRG000_CB8E:
 
 	; +1 to Y to sprite if not flipped
 	LDA Sprite_RAM+$00,Y
-	ADD #$01
+	CLC
+	ADC #$01
 	STA Sprite_RAM+$00,Y
 	STA Sprite_RAM+$04,Y
 
@@ -2468,11 +2487,13 @@ PRG000_CBF8:
 
 	; Foot Xs
 	LDA Sprite_RAM+$03,Y
-	SUB #$03
+	SEC
+	SBC #$03
 	STA Sprite_RAM+$0B,Y
 
 	LDA Sprite_RAM+$07,Y
-	ADD #$03
+	CLC
+	ADC #$03
 	STA Sprite_RAM+$0F,Y
 
 	; Foot attributes
@@ -2504,7 +2525,8 @@ PRG000_CC23:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Object_BumpOffOthers:
 	TXA	; A = object slot index		  
-	ADD Counter_1 
+	CLC
+	ADC Counter_1 
 	LSR A 
 	BCS PRG000_CC6B	 ; Semi-randomly jump to PRG000_CC6B (RTS)
   
@@ -2668,7 +2690,8 @@ PRG000_CCF7:
 	JSR Object_HandleBumpUnderneath	 ; Handle the kicked shelled object getting hit from underneath
  
 	TXA 
-	ADD Counter_1 
+	CLC
+	ADC Counter_1 
 	LSR A 
 	BCC PRG000_CD46	 ; Semi-randomly jump to PRG000_CD46
  
@@ -3150,7 +3173,8 @@ PRG000_CF3D:
 	PHA		 ; Save 'A'
 
 	; Set Y offset to object being held
-	ADD Player_Y
+	CLC
+	ADC Player_Y
 	STA Objects_Y,X
 
 	LDY #$00	 ; Y = 0
@@ -3904,7 +3928,8 @@ PRG000_D22E:
 	STY Temp_Var2		 ; -> Temp_Var2 (height above object considered "stompable" range)
 
 	LDA Objects_Y,X	 ; Get object's Y
-	SUB Temp_Var2		 ; Subtract Temp_Var2 (height above object considered "stompable" range)
+	SEC
+	SBC Temp_Var2		 ; Subtract Temp_Var2 (height above object considered "stompable" range)
 	ROL Temp_Var1		 ; Stores the carry bit into Temp_Var1 bit 0
 	CMP Player_Y
 
@@ -4057,7 +4082,8 @@ PRG000_D2B4:
 
 	; In this case, Kill_Tally will be boosted by 4 (+1) instead of just +1
 	LDA Kill_Tally
-	ADD #$04	
+	CLC
+	ADC #$04	
 	BNE PRG000_D2E4	
 
 PRG000_D2E1:
@@ -4307,7 +4333,8 @@ PRG000_D3EF:
 	; That is, only occasionally actually do the off-screen check
 	; Keeps down on CPU cycles spent wondering about the object
 	TXA		 
-	ADD Counter_1	
+	CLC
+	ADC Counter_1	
 	LSR A		 ; A = (object index + Counter_1) >> 1
 	BCS PRG000_D463	 ; If carry set, jump to PRG000_D463 (RTS)
 
@@ -4572,11 +4599,13 @@ PRG000_D553:
 ; $D554
 Object_CalcSpriteXY_NoHi:
 	LDA Objects_Y,X
-	SUB Level_VertScroll
+	SEC
+	SBC Level_VertScroll
 	STA Objects_SpriteY,X
 
 	LDA Objects_X,X
-	SUB Horz_Scroll
+	SEC
+	SBC Horz_Scroll
 	STA Objects_SpriteX,X
 
 	RTS		 ; Return
@@ -4640,7 +4669,8 @@ PRG000_D588:
 ; $D589
 Object_ShakeAndCalcSprite:
 	LDA Objects_Y,X	; Get object's Y
-	SUB Level_VertScroll	; Make relative
+	SEC
+	SBC Level_VertScroll	; Make relative
 	STA Objects_SpriteY,X	; Store as sprite Y
 	STA Temp_Var1		; Also -> Temp_Var1
 
@@ -4696,7 +4726,8 @@ PRG000_D5BF:
 	STA Temp_Var6		; Temp_Var6 = Objects_Frame << 1
 
 	LDA ObjectGroup_PatternStarts,Y
-	ADD Temp_Var6	
+	CLC
+	ADC Temp_Var6	
 	STA Temp_Var6		; Temp_Var6 += ObjectGroup_PatternStarts[Y] (set base tile index)
 
 	TAX		 	; -> 'X' 
@@ -4773,7 +4804,8 @@ Object_Draw16x32Sprite:
 
 	LDA Objects_Frame,X
 	ASL A		 
-	ADD Temp_Var6	
+	CLC
+	ADC Temp_Var6	
 	STA Temp_Var6	 ; Temp_Var6 += object's frame
 	TAX		 ; -> 'X'
 
@@ -4791,7 +4823,8 @@ PRG000_D62D:
 
 	; 'Y' += 8 (Sprite RAM 2 sprites over)
 	TYA
-	ADD #$08
+	CLC
+	ADC #$08
 	TAY	
 
 	LDX Temp_Var6	 ; X = Temp_Var6 (starting tile)
@@ -4805,7 +4838,8 @@ PRG000_D62D:
 
 PRG000_D63F:
 	LDA #16
-	ADD Temp_Var1	 ; Sprite Y
+	CLC
+	ADC Temp_Var1	 ; Sprite Y
 	STA Temp_Var1	 ; Temp_Var1 += 16
 
 	JSR Object_Draw16x16Sprite	 ; Draw sprite
@@ -4827,7 +4861,8 @@ Object_DrawWide:
 
 	; Calculate offset into the ObjectGroup_PatternSets table
 	LDA Objects_Frame,X
-	ADD Temp_Var6	
+	CLC
+	ADC Temp_Var6	
 	STA Temp_Var6		; Temp_Var6 += object's frame
 	TAX		 	; -> 'X'
 	JSR Object_Draw24x16Sprite	; Draw wide sprite
@@ -4914,7 +4949,8 @@ PRG000_D693:
 	LDA Temp_Var2		; Get sprite X
 	STA Sprite_RAM+$03,Y	; Store into Sprite RAM
 
-	ADD #$08	 	; +8 for next sprite over
+	CLC
+	ADC #$08	 	; +8 for next sprite over
 	STA Sprite_RAM+$07,Y	; Store into second sprite
 
 	LDA ObjectGroup_PatternSets,X	; Get first sprite pattern index
@@ -4977,9 +5013,11 @@ PRG000_D6DF:
 PRG000_D6E4:
 	LDA Temp_Var2
 	STA Sprite_RAM+$03,Y	 ; Set sprite X in RAM
-	ADD #$08
+	CLC
+	ADC #$08
 	STA Sprite_RAM+$07,Y	 ; Set sprite X in RAM (+8)
-	ADD #$08
+	CLC
+	ADC #$08
 	STA Sprite_RAM+$0B,Y	 ; Set sprite X in RAM (+16)
 
 	; Set each of the sprite's patterns
@@ -5045,7 +5083,8 @@ PRG000_D73A:
 
 	LDA RandomN,X
 	AND #$07	
-	ADD Temp_Var7	
+	CLC
+	ADC Temp_Var7	
 	TAY		 ; Y = (Random 0-7) + Temp_Var7
 
 	LDA PRG000_D727,Y
@@ -5075,7 +5114,8 @@ PRG000_D763:
 	; Object slot is dead/empty...
 
 	TYA
-	ADD Counter_7to0
+	CLC
+	ADC Counter_7to0
 	TAY		; Y = object slot + (0-7)
 
 	LDX SprRamOffsets,Y	 ; X = Sprite_RAM offset
@@ -5237,7 +5277,8 @@ PRG000_D7FE:
 
 	; Add 16 to copy of object's Y (bottom of this sprite)
 	LDA Temp_Var2
-	ADD #16
+	CLC
+	ADC #16
 	STA Temp_Var2
 
 	BCC PRG000_D809	 ; If no carry, jump to Objects_SprVVis
@@ -5246,7 +5287,8 @@ PRG000_D7FE:
 
 PRG000_D809:
 	LDA Temp_Var2		
-	SUB Level_VertScroll
+	SEC
+	SBC Level_VertScroll
 	STA Temp_Var4		 ; Temp_Var4 = screen-relative Y
 
 	LDA Temp_Var1		
@@ -5447,7 +5489,8 @@ PRG000_D8CF:
 	BCC PRG000_D8EB	 ; If Player's bbox bottom is NOT higher than object's, jump to PRG000_D8EB
 
 	LDA Temp_Var1	 ; Get Player's bounding box top offset
-	SUB Temp_Var11	 ; Get vertical difference between Player and Object's bounding box bottoms
+	SEC
+	SBC Temp_Var11	 ; Get vertical difference between Player and Object's bounding box bottoms
 	CMP #$08	 
 	BLS PRG000_D8EB	 ; If the result < 8, jump to PRG000_D8EB
 
@@ -5628,7 +5671,8 @@ ObjectObject_Intersect:
 	; we're detecting against
 
 	LDA Temp_Var3		 ; Left of Player's bounding box
-	SUB Temp_Var1		 ; Left of object's bound box
+	SEC
+	SBC Temp_Var1		 ; Left of object's bound box
 	STA Temp_Var11		 ; Difference between the two -> Temp_Var11
 
 	ASL A			 ; Sets carry if it was a negative result
@@ -5659,7 +5703,8 @@ PRG000_D997:
 	ASL <Temp_Var12		 ; Push result bit up
 
 	LDA Temp_Var7		 ; Player's bounding box bottom
-	SUB Temp_Var5		 ; Object's bouncing box bottom
+	SEC
+	SBC Temp_Var5		 ; Object's bouncing box bottom
 	STA Temp_Var11		 ; Store difference -> Temp_Var11
 
 	ASL A		 	 ; Sets carry if it was a negative result
@@ -6022,14 +6067,16 @@ PRG000_DB26:
 
 PRG000_DB2F:
 	LDA Player_TailAttackXOff,Y
-	ADD Player_SpriteX
+	CLC
+	ADC Player_SpriteX
 	STA Temp_Var3	 ; Temp_Var3 = appropriate X offset for tail attack
 
 	LDA #$0a
 	STA Temp_Var4	 ; Temp_Var4 = $0A
 
 	LDA Player_SpriteY
-	ADD #$10
+	CLC
+	ADC #$10
 	STA Temp_Var7	 ; Temp_Var7 = tail attack offset
 
 	LDA #$0f
@@ -6074,11 +6121,13 @@ PRG000_DB7A:
 
 	; Set ShellKillFlash vars
 	LDA PRG000_DB17,Y
-	ADD Player_X	
+	CLC
+	ADC Player_X	
 	STA ShellKillFlash_X
 
 	LDA Player_Y
-	ADD #$10
+	CLC
+	ADC #$10
 	STA ShellKillFlash_Y
 
 	LDA #$0a
@@ -6362,7 +6411,8 @@ PRG000_DC91:
 ; $DCA2 
 Object_CalcCoarseXDiff:
 	LDA Objects_X,X	 
-	SUB Player_X	
+	SEC
+	SBC Player_X	
 	STA Temp_Var15		; Temp_Var15 = difference between Object and Player X
 
 	LDA Objects_XHi,X
@@ -6403,7 +6453,8 @@ Object_CalcCoarseXDiff:
 ; $DCB9
 Object_CalcCoarseYDiff:
 	LDA Objects_Y,X
-	SUB Player_Y	
+	SEC
+	SBC Player_Y	
 	STA Temp_Var15		 ; Temp_Var15 = difference between object's Y and Player's Y
 
 	LDA Objects_YHi,X
@@ -6445,7 +6496,8 @@ Object_ApplyYVel:
 ; $DCD9
 Object_ApplyYVel_NoLimit:
 	TXA		 
-	ADD #(Objects_YVel - Objects_XVel)
+	CLC
+	ADC #(Objects_YVel - Objects_XVel)
 	TAX		 ; Offset to Y velocities
 
 	JSR Object_AddVelFrac	 ; Apply the velocity to the object's position
@@ -6637,7 +6689,8 @@ PRG000_DD65:
 
 	; Temp_Var14 = Temp_Var10 (? input var?) + Player_Y
 	LDA Temp_Var10
-	ADD Player_Y
+	CLC
+	ADC Player_Y
 	STA Temp_Var14
 
 	BCC PRG000_DD75	 ; If no carry, jump to PRG000_DD75
@@ -6650,7 +6703,8 @@ PRG000_DD75:
 
 	; Temp_Var14 -= 16
 	LDA Temp_Var14
-	SUB #16
+	SEC
+	SBC #16
 	STA Temp_Var14
 	BCS PRG000_DD84	 ; If carry set, jump to PRG000_DD84
 
@@ -6671,7 +6725,8 @@ PRG000_DD8E:
 
 	; Temp_Var16 = Player_X + Temp_Var11 (? input var)
 	LDA Player_X
-	ADD Temp_Var11
+	CLC
+	ADC Temp_Var11
 	STA Temp_Var16
 	BCC PRG000_DD99	 ; If no carry, jump to PRG000_DD99
 
@@ -6796,7 +6851,8 @@ PRG000_DE03:
 	LDA Inventory_DestX,X	 ; Get target X coordinate for object
 	LSR A
 	LSR A
-	SUB Temp_Var1		 ; was object X / 4
+	SEC
+	SBC Temp_Var1		 ; was object X / 4
 	STA Objects_XVel	 ; Set as X velocity
 
 	LDA #<-$30
@@ -6838,7 +6894,8 @@ PRG000_DE53:
 
 	STY Level_ScrollDiffH	; Level_ScrollDiffH = 0 or 1
 
-	ADD Player_X
+	CLC
+	ADC Player_X
 	STA Player_X	 ; Player_X += Level_ScrollDiffH
 	BCC PRG000_DE65	 ; If no carry, jump to PRG000_DE65
 
@@ -6865,13 +6922,15 @@ PRG000_DE71:
 
 	LDY #$00	 ; Y = 0
 
-	ADD Level_ScrollDiffV	 ; Level_ScrollDiffV is 0 or -1 right now
+	CLC
+	ADC Level_ScrollDiffV	 ; Level_ScrollDiffV is 0 or -1 right now
 	CMP #$ff
 	BNE PRG000_DE89
 	DEY		 ; Y = -1 
 
 PRG000_DE89:
-	ADD Player_Y
+	CLC
+	ADC Player_Y
 	STA Player_Y
 	TYA		
 	ADC Player_YHi	
@@ -6883,14 +6942,16 @@ AScrlURDiag_CheckWrapping:
 	JSR AScrlURDiag_NoWrapAbort	 ; Will not return here if AScrlURDiag_WrapState_Copy is not set or gameplay halted!
 
 	LDA Objects_X,X
-	ADD AScrlURDiag_OffsetX	
+	CLC
+	ADC AScrlURDiag_OffsetX	
 	STA Objects_X,X
 	BCC PRG000_DEA3	 ; If no carry, jump to PRG000_DEA3
 	INC <Objects_XHi,X	 ; Otherwise, apply carry
 PRG000_DEA3:
 
 	LDA Objects_Y,X
-	ADD AScrlURDiag_OffsetY	
+	CLC
+	ADC AScrlURDiag_OffsetY	
 	STA Objects_Y,X
 	BCC PRG000_DEAF	 ; If no carry, jump to PRG000_DEAF
 	INC <Objects_YHi,X	 ; Otherwise, apply carry 

@@ -692,7 +692,8 @@ PRG002_A325:
 	BEQ PRG002_A347	 ; If Player is small, jump to PRG002_A347
 
 	; Player is NOT small; subtract 16
-	SUB #$10
+	SEC
+	SBC #$10
 	BCS PRG002_A347
 	DEC Objects_YHi,X	; Apply carry
 PRG002_A347:
@@ -707,7 +708,8 @@ PRG002_A347:
 
 	; Use Player X + 8
 	LDA Player_X
-	ADD #$08	
+	CLC
+	ADC #$08	
 	BCC PRG002_A35A	
 	INC Objects_XHi,X	; Apply carry
 PRG002_A35A:
@@ -784,7 +786,8 @@ PRG002_A3AA:
 
 	; Set X as +8 from Object X
 	LDA Objects_X,X
-	ADD #$08
+	CLC
+	ADC #$08
 	STA Objects_X,Y
 
 	; Match other coordinates
@@ -839,11 +842,13 @@ PRG002_A3E5:
 
 	; Set brick debris coordinates
 	LDA GiantBlockCtl_DebrisXOff,X
-	ADD Level_BlkBump_XLo+2	
+	CLC
+	ADC Level_BlkBump_XLo+2	
 	STA SpecialObj_XLo,Y	
 
 	LDA GiantBlockCtl_DebrisYOff,X	
-	ADD Level_BlkBump_YLo+2
+	CLC
+	ADC Level_BlkBump_YLo+2
 	STA SpecialObj_YLo,Y
 	LDA #$00	
 	ADC Level_BlkBump_YHi+2	
@@ -915,7 +920,8 @@ PRG002_A450:
 	JSR GiantBlockCtl_Draw
 
 	PLA		 ; Restore Sprite Y
-	ADD #16
+	CLC
+	ADC #16
 	STA Temp_Var3	 ; Temp_Var3 = Sprite Y + 16
 
 	PLA		 ; Restore Sprite X
@@ -955,7 +961,8 @@ PRG002_A491:
 	STA Sprite_RAM+$03,Y
 
 	; X += 8
-	ADD #$08
+	CLC
+	ADC #$08
 	STA Temp_Var2
 
 	INY
@@ -1081,7 +1088,8 @@ PRG002_A535:
 	BEQ PRG002_A542	 ; If timer 2 expired, jump to PRG002_A542
 
 	; Timer 2 not expired...
-	ADD #29	 ; Add to timer 2 value
+	CLC
+	ADC #29	 ; Add to timer 2 value
 
 PRG002_A542:
 	LSR A		 
@@ -1213,7 +1221,8 @@ PRG002_A5AE:
 
 	; Set Y/Hi
 	LDA Objects_Y,Y
-	SUB #16
+	SEC
+	SBC #16
 	STA Objects_Y,X
 	LDA Objects_YHi,Y
 	SBC #$00
@@ -1297,7 +1306,8 @@ PRG002_A657:
 	JSR Negate	 ; Negate the X offset if he's flipped around
 
 PRG002_A663:
-	ADD Temp_Var2	; Apply X offset
+	CLC
+	ADC Temp_Var2	; Apply X offset
 	STA Temp_Var2	; Update Sprte X
 
 	LDA Level_NoStopCnt
@@ -1310,7 +1320,8 @@ PRG002_A663:
 	LDX #$BE	 ; X = $BE (Ice Brick tile)
 
 	LDA Temp_Var7
-	ADD #$08	
+	CLC
+	ADC #$08	
 	TAY		 ; Y = Sprite_RAM + 8
 
 	JSR Object_Draw16x16Sprite
@@ -1636,7 +1647,8 @@ PRG002_A793:
 	LDY Objects_Var4,X	 ; Y = Var4
 
 	LDA Objects_Var5,X
-	ADD Object_VelCarry
+	CLC
+	ADC Object_VelCarry
 	CMP PRG002_A772,Y
 	BLS PRG002_A7D4	 ; If Var5 < limit value, jump to PRG002_A7D4
 
@@ -1906,7 +1918,8 @@ PRG002_A8EE:
 	LDY #$00	 ; Y = 0 (Player is lower, move down!)
 
 	LDA Temp_Var15
-	SUB #$04
+	SEC
+	SBC #$04
 	BMI PRG002_A901
 
 	INY		 ; Y = 1 (Player is higher, move up!)
@@ -1942,7 +1955,8 @@ ObjInit_Stretch:
 
 	; Stretch starts 4 pixels lower than his placement
 	LDA Objects_Y,X
-	ADD #$04
+	CLC
+	ADC #$04
 	STA Objects_Y,X
 	BCC PRG002_A935
 	INC Objects_YHi,X
@@ -1974,7 +1988,8 @@ ObjInit_StretchFlip:
 
 	; Set Stretch at 6 pixels above his placement position
 	LDA Objects_Y,X
-	SUB #$06
+	SEC
+	SBC #$06
 	STA Objects_Y,X
 	BCS PRG002_A95B
 	DEC Objects_YHi,X
@@ -2070,7 +2085,8 @@ ObjInit_InvisibleLift:
 
 	; Object appears 11 pixels below placement
 	LDA Objects_Y,X
-	ADD #11
+	CLC
+	ADC #11
 	STA Objects_Y,X
 	BCC PRG002_A9C1	
 	INC Objects_YHi,X
@@ -2100,7 +2116,8 @@ PRG002_A9D2:
 
 	; Lift accelerates to -$20
 	LDA Objects_YVel,X
-	SUB #$04
+	SEC
+	SBC #$04
 	CMP #<-$20
 	BGE PRG002_A9E4
 	LDA #<-$20
@@ -2176,7 +2193,8 @@ PRG002_AA21:
 
 	; +16 for second part of lift
 	LDA #16
-	ADD Temp_Var2
+	CLC
+	ADC Temp_Var2
 	STA Temp_Var2
 
 	; Use latter horizontal visibility bits
@@ -2242,7 +2260,8 @@ ObjHit_CloudPlat:
 Player_StandOnPlatform:
 	; Set Player to object's Y - 31
 	LDA Objects_Y,X	 
-	SUB #31
+	SEC
+	SBC #31
 	STA Player_Y
 	LDA Objects_YHi,X
 	SBC #$00
@@ -2259,7 +2278,8 @@ Player_StandOnPlatform:
 
 PRG002_AA7B:
 	; Add to Player_X, with carry
-	ADD Player_X
+	CLC
+	ADC Player_X
 	STA Player_X
 	TYA
 	ADC Player_XHi
@@ -2411,7 +2431,8 @@ ObjInit_FloatWoodenPlat:
 
 	; Set fixed position at water level (vertical scroll +148)
 	LDA Level_VertScroll
-	ADD #148
+	CLC
+	ADC #148
 	STA Objects_Y,X
 	LDA Level_VertScrollH
 	ADC #$00		; Apply carry
@@ -2463,7 +2484,8 @@ PRG002_AB5E:
 
 	; 
 	LDA Objects_Var5,X
-	ADD Object_VelCarry
+	CLC
+	ADC Object_VelCarry
 	STA Objects_Var5,X
 
 	; Clear Object_VelCarry
@@ -2670,7 +2692,8 @@ PRG002_AC6A:
 	LDY Temp_Var13		; Y = Temp_Var13
 
 	LDA WoodenPlat_ScanIndices,Y
-	ADD Temp_Var14		; Travel direction offset
+	CLC
+	ADC Temp_Var14		; Travel direction offset
 	AND #$0f		; Mod 16
 	TAY			; -> 'Y' 
 
@@ -2838,7 +2861,8 @@ PRG002_AD6E:
 	; This gets a little tricky to follow...
 
 	LDA Temp_Var15	
-	ADD #$20
+	CLC
+	ADC #$20
 	CMP #$40
 	BGE PRG002_AD80	 ; Player out of X range
 
@@ -2916,14 +2940,16 @@ PRG002_ADC5:
 	JSR Negate	; Negate the X Offset
 
 PRG002_ADD1:
-	ADD Temp_Var2		 ; Offset by Spike's X
+	CLC
+	ADC Temp_Var2		 ; Offset by Spike's X
 	STA Temp_Var2		 ; -> Temp_Var2
 
 	LDX #(SpikeBall_Patterns - ObjectGroup01_PatternSets)	 ; Offset to patterns for spike ball
 
 	; Draw Spike's pre-thrown spike ball sprite at +8 to Spike's assigned Sprite_RAM offset
 	LDA Temp_Var7
-	ADD #$08	
+	CLC
+	ADC #$08	
 	TAY		
 	JSR Object_Draw16x16Sprite
 
@@ -2950,7 +2976,8 @@ Spike_TossSpikeBall:
 
 	; Set Spike's ball Y
 	LDA Objects_Y,X
-	SUB #14
+	SEC
+	SBC #14
 	STA SpecialObj_YLo,Y
 	LDA Objects_YHi,X
 	SBC #$00
@@ -3196,7 +3223,8 @@ Bank2_PiranhaSpikeHaltAction:
 
 	; Temp_Var1 += 6
 	LDA Temp_Var1
-	ADD #$06
+	CLC
+	ADC #$06
 	STA Temp_Var1
 
 PRG002_AF46:
@@ -3214,12 +3242,14 @@ PRG002_AF4F:
 
 	; Sprite Y += 16 for lower half
 	LDA Temp_Var1
-	ADD #16
+	CLC
+	ADC #16
 	STA Temp_Var1
 
 	; 'Y' += 8 (two sprite index over)
 	TYA
-	ADD #$08
+	CLC
+	ADC #$08
 	TAY
 
 	LDX Temp_Var6	 ; X = starting tiles index
@@ -3293,7 +3323,8 @@ PRG002_AF96:
 
 	; Jump Sprite_RAM offset ahead 16 (four sprites, get passed Patooie/Piranha)
 	TYA	
-	ADD #16	
+	CLC
+	ADC #16	
 	TAY	
 
 	; Draw sprite
@@ -3534,7 +3565,8 @@ PRG002_B0C1:
 
 	; Set Goomba's Y 16 pixels higher than shoe
 	LDA Objects_Y,Y
-	SUB #16
+	SEC
+	SBC #16
 	STA Objects_Y,X
 	LDA Objects_YHi,Y
 	SBC #$00
@@ -3642,7 +3674,8 @@ PRG002_B15F:
 
 	; If not horizontally flipped, +1 to X
 	LDA Temp_Var2
-	ADD #$01
+	CLC
+	ADC #$01
 	STA Temp_Var2
 
 PRG002_B16C:
@@ -3651,7 +3684,8 @@ PRG002_B16C:
 	LDX #$70	 ; X = $70 (Goomba's starting pattern)
 
 	LDA Temp_Var7
-	ADD #$08
+	CLC
+	ADC #$08
 	TAY		 ; Y = Sprite_RAM offset +8 (passed the shoe, for the Goomba)
 
 	JSR Object_Draw16x16Sprite	 ; Draw Goomba
@@ -3666,7 +3700,8 @@ PRG002_B16C:
 
 	; Goomba X - 1
 	LDA Sprite_RAM+$07,Y
-	SUB #$01
+	SEC
+	SBC #$01
 	STA Sprite_RAM+$07,Y
 
 	LDX SlotIndexBackup	 ; X = object slot index
@@ -3696,7 +3731,8 @@ ObjNorm_Nipper:
 	STA Temp_Var14		 ; Store flip direction -> Temp_Var14
 
 	LDA Temp_Var15	
-	ADD #$03
+	CLC
+	ADC #$03
 	CMP #$06
 	BGE PRG002_B1CD	 ; If Player is horizontally too far away from Nipper, jump to PRG002_B1CD
 
@@ -3891,7 +3927,8 @@ Toad_DrawDiagBox:
 	STA Graphics_Buffer+1,X
 
 	; Store the next row address (+32 bytes to next row)
-	ADD #$20	; 32 bytes to next row
+	CLC
+	ADC #$20	; 32 bytes to next row
 	STA ToadTalk_VL
 	BCC PRG002_B2D5
 	INC ToadTalk_VH	 ; Apply carry
@@ -4072,7 +4109,8 @@ PRG002_B468:
 	LSR A
 	STA Graphics_Buffer+4,Y	; terminator
 	TYA
-	ADD #$04
+	CLC
+	ADC #$04
 	STA Graphics_BufCnt	; count
 	LDA ToadTalk_VL
 	STA Graphics_Buffer+1,Y	; address low
@@ -4303,12 +4341,14 @@ PRG002_B572:
 	; Store item sprite Xs
 	LDA Objects_X,X
 	STA Sprite_RAM+$03,Y	; Left half
-	ADD #$08		; +8
+	CLC
+	ADC #$08		; +8
 	STA Sprite_RAM+$07,Y	; Right half
 
 	; Y -= 8
 	TYA
-	SUB #$08
+	SEC
+	SBC #$08
 	TAY
 
 	BPL PRG002_B572	 ; While Y >= 0, loop
@@ -4353,7 +4393,8 @@ PRG002_B5C7:
 
 	; Temp_Var2 (Sprite X) += 24
 	LDA #24
-	ADD Temp_Var2
+	CLC
+	ADC Temp_Var2
 	STA Temp_Var2
 
 	; Alters horizontal visibility ??
@@ -4399,7 +4440,8 @@ ObjNorm_NipperFireBreathe:
 	; Set 'Y' to $10 or -$10 based on which side Player is on
 	LDA Temp_Var15
 	TAY	
-	ADD #$10
+	CLC
+	ADC #$10
 	CMP #$20
 	BLT PRG002_B61F
 
@@ -4416,7 +4458,8 @@ PRG002_B61F:
 	JSR Object_CalcCoarseYDiff
 
 	LDA Temp_Var15
-	ADD #$20
+	CLC
+	ADC #$20
 	CMP #$40
 	BGE PRG002_B65A	 	; If Player is too high above Nipper, jump to PRG002_B65A (RTS)
 
@@ -4428,7 +4471,8 @@ PRG002_B61F:
 
 	; Nipper fireball X
 	LDA Objects_X,X
-	ADD #$04
+	CLC
+	ADC #$04
 	STA SpecialObj_XLo,Y
 
 	; Nipper fireball Y
@@ -4445,7 +4489,8 @@ PRG002_B61F:
 
 	; Nipper fireball Y velocity
 	LDA #<-$40
-	SUB Temp_Var15
+	SEC
+	SBC Temp_Var15
 	STA SpecialObj_YVel,Y
 
 	LDX SlotIndexBackup		 ; X = object slot index
@@ -4555,7 +4600,8 @@ DryBones_Draw:
 	PHA		
 
 	; Subtract 16 from Dry Bones' Y position
-	SUB #16
+	SEC
+	SBC #16
 	STA Objects_Y,X
 	BCS PRG002_B6F2
 	DEC Objects_YHi,X
@@ -4592,7 +4638,8 @@ PRG002_B706:
 	BCS PRG002_B71C	 ; If Dry Bones is horizontally flipped, jump to PRG002_B71C
 
 	; Subtract 8 from Dry Bones' X position
-	SUB #$08
+	SEC
+	SBC #$08
 	STA Objects_X,X
 	BCS PRG002_B71C
 	DEC Objects_XHi,X
@@ -4615,7 +4662,8 @@ PRG002_B71C:
 
 	; Otherwise, 'Y' += 8 (two sprites over)
 	TYA
-	ADD #$08
+	CLC
+	ADC #$08
 	TAY
 
 PRG002_B73C:
@@ -4683,7 +4731,8 @@ PRG002_B77E:
 	; for Dry Bones, handling one or the other being crumpled
 DryBones_BumpOffOthers:
 	TXA		  
-	ADD Counter_1
+	CLC
+	ADC Counter_1
 	LSR A		
 	BCS PRG002_B789	 ; Semi-randomly jump to PRG002_B789
 
@@ -4816,7 +4865,8 @@ ObjInit_ChasingFish:
 
 	; Chasing fish always appear at the current vertical scroll + 160
 	LDA Level_VertScroll
-	ADD #160
+	CLC
+	ADC #160
 	STA Objects_Y,X
 	LDA Level_VertScrollH
 	ADC #$00
@@ -5021,7 +5071,8 @@ PRG002_B925:
 
 	JSR Object_CalcCoarseYDiff
 	LDA Temp_Var15
-	ADD #$08
+	CLC
+	ADC #$08
 	CMP #$0a
 	BGE PRG002_B95C	 ; If Player is vertically too far away to be eaten, jump to PRG002_B95C
 
@@ -5055,7 +5106,8 @@ PRG002_B95C:
 
 	; Big Bertha Y -= 24
 	LDA Objects_Y,X
-	SUB #24
+	SEC
+	SBC #24
 	STA Objects_Y,X
 	BCS PRG002_B974
 	DEC Objects_YHi,X	 ; Apply carry
@@ -5143,7 +5195,8 @@ PRG002_B9CB:
 	DEC Objects_Frame,X	 ; Big Bertha's frame--
 	ASL A	
 	ASL A			; Multiply by 4
-	ADD Temp_Var6		 ; Add to starting tile
+	CLC
+	ADC Temp_Var6		 ; Add to starting tile
 	STA Temp_Var6		 ; Set as starting tile
 	TAX		 ; Starting tile -> 'X'
 
@@ -5162,7 +5215,8 @@ PRG002_B9E8:
 
 	; Sprite_RAM offset += 12 (3 sprites ahead)
 	TYA
-	ADD #$0c
+	CLC
+	ADC #$0c
 	TAY
 
 	LDX Temp_Var6	 ; X = starting tile
@@ -5178,7 +5232,8 @@ PRG002_B9E8:
 PRG002_B9FB:
 	; Sprite Y += 16 (lower half of Big Bertha)
 	LDA #16
-	ADD Temp_Var1
+	CLC
+	ADC Temp_Var1
 	STA Temp_Var1
 	JSR Object_Draw24x16Sprite ; Draw lower half of Big Bertha
 
@@ -5251,7 +5306,8 @@ PRG002_BA52:
 
 	JSR Object_CalcCoarseXDiff
 	LDA Temp_Var15	
-	ADD #$40
+	CLC
+	ADC #$40
 	CMP #$80
 	BLT PRG002_BA6B		; If Cheep Cheep isn't too far away, jump to PRG002_BA6B
 
@@ -5275,7 +5331,8 @@ PRG002_BA78:
 
 	JSR Object_CalcCoarseYDiff
 	LDA Temp_Var15	
-	SUB #$05
+	SEC
+	SBC #$05
 	CMP #$18
 	BGE PRG002_BAA6	 ; If Cheep Cheep is vertically too far from Player, jump to PRG002_BAA6 (RTS)
 
@@ -5320,7 +5377,8 @@ PlayerPlatform_Collide:
 	; Test if Player is standing on top of platform
 
 	LDA Player_SpriteY
-	ADD #24
+	CLC
+	ADC #24
 	CMP Objects_SpriteY,X
 	BGE PRG002_BABE	 ; If Player's bottom is beneath object's top, jump to PRG002_BABE
 
@@ -5349,7 +5407,8 @@ PRG002_BAC9:
 	LDA #$08	 ; A = 8 if small or ducking
 
 PRG002_BACB:
-	ADD Player_SpriteY
+	CLC
+	ADC Player_SpriteY
 	CMP Objects_SpriteY,X
 	BLT PRG002_BADC	 ; If Player's Sprite top is near object's top, jump to PRG002_BADC
 
@@ -5565,7 +5624,8 @@ PRG002_BBBB:
 PRG002_BBC8:
 	; When card is high enough, begin scrolling upward
 	LDA Vert_Scroll
-	SUB #$03
+	SEC
+	SBC #$03
 	STA Vert_Scroll
 
 	STA Level_VertScroll
@@ -5626,7 +5686,8 @@ PRG002_BC10:
 	STA Graphics_Queue	 ; Set five times to execute each of Video_Upd_Table Video_3CM*
 
 PRG002_BC12:
-	SUB #$03
+	SEC
+	SBC #$03
 	STA Objects_Var1,X	 ; Var1 -= 3 (separation between drawing segments, see Video_Upd_Table Video_3CM*)
 
 EndLevelCard_AnimateSpinAway:
@@ -5640,7 +5701,8 @@ EndLevelCard_AnimateSpinAway:
 
 	; Loop frame 3,6,9,12 / 4,7,10,13 / 5,8,11,14 (Mushroom, Flower, Star)
 	LDA Objects_Frame,X
-	SUB #$03
+	SEC
+	SBC #$03
 	CMP #$03
 	BGE PRG002_BC2F	 ; If not underflowed, jump to PRG002_BC2F
 	ADC #12		; Reset animation by adding 12
@@ -5974,9 +6036,11 @@ PRG002_BDA4:
 	LDA XUp_XOff,X
 	BIT Vert_Scroll
 	BPL PRG002_BDBE	 ; If vertical scroll is high up (Triple Card Match), jump to PRG002_BDBE
-	ADD #$08	 ; Otherwise, +8
+	CLC
+	ADC #$08	 ; Otherwise, +8
 PRG002_BDBE:
-	SUB Horz_Scroll
+	SEC
+	SBC Horz_Scroll
 	STA Sprite_RAM+$03,Y
 
 	INY
@@ -6386,11 +6450,13 @@ EndLevelCard_Draw:
 
 	; Select own range of sprite area
 	LDA #$05
-	ADD Counter_7to0
+	CLC
+	ADC Counter_7to0
 	TAY		 ; Y = 5 to 12
 
 	LDA SprRamOffsets,Y
-	ADD #$08
+	CLC
+	ADC #$08
 	TAY		 ; -> 'Y'
 
 	JSR Object_Draw16x16Sprite	 ; Draw the End Level card

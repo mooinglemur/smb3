@@ -229,7 +229,8 @@ Music_GetRestTicks:
 	; Music_RestH_Off is always $00 or $10 (low time warning)
 
 	AND #$0f	 	; Get lower 4 bits
-	ADD Music_RestH_Base	; Add this to Music_RestH_Base
+	CLC
+	ADC Music_RestH_Base	; Add this to Music_RestH_Base
 	ADC Music_RestH_Off	; Add this to Music_RestH_Off
 
 	TAY			; Y = A
@@ -308,7 +309,8 @@ SndMus_QueueSet2B:
 	STA Music_Start	 		; Set Music_Start
 
 	LDA Music_Set2B_Ends-1,Y	; Because Y starts at '1', we must subtract 1 from the LUT address
-	ADD #$02	 		; A += 2 (Reason for adding two: The index counter is always one ahead, and the end index is INCLUSIVE!)
+	CLC
+	ADC #$02	 		; A += 2 (Reason for adding two: The index counter is always one ahead, and the end index is INCLUSIVE!)
 	STA Music_End			; Set Music_End
 
 	LDA Music_Set2B_Loops-1,Y	; Because Y starts at '1', we must subtract 1 from the LUT address
@@ -412,7 +414,8 @@ PRG031_E411:
 	STA Music_Start	  		; Set Music_Start
 
 	LDA Music_Set2A_Ends-1,Y	; Because Y starts at '1', we must subtract 1 from the LUT address
-	ADD #$02	 		; A += 2 (Reason for adding two: The index counter is always one ahead, and the end index is INCLUSIVE!)
+	CLC
+	ADC #$02	 		; A += 2 (Reason for adding two: The index counter is always one ahead, and the end index is INCLUSIVE!)
 	STA Music_End	 		; Set Music_End
 
 	LDA Music_Set2A_Loops-1,Y	; Because Y starts at '1', we must subtract 1 from the LUT address 
@@ -1132,11 +1135,13 @@ PRG031_E7C8:
 	; this is (Note MOD 12), just no such instruction available
 PRG031_E7D1:
 	INC Sound_Octave ; Sound_Octave++ (Sound_Octave will have the octave level after this, essentially Note / 12)
-	SUB #24	 	  ; A -= 24 (down an octave)
+	SEC
+	SBC #24	 	  ; A -= 24 (down an octave)
 	BPL PRG031_E7D1	  ; While above zero, loop! 
 
 PRG031_37D9:
-	ADD #24	 	  ; A += 24 (recover from last subtraction)
+	CLC
+	ADC #24	 	  ; A += 24 (recover from last subtraction)
 	TAY		  ; Y = A (Y is now the offset into the LUT to get the base frequency for this note)
 
 	; Y should now be a lookup into the note table!
@@ -1187,7 +1192,8 @@ PRG031_E808:
 PRG031_E818:
 	; For Square Wave 2 only!
 	LDA Sound_Sqr_FreqL
-	SUB #$02	 	; Sound_Sqr_FreqL -= 2
+	SEC
+	SBC #$02	 	; Sound_Sqr_FreqL -= 2
 	STA PAPU_FT2	 	; Store low part of frequency in register
 	STA Sound_Sq2_CurFL
 
@@ -1627,7 +1633,8 @@ PRG031_F51D:
 	LDA Horz_Scroll
 	STA PPU_SCROLL	; Horizontal Scroll set
 	LDA Vert_Scroll
-	ADD Vert_Scroll_Off	; Apply vertical offset (used for??)
+	CLC
+	ADC Vert_Scroll_Off	; Apply vertical offset (used for??)
 	STA PPU_SCROLL		; Vertical scroll set
 
 	; This sets the status bar scroll fix for everything after the title screen!
@@ -2870,7 +2877,8 @@ PRG031_FCFF:
 
 	LDA Temp_Var3		; A = Temp_Var3 (offset to current card)
 	STX Temp_Var3		; Temp_Var3 = X
-	SUB Temp_Var3		; A -= Temp_Var3 (offset from start to current card)
+	SEC
+	SBC Temp_Var3		; A -= Temp_Var3 (offset from start to current card)
 	TAX		 	; A = X
 
 	LDA CardVStartU,X
@@ -2912,7 +2920,8 @@ PRG031_FD29:
 
 	; Set buffer count
 	TYA
-	ADD #$0a
+	CLC
+	ADC #$0a
 	STA Graphics_BufCnt
 
 	RTS		 ; Return
@@ -3096,7 +3105,8 @@ PRG031_FDE1:
 	BNE PRG031_FDE1	 ; While <> 0, loop (will write 4 times)
 
 	LDA Temp_Var1	 ; Retrieve initial A value again
-	ADD #$03	 	; A += 3 (moving to attribute table)
+	CLC
+	ADC #$03	 	; A += 3 (moving to attribute table)
 	STA PPU_VRAM_ADDR	; Address high byte
 	LDA #$c0		; Beginning of attribute table
 	STA PPU_VRAM_ADDR	; Address low byte
@@ -3206,7 +3216,8 @@ PRG031_FE76:
 
 	; Next VRAM byte
 	LDA Temp_Var2
-	ADD #$01
+	CLC
+	ADC #$01
 	STA Temp_Var2
 	LDA Temp_Var1
 	ADC #$00

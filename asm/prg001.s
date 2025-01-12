@@ -520,11 +520,13 @@ ObjInit_SpinyCheep:
 
 	; Var10 = Object's X
 	LDA Objects_X,X
-	SUB #$30
+	SEC
+	SBC #$30
 	STA Objects_Var10,X
 
 	; Var11 = Object's X + 96
-	ADD #96
+	CLC
+	ADC #96
 	STA Objects_Var11,X
 
 	RTS		 ; Return
@@ -756,7 +758,8 @@ PRG001_A334:
 	LDA Player_YHi
 	STA Objects_YHi,X
 	LDA Player_Y
-	ADD #32		
+	CLC
+	ADC #32		
 	AND #$f0	 ; Align to grid
 	STA Objects_Y,X
 
@@ -992,7 +995,8 @@ ObjHit_Obj05:
 	STA Temp_Var1		 ; Temp_Var1 = Player Y Hi
 
 	LDA Objects_Y,X	
-	SUB Player_Y		
+	SEC
+	SBC Player_Y		
 	STA Temp_Var2		 ; Temp_Var2 = difference between Object's Y and Player's Y
 
 	BCS PRG001_A478	 	; If no carry, jump to PRG001_A478
@@ -1005,7 +1009,8 @@ PRG001_A478:
 	BNE PRG001_A49E	 ; If the "Y Hi" values are different, jump to PRG001_A49E
 
 	LDA Temp_Var2	
-	SUB #$09	
+	SEC
+	SBC #$09	
 	BMI PRG001_A49E	 ; If (Temp_Var2 - 9) < 0, jump to PRG001_A49E
 
 	; Reset timer
@@ -1360,7 +1365,8 @@ PRG001_A63F:
 
 	; Select own range of sprite area
 	LDA #$05
-	ADD Counter_7to0
+	CLC
+	ADC Counter_7to0
 	TAY		 ; Y = 5 + (0 to 7)
 
 	LDA SprRamOffsets,Y
@@ -1368,7 +1374,8 @@ PRG001_A63F:
 
 	; Block bouncers always appear in object slot 6 or 7, so this makes it relative to 0 or 1
 	TXA		 
-	SUB #$06	 
+	SEC
+	SBC #$06	 
 	TAY		 ; Y = 0 or 1
  
 	PLA		 ; Restore the value
@@ -1379,18 +1386,22 @@ PRG001_A63F:
 
 	; Screen-relative X position for sprite position
 	LDA Objects_X,X
-	SUB Horz_Scroll	
+	SEC
+	SBC Horz_Scroll	
 	STA Objects_SpriteX,X
 
 	; Store two pieces of bounce block sprite X
 	STA Sprite_RAM+3,Y
-	ADD #$08	 
+	CLC
+	ADC #$08	 
 	STA Sprite_RAM+7,Y
 
 	; Screen-relative Y position for sprite position
 	LDA Objects_Y,X
-	SUB Level_VertScroll
-	SUB #$01
+	SEC
+	SBC Level_VertScroll
+	SEC
+	SBC #$01
 	STA Objects_SpriteY,X
 
 	; Store two pieces of bounce block sprite Y
@@ -1450,13 +1461,15 @@ PRG001_A6A3:
 	; Anchor top
 	LDA Objects_SpriteY,X
 	STA Temp_Var1		; Temp_Var1 = Sprite Y
-	SUB #16	
+	SEC
+	SBC #16	
 	STA Temp_Var1		; Temp_Var1 -= 16
 
 	STA Sprite_RAM+12,Y	; Set Sprite Y
 
 	LDA Objects_SpriteX,X	
-	ADD #$08	
+	CLC
+	ADC #$08	
 	STA Temp_Var2		; Temp_Var2 = Sprite X + 8
 	STA Sprite_RAM+15,Y	; Set sprite X
 
@@ -1471,7 +1484,8 @@ PRG001_A6A3:
 	LDY #$60	 ; Y = $60
 PRG001_A6DF:
 	LDA Temp_Var1
-	SUB #16
+	SEC
+	SBC #16
 	STA Temp_Var1	 ; Temp_Var1 -= 16 (next link up)
 	BCC PRG001_A702	 ; If we're done with the chain, jump to PRG001_A702
 
@@ -1529,7 +1543,8 @@ ObjHit_Obj0A:
 	BMI PRG001_A746	 ; If Player Y Velocity is negative (moving upward), jump to PRG001_A746
 
 	LDA Objects_SpriteY,X	
-	SUB Player_SpriteY	
+	SEC
+	SBC Player_SpriteY	
 	CMP #$16
 	BLS PRG001_A746	 ; If Object is less than 16 pixels above Player, jump to PRG001_A746
 
@@ -1541,7 +1556,8 @@ ObjHit_Obj0A:
 
 	; Subtract 25 from Object's Y
 	LDA Objects_Y,X 
-	SUB #25	 
+	SEC
+	SBC #25	 
 	BCS PRG001_A73F
 	DEY		 ; Apply carry, if needed
 PRG001_A73F:
@@ -1554,7 +1570,8 @@ PRG001_A746:
 	BPL PRG001_A757	 ; If Player is not moving upward, jump to PRG001_A757
 
 	LDA Objects_SpriteY,X
-	SUB Player_SpriteY	
+	SEC
+	SBC Player_SpriteY	
 	CMP #<-$6
 	BGS PRG001_A757	 
 
@@ -1906,7 +1923,8 @@ PRG001_A8D5:
 
 	; Move powerup up 1 pixel
 	LDA Objects_Y,X
-	SUB #$01
+	SEC
+	SBC #$01
 	STA Objects_Y,X
 	LDA Objects_YHi,X
 	SBC #$00
@@ -1929,8 +1947,10 @@ PRG001_A8F7:
 
 	LDA Objects_Y,X
 	AND #$f0	 	; Align object Y to tile
-	ADD #$0f	 	; +15
-	SUB Level_VertScroll	; Calc relative to vertical scroll
+	CLC
+	ADC #$0f	 	; +15
+	SEC
+	SBC Level_VertScroll	; Calc relative to vertical scroll
 
 	; Set for both sprite halves Y
 	STA Sprite_RAM,Y
@@ -1949,7 +1969,8 @@ PRG001_A8F7:
 	; Set sprite X's side by side
 	LDA Objects_SpriteX,X
 	STA Sprite_RAM+3,Y
-	ADD #$08
+	CLC
+	ADC #$08
 	STA Sprite_RAM+7,Y
 
 PRG001_A937:
@@ -1983,7 +2004,8 @@ Mushroom_SetFall:
 	LDY #$00	 ; Y = 0 (mushroom falls to the left)
 
 	LDA Objects_X,X
-	SUB Horz_Scroll	; Make X relative to screen
+	SEC
+	SBC Horz_Scroll	; Make X relative to screen
 	CMP Player_SpriteX	
 	BLT PRG001_A956	 	; If object X is less than Player's X, jump to PRG001_A956
 
@@ -2077,7 +2099,8 @@ PRG001_A993:
 
 PRG001_A9A7:
 	STY Temp_Var1	 ; Temp_Var1 = 3 (because the above does nothing, heh)
-	ADD Temp_Var1	 ; Temp_Var1 = 6
+	CLC
+	ADC Temp_Var1	 ; Temp_Var1 = 6
 	CMP #$08	 
 	BGE PRG001_A9B1	 ; If Temp_Var1 >= 8 (never gonna happen), jump to PRG001_A9B1
 
@@ -2350,7 +2373,8 @@ PRG001_AAC5:
 
 	; Set Y
 	LDA Objects_Y,X
-	SUB #$01
+	SEC
+	SBC #$01
 	STA Objects_Y,Y
 
 	; Set Y Hi
@@ -2459,7 +2483,8 @@ PRG001_AB48:
 
 	; Copy this object's Y minus 8 to slot 5
 	LDA Objects_Y,X
-	SUB #$08
+	SEC
+	SBC #$08
 	STA Objects_Y,Y
 
 	BCS PRG001_AB7A	 ; If that didn't cause a borrow, jump to PRG001_AB7A
@@ -2582,7 +2607,8 @@ PRG001_AC02:
 
 PRG001_AC07:
 	LDA PRG001_ABD1,Y
-	ADD #$06	 	; Value +6
+	CLC
+	ADC #$06	 	; Value +6
 	STA Objects_YVel,X	; -> Y Velocity
 
 	JSR Object_ApplyXVel	 ; Apply X Velocity
@@ -2753,7 +2779,8 @@ PRG001_ACA9:
 	INY		 ; Y = 1 (uses the next nametable address in Vine_NTHigh)
 
 PRG001_ACCE:
-	ADD #16	 	; Next row
+	CLC
+	ADC #16	 	; Next row
 
 PRG001_ACD1:
 	ASL A	
@@ -2786,7 +2813,8 @@ PRG001_ACD1:
 	STA Graphics_Buffer+1,Y
 
 	; Store right column update
-	ADD #$01
+	CLC
+	ADC #$01
 	STA Graphics_Buffer+6,Y
 
 	LDA #$82
@@ -2810,7 +2838,8 @@ PRG001_ACD1:
 
 	; Update run count
 	TYA
-	ADD #$0a	 ; Count += 10
+	CLC
+	ADC #$0a	 ; Count += 10
 	STA Graphics_BufCnt
 
 PRG001_AD23:
@@ -2849,14 +2878,16 @@ ObjNorm_WarpHide:
 	; Trigger when close enough X
 	JSR Object_CalcCoarseXDiff
 	LDA Temp_Var15	
-	ADD #$04	
+	CLC
+	ADC #$04	
 	CMP #$08	
 	BGE PRG001_AD7E	
 
 	; Trigger when close enough Y
 	JSR Object_CalcCoarseYDiff
 	LDA Temp_Var15	
-	ADD #$08	
+	CLC
+	ADC #$08	
 	CMP #$10	
 	BCS PRG001_AD7E	
 
@@ -2910,7 +2941,8 @@ ObjNorm_PDoor:
 	; If Player is NOT within range of the door X-wise, jump to PRG001_ADBB
 	JSR Object_CalcCoarseXDiff	 
 	LDA Temp_Var15	
-	ADD #$02	
+	CLC
+	ADC #$02	
 	CMP #$04	
 	BGE PRG001_ADBB
 
@@ -2958,7 +2990,8 @@ ObjHit_Card:
 
 	; Calculate which card you get
 	LDA Level_ObjectID,X
-	SUB #(OBJ_POWERUP_MUSHCARD-1)
+	SEC
+	SBC #(OBJ_POWERUP_MUSHCARD-1)
 
 	; Update the Player's card collection
 	JSR Player_GetCardAndUpdate
@@ -3338,7 +3371,8 @@ PRG001_AFC5:
 	; and making the overall height a bit variable
 	LDY Objects_Var4,X	 ; Get Koopaling's current hit count
 	LDA Koopaling_JumpYVelsBase,Y
-	ADD World_Num
+	CLC
+	ADC World_Num
 	TAY		; -> 'Y'
 
 	; This determines the chance that they will actually jump
@@ -3441,12 +3475,14 @@ PRG001_B02E:
 
 	; Set wand blast X
 	LDA Objects_X,X
-	ADD Temp_Var1	
+	CLC
+	ADC Temp_Var1	
 	STA SpecialObj_XLo,Y
 
 	; Set wand blast Y
 	LDA Objects_Y,X
-	ADD #$0a
+	CLC
+	ADC #$0a
 	STA SpecialObj_YLo,Y
 
 	; Set wand blast Y Hi
@@ -3561,7 +3597,8 @@ PRG001_B0BC:
 
 PRG001_B0C4:
 	LDA Temp_Var12
-	ADD Temp_Var13
+	CLC
+	ADC Temp_Var13
 	CMP Temp_Var14
 	BLT PRG001_B0D1		; If (Temp_Var12 + Temp_Var13) < Temp_Var14, jump to PRG001_B0D1
 
@@ -3990,7 +4027,8 @@ PRG001_B336:
 
 	; Temp_Var2 += 4 (Sprite_X from Object_ShakeAndCalcSprite)
 	LDA Temp_Var2
-	ADD #$04
+	CLC
+	ADC #$04
 	STA Temp_Var2
 
 	TYA		 	; Restore Frame
@@ -4023,12 +4061,14 @@ PRG001_B368:
 
 	; Second row sprites
 	LDA Temp_Var1
-	ADD #$10
+	CLC
+	ADC #$10
 	STA Temp_Var1
 
 	; Sprite_RAM offset += 12 (next three sprites)
 	TYA
-	ADD #$0c
+	CLC
+	ADC #$0c
 	TAY
 
 	; X += 3 (next sprite pattern set)
@@ -4125,7 +4165,8 @@ Draw_KoopalingWand:
 
 	; Add 12 to offset index
 	TYA
-	ADD #$0c
+	CLC
+	ADC #$0c
 	TAY
 
 PRG001_B3FF:
@@ -4232,9 +4273,11 @@ PRG001_B472:
 	; Store all sprites' Xs
 	LDA Temp_Var2
 	STA Sprite_RAM+3,Y
-	ADD #$08
+	CLC
+	ADC #$08
 	STA Sprite_RAM+7,Y
-	ADD #$08
+	CLC
+	ADC #$08
 	STA Sprite_RAM+11,Y
 
 	LDA KPatTable,X
@@ -4533,7 +4576,8 @@ PRG001_B5C1:
 	STA Sprite_RAM+3,Y
 
 	; X += 8
-	ADD #$08
+	CLC
+	ADC #$08
 	STA Temp_Var15
 
 	INY
@@ -4620,7 +4664,8 @@ PRG001_B624:
 	LSR A
 	LSR A
 	LSR A	
-	ADD #$01
+	CLC
+	ADC #$01
 	ADC Objects_YVel,X
 	STA Objects_YVel,X
 
@@ -4796,7 +4841,8 @@ PRG001_B710:
 
 	LDA Objects_Y,X	; Get object's Y
 	PHA		 	; Save it
-	SUB Temp_Var1		; Subtract 0 or 1
+	SEC
+	SBC Temp_Var1		; Subtract 0 or 1
 	STA Objects_Y,X	; Store into object's Y
 
 	LDA Objects_YHi,X	; Get object's Y Hi
@@ -4861,12 +4907,14 @@ PRG001_B761:
 	STA Sprite_RAM+$1B	 ; Store into sprite X
 	STA Temp_Var2		 ; -> Temp_Var2
 
-	ADD #$08	 
+	CLC
+	ADC #$08	 
 	STA Sprite_RAM+$1F	 ; Store into second sprite X
 
 	; Set sprite Y with +$20 offset
 	LDA Objects_SpriteY,X
-	ADD #$20
+	CLC
+	ADC #$20
 	STA Sprite_RAM+$18
 	STA Sprite_RAM+$1C
 
@@ -4876,14 +4924,16 @@ PRG001_B761:
 	; X bound
 	LDA Player_SpriteX
 	SBC Temp_Var2
-	ADD #$0c
+	CLC
+	ADC #$0c
 	CMP #$18
 	BGE PRG001_B799
 
 	; Y bound
 	LDA Player_SpriteY
 	SBC Sprite_RAM+$18
-	ADD #$20
+	CLC
+	ADC #$20
 	CMP #$20
 	BGE PRG001_B799
 
@@ -4930,7 +4980,8 @@ PRG001_B7A7:
 
 	; New object Y -- Koopaling Y + 32
 	LDA Objects_Y,X
-	ADD #$20
+	CLC
+	ADC #$20
 	STA Objects_Y,Y
 	LDA Objects_YHi,X
 	ADC #$00
@@ -4938,7 +4989,8 @@ PRG001_B7A7:
 
 	; New object X -- Koopaling X + 4
 	LDA Objects_X,X
-	ADD #$04
+	CLC
+	ADC #$04
 	STA Objects_X,Y
 	LDA Objects_XHi,X
 	ADC #$00
@@ -5383,7 +5435,8 @@ PRG001_BA1F:
 
 	; Calculate an X position that targets Player and aligned to tile
 	LDA Objects_X,X
-	ADD #$08
+	CLC
+	ADC #$08
 	AND #$f0
 	STA Objects_TargetingXVal,X
 
@@ -5473,7 +5526,8 @@ PRG001_BA96:
 PRG001_BAA1:
 
 	; Bowser's rapid stomp fall!
-	ADD #$06
+	CLC
+	ADC #$06
 	STA Objects_YVel,X
 
 PRG001_BAA6:
@@ -5647,7 +5701,8 @@ PRG001_BB5E:
 
 	; Set fireball Y to Bowser's +16
 	LDA Objects_Y,X
-	ADD #16
+	CLC
+	ADC #16
 	STA Objects_Y,Y
 	LDA Objects_YHi,X
 	ADC #$00
@@ -5779,7 +5834,8 @@ PRG001_BC0B:
 	PHA		 	; Save it
 
 	; Detect the right tile under Bowser's feet
-	ADD #16
+	CLC
+	ADC #16
 	STA Objects_X,X
 	JSR Object_WorldDetectN1
 
@@ -5825,7 +5881,8 @@ PRG001_BC32:
 
 	; Aligned Bowser impact Y
 	LDA Objects_Y,X
-	ADD #$30
+	CLC
+	ADC #$30
 	AND #$f0
 	STA Level_BlockChgYLo
 	LDA Objects_YHi,X
@@ -5870,12 +5927,14 @@ PRG001_BC6D:
 	STA BrickBust_YUpr
 
 	; Brick bust lower Y
-	ADD #$08
+	CLC
+	ADC #$08
 	STA BrickBust_YLwr
 
 	; Brick bust X
 	LDA Level_BlockChgXLo
-	SUB Horz_Scroll	
+	SEC
+	SBC Horz_Scroll	
 	STA BrickBust_X
 
 	; reset brick bust X distance, no horizontal
@@ -5974,7 +6033,8 @@ PRG001_BDB4:
 	; Frame 7 is slightly lower than the others
 
 	LDA Temp_Var1
-	ADD #$04
+	CLC
+	ADC #$04
 	STA Temp_Var1
 
 PRG001_BDBB:
@@ -6019,7 +6079,8 @@ PRG001_BDDF:
 	ASL A	
 	ASL A	
 	ASL A	
-	ADD Temp_Var16	 ; Temp_Var16 = current sprite we're on
+	CLC
+	ADC Temp_Var16	 ; Temp_Var16 = current sprite we're on
 	TAY		 ; -> 'Y'
 
 	LDA Bowser_SprRAMOff,Y
@@ -6041,7 +6102,8 @@ PRG001_BDDF:
 	BNE PRG001_BE49	 ; If this sprite should not be drawn due to beging horizontally off-screen, jump to PRG001_BE49
 
 	LDA Temp_Var15	
-	ADD Temp_Var16	 ; Temp_Var16 = (Bowser's frame * 16 [Temp_Var15]) + (which sprite we're on)
+	CLC
+	ADC Temp_Var16	 ; Temp_Var16 = (Bowser's frame * 16 [Temp_Var15]) + (which sprite we're on)
 	TAX		 ; -> 'X'
 
 	; Store pattern of this Bowser sprite
@@ -6055,7 +6117,8 @@ PRG001_BDDF:
 
 	; Otherwise, use the vertically flipped lookups
 	TXA
-	ADD #(Bowser_SprYVFlipped - Bowser_SprYNotVFlipped)
+	CLC
+	ADC #(Bowser_SprYVFlipped - Bowser_SprYNotVFlipped)
 	TAX
 
 PRG001_BE1A:
@@ -6084,7 +6147,8 @@ PRG001_BE30:
 
 	; Otherwise, use the horizontally flipped lookups
 	TXA		 
-	ADD #(Bowser_SprXHFlipped - Bowser_SprXNotHFlipped)
+	CLC
+	ADC #(Bowser_SprXHFlipped - Bowser_SprXNotHFlipped)
 	TAX
 
 PRG001_BE40:
@@ -6112,7 +6176,8 @@ Bowser_CalcPlayersSide:
 	PHA
 
 	; +8 Bowser's X; calculation of which side the Player is on is offset
-	ADD #$08
+	CLC
+	ADC #$08
 	STA Objects_X,X
 	JSR Level_ObjCalcXDiffs
 
@@ -6239,7 +6304,8 @@ PRG001_BEBD:
 PRG001_BEDE:
 	LDA Objects_Y,X	; Get Bowser's Y
 	PHA			; Save it
-	ADD #16			; +16
+	CLC
+	ADC #16			; +16
 	STA Objects_Y,X	; -> Bowser's Y
 
 	LDA Objects_YHi,X	; Get Bowser's Y Hi
@@ -6355,7 +6421,8 @@ PRG001_BF4C:
 	; Store X parts of door
 	LDA DoorAppear_X,Y 
 	STA Sprite_RAM+3,X 
-	ADD #$08 
+	CLC
+	ADC #$08 
 	STA Sprite_RAM+7,X 
 
 	DEY		 ; Y-- 
@@ -6365,7 +6432,8 @@ PRG001_BF4C:
 	BEQ PRG001_BF9B	 ; If Player is not low, jump to PRG001_BF9B
  
 	LDA Player_X 
-	SUB #$e4 
+	SEC
+	SBC #$e4 
 	CMP #$08 
 	BGE PRG001_BF9B	 ; If Player is way to the right, jump to PRG001_BF9B
 

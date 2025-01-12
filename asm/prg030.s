@@ -699,7 +699,8 @@ PRG030_84D7:
 	LDA #<(Inventory_Score - Inventory_Items)	; Base offset to score from Inventory_Items
 	CPX #$00	 	; 
 	BEQ PRG030_853F	 	; If X = 0 (Player is Mario), jump to PRG030_853F
-	ADD #<(Inventory_Score2 - Inventory_Score)	 ; Otherwise, add $23
+	CLC
+	ADC #<(Inventory_Score2 - Inventory_Score)	 ; Otherwise, add $23
 
 PRG030_853F:
 	TAY		 ; Y = $1F (Mario) or $42 (Luigi)
@@ -1238,7 +1239,8 @@ PRG030_884C:
 	ASL A
 	ASL A
 	ASL A
-	SUB Horz_Scroll
+	SEC
+	SBC Horz_Scroll
 	STA Temp_Var1		; Temp_Var1 = (Map_EntTran_BVAddrL[X] << 3) - Horz_Scroll
 
 	; This goes through all system sprites and removes them as the encroaching black border hits them
@@ -1905,7 +1907,8 @@ PRG030_8BDF:
 	; Otherwise, offset initial address by $F0 (15 rows) and
 	; flag we're performing this on the lower vertical
 	LDA Map_Tile_AddrL
-	ADD #$f0	 
+	CLC
+	ADC #$f0	 
 	STA Map_Tile_AddrL	; Map_Tile_AddrL += $F0
 
 	LDA #$01
@@ -2800,7 +2803,8 @@ PRG030_9062:
 
 	CPX #$00
 	BEQ PRG030_907D	 ; If Player is Mario, jump to PRG030_907D
-	ADD #<(Inventory_Score2 - Inventory_Score)	; offset to Luigi's score
+	CLC
+	ADC #<(Inventory_Score2 - Inventory_Score)	; offset to Luigi's score
 PRG030_907D:
 	TAY		 ; Y = offset to score
 
@@ -2841,7 +2845,8 @@ PRG030_9097:
 	CPX #$00
 	BEQ PRG030_90AD	 ; If Player is Mario, jump to PRG030_90AD
 
-	ADD #<(Inventory_Items2 - Inventory_Items)	; Offset to Luigi's Score
+	CLC
+	ADC #<(Inventory_Items2 - Inventory_Items)	; Offset to Luigi's Score
 
 PRG030_90AD:
 	TAY		 ; -> 'Y'
@@ -3429,7 +3434,8 @@ PRG030_93E7:
 	LDX Player_Current
 	BEQ PRG030_93F1	 ; If current Player is Mario, jump to PRG030_93F1
 
-	ADD #<(Inventory_Score2 - Inventory_Score)	; Offset to Luigi's score
+	CLC
+	ADC #<(Inventory_Score2 - Inventory_Score)	; Offset to Luigi's score
 
 PRG030_93F1:
 	TAY		 ; Y = offset to Player's score
@@ -3709,7 +3715,8 @@ PRG030_9555:
 BoxOut_SetThisBorderVRAM:
 	; Map_EntTran_VAddrL/H += Map_EntTran_VRAMGap
 	LDA Map_EntTran_VAddrL
-	ADD Map_EntTran_VRAMGap
+	CLC
+	ADC Map_EntTran_VRAMGap
 	STA Map_EntTran_VAddrL
 	LDA Map_EntTran_VAddrH
 	ADC #$00
@@ -3779,7 +3786,8 @@ BoxOut_CalcOffsets:
 	LDA Map_EntTran_VAddrL
 	AND #$1f
 	LSR A	
-	ADD Map_EntTran_TileOff
+	CLC
+	ADC Map_EntTran_TileOff
 	STA Map_EntTran_TileOff
 
 	RTS		 ; Return
@@ -3880,7 +3888,8 @@ Bonus_Prize1:
 PRG030_9622:
 	; Offset to Luigi's Inventory
 	LDA Temp_Var16
-	ADD #<(Inventory_Items2 - Inventory_Items)
+	CLC
+	ADC #<(Inventory_Items2 - Inventory_Items)
 	STA Temp_Var16
 
 	DEY		 ; Y will equal 1 here, so this just makes Y zero
@@ -3889,7 +3898,8 @@ PRG030_9622:
 PRG030_962C:
 	TXA		 ; Input value -> 'A'
 
-	ADD Temp_Var16	 ; Add to offset value
+	CLC
+	ADC Temp_Var16	 ; Add to offset value
 	TAX		 ; -> 'X'
 
 	INC Inventory_Cards,X	 ; The intention of this is unclear!
@@ -3933,7 +3943,8 @@ PRG030_965E:
 
 	; Otherwise, offset halfway through screen
 	LDA Map_Tile_AddrL
-	ADD #$f0
+	CLC
+	ADC #$f0
 	STA Map_Tile_AddrL	; Map_Tile_AddrL += $F0
 
 PRG030_966C:
@@ -3952,7 +3963,8 @@ PRG030_966C:
 
 	TAY		 
 	LDA Map_EntTran_Tile8x8
-	ADD Temp_Var14		
+	CLC
+	ADC Temp_Var14		
 	STA Temp_Var14		
 	LDA (Temp_Var13),Y	 ; Get the specific 8x8 tile of the tile we're working on
 
@@ -3988,7 +4000,8 @@ PRG030_9695:
 
 	LDA Scroll_Temp	; A = result from loop...
 	STA Scroll_ColumnL	; Store as the current "left side" column
-	ADD #16	
+	CLC
+	ADC #16	
 	STA Scroll_ColumnR	; Scroll_ColumnR = Scroll_ColumnL + 16 (always -- 256/16 = 16 columns spanning the screen)
 	RTS			; Return!
 
@@ -3998,13 +4011,15 @@ PRG030_96A5:
 	LDA Scroll_Temp
 	BEQ PRG030_96B7	 	; If Scroll_Temp = 0, jump to PRG030_96B7
 
-	SUB #16			
+	SEC
+	SBC #16			
 	STA Scroll_Temp	; Scroll_Temp -= 16
 
 	CMP #$f0	 
 	BLT PRG030_96B7	 ; If Scroll_Temp < $F0 (would only happen if it was previously $00-$0F), jump to PRG030_96B7
 
-	SUB #17
+	SEC
+	SBC #17
 	STA Scroll_Temp	; Scroll_Temp -= 17
 
 PRG030_96B7:
@@ -4013,7 +4028,8 @@ PRG030_96B7:
 
 	; Calculate bottom tile row offset
 
-	ADD #$e0	 	; A = Scroll_Temp + $E0
+	CLC
+	ADC #$e0	 	; A = Scroll_Temp + $E0
 	BCC PRG030_96C2	 	; If no carry occurred, jump to PRG030_96C2
 
 	ADC #$10	 	; A = Scroll_Temp + $F0
@@ -4022,7 +4038,8 @@ PRG030_96C2:
 	CMP #$f0	 	
 	BLT PRG030_96CB	 	; If A < $F0, jump to PRG030_96CB
 	AND #$0f	 	; A &= $F
-	ADD #$01	 	; A += 1
+	CLC
+	ADC #$01	 	; A += 1
 
 PRG030_96CB:
 	STA Scroll_VOffsetB	; Update Scroll_VOffsetB
@@ -4491,7 +4508,8 @@ PRG030_98DE:
 
 	; Level_LayPtr_AddrL/H += 9 (i.e. move pointer to after the header)
 	LDA Level_LayPtr_AddrL
-	ADD #$09
+	CLC
+	ADC #$09
 	STA Level_LayPtr_AddrL
 	LDA Level_LayPtr_AddrH
 	ADC #$00
@@ -4519,7 +4537,8 @@ PRG030_98EE:
 	TYA		 		; A = Y
 
 	; Add current offset into Level_LayPtr_AddrL/H, moving it ahead
-	ADD Level_LayPtr_AddrL
+	CLC
+	ADC Level_LayPtr_AddrL
 	STA Level_LayPtr_AddrL
 	LDA Level_LayPtr_AddrH
 	ADC #$00	 
@@ -4775,7 +4794,8 @@ Level_RecordBlockHit:
 
 	; If junctioning, Temp_Var13 += $40
 	LDA Temp_Var13
-	ADD #$40
+	CLC
+	ADC #$40
 	STA Temp_Var13
 
 PRG030_99DC:
@@ -5035,7 +5055,8 @@ PRG030_9B10:
 	STA Vert_Scroll
 
 	; Scroll_RightUpd = $E8
-	ADD #$08
+	CLC
+	ADC #$08
 	STA Scroll_RightUpd
 
 	; Scroll_ColumnR = (Level_SizeOrig - 1) | $E0
@@ -5063,7 +5084,8 @@ PRG030_9B26:
 	JSR Scroll_ToVRAM_Apply	 ; Applies Scroll_ToVRAMHi and Scroll_ToVRAMHA updates
 
 	LDA Vert_Scroll
-	ADD #$08
+	CLC
+	ADC #$08
 	STA Vert_Scroll
 
 	CMP #$f0
@@ -5085,7 +5107,8 @@ PRG030_9B59:
 
 	; Otherwise, go to next row
 	LDA Scroll_VOffsetT
-	ADD #$10
+	CLC
+	ADC #$10
 	STA Scroll_VOffsetT
 
 PRG030_9B66:
@@ -5299,7 +5322,8 @@ PRG030_9C40:
 	STA Scroll_PatStrip+1,X
 
 	LDA Temp_Var2
-	ADD #16	
+	CLC
+	ADC #16	
 	STA Temp_Var2	 	; Temp_Var2 += 16 (next row in this column is 16 bytes down)
 	BCC PRG030_9C5A	 	; If we haven't overflowed, jump to PRG030_9C5A
 	INC Temp_Var16	; Otherwise we need to increment the upper part of the tile address
@@ -5376,7 +5400,8 @@ PRG030_9CA6:
 	AND #$c0	 	; Set attributes based on the "range" of the tile, like palette 0 for tiles 00-3f, palette 1 for tiles 40-7f, etc.
 	STA Scroll_ColorStrip,X	; Store this into the attribute strip
 	TYA		 	; A = Y (the tile offset)
-	ADD #16		 	; A += 16 (every tile row is 16 bytes)
+	CLC
+	ADC #16		 	; A += 16 (every tile row is 16 bytes)
 	TAY		 	; Y = A
 	BCC PRG030_9CB5	 	; If we didn't overflow, jump to PRG030_9CB5
 	INC Temp_Var16	; Increment the high byte
@@ -5473,7 +5498,8 @@ VScroll_CalcPatternVRAMAddr:
 	LSR A
 	LSR A
 	LSR A
-	ADD #$20
+	CLC
+	ADC #$20
 	STA Scroll_ToVRAMHi
 
 	; Calculate VRAM Low into nametable for this offset
@@ -5489,7 +5515,8 @@ VScroll_CalcPatternVRAMAddr:
 
 	; +32 bytes to offset to reach next tile row in VRAM
 	LDA Scroll_LastOff8
-	ADD #32
+	CLC
+	ADC #32
 	STA Scroll_LastOff8
 
 PRG030_9D3E:
@@ -5596,7 +5623,8 @@ VScroll_CalcAttributeVRAMAddr:
 	AND #$c0
 	LSR A
 	LSR A
-	ADD #$c0
+	CLC
+	ADC #$c0
 	STA Scroll_LastAttr
 
 	LDA Scroll_VOffsetT,X
@@ -5605,7 +5633,8 @@ VScroll_CalcAttributeVRAMAddr:
 
 	; Scroll_LastAttr += 8
 	LDA Scroll_LastAttr
-	ADD #$08
+	CLC
+	ADC #$08
 	STA Scroll_LastAttr
 
 PRG030_9DBB:
@@ -5640,7 +5669,8 @@ Scroll_Do_AttrRow:
 	BNE PRG030_9DDE
 
 	LDA Temp_Var9
-	ADD #$10
+	CLC
+	ADC #$10
 	STA Temp_Var9 
 
 PRG030_9DDE:
@@ -5655,7 +5685,8 @@ PRG030_9DE4:
 
 	; Y -= 15 (previous row; 15 because VScroll_TileQuads2Attrs already subtracted 1)
 	TYA
-	SUB #$0f
+	SEC
+	SBC #$0f
 	TAY
 
 	JSR VScroll_TileQuads2Attrs	 ; Create attribute bits out of tile values
@@ -5809,7 +5840,8 @@ LevelJct_GetVScreenH:
 
 PRG030_9E8A:
 	; Add $10 and roll over 'Y' (Considered in the lower vertical half)
-	ADD #$10
+	CLC
+	ADC #$10
 	INY	
 
 PRG030_9E8E:
