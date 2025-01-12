@@ -35,26 +35,26 @@
 .importzp Objects_XVel, SlotIndexBackup, Player_HaltGame, Player_YVel, Objects_YVel, Player_InAir
 .importzp Objects_DetStat, Level_Tile, Player_Suit, Player_FlipBits, Player_IsDying
 ; BSS imports (low RAM and cart SRAM)
-.importzp Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, ObjGroupRel_Idx, InvFlip_VAddrHi, InvFlip_Frame
-.importzp InvFlip_Counter, InvStart_Item, Coins_Earned, Objects_Var7, SndCur_Level1, Sound_QPlayer
-.importzp Sound_QLevel1, Sound_QLevel2, Sound_QMusic1, Objects_Timer, Objects_Timer2, Level_BlockChgXHi
-.importzp Level_BlockChgXLo, Level_BlockChgYHi, Level_BlockChgYLo, Level_BlkBump, Level_BlkBump_XHi
-.importzp Level_BlkBump_XLo, Level_BlkBump_YHi, Level_BlkBump_YLo, Level_VertScrollH, Level_VertScroll
-.importzp Player_AboveTop, Player_Flip, Player_StarInv, Player_HaltTick, Player_EndLevel, Counter_7to0
-.importzp Level_ChgTileEvent, Level_NoStopCnt, Level_PSwitchCnt, Player_HitCeiling, Player_IsDucking
-.importzp Player_QueueSuit, Player_Statue, Player_Bounce, Player_BounceDir, Player_OffScreen
-.importzp Player_Behind_En, Player_Behind, Player_MushFall, Player_SprOff, Object_SprRAM, SpecialObj_YLo
-.importzp SpecialObj_XLo, SpecialObj_YVel, SpecialObj_XVel, Inventory_Open, Level_TimerEn, Kill_Tally
-.importzp Level_AScrlConfig, Level_Tile_GndR, Object_TileFeet, Object_TileWall, Objects_SprHVis
-.importzp Objects_State, Objects_Frame, Level_ObjectID, Objects_FlipBits, Objects_SprVVis, Objects_Var1
-.importzp Objects_Var2, Objects_Timer3, SpecialObj_Data, ToadTalk_VH, ToadTalk_VL, ToadTalk_CPos
-.importzp Map_ReturnStatus, PatTable_BankSel, Map_Prev_XOff, Map_Prev_XHi, Player_Current, Player_Lives
-.importzp Object_VelCarry, Objects_Var6, LRBounce_Vel, Palette_Buffer, Map_WasInPipeway, EndCard_Flag
-.importzp Map_Entered_Y, Map_Entered_XHi, Map_Entered_X, Player_NoSlopeStick, PlayerProj_ID
-.importzp Objects_HitCount, Inventory_Items, Inventory_Cards, Inventory_Items2, Inventory_Cards2
-.importzp Pal_Data, Object_TileFeet2, Object_TileWall2, ObjTile_DetYHi, ObjTile_DetYLo, ObjTile_DetXHi
-.importzp ObjTile_DetXLo, Splash_Counter, Splash_Y, Splash_X, Splash_NoScrollY, SpecialObj_ID
-.importzp SpecialObj_YHi, Objects_SprAttr, Objects_IsGiant
+.import Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, ObjGroupRel_Idx, InvFlip_VAddrHi, InvFlip_Frame
+.import InvFlip_Counter, InvStart_Item, Coins_Earned, Objects_Var7, SndCur_Level1, Sound_QPlayer
+.import Sound_QLevel1, Sound_QLevel2, Sound_QMusic1, Objects_Timer, Objects_Timer2, Level_BlockChgXHi
+.import Level_BlockChgXLo, Level_BlockChgYHi, Level_BlockChgYLo, Level_BlkBump, Level_BlkBump_XHi
+.import Level_BlkBump_XLo, Level_BlkBump_YHi, Level_BlkBump_YLo, Level_VertScrollH, Level_VertScroll
+.import Player_AboveTop, Player_Flip, Player_StarInv, Player_HaltTick, Player_EndLevel, Counter_7to0
+.import Level_ChgTileEvent, Level_NoStopCnt, Level_PSwitchCnt, Player_HitCeiling, Player_IsDucking
+.import Player_QueueSuit, Player_Statue, Player_Bounce, Player_BounceDir, Player_OffScreen
+.import Player_Behind_En, Player_Behind, Player_MushFall, Player_SprOff, Object_SprRAM, SpecialObj_YLo
+.import SpecialObj_XLo, SpecialObj_YVel, SpecialObj_XVel, Inventory_Open, Level_TimerEn, Kill_Tally
+.import Level_AScrlConfig, Level_Tile_GndR, Object_TileFeet, Object_TileWall, Objects_SprHVis
+.import Objects_State, Objects_Frame, Level_ObjectID, Objects_FlipBits, Objects_SprVVis, Objects_Var1
+.import Objects_Var2, Objects_Timer3, SpecialObj_Data, ToadTalk_VH, ToadTalk_VL, ToadTalk_CPos
+.import Map_ReturnStatus, PatTable_BankSel, Map_Prev_XOff, Map_Prev_XHi, Player_Current, Player_Lives
+.import Object_VelCarry, Objects_Var6, LRBounce_Vel, Palette_Buffer, Map_WasInPipeway, EndCard_Flag
+.import Map_Entered_Y, Map_Entered_XHi, Map_Entered_X, Player_NoSlopeStick, PlayerProj_ID
+.import Objects_HitCount, Inventory_Items, Inventory_Cards, Inventory_Items2, Inventory_Cards2
+.import Pal_Data, Object_TileFeet2, Object_TileWall2, ObjTile_DetYHi, ObjTile_DetYLo, ObjTile_DetXHi
+.import ObjTile_DetXLo, Splash_Counter, Splash_Y, Splash_X, Splash_NoScrollY, SpecialObj_ID
+.import SpecialObj_YHi, Objects_SprAttr, Objects_IsGiant
 ; imports from PRG000
 .import SprRamOffsets, DoTimeBonus, ObjectObject_Intersect, Object_CalcBoundBox, Object_AttrFlags
 .import Object_CalcBoundBox2, Score_Get100PlusPts, Object_DetermineHorzVis, Object_DetermineHorzVisY
@@ -6030,10 +6030,10 @@ PRG002_BDF8:
 	LDY #$00	 ; Otherwise, Y = 0
 
 PRG002_BE07:
-	CPY #(Inventory_Cards2 - Inventory_Cards + $03)
+	CPY #<(Inventory_Cards2 - Inventory_Cards + $03)
 	BNE PRG002_BE0D	 ; If Y <> Luigi's last card index, jump to PRG002_BE0D
 
-	LDY #(Inventory_Cards2 - Inventory_Cards)
+	LDY #<(Inventory_Cards2 - Inventory_Cards)
 PRG002_BE0D:
 	TYA
 	STA Objects_Var2,X	 ; Update Var2
@@ -6094,7 +6094,7 @@ PRG002_BE2E:
 Player_GetInventoryOffset:
 	LDY Player_Current
 	BEQ PRG002_BE4B	
-	LDY #(Inventory_Items2 - Inventory_Items)
+	LDY #<(Inventory_Items2 - Inventory_Items)
 PRG002_BE4B:
 	RTS		 ; Return
 
