@@ -11,6 +11,67 @@
 ; This source file last updated: 2011-11-18 21:50:34.000000000 -0600
 ; Distribution package date: Fri Apr  6 23:46:16 UTC 2012
 ;---------------------------------------------------------------------------
+.include "../inc/macros.inc"
+.include "../inc/defines.inc"
+
+; ZP imports
+.importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var8
+.importzp Temp_Var9, Temp_Var10, Temp_Var15, Temp_Var16, Map_EnterViaID, Level_LayPtr_AddrL
+.importzp Level_LayPtr_AddrH, Map_Tile_AddrL, Map_Tile_AddrH, Level_ObjPtr_AddrL, Level_ObjPtr_AddrH
+.importzp World_Map_Y, World_Map_XHi, World_Map_X, Map_UnusedPlayerVal, Map_UnusedPlayerVal2
+.importzp World_Map_Tile, Level_Tile
+; BSS imports (low RAM and cart SRAM)
+.import Map_Warp_PrevWorld, Bonus_GameHost, Bonus_GameType, Bonus_KTPrize, Level_MusicQueue, Level_Tileset
+.import Player_Current, World_Num, World_EnterState, PalSel_Tile_Colors, PalSel_Obj_Colors
+.import Player_FallToKing, Tile_Mem, Map_Entered_Y, Map_Entered_XHi, Map_Entered_X
+.import Map_Previous_UnusedPVal2, Map_Completions, Tile_AttrTable, Level_LayPtrOrig_AddrL
+.import Level_LayPtrOrig_AddrH, Level_ObjPtrOrig_AddrL, Level_ObjPtrOrig_AddrH
+; imports from PRG006
+.import W8BCO, W8T2O, W8P6O, W802O, W80FO, W801O, W8P3O, W8H1O, W8H2O, W8H3O, W8P5O, W8P2O, W8BSO, W8T1O
+.import W8P4O, W8HBO, W8P1O, W7I2O, W7I2O, W7F2O, W709O, W705O, W705O, W708O, W7P8O, W7P6O, W707O, W706O
+.import W703O, W7P4O, W7P3O, W702O, W704O, W7I1O, W7P7O, W7P2O, W701O, W7F1O, W7P1O, W7P5O, W610O, W6F3O
+.import W609O, W605O, W607O, W604O, W608O, W6F2O, W606O, W6P2O, W603O, W6F1O, W601O, W6P1O, W602O, W506O
+.import W508O, W509O, W507O, W504O, W505O, W5TDO, W5F1O, W5T1O, W5P1O, W501O, W503O, W502O, W401O, W404O
+.import W402O, W403O, W4F1O, W405O, W4P2O, W4F2O, W46AO, W4P1O, W4HBO, W3P3O, W309O, W308O, W307O, W306O
+.import W3P2O, W305O, W3P1O, W301O, W3F1O, W304O, W302O, W303O, W3HBO, W2PYO, W205O, W2FBO, W2STO, W204O
+.import W2P1O, W20FO, W201O, W203O, W202O, W2HBO, W106O, W105O, KINGO, W10FO, W104O, W1UNO, W103O, W102O
+.import W1HBO, W101O
+.import W705_UnderO, CoinShipO, W8AirshipO, W7AirshipO, W6AirshipO, W5AirshipO, W4AirshipO, W3AirshipO
+.import W2AirshipO, W1AirshipO, Empty_ObjLayout
+; imports from PRG013 (Under)
+.import W802L, PJFRL, PJFLL, W608L, PJELL, PJERL, W502L, PJCRL, PJBRL, PJCLL, W308L, PJBLL, PJDLL, PJDRL
+.import W304L, PJALL, PJARL, W105L
+; imports from PRG015 (Plains)
+.import W801L, W705L, W708L, W707L, W706L, W704L, W701L, W7HBA, W501L, W503L, W46AL, W309L, W307L, W3HBB
+.import W303L, W3HBC, W3HBA, W103L, W101L
+.import W705_UnderL
+; imports from PRG016 (Hills)
+.import W703L, W5HBB, W5HBA, W2STL, W202L, W1HBB, W102L, W1HBA
+; imports from PRG017 (High&Ice)
+.import W610L, W609L, W605L, W607L, W604L, W6F2L, W606L, W603L, W601L, W6HBA, W602L, W6HBB, W505L, W306L
+.import W302L, W106L, W104L, W1UNL
+; imports from PRG018 (WatToPM)
+.import W305L, W301L, TOADL
+.import TOAD_SpecL
+; imports from PRG019 (SkyGiPl)
+.import W8H1L, W8H2L, W8H3L, W7I2L, W7I1L, W506L, W508L, W509L, W507L, W504L, W5HBC, W5HBD, W5TDL, W401L
+.import W404L, W402L, W403L, W405L, W4HBA
+; imports from PRG020 (Desert)
+.import W709L, W702L, W2PYL, W205L, W204L, W20FL, W201L, W203L, W2HBA
+; imports from PRG021 (Fortress)
+.import W8BCL, W80FL, W7F2L, W7F1L, W6F3L, W6F1L, W5F1L, W5T1L, W4F1L, W4F2L, W3F1L, W10FL, KNG7L, KNG6L
+.import KNG5L, KNG4L, KNG3L, KNG2L, KNG1L
+; imports from PRG022
+.import Bonus_LayoutData
+; imports from PRG023 (Airship)
+.import W8T2L, W8BSL, W8T1L
+.import CoinShipL, W8AirshipL, W7AirshipL, W6AirshipL, W5AirshipL, W4AirshipL, W3AirshipL, W2AirshipL
+.import W1AirshipL
+; imports from PRG030
+.import Tile_Mem_Addr, Tile_Mem_ClearA, Tile_Mem_ClearB
+; imports from PRG031
+.import DynJump
+
 .ifdef NES
 .segment "PRG012"
 .endif
@@ -137,7 +198,7 @@ Map_Complete_Bits:
 
 Map_Removable_Tiles:
 	.byte TILE_ROCKBREAKH, TILE_ROCKBREAKV, TILE_LOCKVERT, TILE_FORT, TILE_ALTFORT, TILE_ALTLOCK, TILE_LOCKHORZ, TILE_RIVERVERT
-MRT_END	; marker to calculate size -- allows user expansion of Map_Removable_Tiles
+MRT_END:	; marker to calculate size -- allows user expansion of Map_Removable_Tiles
 
 Map_RemoveTo_Tiles:
 	; These specify tiles that coorespond to the tile placed when the above is removed
@@ -149,7 +210,7 @@ Map_Completable_Tiles:
 	; These tiles are simply marked with the M/L
 	; NOTE: The Dancing Flower is a "completable tile"...
 	.byte TILE_TOADHOUSE, TILE_SPADEBONUS, TILE_HANDTRAP, TILE_DANCINGFLOWER, TILE_ALTTOADHOUSE
-MCT_END	; marker to calculate size -- allows user expansion of Map_Completable_Tiles
+MCT_END:	; marker to calculate size -- allows user expansion of Map_Completable_Tiles
 
 Map_CompleteByML_Tiles:
 	.byte TILE_MARIOCOMP_P, TILE_LUIGICOMP_P, TILE_MARIOCOMP_O, TILE_LUIGICOMP_O
@@ -179,7 +240,8 @@ PRG012_A462:
 	LDA #$02	 
 	JSR Tile_Mem_ClearB
 	TYA		 
-	ADD #$10	 
+	CLC
+	ADC #$10	 
 	TAY		 
 	LDA #$4e	 
 	JSR Tile_Mem_ClearB
@@ -189,21 +251,22 @@ PRG012_A462:
 
 	; After these two, Map_Tile_Addr = Tile_Mem_Addr + $110
 	LDA Tile_Mem_Addr
-	ADD #$10	 
-	STA <Map_Tile_AddrL
+	CLC
+	ADC #$10	 
+	STA Map_Tile_AddrL
 
 	LDA Tile_Mem_Addr+1
 	ADC #$01	 
-	STA <Map_Tile_AddrH
+	STA Map_Tile_AddrH
 
 	; Temp_Var1/2 will form an address pointing at the beginning of this world's map tile layout...
 	LDA World_Num
 	ASL A
 	TAY		 ; Y = World_Num << 1 (index into Map_Tile_Layouts)
 	LDA Map_Tile_Layouts,Y	
-	STA <Temp_Var1		
+	STA Temp_Var1		
 	LDA Map_Tile_Layouts+1,Y
-	STA <Temp_Var2		
+	STA Temp_Var2		
 
 	; This loop loads the layout data into the Tile_Mem
 	; Note that it COULD terminate early via an $FF
@@ -211,10 +274,10 @@ PRG012_A462:
 PRG012_A496:
 	LDY #$00	 	; Y = 0
 PRG012_A498:
-	LDA [Temp_Var1],Y	; Get byte from tile layout
+	LDA (Temp_Var1),Y	; Get byte from tile layout
 	CMP #$ff	 
 	BEQ PRG012_A4C1	 	; If it's $FF (terminator), jump to PRG012_A4C1
-	STA [Map_Tile_AddrL],Y	; Copy byte to RAM copy of tiles
+	STA (Map_Tile_AddrL),Y	; Copy byte to RAM copy of tiles
 	INY		 	; Y++
 
 	; 144 supports a 16x9 map screen (the left and right columns
@@ -225,22 +288,24 @@ PRG012_A498:
 	; This does a 16-bit addition of 144 to the
 	; address stored at [Temp_Var2][Temp_Var1]
 	TYA
-	ADD <Temp_Var1	
-	STA <Temp_Var1	
-	LDA <Temp_Var2	
+	CLC
+	ADC Temp_Var1	
+	STA Temp_Var1	
+	LDA Temp_Var2	
 	ADC #$00	
-	STA <Temp_Var2
+	STA Temp_Var2
 
 	; The tile layout for the map actually has a lot of
 	; unused vertical space (used for level layout) so
 	; this needs to add a significant amount more ($1b0)
 	; to the Map_Tile_Addr
-	LDA <Map_Tile_AddrL
-	ADD #$b0	
-	STA <Map_Tile_AddrL
-	LDA <Map_Tile_AddrH
+	LDA Map_Tile_AddrL
+	CLC
+	ADC #$b0	
+	STA Map_Tile_AddrL
+	LDA Map_Tile_AddrH
 	ADC #$01
-	STA <Map_Tile_AddrH
+	STA Map_Tile_AddrH
 	JMP PRG012_A496	 	; Do next 144 bytes...
 
 PRG012_A4C1:
@@ -264,15 +329,15 @@ PRG012_A4C9:
 	STA PalSel_Obj_Colors	 	; Store which colors to use on map objects
 
 	LDY #$00	
-	STY <Temp_Var1	; Temp_Var1 = $00 (current completion column we're checking)
+	STY Temp_Var1	; Temp_Var1 = $00 (current completion column we're checking)
 PRG012_A4E5:
 	LDA #$80	
-	STA <Temp_Var2	; Temp_Var2 = $80 (current completion bit/row we're checking)
+	STA Temp_Var2	; Temp_Var2 = $80 (current completion bit/row we're checking)
 
 PRG012_A4E9:
-	LDY <Temp_Var1		; Get current offset
+	LDY Temp_Var1		; Get current offset
 	LDA Map_Completions,Y	; Get this "Map Completion" value
-	AND <Temp_Var2	 	; Check current completion bit
+	AND Temp_Var2	 	; Check current completion bit
 	BNE PRG012_A4F5	 	; If this row has a completion on this bit, jump to PRG012_A4F5
 	JMP PRG012_A585	 	; Otherwise, jump to PRG012_A585
 
@@ -292,16 +357,16 @@ PRG012_A4F5:
 
 	; This pulls the correct starting address for this map "screen"
 	LDA Tile_Mem_Addr,X
-	STA <Map_Tile_AddrL
+	STA Map_Tile_AddrL
 	LDA Tile_Mem_Addr+1,X
-	STA <Map_Tile_AddrH
-	INC <Map_Tile_AddrH	; Because map is always one the "lower" screen (as far as tile memory goes)
+	STA Map_Tile_AddrH
+	INC Map_Tile_AddrH	; Because map is always one the "lower" screen (as far as tile memory goes)
 
 	; The following loop determines what "index" cooresponds to this completion bit
 	; that we're working with (only one!)
 	LDX #$07		; X = 7
 PRG012_A50A:
-	LDA <Temp_Var2		; Current complete bit
+	LDA Temp_Var2		; Current complete bit
 	CMP Map_Complete_Bits,X	
 	BEQ PRG012_A514	 	; If bitvalue matched, jump out of loop
 	DEX		 	; X--
@@ -315,19 +380,20 @@ PRG012_A514:
 	ASL A
 	ASL A
 	ASL A		 ; A = X * 16
-	ADD #$10	 ; A += 16  (Thus: 16, 32, 48, 64, 80, 96, 112, 144; each row is another 16 bytes!)
-	STA <Temp_Var3	 ; Store result into Temp_Var3
+	CLC
+	ADC #$10	 ; A += 16  (Thus: 16, 32, 48, 64, 80, 96, 112, 144; each row is another 16 bytes!)
+	STA Temp_Var3	 ; Store result into Temp_Var3
 
 	TYA		 ; A = Y (the current "column" of completion we're working on)
 	AND #$0f	 ; Make it relative within this screen only (0-15)
-	ORA <Temp_Var3	 ; Merge with previous result; now its a direct offset within this screen to this row/col
+	ORA Temp_Var3	 ; Merge with previous result; now its a direct offset within this screen to this row/col
 	TAY		 ; Y now holds the aforementioned offset
 
 PRG012_A524:
-	LDA [Map_Tile_AddrL],Y	 ; Get this tile
+	LDA (Map_Tile_AddrL),Y	 ; Get this tile
 
-	STY <Temp_Var5	 ; Y -> Temp_Var5
-	STA <World_Map_Tile	 ; -> World_Map_Tile
+	STY Temp_Var5	 ; Y -> Temp_Var5
+	STA World_Map_Tile	 ; -> World_Map_Tile
 
 	; Get tile quadrant -> 'X'
 	AND #$c0
@@ -340,7 +406,7 @@ PRG012_A524:
 	; Check if this tile is one of the completable event tiles
 	; $50 = Toad house  $E8 = Spade panel  $E6 = Hand trap (works anywhere!)  $BD = Enterable flower??  $E0 = Red Toad House
 	LDY #(MCT_END-Map_Completable_Tiles-1)	 	; Y = 4 
-	LDA <World_Map_Tile	; A = tile
+	LDA World_Map_Tile	; A = tile
 PRG012_A535:
 	CMP Map_Completable_Tiles,Y	
 	BEQ PRG012_A570	 ; If tile match, jump to PRG012_A570
@@ -372,19 +438,20 @@ PRG031_A556:
 	JMP PRG031_A581			; Jump to PRG031_A581
 
 PRG012_A55C:
-	LDA <Temp_Var2
+	LDA Temp_Var2
 	CMP #$01
 	BNE PRG012_A585	 ; If Temp_Var2 (current completion bit) <> 1, jump to PRG012_A585
 
 	; Completion bit 1 appears one row lower than the other adjacent bits
 
-	LDY <Temp_Var5
+	LDY Temp_Var5
 	CPY #$90
 	BGE PRG012_A585	 ; If Temp_Var5 (offset to tile) >= $90, jump to PRG012_A585
 
 	; Y += 16 (next tile row)
 	TYA
-	ADD #16
+	CLC
+	ADC #16
 	TAY
 
 	JMP PRG012_A524	 ; Jump to PRG012_A524
@@ -393,30 +460,30 @@ PRG012_A570:
 	; Just about any "flippable" tile goes here, produces M/L
 	TXA
 	ASL A
-	STA <Temp_Var4	 ; Temp_Var4 = X (tile quadrant) << 1
+	STA Temp_Var4	 ; Temp_Var4 = X (tile quadrant) << 1
 
-	LDA <Temp_Var1
+	LDA Temp_Var1
 	AND #$40
 	BEQ PRG012_A57C	 ; If this is completion bit 6, jump to PRG012_A57C
 
-	INC <Temp_Var4		 ; Otherwise, Temp_Var4++
+	INC Temp_Var4		 ; Otherwise, Temp_Var4++
 PRG012_A57C:
-	LDX <Temp_Var4		 ; X = (tile quadrant * 2) + 0/1
+	LDX Temp_Var4		 ; X = (tile quadrant * 2) + 0/1
 
 	LDA Map_CompleteByML_Tiles,X	; Get proper completion tile
 
 PRG031_A581:
-	LDY <Temp_Var5		 ; Y = Temp_Var5 (offset to tile)
-	STA [Map_Tile_AddrL],Y	 ; Set proper completion tile!
+	LDY Temp_Var5		 ; Y = Temp_Var5 (offset to tile)
+	STA (Map_Tile_AddrL),Y	 ; Set proper completion tile!
 
 PRG012_A585:
-	LSR <Temp_Var2	 ; Temp_Var2 >>= 1
+	LSR Temp_Var2	 ; Temp_Var2 >>= 1
 	BEQ PRG012_A58C	 ; If we've finished all row completion bits, jump to PRG012_A58C
 	JMP PRG012_A4E9	 ; Jump to PRG012_A4E9
 
 PRG012_A58C:
-	INC <Temp_Var1	 ; Temp_Var1++
-	LDA <Temp_Var1	 
+	INC Temp_Var1	 ; Temp_Var1++
+	LDA Temp_Var1	 
 	CMP #$80	 
 	BEQ PRG012_A597	 ; If Temp_Var1 = 80 (completed through all column bytes), jump to PRG012_A597 (RTS)
 	JMP PRG012_A4E5	 ; Otherwise, jump back around again...
@@ -433,15 +500,15 @@ Map_Tile_Layouts:
 	; Each world's layout; very simple data, specifies a linear list of tile bytes.
 	; Every 144 bytes form a 16x9 single screen of world map.
 	; The stream is terminated by $FF
-W1_Map_Layout:	.include "PRG/maps/World1L"
-W2_Map_Layout:	.include "PRG/maps/World2L"
-W3_Map_Layout:	.include "PRG/maps/World3L"
-W4_Map_Layout:	.include "PRG/maps/World4L"
-W5_Map_Layout:	.include "PRG/maps/World5L"
-W6_Map_Layout:	.include "PRG/maps/World6L"
-W7_Map_Layout:	.include "PRG/maps/World7L"
-W8_Map_Layout:	.include "PRG/maps/World8L"
-W9_Map_Layout:	.include "PRG/maps/World9L"
+W1_Map_Layout:	.include "maps/World1L.asm"
+W2_Map_Layout:	.include "maps/World2L.asm"
+W3_Map_Layout:	.include "maps/World3L.asm"
+W4_Map_Layout:	.include "maps/World4L.asm"
+W5_Map_Layout:	.include "maps/World5L.asm"
+W6_Map_Layout:	.include "maps/World6L.asm"
+W7_Map_Layout:	.include "maps/World7L.asm"
+W8_Map_Layout:	.include "maps/World8L.asm"
+W9_Map_Layout:	.include "maps/World9L.asm"
 
 ; FIXME: Anybody want to claim this? Is this part of the above?
 ; $B0F3
@@ -472,110 +539,112 @@ PRG012_B10A:
 
 	; Temp_Var2/1 form an address to Map_ByRowType
 	LDA Map_ByRowType,Y	 
-	STA <Temp_Var1		 
+	STA Temp_Var1		 
 	LDA Map_ByRowType+1,Y	 
-	STA <Temp_Var2		 
+	STA Temp_Var2		 
 
 	; Temp_Var4/3 form an address to Map_ByScrCol
 	LDA Map_ByScrCol,Y	 
-	STA <Temp_Var3		 
+	STA Temp_Var3		 
 	LDA Map_ByScrCol+1,Y	 
-	STA <Temp_Var4		 
+	STA Temp_Var4		 
 
 	; Temp_Var6/5 form an address to Map_ObjSets
 	LDA Map_ObjSets,Y	 
-	STA <Temp_Var5		 
+	STA Temp_Var5		 
 	LDA Map_ObjSets+1,Y	 
-	STA <Temp_Var6		 
+	STA Temp_Var6		 
 
 	; Temp_Var8/7 form an address to Map_LevelLayouts
 	LDA Map_LevelLayouts,Y	 
-	STA <Temp_Var7		 
+	STA Temp_Var7		 
 	LDA Map_LevelLayouts+1,Y	 
-	STA <Temp_Var8		 
+	STA Temp_Var8		 
 
 	; Temp_Var10/9 form an address to Map_ByXHi_InitIndex
 	LDA Map_ByXHi_InitIndex,Y	 
-	STA <Temp_Var9		 
+	STA Temp_Var9		 
 	LDA Map_ByXHi_InitIndex+1,Y	 
-	STA <Temp_Var10		 
+	STA Temp_Var10		 
 
 
 	LDX Player_Current
-	LDY <World_Map_XHi,X
-	LDA [Temp_Var9],Y	; get initial index based on the current "screen" of the map the Player was on
+	LDY World_Map_XHi,X
+	LDA (Temp_Var9),Y	; get initial index based on the current "screen" of the map the Player was on
 	TAY		 	; Y = the aforementioned index
 
 	LDA #$00
-	STA <Temp_Var15		; Temp_Var15 = 0 (will be a page change value)
+	STA Temp_Var15		; Temp_Var15 = 0 (will be a page change value)
 
 	; Now we search, beginning from the specified index, and try to match the row the Player
 	; is on with the upper 4 bits of the value we get from the next table
 	; The index remains in the 'Y' register at completion
 	LDX Player_Current
 PRG012_B150:
-	LDA [Temp_Var1],Y	
+	LDA (Temp_Var1),Y	
 	AND #$f0	 	; Specifically only consider the "row" this specifies
-	CMP <World_Map_Y,X	; Compare to the Player's Y position on the map
+	CMP World_Map_Y,X	; Compare to the Player's Y position on the map
 	BEQ PRG012_B162	 	; If this byte matches your Y position on the map, jump to PRG012_B162
 	INY		 	; Y++
 	BNE PRG012_B150	 	; While Y <> 0, loop!
 
 	; Didn't find any matching position!  
-	INC <Temp_Var2		; Move to the next address page
-	INC <Temp_Var15		; Temp_Var15++ (to acknowledge the page change for the next part)
+	INC Temp_Var2		; Move to the next address page
+	INC Temp_Var15		; Temp_Var15++ (to acknowledge the page change for the next part)
 	JMP PRG012_B150	 	; Try again...
 
 PRG012_B162:
 
 	; Add the page change (if any) to Temp_Var4 (applies same page change here)
-	LDA <Temp_Var4
-	ADD <Temp_Var15
-	STA <Temp_Var4
+	LDA Temp_Var4
+	CLC
+	ADC Temp_Var15
+	STA Temp_Var4
 
 	LDA #$00
-	STA <Temp_Var15		; Temp_Var15 = 0
+	STA Temp_Var15		; Temp_Var15 = 0
 
 	; Temp_Var9 will now be a value where the current "column" on the map is 
 	; in the lower 4 bits and the current "screen" (XHi) is in the upper bits.
-	LDA <World_Map_X,X
+	LDA World_Map_X,X
 	LSR A		 
 	LSR A		 
 	LSR A		 
 	LSR A		 
-	STA <Temp_Var9		
-	LDA <World_Map_XHi,X
+	STA Temp_Var9		
+	LDA World_Map_XHi,X
 	ASL A		 
 	ASL A		 
 	ASL A		 
 	ASL A		 
-	ORA <Temp_Var9
+	ORA Temp_Var9
 
 	; 'Y' was set by the last loop...
 PRG012_B17D:
-	CMP [Temp_Var3],Y	; See if this position matches
+	CMP (Temp_Var3),Y	; See if this position matches
 	BEQ PRG012_B18B	 	; If this matches, jump to PRG012_B18B
 	INY			; Y++
 	BNE PRG012_B17D	 	; While Y <> 0, loop!
 
 	; Didn't find any matching position!  
-	INC <Temp_Var4		; Move to the next address page
-	INC <Temp_Var15		; Temp_Var15++ (to acknowledge the page change for the next part)
+	INC Temp_Var4		; Move to the next address page
+	INC Temp_Var15		; Temp_Var15++ (to acknowledge the page change for the next part)
 	JMP PRG012_B17D	 	; Try again...
 
 PRG012_B18B:
 
 	; Add the page change (if any) to Temp_Var2 (applies same page change here)
-	LDA <Temp_Var2	
-	ADD <Temp_Var15	
-	STA <Temp_Var2	
+	LDA Temp_Var2	
+	CLC
+	ADC Temp_Var15	
+	STA Temp_Var2	
 
 	LDA World_Num
 	CMP #$08	
 	BNE PRG012_B1A1	 	; If World_Num <> 8 (World 9), jump to PRG012_B1A1
 
 	; World 9 bypass
-	LDA [Temp_Var1],Y	; Just goes to get the original value "type" ID, which in this case is world to enter
+	LDA (Temp_Var1),Y	; Just goes to get the original value "type" ID, which in this case is world to enter
 	AND #$0f
 
 	; Destination world is fed back out through Map_Warp_PrevWorld
@@ -583,14 +652,15 @@ PRG012_B18B:
 	RTS		 ; Return
 
 PRG012_B1A1:
-	LDA [Temp_Var1],Y	
+	LDA (Temp_Var1),Y	
 	AND #$0f	 	; Get "type" bits 
 	STA Level_Tileset	; Store into Level_Tileset
 
 	; Add the page change (if any) to Temp_Var6 (applies same page change here)
-	LDA <Temp_Var6
-	ADD <Temp_Var15
-	STA <Temp_Var6
+	LDA Temp_Var6
+	CLC
+	ADC Temp_Var15
+	STA Temp_Var6
 
 	TYA		 
 	TAX		 ; X = Y (our sought after offset)
@@ -599,25 +669,26 @@ PRG012_B1A1:
 	BCC PRG012_B1BB	 ; Somewhat excessive skip to not add carry if we don't need to :P
 
 	; Apply carry to Temp_Var6
-	LDA <Temp_Var6
+	LDA Temp_Var6
 	ADC #$00	
-	STA <Temp_Var6	
+	STA Temp_Var6	
 
 PRG012_B1BB:
 
 	; Store address of object set into Level_ObjPtr_AddrL/H and Level_ObjPtrOrig_AddrL/H
-	LDA [Temp_Var5],Y	 
-	STA <Level_ObjPtr_AddrL
+	LDA (Temp_Var5),Y	 
+	STA Level_ObjPtr_AddrL
 	STA Level_ObjPtrOrig_AddrL	 
 	INY		 
-	LDA [Temp_Var5],Y	 
-	STA <Level_ObjPtr_AddrH		 
+	LDA (Temp_Var5),Y	 
+	STA Level_ObjPtr_AddrH		 
 	STA Level_ObjPtrOrig_AddrH	 
 
 	; Add the page change (if any) to Temp_Var6 (applies same page change here)
-	LDA <Temp_Var8	
-	ADD <Temp_Var15	
-	STA <Temp_Var8	
+	LDA Temp_Var8	
+	CLC
+	ADC Temp_Var15	
+	STA Temp_Var8	
 
 	TXA
 	ASL A		 
@@ -625,23 +696,23 @@ PRG012_B1BB:
 	BCC PRG012_B1DC	 ; Somewhat excessive skip to not add carry if we don't need to :P
 
 	; Apply carry to Temp_Var8
-	LDA <Temp_Var8
+	LDA Temp_Var8
 	ADC #$00	
-	STA <Temp_Var8	
+	STA Temp_Var8	
 
 PRG012_B1DC:
-	STY <Temp_Var16	 ; Keep index in Temp_Var16
+	STY Temp_Var16	 ; Keep index in Temp_Var16
 
 	; Store address of object set into Level_LayPtr_AddrL/H and Level_LayPtrOrig_AddrL/H
-	LDA [Temp_Var7],Y	 
-	STA <Level_LayPtr_AddrL		 
+	LDA (Temp_Var7),Y	 
+	STA Level_LayPtr_AddrL		 
 	STA Level_LayPtrOrig_AddrL	 
 	INY		 
-	LDA [Temp_Var7],Y	 
-	STA <Level_LayPtr_AddrH		 
+	LDA (Temp_Var7),Y	 
+	STA Level_LayPtr_AddrH		 
 	STA Level_LayPtrOrig_AddrH	 
 
-	LDA <Map_EnterViaID
+	LDA Map_EnterViaID
 	BNE Map_DoEnterViaID	 ; If Map_EnterViaID <> 0, jump to Map_DoEnterViaID
 
 	LDA Level_Tileset
@@ -693,34 +764,35 @@ Map_DoEnterViaID:
 ; This is a perfect clone of Map_GetTile from PRG010, but not used here...
 ; $B226 
 	LDX Player_Current
-	LDA <World_Map_XHi,X
+	LDA World_Map_XHi,X
 	ASL A		 
 	TAY		 
 
 	; Store starting offset for this map screen into Map_Tile_AddrL/H
 	LDA Tile_Mem_Addr,Y
-	STA <Map_Tile_AddrL
+	STA Map_Tile_AddrL
 	LDA Tile_Mem_Addr+1,Y
-	STA <Map_Tile_AddrH
+	STA Map_Tile_AddrH
 
-	INC <Map_Tile_AddrH	; Effectively adds $100 to the address (maps get loaded at screen base + $110)
+	INC Map_Tile_AddrH	; Effectively adds $100 to the address (maps get loaded at screen base + $110)
 
-	LDA <World_Map_X,X
+	LDA World_Map_X,X
 	LSR A		 
 	LSR A		 
 	LSR A		 
 	LSR A		 
-	STA <Temp_Var1		; Temp_Var1 = World_Map_X / 16 (the current column of the current screen)
+	STA Temp_Var1		; Temp_Var1 = World_Map_X / 16 (the current column of the current screen)
 
-	LDA <World_Map_Y,X
-	SUB #16
+	LDA World_Map_Y,X
+	SEC
+	SBC #16
 	AND #$f0
-	ORA <Temp_Var1		; Temp_Var1 now holds the X column in the lower 4-bits and the Y row in the upper 4-bits
+	ORA Temp_Var1		; Temp_Var1 now holds the X column in the lower 4-bits and the Y row in the upper 4-bits
 
 	TAY		 	; Store this offset value into 'Y'
 
-	LDA [Map_Tile_AddrL],Y
-	STA <World_Map_Tile	
+	LDA (Map_Tile_AddrL),Y
+	STA World_Map_Tile	
 	RTS		 ; Return
 
 KingsRoomLayout_ByWorld:
@@ -746,14 +818,14 @@ PRG012_B262:
 	TAX		 ; X = World_Num * 2 (2 byte index)
 
 	LDA KingsRoomLayout_ByWorld,X
-	STA <Level_LayPtr_AddrL
+	STA Level_LayPtr_AddrL
 	LDA KingsRoomLayout_ByWorld+1,X
-	STA <Level_LayPtr_AddrH
+	STA Level_LayPtr_AddrH
 
 	LDA KingsRoomObjLayout
-	STA <Level_ObjPtr_AddrL
+	STA Level_ObjPtr_AddrL
 	LDA KingsRoomObjLayout+1
-	STA <Level_ObjPtr_AddrH
+	STA Level_ObjPtr_AddrH
 
 	; King's room tile set
 	LDA #$02
@@ -790,15 +862,15 @@ MO_Airship:
 
 	; Get proper airship layout
 	LDA Airship_Layouts,Y
-	STA <Level_LayPtr_AddrL
+	STA Level_LayPtr_AddrL
 	LDA Airship_Layouts+1,Y
-	STA <Level_LayPtr_AddrH
+	STA Level_LayPtr_AddrH
 
 	; Get proper airship object set pointer
 	LDA Airship_Objects,Y
-	STA <Level_ObjPtr_AddrL
+	STA Level_ObjPtr_AddrL
 	LDA Airship_Objects+1,Y
-	STA <Level_ObjPtr_AddrH
+	STA Level_ObjPtr_AddrH
 
 	; Force Level_Tileset = 10 (Airship)
 	LDA #10
@@ -839,9 +911,9 @@ MO_NSpade:
 
 	; Bonus game layout
 	LDA Bonus_LayoutData,Y
-	STA <Level_LayPtr_AddrL
+	STA Level_LayPtr_AddrL
 	LDA Bonus_LayoutData+1,Y
-	STA <Level_LayPtr_AddrH	
+	STA Level_LayPtr_AddrH	
 
 	; World_EnterState = 3
 	LDA #$03
@@ -880,15 +952,15 @@ MO_Shop:
 
 	; Load proper Toad Shop layout
 	LDA ToadShop_Layouts,Y
-	STA <Level_LayPtr_AddrL
+	STA Level_LayPtr_AddrL
 	LDA ToadShop_Layouts+1,Y
-	STA <Level_LayPtr_AddrH	
+	STA Level_LayPtr_AddrH	
 
 	; Load proper Toad Shop object set
 	LDA ToadShop_Objects,Y
-	STA <Level_ObjPtr_AddrL
+	STA Level_ObjPtr_AddrL
 	LDA ToadShop_Objects+1,Y
-	STA <Level_ObjPtr_AddrH	
+	STA Level_ObjPtr_AddrH	
 
 	; Level_Tileset = 7 (Toad House)
 	LDA #$07
@@ -924,15 +996,15 @@ MO_CoinShip:
 
 	; Get coin ship layout
 	LDA CoinShip_Layouts,Y
-	STA <Level_LayPtr_AddrL
+	STA Level_LayPtr_AddrL
 	LDA CoinShip_Layouts+1,Y
-	STA <Level_LayPtr_AddrH	
+	STA Level_LayPtr_AddrH	
 
 	; Get coin ship objects
 	LDA CoinShip_Objects,Y
-	STA <Level_ObjPtr_AddrL
+	STA Level_ObjPtr_AddrL
 	LDA CoinShip_Objects+1,Y
-	STA <Level_ObjPtr_AddrH	
+	STA Level_ObjPtr_AddrH	
 
 	; Set Level_Tileset = 10 (Airship)
 	LDA #10
@@ -950,15 +1022,15 @@ MO_UnusedMapObj:
 
 	; Set the layout
 	LDA UnusedMapObj_Layout
-	STA <Level_LayPtr_AddrL
+	STA Level_LayPtr_AddrL
 	LDA UnusedMapObj_Layout+1
-	STA <Level_LayPtr_AddrH
+	STA Level_LayPtr_AddrH
 
 	; Set the objects
 	LDA UnusedMapObj_Objects
-	STA <Level_ObjPtr_AddrL
+	STA Level_ObjPtr_AddrL
 	LDA UnusedMapObj_Objects+1
-	STA <Level_ObjPtr_AddrH
+	STA Level_ObjPtr_AddrH
 
 	; Level_Tileset = 1 (Plains style)
 	LDA #$01
@@ -984,30 +1056,30 @@ PRG012_B384:
 	LDA #15
 	STA Level_Tileset	 ; Re-affirming Level_Tileset = 15?
 
-	LDY <Temp_Var16		 ; Index of level entered
+	LDY Temp_Var16		 ; Index of level entered
 
 	; Set Bonus_GameType (always 1 in actual game)
-	LDA [Temp_Var5],Y
+	LDA (Temp_Var5),Y
 	STA Bonus_GameType
 
 	; Set Bonus_KTPrize (always irrelevant in actual game)
-	LDA [Temp_Var7],Y
+	LDA (Temp_Var7),Y
 	STA Bonus_KTPrize
 
 	INY		 ; Y++
 
 	; Set Bonus_GameHost (always 0 in actual game)
-	LDA [Temp_Var5],Y
+	LDA (Temp_Var5),Y
 	STA Bonus_GameHost
 
-	LDA [Temp_Var7],Y
+	LDA (Temp_Var7),Y
 	ASL A
 	TAY		 ; -> 'Y'
 
 	LDA Bonus_LayoutData,Y
-	STA <Level_LayPtr_AddrL
+	STA Level_LayPtr_AddrL
 	LDA Bonus_LayoutData+1,Y
-	STA <Level_LayPtr_AddrH
+	STA Level_LayPtr_AddrH
 
 	; World_EnterState = 3
 	LDA #$03
@@ -1045,15 +1117,15 @@ Map_LevelLayouts:
 
 	; "Structure" data files -- contains data that links levels to
 	; their layout and objects by the rows and columns 
-	.include "PRG/maps/World1S"
-	.include "PRG/maps/World2S"
-	.include "PRG/maps/World3S"
-	.include "PRG/maps/World4S"
-	.include "PRG/maps/World5S"
-	.include "PRG/maps/World6S"
-	.include "PRG/maps/World7S"
-	.include "PRG/maps/World8S"
-	.include "PRG/maps/World9S"
+	.include "maps/World1S.asm"
+	.include "maps/World2S.asm"
+	.include "maps/World3S.asm"
+	.include "maps/World4S.asm"
+	.include "maps/World5S.asm"
+	.include "maps/World6S.asm"
+	.include "maps/World7S.asm"
+	.include "maps/World8S.asm"
+	.include "maps/World9S.asm"
 
 
 ; FIXME: Anybody want to claim this??
