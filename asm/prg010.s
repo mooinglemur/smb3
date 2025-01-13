@@ -3429,7 +3429,9 @@ Map_Object_Valid_Up:
 	.byte TILE_VERTPATHWLL, TILE_VERTPATHW,   TILE_VERTPATHSKY, TILE_VERTPATHWLB
 
 	; This makes it safe to expand the above
-Map_Object_Valid_Tiles2Check = (Map_Object_Valid_Right - Map_Object_Valid_Left) 	
+.exportzp Map_Object_Valid_Tiles2Check
+Map_Object_Valid_Tiles2Check := <(Map_Object_Valid_Right - Map_Object_Valid_Left)
+
 
 	; Appropriate crossable draw bridge tile based on direction 0-3
 	; 0-3 (right, left, down, up respectively)

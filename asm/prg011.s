@@ -11,6 +11,52 @@
 ; This source file last updated: 2011-11-18 21:50:36.000000000 -0600
 ; Distribution package date: Fri Apr  6 23:46:16 UTC 2012
 ;---------------------------------------------------------------------------
+.include "../inc/macros.inc"
+.include "../inc/defines.inc"
+
+; ZP imports
+.importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var8
+.importzp Temp_Var9, Temp_Var10, Temp_Var11, Temp_Var12, Temp_Var13, Temp_Var14, Temp_Var15, Temp_Var16
+.importzp Counter_1, PPU_CTL2_Copy, Map_EnterViaID, Map_ClearLevelFXCnt, Scroll_ColumnR, Scroll_ColumnL
+.importzp Map_Tile_AddrL, Map_Tile_AddrH, Horz_Scroll, World_Map_Y, World_Map_XHi, World_Map_X
+.importzp World_Map_Move, World_Map_Dir, Map_UnusedPlayerVal, Map_UnusedPlayerVal2, Map_WWOrHT_Y
+.importzp Map_HandTrap_XHi, Map_WWOrHT_X, Map_WWOrHT_Cnt, Map_WWOrHT_Dir, Map_WarpWind_FX
+.importzp Map_StarFX_State, World_Map_Twirl, Map_Skid_DeltaY, Map_Skid_DeltaFracY, Map_Skid_FracY
+.importzp Map_Skid_DeltaX, Map_Skid_DeltaFracX, Map_Skid_FracX, Map_Skid_FracCarry, Map_Skid_Count
+.importzp Map_Skid_Counter, Map_Skid_TravDirs, Map_StarsX, Map_StarsY, Map_StarsOutRad, Map_StarsXSteps
+.importzp Map_StarsRadCnt, Map_StarsCenterX, Map_StarsCenterY, Map_StarsDeltaR, Map_StarsConst9
+.importzp Map_StarsAnimCnt, Map_StarsFrame, Map_StarsPattern, Map_StarsLandRad, Map_StarsYSteps
+.importzp Map_StarsRadius, Map_StarsState, Map_SkidBack, Map_Airship_DC, Map_Airship_DY
+.importzp Map_Airship_YNib, Map_Airship_YAcc, Map_Airship_DXHi, Map_Airship_DX, Map_Airship_XNib
+.importzp Map_Airship_Dir, Map_HideObj, World_Map_Tile, Objects_XHi, Objects_X, Objects_Y
+; BSS imports (low RAM and cart SRAM)
+.import Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, Map_StarsDeltaX, Map_StarsDeltaY, Map_Stars_PRelX
+.import Map_Stars_PRelY, Map_DrawPanState, Map_Warp_PrevWorld, Map_W8D_Idx, SndCur_Level2, Sound_QLevel1
+.import Sound_QLevel2, Sound_QMusic2, Sound_QMap, Map_Object_ActY, Map_Object_ActX, Map_Object_ActXH
+.import Map_Object_Data, Map_March_Count, Map_Objects_Vis, Map_MarchInit, Map_InCanoe_Flag, World_8_Dark
+.import World_Map_AnimF, World_Map_AnimT, Map_Pan_Count, Map_Intro_Tick, Map_ReturnStatus, Player_Score
+.import PatTable_BankSel, Map_Prev_XOff, Map_Prev_XHi, Player_Current, World_Num, World_EnterState
+.import GameOver_State, Map_Operation, Total_Players, Map_Unused72C, Map_HandState, Map_WW_Backup_Y
+.import Map_WW_Backup_XH, Map_WW_Backup_X, Map_WW_Backup_UPV2, Map_Unused738, Map_Player_SkidBack
+.import Map_Airship_Trav, RandomN, World3_Bridge, Tile_Mem, Map_Objects_Itm, Level_TreasureItem
+.import Map_BonusType, Map_BonusCoinsReqd, Coins_ThisLevel, Map_NSpade_NextScore, Map_BonusAppY
+.import Map_BonusAppXHi, Map_BonusAppX, Map_NoLoseTurn, Map_Anchored, Map_WhiteHouse, Map_CoinShip
+.import Map_WasInPipeway, Map_PlyrSprOvrY, Map_Entered_Y, Map_Entered_XHi, Map_Entered_X
+.import Map_Previous_UnusedPVal2, Map_Previous_Y, Map_Previous_XHi, Map_Previous_X, Map_Unused7984
+.import Map_Prev_XOff2, Map_Prev_XHi2, Map_Unused798A, Map_Unused7992, Map_Previous_Dir, Map_Unused7995
+.import Map_Completions, Inventory_Items, Inventory_Items2, Map_Unused7DC6, Tile_AttrTable
+.import Map_Unused7EEA, Map_Objects_Y, Map_Objects_XLo, Map_Objects_XHi, Map_Objects_IDs
+.import Map_SprRAMOffDistr, Map_2PVsGame, Map_Airship_Dest, StatusBar_CoinH, StatusBar_CoinL
+.import StatusBar_Score, Map_MusicBox_Cnt
+; imports from PRG010
+.importzp Map_Object_Valid_Tiles2Check ; a constant that we've corrupted into a label
+.import Map_W8DarknessUpdate, Map_Object_Valid_Tiles, Map_GetTile, WorldMap_UpdateAndDraw
+.import FX_MonoFlash_By_MapTick
+; imports from PRG030
+.import Map_Calc_NT2Addr_By_XY, Tile_Mem_Addr, Map_Y_Starts
+; imports from PRG031
+.import DynJump
+
 .ifdef NES
 .segment "PRG011"
 .endif
@@ -41,57 +87,57 @@ Map_List_Object_Items:
 	.word W1_Obj_Items, W2_Obj_Items, W3_Obj_Items, W4_Obj_Items, W5_Obj_Items, W6_Obj_Items, W7_Obj_Items, W8_Obj_Items
 
 ; The 'Y' position of each map object
-W1_Obj_Ys:	.include "PRG/maps/World1OY"
-W2_Obj_Ys:	.include "PRG/maps/World2OY"
-W3_Obj_Ys:	.include "PRG/maps/World3OY"
-W4_Obj_Ys:	.include "PRG/maps/World4OY"
-W5_Obj_Ys:	.include "PRG/maps/World5OY"
-W6_Obj_Ys:	.include "PRG/maps/World6OY"
-W7_Obj_Ys:	.include "PRG/maps/World7OY"
-W8_Obj_Ys:	.include "PRG/maps/World8OY"
+W1_Obj_Ys:	.include "maps/World1OY.asm"
+W2_Obj_Ys:	.include "maps/World2OY.asm"
+W3_Obj_Ys:	.include "maps/World3OY.asm"
+W4_Obj_Ys:	.include "maps/World4OY.asm"
+W5_Obj_Ys:	.include "maps/World5OY.asm"
+W6_Obj_Ys:	.include "maps/World6OY.asm"
+W7_Obj_Ys:	.include "maps/World7OY.asm"
+W8_Obj_Ys:	.include "maps/World8OY.asm"
 
 ; The hi and low (respective) X coordinates of the map objects
-W1_Obj_XHis:	.include "PRG/maps/World1OH"
-W2_Obj_XHis:	.include "PRG/maps/World2OH"
-W3_Obj_XHis:	.include "PRG/maps/World3OH"
-W4_Obj_XHis:	.include "PRG/maps/World4OH"
-W5_Obj_XHis:	.include "PRG/maps/World5OH"
-W6_Obj_XHis:	.include "PRG/maps/World6OH"
-W7_Obj_XHis:	.include "PRG/maps/World7OH"
-W8_Obj_XHis:	.include "PRG/maps/World8OH"
-W1_Obj_XLos:	.include "PRG/maps/World1OX"
-W2_Obj_XLos:	.include "PRG/maps/World2OX"
-W3_Obj_XLos:	.include "PRG/maps/World3OX"
-W4_Obj_XLos:	.include "PRG/maps/World4OX"
-W5_Obj_XLos:	.include "PRG/maps/World5OX"
-W6_Obj_XLos:	.include "PRG/maps/World6OX"
-W7_Obj_XLos:	.include "PRG/maps/World7OX"
-W8_Obj_XLos:	.include "PRG/maps/World8OX"
+W1_Obj_XHis:	.include "maps/World1OH.asm"
+W2_Obj_XHis:	.include "maps/World2OH.asm"
+W3_Obj_XHis:	.include "maps/World3OH.asm"
+W4_Obj_XHis:	.include "maps/World4OH.asm"
+W5_Obj_XHis:	.include "maps/World5OH.asm"
+W6_Obj_XHis:	.include "maps/World6OH.asm"
+W7_Obj_XHis:	.include "maps/World7OH.asm"
+W8_Obj_XHis:	.include "maps/World8OH.asm"
+W1_Obj_XLos:	.include "maps/World1OX.asm"
+W2_Obj_XLos:	.include "maps/World2OX.asm"
+W3_Obj_XLos:	.include "maps/World3OX.asm"
+W4_Obj_XLos:	.include "maps/World4OX.asm"
+W5_Obj_XLos:	.include "maps/World5OX.asm"
+W6_Obj_XLos:	.include "maps/World6OX.asm"
+W7_Obj_XLos:	.include "maps/World7OX.asm"
+W8_Obj_XLos:	.include "maps/World8OX.asm"
 
 ; The IDs of the map objects
 ; NOTE: The second index is considered reserved for the Airship, which will
 ; always and only occupy that slot; do not use it for regular maps!
 ; (World 8 would probably be okay though?)
-W1_Obj_IDs:	.include "PRG/maps/World1O"
-W2_Obj_IDs:	.include "PRG/maps/World2O"
-W3_Obj_IDs:	.include "PRG/maps/World3O"
-W4_Obj_IDs:	.include "PRG/maps/World4O"
-W5_Obj_IDs:	.include "PRG/maps/World5O"
-W6_Obj_IDs:	.include "PRG/maps/World6O"
-W7_Obj_IDs:	.include "PRG/maps/World7O"
-W8_Obj_IDs:	.include "PRG/maps/World8O"
+W1_Obj_IDs:	.include "maps/World1O.asm"
+W2_Obj_IDs:	.include "maps/World2O.asm"
+W3_Obj_IDs:	.include "maps/World3O.asm"
+W4_Obj_IDs:	.include "maps/World4O.asm"
+W5_Obj_IDs:	.include "maps/World5O.asm"
+W6_Obj_IDs:	.include "maps/World6O.asm"
+W7_Obj_IDs:	.include "maps/World7O.asm"
+W8_Obj_IDs:	.include "maps/World8O.asm"
 
 ; The item that this "event" gives you (for hammer brothers only I think)
 ; 1 - Super, 2 - Fire, 3 - Leaf, 4 - Frog, 5 - Tanooki, 6 - Hammer, 7 - Judgems, 8 - Pwing, 9 - Star
 ; A - Anchor, B - Hammer, C - Warp Whistle, D - Music Box
-W1_Obj_Items:	.include "PRG/maps/World1OI"
-W2_Obj_Items:	.include "PRG/maps/World2OI"
-W3_Obj_Items:	.include "PRG/maps/World3OI"
-W4_Obj_Items:	.include "PRG/maps/World4OI"
-W5_Obj_Items:	.include "PRG/maps/World5OI"
-W6_Obj_Items:	.include "PRG/maps/World6OI"
-W7_Obj_Items:	.include "PRG/maps/World7OI"
-W8_Obj_Items:	.include "PRG/maps/World8OI"
+W1_Obj_Items:	.include "maps/World1OI.asm"
+W2_Obj_Items:	.include "maps/World2OI.asm"
+W3_Obj_Items:	.include "maps/World3OI.asm"
+W4_Obj_Items:	.include "maps/World4OI.asm"
+W5_Obj_Items:	.include "maps/World5OI.asm"
+W6_Obj_Items:	.include "maps/World6OI.asm"
+W7_Obj_Items:	.include "maps/World7OI.asm"
+W8_Obj_Items:	.include "maps/World8OI.asm"
 
 
 PRG011_A1C8:
@@ -113,48 +159,48 @@ Map_Init:
 
 	; Set address of object Y list for this world
 	LDA Map_List_Object_Ys,X
-	STA <Temp_Var11	
+	STA Temp_Var11	
 	LDA Map_List_Object_Ys+1,X
-	STA <Temp_Var12	
+	STA Temp_Var12	
 
 	; Set address of object X (hi byte) list for this world
 	LDA Map_List_Object_XHis,X
-	STA <Temp_Var13	
+	STA Temp_Var13	
 	LDA Map_List_Object_XHis+1,X
-	STA <Temp_Var14	
+	STA Temp_Var14	
 
 	; Set address of object X (lo byte) list for this world
 	LDA Map_List_Object_XLos,X
-	STA <Temp_Var15	
+	STA Temp_Var15	
 	LDA Map_List_Object_XLos+1,X
-	STA <Temp_Var16	
+	STA Temp_Var16	
 
 	; Set address of object ID list for this world
 	LDA Map_List_Object_IDs,X
-	STA <Temp_Var9
+	STA Temp_Var9
 	LDA Map_List_Object_IDs+1,X
-	STA <Temp_Var10
+	STA Temp_Var10
 
 	; Set address of object item list for this world
 	LDA Map_List_Object_Items,X
-	STA <Temp_Var7
+	STA Temp_Var7
 	LDA Map_List_Object_Items+1,X
-	STA <Temp_Var8
+	STA Temp_Var8
 
 	; Loop MAPOBJ_TOTALINIT times for all defined map objects
 	LDY #MAPOBJ_TOTALINIT
 PRG011_A21B:
 
 	; Copy in the data relevant to this map object
-	LDA [Temp_Var11],Y
+	LDA (Temp_Var11),Y
 	STA Map_Objects_Y,Y	; Y
-	LDA [Temp_Var13],Y
+	LDA (Temp_Var13),Y
 	STA Map_Objects_XHi,Y	; XHi
-	LDA [Temp_Var15],Y	
+	LDA (Temp_Var15),Y	
 	STA Map_Objects_XLo,Y	; XLo
-	LDA [Temp_Var9],Y	
+	LDA (Temp_Var9),Y	
 	STA Map_Objects_IDs,Y	; ID
-	LDA [Temp_Var7],Y	
+	LDA (Temp_Var7),Y	
 	STA Map_Objects_Itm,Y	; Item
 
 	DEY		 ; Y--
@@ -223,13 +269,14 @@ Map_Airship_Pick_Travel:
 	AND #$0f		; Capped 0-15
 	TAX			; X = random number 0-15
 	LDA Map_Airship_Travel_Random,X		; Get initial random offset value (essentially amounts to a random value of 0 to 2)
-	ADD Map_Airship_Travel_BaseIdx,Y	; Apply base index (Adds 3x World_Num)
+	CLC
+	ADC Map_Airship_Travel_BaseIdx,Y	; Apply base index (Adds 3x World_Num)
 	STA Map_Airship_Trav	; Store as the Map_Airship_Trav value
 	RTS		 	; Return
 
 
 	; Offset to Player-specific inventory items
-Inventory_OffsetByPlayer:	.byte (Inventory_Items - Inventory_Items), (Inventory_Items2 - Inventory_Items)
+Inventory_OffsetByPlayer:	.byte <(Inventory_Items - Inventory_Items), <(Inventory_Items2 - Inventory_Items)
 
 
 	; FIXME: Anyone want to claim this?
@@ -245,10 +292,11 @@ Inventory_OffsetByPlayer:	.byte (Inventory_Items - Inventory_Items), (Inventory_
 
 	; Temp_Var1 = offset to Player's inventory
 	LDA Inventory_OffsetByPlayer,X
-	STA <Temp_Var1
+	STA Temp_Var1
 
 	LDA Map_Unused738	; Get Map_Unused738
-	ADD <Temp_Var1	; Add offset to inventory ?
+	CLC
+	ADC Temp_Var1	; Add offset to inventory ?
 	TAX		; -> 'X'
 
 	LDA Inventory_Items,X
@@ -286,7 +334,7 @@ WorldMap_UpdateAndDrawInd:
 	JMP WorldMap_UpdateAndDraw
 
 Map_WW_StartX:	.byte 0, 240	; Map warp wind starting X position, depending which direction it comes from
-Map_WW_DeltaX:	.byte 2, -2	; Position change depending on the direction of travel
+Map_WW_DeltaX:	.byte 2, <-2	; Position change depending on the direction of travel
 Map_WW_TargetX:	.byte 240, 0	; The ending position, depending on direction of travel
 
 	; Starting Y position depending on what world you came from
@@ -322,7 +370,7 @@ Map_DoMap_WarpWind_FX:
 	; contains a "bug", which might just be unmaintained legacy code..
 
 	; Dynamic jump based on current map special effect occurring..
-	LDA <Map_WarpWind_FX	
+	LDA Map_WarpWind_FX	
 	JSR DynJump
 
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
@@ -334,24 +382,24 @@ Map_DoMap_WarpWind_FX:
 	.word WWFX_WarpWhistleFlash	; 5 - UNUSED; same as State 1, except it will crash by trying to go to undefined "State 6"!
 
 WarpWhistle_Flash:
-	LDA <Map_WWOrHT_Cnt
+	LDA Map_WWOrHT_Cnt
 	BNE PRG011_A333	 	; If Map_WWOrHT_Cnt <> 0, jump to PRG011_A333
 
 	LDA #$20	 
-	STA <Map_WWOrHT_Cnt	; Otherwise, Map_WWOrHT_Cnt = $20
+	STA Map_WWOrHT_Cnt	; Otherwise, Map_WWOrHT_Cnt = $20
 
 
 PRG011_A333:
 
 	; Basically here's what does the white flashing effect
 	LDY #%00011000		; Show BG + Sprites
-	DEC <Map_WWOrHT_Cnt	; Map_WWOrHT_Cnt--
+	DEC Map_WWOrHT_Cnt	; Map_WWOrHT_Cnt--
 	AND #$04	 
 	BEQ PRG011_A33D	 	; Every 4 ticks, toggle mono effect
 	LDY #%00011001		; Show BG + Sprites + Mono
 
 PRG011_A33D:
-	STY <PPU_CTL2_Copy	; Update
+	STY PPU_CTL2_Copy	; Update
 	RTS		 	; Return...
 
 WWFX_WarpWhistleInit:
@@ -361,19 +409,20 @@ WWFX_WarpWhistleInit:
 	LDY Player_Current	; Y = Player_Current
 	LDX #$00	 	; X = 0 (come from left)
 	LDA World_Map_X,Y	; Get Player's world map X coordinate
-	SUB <Horz_Scroll
+	SEC
+	SBC Horz_Scroll
 	CMP #$80	 	
 	BGE PRG011_A351	 	; If map is scrolled halfway across, jump to PRG011_A351
 	LDX #$01	 	; Otherwise X = 1 (come from right)
 
 PRG011_A351:
-	STX <Map_WWOrHT_Dir	; Store 'X' as direction of warp wind travel
+	STX Map_WWOrHT_Dir	; Store 'X' as direction of warp wind travel
 
 	LDA Map_WW_StartX,X
-	STA <Map_WWOrHT_X	; Set appropriate starting X position
+	STA Map_WWOrHT_X	; Set appropriate starting X position
 
 	LDA World_Map_Y,Y	
-	STA <Map_WWOrHT_Y	; Set Y position equal to Player
+	STA Map_WWOrHT_Y	; Set Y position equal to Player
 	STA Map_PlyrSprOvrY	; Set Map_PlyrSprOvrY 
 
 	LDX #$05	 	; X = 5 NOTE: This is broken (and seems unused anyway); see NOTE @ PRG011_A381
@@ -407,7 +456,7 @@ PRG011_A381:
 
 	; But that's okay, because technically this routine isn't used anyway! :X
 
-	STX <Map_WarpWind_FX		; Map_WarpWind_FX = ... 5 if backup already performed, 1 if not 
+	STX Map_WarpWind_FX		; Map_WarpWind_FX = ... 5 if backup already performed, 1 if not 
 	JMP WorldMap_UpdateAndDraw	 ; Update and draw world map and don't come back
 
 
@@ -418,28 +467,30 @@ WWFX_WarpWhistleFlash:
 
 	JSR WarpWhistle_Flash		; Do the "flash" effect of the warp whistle
 
-	LDA <Map_WWOrHT_Cnt
+	LDA Map_WWOrHT_Cnt
 	BNE PRG011_A396	 		; If the counter isn't zero yet, jump to PRG011_A396
 
-	INC <Map_WarpWind_FX		; Otherwise, next state!
+	INC Map_WarpWind_FX		; Otherwise, next state!
 
 PRG011_A396:
 	JMP WorldMap_UpdateAndDraw	 ; Update and draw world map and don't come back
 
 
 WWFX_WarpDoWind:
-	INC <Map_WWOrHT_Cnt		; Map_WWOrHT_Cnt++
+	INC Map_WWOrHT_Cnt		; Map_WWOrHT_Cnt++
 
 	LDY Player_Current	 	; Y = Player_Current
-	LDX <Map_WWOrHT_Dir		; X = Map_WWOrHT_Dir
+	LDX Map_WWOrHT_Dir		; X = Map_WWOrHT_Dir
 
-	LDA <Map_WWOrHT_X
-	ADD Map_WW_DeltaX,X
-	STA <Map_WWOrHT_X		; Map_WWOrHT_X += Map_WW_DeltaX[X] (travels based on direction)
+	LDA Map_WWOrHT_X
+	CLC
+	ADC Map_WW_DeltaX,X
+	STA Map_WWOrHT_X		; Map_WWOrHT_X += Map_WW_DeltaX[X] (travels based on direction)
 
 	LDA World_Map_X,Y
-	SUB <Horz_Scroll
-	CMP <Map_WWOrHT_X
+	SEC
+	SBC Horz_Scroll
+	CMP Map_WWOrHT_X
 	BNE PRG011_A3BA	 		; If warp wind hasn't hit the Player yet, jump to PRG011_A3BA
 
 	LDA #$f8
@@ -448,7 +499,7 @@ WWFX_WarpDoWind:
 
 PRG011_A3BA:
 	; Haven't hit the Player yet...
-	LDA <Map_WWOrHT_X		
+	LDA Map_WWOrHT_X		
 	CMP Map_WW_TargetX,X
 	BNE PRG011_A3D9	 		; If Warp Wind hasn't reached its target edge yet, jump to PRG011_A3D9
 
@@ -466,28 +517,28 @@ PRG011_A3D0:
 	DEY		 ; Y--
 	BPL PRG011_A3D0	 ; If Y >= 0, loop..
 
-	INC <Map_WarpWind_FX		; Next state...
+	INC Map_WarpWind_FX		; Next state...
 	RTS		 ; Return
 
 PRG011_A3D9:
 	JSR WorldMap_UpdateAndDraw	; Update and draw map
 
-	LDA <Map_WWOrHT_X
-	STA <Temp_Var2			; Temp_Var2 = Map_WWOrHT_X
+	LDA Map_WWOrHT_X
+	STA Temp_Var2			; Temp_Var2 = Map_WWOrHT_X
 
 	LDA #$01
-	STA <Temp_Var3		 	; Temp_Var3 = 1 (uses palette 1, the white color; otherwise would use hand trap stuff)
+	STA Temp_Var3		 	; Temp_Var3 = 1 (uses palette 1, the white color; otherwise would use hand trap stuff)
 
 	JMP WarpWindHandTrap_Draw	 		; Jump to WarpWindHandTrap_Draw...
 
 
 WWFX_WarpIslandInit:
 	LDA #$00
-	STA <Map_WWOrHT_Cnt	; Map_WWOrHT_Cnt = 0
+	STA Map_WWOrHT_Cnt	; Map_WWOrHT_Cnt = 0
 
 	LDA #248
-	STA <Map_WWOrHT_X	; Map_WWOrHT_X = 248 (overwritten further down... oops?)
-	INC <Map_WarpWind_FX	; Next state...
+	STA Map_WWOrHT_X	; Map_WWOrHT_X = 248 (overwritten further down... oops?)
+	INC Map_WarpWind_FX	; Next state...
 
 	LDY Map_Warp_PrevWorld	; Y = Map_Warp_PrevWorld
 	LDX Player_Current	; X = Map_Warp_PrevWorld
@@ -496,16 +547,16 @@ WWFX_WarpIslandInit:
 	LDA #$00
 	STA Map_Prev_XOff,X
 	STA Map_Prev_XHi,X
-	STA <World_Map_XHi,X
+	STA World_Map_XHi,X
 
 	LDA Map_WW_IslandX,Y
-	STA <World_Map_X,X	; Store appropriate X coordinate based on world you came from
+	STA World_Map_X,X	; Store appropriate X coordinate based on world you came from
 
 	LDA #240
-LT0:	STA <Map_WWOrHT_X	; Map_WWOrHT_X = 240 (oops, reassigned?)
+LT0:	STA Map_WWOrHT_X	; Map_WWOrHT_X = 240 (oops, reassigned?)
 
 	LDA Map_WW_IslandY,Y
-	STA <Map_WWOrHT_Y	; Store appropriate Y coordinate based on world you came from
+	STA Map_WWOrHT_Y	; Store appropriate Y coordinate based on world you came from
 
 	LDA #$80	 
 	STA Map_Intro_Tick	; Map_Intro_Tick = $80
@@ -525,15 +576,16 @@ WWFX_WarpLanding:
 	LDY Map_Warp_PrevWorld	; Y = Map_Warp_PrevWorld (reassigned not two instructions later!)
 	LDX Player_Current	; X = Player_Current
 
-	INC <Map_WWOrHT_Cnt	; Map_WWOrHT_Cnt++
+	INC Map_WWOrHT_Cnt	; Map_WWOrHT_Cnt++
 
 	LDY Map_Warp_PrevWorld	; Y = Map_Warp_PrevWorld (assigned again??)
-	LDX <Map_WWOrHT_Dir	; X = Map_WWOrHT_Dir
+	LDX Map_WWOrHT_Dir	; X = Map_WWOrHT_Dir
 
-	LDA <Map_WWOrHT_X
-	ADD Map_WW_DeltaX,X	; Map_WWOrHT_X += Map_WW_DeltaX[X] (travels based on direction)
+	LDA Map_WWOrHT_X
+	CLC
+	ADC Map_WW_DeltaX,X	; Map_WWOrHT_X += Map_WW_DeltaX[X] (travels based on direction)
 
-	STA <Map_WWOrHT_X
+	STA Map_WWOrHT_X
 	CMP Map_WW_IslandX,Y
 	BNE PRG011_A44C	 	; If wind hasn't reached your landing point, jump to PRG011_A44C
 
@@ -541,7 +593,7 @@ WWFX_WarpLanding:
 
 	LDA Map_WW_IslandY,Y
 	STA Map_PlyrSprOvrY	; Map_PlyrSprOvrY = Map_WW_IslandY[Y] (target Y) (restore map sprite)
-	STA <World_Map_Y,X	; World_Map_Y = Map_WW_IslandY[Y] (target Y)
+	STA World_Map_Y,X	; World_Map_Y = Map_WW_IslandY[Y] (target Y)
 
 	JMP PRG011_A45B	 	; Jump to PRG011_A45B
 
@@ -553,11 +605,11 @@ PRG011_A44C:
 
 	; Otherwise, shut it down!
 	LDA #$00	 
-	STA <Map_WWOrHT_Cnt
-	STA <Map_WarpWind_FX
+	STA Map_WWOrHT_Cnt
+	STA Map_WarpWind_FX
 
 	LDA #248
-	STA <Map_WWOrHT_X	; Map_WWOrHT_X = 248
+	STA Map_WWOrHT_X	; Map_WWOrHT_X = 248
 
 PRG011_A45B:
 	JMP PRG011_A3D9	 ; Jump to PRG011_A3D9
@@ -574,17 +626,18 @@ MO_HandTrap:
 
 HT_Init:
 	LDX Player_Current
-	LDA <World_Map_Y,X
+	LDA World_Map_Y,X
 	STA Map_PlyrSprOvrY	; Reset Map_PlyrSprOvrY to the Player's current Y
 
-	ADD #16
-	STA <Map_WWOrHT_Y	; Start 16 pixels beneath Player
+	CLC
+	ADC #16
+	STA Map_WWOrHT_Y	; Start 16 pixels beneath Player
 
 	; Match Player's X
-	LDA <World_Map_XHi,X	 
-	STA <Map_HandTrap_XHi	
-	LDA <World_Map_X,X
-	STA <Map_WWOrHT_X
+	LDA World_Map_XHi,X	 
+	STA Map_HandTrap_XHi	
+	LDA World_Map_X,X
+	STA Map_WWOrHT_X
 
 	INC Map_HandState		; Next state...
 	JMP WorldMap_UpdateAndDraw	 ; Update and draw world map and don't come back
@@ -592,7 +645,7 @@ HT_Init:
 HT_Flash:
 	JSR WarpWhistle_Flash	 	; Reused flashing effect
 
-	LDA <Map_WWOrHT_Cnt
+	LDA Map_WWOrHT_Cnt
 	BNE PRG011_A494	 		; If Map_WWOrHT_Cnt <> 0, the effect is not over, jump to PRG011_A494
 
 	INC Map_HandState	 	; Next state...
@@ -606,11 +659,11 @@ PRG011_A494:
 
 HT_GrabPlayer:
 	LDA #$01
-	STA <Temp_Var1			; Temp_Var1 = 1
+	STA Temp_Var1			; Temp_Var1 = 1
 
 	JSR HT_DoRaiseAndFall	 	; Raise hand, take Player down with it
 
-	LDA <Map_WWOrHT_Cnt
+	LDA Map_WWOrHT_Cnt
 	CMP #32 
 	BNE PRG011_A4B8	 		; If Map_WWOrHT_Cnt <> 32, jump to PRG011_A4B8
 
@@ -629,29 +682,31 @@ PRG011_A4B8:
 	JSR WorldMap_UpdateAndDraw	; Do WorldMap_UpdateAndDraw
 
 	LDX Player_Current
-	LDA <World_Map_Y,X
-	ADD #16
-	STA <Temp_Var1		 	; Temp_Var1 = Player's map Y + 16
+	LDA World_Map_Y,X
+	CLC
+	ADC #16
+	STA Temp_Var1		 	; Temp_Var1 = Player's map Y + 16
 
-	LDA <World_Map_X,X
-	SUB <Horz_Scroll
-	STA <Temp_Var2		 	; Temp_Var2 = Player's map X - Horz_Scroll
+	LDA World_Map_X,X
+	SEC
+	SBC Horz_Scroll
+	STA Temp_Var2		 	; Temp_Var2 = Player's map X - Horz_Scroll
 
 	LDA #$00
-	STA <Temp_Var3		 	; Temp_Var3 = 0
+	STA Temp_Var3		 	; Temp_Var3 = 0
 	JMP PRG011_A503	 		; Jump to PRG011_A503
 
 	; Hand Trap raises for 16 ticks (-1), then falls (1)
-HT_RaiseFall:	.byte -1, 1
+HT_RaiseFall:	.byte <-1, 1
 
 HT_DoRaiseAndFall:
-	LDA <Counter_1
+	LDA Counter_1
 	AND #$01	
 	BNE PRG011_A4FC	 	; Every other tic, jump to PRG011_A4FC
 
 	; More specifically, 16 tics for the hand to come up, 16
 	; tics for the hand to go down...
-	LDA <Map_WWOrHT_Cnt
+	LDA Map_WWOrHT_Cnt
 	AND #$10	 	; Every 16 counter tics...
 	LSR A	
 	LSR A	
@@ -660,17 +715,18 @@ HT_DoRaiseAndFall:
 	TAY		 	; Y = 0 or 1
 	LDX Player_Current	; X = Player_Current
 
-	LDA <Map_WWOrHT_Y
-	ADD HT_RaiseFall,Y
-	STA <Map_WWOrHT_Y	; Hand trap's Y += HT_RaiseFall[Y]
+	LDA Map_WWOrHT_Y
+	CLC
+	ADC HT_RaiseFall,Y
+	STA Map_WWOrHT_Y	; Hand trap's Y += HT_RaiseFall[Y]
 
-	INC <Map_WWOrHT_Cnt
-	LDA <Map_WWOrHT_Cnt
+	INC Map_WWOrHT_Cnt
+	LDA Map_WWOrHT_Cnt
 	AND #$10
 	BEQ PRG011_A4FC	 	; If hand is still raising (pre 16 ticks), jump to PRG011_A4FC
 
 	; As hand falls, it takes Player down with it!
-	LDA <Map_WWOrHT_Y	
+	LDA Map_WWOrHT_Y	
 	STA Map_PlyrSprOvrY	
 
 PRG011_A4FC:
@@ -695,7 +751,7 @@ PRG011_A505:
 	ASL A		 
 	TAY		 	; Y = X << 2 (* 4, or for 7 sprites...)
 
-	LDA <Temp_Var1
+	LDA Temp_Var1
 	STA Sprite_RAM+$00,Y	; Store Y
 
 	LDA #$27	 
@@ -711,14 +767,14 @@ PRG011_A505:
 	BPL PRG011_A505	 	; While X >= 0, loop!
 
 WarpWindHandTrap_Draw:
-	LDX <Temp_Var3		; X = Temp_Var3 (warp wind palette)
+	LDX Temp_Var3		; X = Temp_Var3 (warp wind palette)
 
 	; The warp wind sprite Y
-	LDA <Map_WWOrHT_Y	; A = Map_WWOrHT_Y
+	LDA Map_WWOrHT_Y	; A = Map_WWOrHT_Y
 	STA Sprite_RAM+$60
 	STA Sprite_RAM+$64
 
-	LDA <Temp_Var3		; A = Temp_Var3
+	LDA Temp_Var3		; A = Temp_Var3
 	BEQ PRG011_A544	 	; If Temp_Var3 = 0, jump to PRG011_A544 (AFAIK, this is never the case)
 
 	LDA Map_PlyrSprOvrY
@@ -736,7 +792,7 @@ WarpWindHandTrap_Draw:
 PRG011_A544:
 	; Otherwise, not disabling Player map sprite...
 
-	LDA <Map_WWOrHT_Cnt
+	LDA Map_WWOrHT_Cnt
 	AND #$10
 	BEQ PRG011_A56B
 
@@ -744,7 +800,8 @@ PRG011_A544:
 	LDA Map_PlyrSprOvrY
 	STA Sprite_RAM+$8C
 	STA Sprite_RAM+$90
-	SUB #16
+	SEC
+	SBC #16
 	STA Sprite_RAM+$84
 	STA Sprite_RAM+$88
 
@@ -764,14 +821,15 @@ PRG011_A56B:
 	STA Sprite_RAM+$66
 
 	; Set the warp wind's X
-	LDA <Temp_Var2		; Map_WWOrHT_X
+	LDA Temp_Var2		; Map_WWOrHT_X
 	STA Sprite_RAM+$63
-	ADD #$08	 
+	CLC
+	ADC #$08	 
 	STA Sprite_RAM+$67	; Map_WWOrHT_X + 8
 
 	LDY Map_WW_Pattern,X	; Get the pattern for the wind/hand
 
-	LDA <Map_WWOrHT_Cnt
+	LDA Map_WWOrHT_Cnt
 	AND #$10	 
 	BEQ PRG011_A58B	 
 	LDY Map_WW_Pattern+2,X	; Every 16 tics, use the second frame
@@ -784,7 +842,7 @@ PRG011_A58B:
 	INY			; Pattern += 2
 	STY Sprite_RAM+$65	; Store the pattern for the second sprite
 
-	LDA <Map_WWOrHT_Dir
+	LDA Map_WWOrHT_Dir
 	BEQ PRG011_A5AA	 	; If Map_WWOrHT_Dir = 0, jump to PRG011_A5AA
 
 	; Flip the wind patterns!
@@ -805,7 +863,7 @@ PRG011_A5AA:
 	; using border patterns to clip the warp wind sprite!
 
 	; Sprite set to Y
-	LDA <Map_WWOrHT_Y
+	LDA Map_WWOrHT_Y
 	STA Sprite_RAM+$00
 	STA Sprite_RAM+$04
 
@@ -829,7 +887,7 @@ PRG011_A5AA:
 	LDA #$08	 
 	STA Sprite_RAM+$03
 
-	LDA <Temp_Var2	 ; MapWWOrHT_X
+	LDA Temp_Var2	 ; MapWWOrHT_X
 	AND #$80	 
 	BEQ PRG011_A5DC	 ; If MapWWOrHT_X is not in the right half of the screen, jump to PRG011_A5DC (RTS)
 
@@ -846,25 +904,27 @@ PRG011_A5DC:
 GameOver_TwirlToStart:
 	LDX Player_Current	 
 
-	LDA <Map_SkidBack
+	LDA Map_SkidBack
 	BNE PRG011_A63D	 ; If Map_SkidBack is set, jump to PRG011_A63D
 
 	LDY World_Num	 ; Y = World_Num
 
-	LDA <World_Map_Y,X
-	SUB Map_Y_Starts,Y
-	STA <Map_Skid_DeltaY
+	LDA World_Map_Y,X
+	SEC
+	SBC Map_Y_Starts,Y
+	STA Map_Skid_DeltaY
 
-	LDA <World_Map_X,X
-	SUB #$20
-	STA <Map_Skid_DeltaX
+	LDA World_Map_X,X
+	SEC
+	SBC #$20
+	STA Map_Skid_DeltaX
 
 	LDA #$00
-	STA <Map_Skid_TravDirs
-	STA <Map_Skid_DeltaFracX
-	STA <Map_Skid_DeltaFracY
+	STA Map_Skid_TravDirs
+	STA Map_Skid_DeltaFracX
+	STA Map_Skid_DeltaFracY
 
-	LDA <World_Map_X,X
+	LDA World_Map_X,X
 	CMP #32
 	BGE PRG011_A610	 ; If Player's Map X >= 32 (the common start X of all maps), jump to PRG011_A610
 
@@ -872,19 +932,19 @@ GameOver_TwirlToStart:
 
 	; Set bit 0 on Map_Skid_TravDirs (travel right instead of left)
 	LDA #$01
-	STA <Map_Skid_TravDirs
+	STA Map_Skid_TravDirs
 
 	; Negate Map_Skid_DeltaX
 	LDA #$ff
-	EOR <Map_Skid_DeltaX
+	EOR Map_Skid_DeltaX
 	TAY
 	INY
-	STY <Map_Skid_DeltaX
+	STY Map_Skid_DeltaX
 
 PRG011_A610:
 	LDY World_Num	 ; Y = World_Num
 
-	LDA <World_Map_Y,X
+	LDA World_Map_Y,X
 	CMP Map_Y_Starts,Y
 	BGE PRG011_A628	 ; If Player's Map Y >= the starting Y of the map, jump to PRG011_A628
 
@@ -892,15 +952,15 @@ PRG011_A610:
 
 	; Negate Map_Skid_DeltaY
 	LDA #$ff
-	EOR <Map_Skid_DeltaY
+	EOR Map_Skid_DeltaY
 	TAY
 	INY
-	STY <Map_Skid_DeltaY
+	STY Map_Skid_DeltaY
 
 	; Set bit 1 on Map_Skid_TravDirs (travel down instead of up)
-	LDA <Map_Skid_TravDirs
+	LDA Map_Skid_TravDirs
 	ORA #$02
-	STA <Map_Skid_TravDirs
+	STA Map_Skid_TravDirs
 
 PRG011_A628:
 
@@ -908,21 +968,21 @@ PRG011_A628:
 	LDY #$04	 ; Y = 4
 PRG011_A62A:
 	CLC		 ; Clear carry
-	LSR <Map_Skid_DeltaY		; Bit 0 of Map_Skid_DeltaY -> carry
-	ROR <Map_Skid_DeltaFracY		; Set as bit 7 of Map_Skid_DeltaFracY
+	LSR Map_Skid_DeltaY		; Bit 0 of Map_Skid_DeltaY -> carry
+	ROR Map_Skid_DeltaFracY		; Set as bit 7 of Map_Skid_DeltaFracY
 
 	CLC		 ; Clear carry
-	LSR <Map_Skid_DeltaX		; Bit 0 of Map_Skid_DeltaX -> carry
-	ROR <Map_Skid_DeltaFracX		; Set as bit 7 of Map_Skid_DeltaFracX
+	LSR Map_Skid_DeltaX		; Bit 0 of Map_Skid_DeltaX -> carry
+	ROR Map_Skid_DeltaFracX		; Set as bit 7 of Map_Skid_DeltaFracX
 
 	DEY			; Y--
 	BPL PRG011_A62A		; While Y >= 0, loop!
 
 	; Map_Skid_Counter = $20
 	LDA #$20
-	STA <Map_Skid_Counter
+	STA Map_Skid_Counter
 
-	INC <Map_SkidBack		 ; Set Map_SkidBack
+	INC Map_SkidBack		 ; Set Map_SkidBack
 
 PRG011_A63D:
 
@@ -930,26 +990,27 @@ PRG011_A63D:
 	LDA #SND_LEVELSKID
 	STA Sound_QLevel2
 
-	LDA <Map_Skid_TravDirs
+	LDA Map_Skid_TravDirs
 	AND #$01
 	BEQ PRG011_A65E	 ; If Player is traveling left, jump to PRG011_A65E
 
 	; Traveling to the right...
 
 	; Map_Skid_FracX += Map_Skid_DeltaFracX
-	LDA <Map_Skid_FracX
-	ADD <Map_Skid_DeltaFracX
-	STA <Map_Skid_FracX
+	LDA Map_Skid_FracX
+	CLC
+	ADC Map_Skid_DeltaFracX
+	STA Map_Skid_FracX
 
 	; Add and carry into the full X
-	LDA <World_Map_X,X
-	ADC <Map_Skid_DeltaX
-	STA <World_Map_X,X
+	LDA World_Map_X,X
+	ADC Map_Skid_DeltaX
+	STA World_Map_X,X
 
 	; Any additional carry into Map XHi
-	LDA <World_Map_XHi,X
+	LDA World_Map_XHi,X
 	ADC #$00
-	STA <World_Map_XHi,X
+	STA World_Map_XHi,X
 
 	JMP PRG011_A671	 ; Jump to PRG011_A671
 
@@ -958,36 +1019,38 @@ PRG011_A65E:
 	; Traveling to the left
 
 	; Map_Skid_FracX -= Map_Skid_DeltaFracX
-	LDA <Map_Skid_FracX
-	SUB <Map_Skid_DeltaFracX
-	STA <Map_Skid_FracX
+	LDA Map_Skid_FracX
+	SEC
+	SBC Map_Skid_DeltaFracX
+	STA Map_Skid_FracX
 
 	; Subtract and carry into the full X
-	LDA <World_Map_X,X
-	SBC <Map_Skid_DeltaX
-	STA <World_Map_X,X
+	LDA World_Map_X,X
+	SBC Map_Skid_DeltaX
+	STA World_Map_X,X
 
 	; Any additional carry into Map XHi
-	LDA <World_Map_XHi,X
+	LDA World_Map_XHi,X
 	SBC #$00
-	STA <World_Map_XHi,X
+	STA World_Map_XHi,X
 
 PRG011_A671:
-	LDA <Map_Skid_TravDirs
+	LDA Map_Skid_TravDirs
 	AND #$02
 	BEQ PRG011_A687	 ; If Player is traveling up, jump to PRG011_A65E
 
 	; Traveling downward
 
 	; Map_Skid_FracY += Map_Skid_DeltaFracY
-	LDA <Map_Skid_FracY
-	ADD <Map_Skid_DeltaFracY
-	STA <Map_Skid_FracY
+	LDA Map_Skid_FracY
+	CLC
+	ADC Map_Skid_DeltaFracY
+	STA Map_Skid_FracY
 
 	; Add and carry into the full Y
-	LDA <World_Map_Y,X
-	ADC <Map_Skid_DeltaY
-	STA <World_Map_Y,X
+	LDA World_Map_Y,X
+	ADC Map_Skid_DeltaY
+	STA World_Map_Y,X
 
 	JMP PRG011_A694	 ; Jump to PRG011_A694
 
@@ -996,17 +1059,18 @@ PRG011_A687:
 	; Traveling downward
 
 	; Map_Skid_FracY -= Map_Skid_DeltaFracY
-	LDA <Map_Skid_FracY
-	SUB <Map_Skid_DeltaFracY
-	STA <Map_Skid_FracY
+	LDA Map_Skid_FracY
+	SEC
+	SBC Map_Skid_DeltaFracY
+	STA Map_Skid_FracY
 
 	; Subtract and carry into the full Y
-	LDA <World_Map_Y,X
-	SBC <Map_Skid_DeltaY
-	STA <World_Map_Y,X
+	LDA World_Map_Y,X
+	SBC Map_Skid_DeltaY
+	STA World_Map_Y,X
 
 PRG011_A694:
-	DEC <Map_Skid_Counter	; Map_Skid_Counter--
+	DEC Map_Skid_Counter	; Map_Skid_Counter--
 	BNE PRG011_A6BC	 ; If Map_Skid_Counter <> 0, jump to PRG011_A6BC
 
 PRG011_A698:
@@ -1017,7 +1081,7 @@ PRG011_A698:
 	LDX Player_Current	 ; X = Player_Current
 
 	LDA #$00
-	STA <Map_SkidBack
+	STA Map_SkidBack
 	STA World_Map_Twirl,X	 ; Twirling is done
 	STA Map_Prev_XOff2,X
 	STA Map_Prev_XHi2,X
@@ -1025,13 +1089,13 @@ PRG011_A698:
 	; Set the previous values at the twirl landing spot
 
 	; Map_Previous_Y = World_Map_Y
-	LDA <World_Map_Y,X
+	LDA World_Map_Y,X
 	STA Map_Previous_Y,X
 
 	; Map_Previous_X/Hi = Map_Previous_X/Hi
-	LDA <World_Map_XHi,X
+	LDA World_Map_XHi,X
 	STA Map_Previous_XHi,X
-	LDA <World_Map_X,X
+	LDA World_Map_X,X
 	STA Map_Previous_X,X
 
 PRG011_A6BC:
@@ -1042,15 +1106,17 @@ GameOver_TwirlFromAfar:
 	LDX Player_Current	 ; X = Player_Current
 
 	; Map X -= 2 (Player flying from way off goes directly left)
-	LDA <World_Map_X,X
-	SUB #$02
-	STA <World_Map_X,X
-	LDA <World_Map_XHi,X
+	LDA World_Map_X,X
+	SEC
+	SBC #$02
+	STA World_Map_X,X
+	LDA World_Map_XHi,X
 	SBC #$00
-	STA <World_Map_XHi,X
+	STA World_Map_XHi,X
 
-	LDA <World_Map_X,X
-	SUB <Horz_Scroll
+	LDA World_Map_X,X
+	SEC
+	SBC Horz_Scroll
 	BNE PRG011_A6E4	 ; If Player Map X <> Horz_Scroll, jump to PRG011_A6E4
 
 	LDA #$00
@@ -1075,7 +1141,7 @@ Map_DrawBorderForPlayer:
 	LDX Player_Current	; X = Player_Current
 
 	; Set Map Border Sprite Y
-	LDA <World_Map_Y,X
+	LDA World_Map_Y,X
 	STA Sprite_RAM+$00
 	STA Sprite_RAM+$04
 
@@ -1099,8 +1165,9 @@ Map_DrawBorderForPlayer:
 	LDA #$08
 	STA Sprite_RAM+$03
 
-	LDA <World_Map_X,X
-	SUB <Horz_Scroll
+	LDA World_Map_X,X
+	SEC
+	SBC Horz_Scroll
 	AND #$80
 	BEQ PRG011_A727	 ; If difference is positive, jump to PRG011_A727 (RTS)
 
@@ -1114,16 +1181,16 @@ PRG011_A727:
 	RTS		 ; Return
 
 
-GameOver_AlignToStartY
+GameOver_AlignToStartY:
 	LDX Player_Current	 ; X = Player_Current
 
 	; Enter from right side
 	LDA #240
-	STA <World_Map_X,X
+	STA World_Map_X,X
 
 	LDY World_Num		 ; Y = World_Num
 	LDA Map_Y_Starts,Y	 ; Get start Y
-	STA <World_Map_Y,X	 ; Set Player at start Y
+	STA World_Map_Y,X	 ; Set Player at start Y
 
 	INC GameOver_State	 ; GameOver_State++
 	JMP PRG011_A6E4	 	; Jump to PRG011_A6E4
@@ -1132,9 +1199,10 @@ GameOver_ReturnToStartX:
 	LDX Player_Current	 ; X = Player_Current
 
 	; Player's Map X -= 2 (skidding towards Start panel)
-	LDA <World_Map_X,X
-	SUB #$02
-	STA <World_Map_X,X
+	LDA World_Map_X,X
+	SEC
+	SBC #$02
+	STA World_Map_X,X
 
 	CMP #$20
 	BNE PRG011_A74E	 ; If Player is not at $20 (fixed start point X), jump to PRG011_A74E
@@ -1152,7 +1220,7 @@ PRG011_A74E:
 MO_SkidToPrev:
 	LDX Player_Current	 ; X = Player_Current
 
-	LDA <Map_SkidBack
+	LDA Map_SkidBack
 	BEQ PRG011_A760	 ; If Map_SkidBack is not set, jump to PRG011_A760
 
 	JMP PRG011_A834	 ; Jump to PRG011_A834
@@ -1174,15 +1242,15 @@ PRG011_A767:
 PRG011_A76D:
 
 	; If Player is not on top of the airship, jump to PRG011_A767
-	LDA <World_Map_Y,X
+	LDA World_Map_Y,X
 	CMP Map_Objects_Y,Y
 	BNE PRG011_A767
 
-	LDA <World_Map_XHi,X
+	LDA World_Map_XHi,X
 	CMP Map_Objects_XHi,Y
 	BNE PRG011_A767
 
-	LDA <World_Map_X,X
+	LDA World_Map_X,X
 	CMP Map_Objects_XLo,Y
 	BNE PRG011_A767
 
@@ -1214,11 +1282,12 @@ PRG011_A79D:
 	; Player died on top of something not an Airship or a Coin ship...
 
 	LDA Map_Previous_Y,X
-	SUB <World_Map_Y,X
-	STA <Map_Skid_DeltaY
+	SEC
+	SBC World_Map_Y,X
+	STA Map_Skid_DeltaY
 
 	LDA Map_Previous_XHi,X
-	CMP <World_Map_XHi,X
+	CMP World_Map_XHi,X
 	BEQ PRG011_A7B0	 ; If Player is on the same map screen as he was before, jump to PRG011_A7B0
 	BGE PRG011_A7B7	 ; If Player is on a map screen to the right, jump to PRG011_A7B7
 	BLT PRG011_A7CB	 ; If Player is on a map screen to the left, jump to PRG011_A7CB
@@ -1228,7 +1297,7 @@ PRG011_A7B0:
 	; Player is on the same map screen he was previously...
 
 	LDA Map_Previous_X,X
-	CMP <World_Map_X,X
+	CMP World_Map_X,X
 	BLT PRG011_A7CB	 ; If Player is to the left from where he was, jump to PRG011_A7CB
 
 PRG011_A7B7:
@@ -1237,13 +1306,14 @@ PRG011_A7B7:
 
 	; Map_Skid_DeltaFracX starts as straight difference in X, to be corrected
 	LDA Map_Previous_X,X
-	SUB <World_Map_X,X
-	STA <Map_Skid_DeltaFracX
+	SEC
+	SBC World_Map_X,X
+	STA Map_Skid_DeltaFracX
 
 	; Map_Skid_DeltaX starts as straight difference in X Hi
 	LDA Map_Previous_XHi,X
-	SBC <World_Map_XHi,X	
-	STA <Map_Skid_DeltaX
+	SBC World_Map_XHi,X	
+	STA Map_Skid_DeltaX
 
 	; Do not set bit 0 on Map_Skid_TravDirs (travel left instead of right)
 	LDY #$00	 ; Y = 0
@@ -1255,61 +1325,65 @@ PRG011_A7CB:
 	; Player is to the left from where he was
 
 	; Map_Skid_DeltaFracX starts as straight difference in X, to be corrected
-	LDA <World_Map_X,X
-	SUB Map_Previous_X,X
-	STA <Map_Skid_DeltaFracX
+	LDA World_Map_X,X
+	SEC
+	SBC Map_Previous_X,X
+	STA Map_Skid_DeltaFracX
 
 	; Map_Skid_DeltaX starts as straight difference in X Hi
-	LDA <World_Map_XHi,X
+	LDA World_Map_XHi,X
 	SBC Map_Previous_XHi,X
-	STA <Map_Skid_DeltaX
+	STA Map_Skid_DeltaX
 
 	; Set bit 0 on Map_Skid_TravDirs (travel right instead of left)
 	LDY #$01	 ; Y = 1
 
 PRG011_A7DC:
-	STY <Map_Skid_TravDirs	 ; Set Map_Skid_TravDirs
+	STY Map_Skid_TravDirs	 ; Set Map_Skid_TravDirs
 
 	LDA #$00
-	STA <Map_Skid_FracX
-	STA <Map_Skid_DeltaFracY
+	STA Map_Skid_FracX
+	STA Map_Skid_DeltaFracY
 
 	LDA Map_Previous_Y,X
-	CMP <World_Map_Y,X
+	CMP World_Map_Y,X
 	BGE PRG011_A7F9	 ; If Player is lower than he was before, jump to PRG011_A7F9
 
 	; Player was higher than before... negate Map_Skid_DeltaY
 	LDA #$ff
-	EOR <Map_Skid_DeltaY
+	EOR Map_Skid_DeltaY
 	TAY
 	INY
-	STY <Map_Skid_DeltaY
+	STY Map_Skid_DeltaY
 
 	; Set bit 1 on Map_Skid_TravDirs (travel down instead of up)
-	LDA <Map_Skid_TravDirs
+	LDA Map_Skid_TravDirs
 	ORA #$02
-	STA <Map_Skid_TravDirs
+	STA Map_Skid_TravDirs
 
 PRG011_A7F9:
-	LDA <Map_Skid_DeltaX
+	LDA Map_Skid_DeltaX
 	BNE PRG011_A817	 ; If Player is left/right of where he was before, jump to PRG011_A817
 
-	LDA <World_Map_X,X
-	SUB <Horz_Scroll
+	LDA World_Map_X,X
+	SEC
+	SBC Horz_Scroll
 	TAY
 
-	LDA <Map_Skid_TravDirs
+	LDA Map_Skid_TravDirs
 	AND #$01
 	BNE PRG011_A811	 ; If Player is traveling right, jump to PRG011_A811
 
 	TYA
-	ADD <Map_Skid_DeltaFracX
+	CLC
+	ADC Map_Skid_DeltaFracX
 	BCC PRG011_A81D	 ; If no carry, jump to PRG011_A81D
 	BCS PRG011_A817	 ; Otherwise, jump to PRG011_A817
 
 PRG011_A811:
 	TYA
-	SUB <Map_Skid_DeltaFracX
+	SEC
+	SBC Map_Skid_DeltaFracX
 	BCS PRG011_A81D	 ; If carry set, jump to PRG011_A81D
 
 PRG011_A817:
@@ -1322,93 +1396,97 @@ PRG011_A81D:
 	LDY #$04	 ; Y = 4
 PRG011_A81F:
 	CLC		 ; Clear carry
-	LSR <Map_Skid_DeltaY		; Bit 0 of Map_Skid_DeltaY -> carry
-	ROR <Map_Skid_DeltaFracY	; Set as bit 7 of Map_Skid_DeltaFracY
+	LSR Map_Skid_DeltaY		; Bit 0 of Map_Skid_DeltaY -> carry
+	ROR Map_Skid_DeltaFracY	; Set as bit 7 of Map_Skid_DeltaFracY
 
 	CLC		 ; Clear carry
-	LSR <Map_Skid_DeltaX		; Bit 0 of Map_Skid_DeltaX -> carry
-	ROR <Map_Skid_DeltaFracX	; Set as bit 7 of Map_Skid_DeltaFracX; Bit 0 -> Carry
-	ROR <Map_Skid_FracX		; Set as bit 7 of <Map_Skid_FracX
+	LSR Map_Skid_DeltaX		; Bit 0 of Map_Skid_DeltaX -> carry
+	ROR Map_Skid_DeltaFracX	; Set as bit 7 of Map_Skid_DeltaFracX; Bit 0 -> Carry
+	ROR Map_Skid_FracX		; Set as bit 7 of <Map_Skid_FracX
 
 	DEY			; Y--
 	BPL PRG011_A81F		; While Y >= 0, loop!
 
 	; Map_Skid_Counter = $20
 	LDA #$20
-	STA <Map_Skid_Counter
+	STA Map_Skid_Counter
 
-	INC <Map_SkidBack		 ; Set Map_SkidBack
+	INC Map_SkidBack		 ; Set Map_SkidBack
 
 PRG011_A834:
-	LDA <Map_Skid_Counter
+	LDA Map_Skid_Counter
 	BEQ PRG011_A891	 ; If Map_Skid_Counter = 0, jump to PRG011_A891
 
 	; Play skidding sound
 	LDA #SND_LEVELSKID
 	STA Sound_QLevel2
 
-	LDA <Map_Skid_TravDirs
+	LDA Map_Skid_TravDirs
 	AND #$01
 	BNE PRG011_A859	 ; If Player is traveling right, jump to PRG011_A859
 
-	LDA <Map_Skid_FracCarry
-	ADD <Map_Skid_FracX
-	STA <Map_Skid_FracCarry
+	LDA Map_Skid_FracCarry
+	CLC
+	ADC Map_Skid_FracX
+	STA Map_Skid_FracCarry
 
-	LDA <World_Map_X,X
-	ADC <Map_Skid_DeltaFracX
-	STA <World_Map_X,X
+	LDA World_Map_X,X
+	ADC Map_Skid_DeltaFracX
+	STA World_Map_X,X
 
-	LDA <World_Map_XHi,X
-	ADC <Map_Skid_DeltaX
-	STA <World_Map_XHi,X
+	LDA World_Map_XHi,X
+	ADC Map_Skid_DeltaX
+	STA World_Map_XHi,X
 
 	JMP PRG011_A86C	 ; Jump to PRG011_A86C
 
 PRG011_A859:
-	LDA <Map_Skid_FracCarry
-	SUB <Map_Skid_FracX
-	STA <Map_Skid_FracCarry
+	LDA Map_Skid_FracCarry
+	SEC
+	SBC Map_Skid_FracX
+	STA Map_Skid_FracCarry
 
-	LDA <World_Map_X,X
-	SBC <Map_Skid_DeltaFracX
-	STA <World_Map_X,X
+	LDA World_Map_X,X
+	SBC Map_Skid_DeltaFracX
+	STA World_Map_X,X
 
-	LDA <World_Map_XHi,X
-	SBC <Map_Skid_DeltaX
-	STA <World_Map_XHi,X
+	LDA World_Map_XHi,X
+	SBC Map_Skid_DeltaX
+	STA World_Map_XHi,X
 
 PRG011_A86C:
-	LDA <Map_Skid_TravDirs
+	LDA Map_Skid_TravDirs
 	AND #$02
 	BNE PRG011_A882	 ; If Player is traveling down, jump to PRG011_A882
 
-	LDA <Map_Skid_FracY
-	ADD <Map_Skid_DeltaFracY
-	STA <Map_Skid_FracY
+	LDA Map_Skid_FracY
+	CLC
+	ADC Map_Skid_DeltaFracY
+	STA Map_Skid_FracY
 
-	LDA <World_Map_Y,X
-	ADC <Map_Skid_DeltaY
-	STA <World_Map_Y,X
+	LDA World_Map_Y,X
+	ADC Map_Skid_DeltaY
+	STA World_Map_Y,X
 
 	JMP PRG011_A88F	 ; Jump to PRG011_A88F
 
 PRG011_A882:
-	LDA <Map_Skid_FracY
-	SUB <Map_Skid_DeltaFracY
-	STA <Map_Skid_FracY
+	LDA Map_Skid_FracY
+	SEC
+	SBC Map_Skid_DeltaFracY
+	STA Map_Skid_FracY
 
-	LDA <World_Map_Y,X
-	SBC <Map_Skid_DeltaY
-	STA <World_Map_Y,X
+	LDA World_Map_Y,X
+	SBC Map_Skid_DeltaY
+	STA World_Map_Y,X
 
 PRG011_A88F:
-	DEC <Map_Skid_Counter		 ; Map_Skid_Counter--
+	DEC Map_Skid_Counter		 ; Map_Skid_Counter--
 
 PRG011_A891:
 	JSR WorldMap_UpdateAndDraw	 ; Update and draw map
 
-	LDA <Map_Skid_Counter
+	LDA Map_Skid_Counter
 	ORA Map_March_Count+1	; <--- Airship's movement counter
 	ORA Map_Pan_Count
 	BNE PRG011_A8C8	 ; If skidding, the airship is moving, or the map is panning, jump to PRG011_A8C8 (RTS)
@@ -1420,11 +1498,11 @@ PRG011_A891:
 	LDX Player_Current	 ; X = Player_Current
 
 	; Ensure Player is precisely at his previous position
-	LDA <World_Map_Y,X
+	LDA World_Map_Y,X
 	STA Map_Entered_Y,X
-	LDA <World_Map_XHi,X
+	LDA World_Map_XHi,X
 	STA Map_Entered_XHi,X
-	LDA <World_Map_X,X
+	LDA World_Map_X,X
 	STA Map_Entered_X,X
 
 	LDA Map_Prev_XOff2,X
@@ -1435,7 +1513,7 @@ PRG011_A891:
 
 	; Clear skid vars
 	LDA #$00
-	STA <Map_SkidBack
+	STA Map_SkidBack
 	STA Map_Player_SkidBack,X
 
 PRG011_A8C8:
@@ -1444,20 +1522,22 @@ PRG011_A8C8:
 MO_SkidToPrevAfar:
 	LDX Player_Current	 ; X = Player_Current
 
-	LDA <Map_Skid_TravDirs
+	LDA Map_Skid_TravDirs
 	AND #$01
 	BEQ PRG011_A8E9	 ; If Player is traveling left, jump to PRG011_A8E9
 
 	; Far away Player skidding directly to the left; Map X -= 2
-	LDA <World_Map_X,X
-	SUB #$02
-	STA <World_Map_X,X
-	LDA <World_Map_XHi,X
+	LDA World_Map_X,X
+	SEC
+	SBC #$02
+	STA World_Map_X,X
+	LDA World_Map_XHi,X
 	SBC #$00
-	STA <World_Map_XHi,X
+	STA World_Map_XHi,X
 
-	LDA <World_Map_X,X
-	SUB <Horz_Scroll
+	LDA World_Map_X,X
+	SEC
+	SBC Horz_Scroll
 	BEQ PRG011_A8FF	 ; If Player hit left edge, jump to PRG011_A8FF
 
 	JMP PRG011_A90E	 ; Jump to PRG011_A90E
@@ -1465,15 +1545,17 @@ MO_SkidToPrevAfar:
 PRG011_A8E9:
 
 	; Far away Player skidding directly to the right; Map X += 2
-	LDA <World_Map_X,X
-	ADD #$02
-	STA <World_Map_X,X
-	LDA <World_Map_XHi,X
+	LDA World_Map_X,X
+	CLC
+	ADC #$02
+	STA World_Map_X,X
+	LDA World_Map_XHi,X
 	ADC #$00
-	STA <World_Map_XHi,X
+	STA World_Map_XHi,X
 
-	LDA <World_Map_X,X
-	SUB <Horz_Scroll
+	LDA World_Map_X,X
+	SEC
+	SBC Horz_Scroll
 	CMP #240
 	BNE PRG011_A90E	 ; If Player has not hit right edge, jump to PRG011_A90E
 
@@ -1504,11 +1586,11 @@ MO_SkidAfarPrep:
 
 	; Set Player's Y and XHi to their previous values
 	LDA Map_Previous_Y,X
-	STA <World_Map_Y,X
+	STA World_Map_Y,X
 	LDA Map_Previous_XHi,X
-	STA <World_Map_XHi,X
+	STA World_Map_XHi,X
 
-	LDA <Map_Skid_TravDirs
+	LDA Map_Skid_TravDirs
 	AND #$01
 	BEQ PRG011_A946	 ; If Player is traveling left, jump to PRG011_A946
 
@@ -1516,19 +1598,20 @@ MO_SkidAfarPrep:
 
 	LDY #240	 ; Y = 240
 
-	LDA <Horz_Scroll
+	LDA Horz_Scroll
 	BEQ PRG011_A941		; If horizontal scroll = 0, jump to PRG011_A941
 
 	LDA Map_Previous_X,X
-	ADD <Horz_Scroll
+	CLC
+	ADC Horz_Scroll
 	LDA Map_Previous_XHi,X
 	ADC #$00
-	STA <World_Map_XHi,X
+	STA World_Map_XHi,X
 
 	LDY #112	 ; Y = 112
 
 PRG011_A941:
-	STY <World_Map_X,X ; Set proper World Map X to begin skidding from
+	STY World_Map_X,X ; Set proper World Map X to begin skidding from
 
 	JMP PRG011_A95B	 ; Jump to PRG011_A95B
 
@@ -1536,18 +1619,19 @@ PRG011_A946:
 
 	; Traveling leftward
 
-	LDA <Horz_Scroll
+	LDA Horz_Scroll
 	BEQ PRG011_A957	 ; If Horz_Scroll = 0, jump to PRG011_A957
 
 	LDA Map_Previous_X,X
-	SUB <Horz_Scroll
+	SEC
+	SBC Horz_Scroll
 	LDA Map_Previous_XHi,X
 	SBC #$00
-	STA <World_Map_XHi,X
+	STA World_Map_XHi,X
 
 PRG011_A957:
-	LDA <Horz_Scroll
-	STA <World_Map_X,X
+	LDA Horz_Scroll
+	STA World_Map_X,X
 
 PRG011_A95B:
 
@@ -1562,21 +1646,22 @@ PRG011_A95B:
 MO_SkidAfarFinish:
 	LDX Player_Current	 ; X = Player_Current
 
-	LDA <Map_Skid_TravDirs
+	LDA Map_Skid_TravDirs
 	AND #$01
 	BEQ PRG011_A986	 ; If Player is traveling left, jump to PRG011_A946
 
 	; Player traveling left
 
 	; Map X -= 2
-	LDA <World_Map_X,X
-	SUB #$02
-	STA <World_Map_X,X
-	LDA <World_Map_XHi,X
+	LDA World_Map_X,X
+	SEC
+	SBC #$02
+	STA World_Map_X,X
+	LDA World_Map_XHi,X
 	SBC #$00
-	STA <World_Map_XHi,X
+	STA World_Map_XHi,X
 
-	LDA <World_Map_X,X
+	LDA World_Map_X,X
 	CMP Map_Previous_X,X
 	BEQ PRG011_A99A	 ; If Player Map X is at his previous X, jump to PRG011_A99A
 
@@ -1587,14 +1672,15 @@ PRG011_A986:
 	; Player traveling right
 
 	; Map X += 2
-	LDA <World_Map_X,X
-	ADD #$02
-	STA <World_Map_X,X
-	LDA <World_Map_XHi,X
+	LDA World_Map_X,X
+	CLC
+	ADC #$02
+	STA World_Map_X,X
+	LDA World_Map_XHi,X
 	ADC #$00
-	STA <World_Map_XHi,X
+	STA World_Map_XHi,X
 
-	LDA <World_Map_X,X
+	LDA World_Map_X,X
 	CMP Map_Previous_X,X
 	BNE PRG011_A9B5	 ; If Player Map X is not at his previous X, jump to PRG011_A9B5 (indirect to PRG011_A90E)
 
@@ -1607,15 +1693,15 @@ PRG011_A99A:
 	STA Map_Operation
 
 	; Ensure Player is precisely at his previous position
-	LDA <World_Map_Y,X
+	LDA World_Map_Y,X
 	STA Map_Entered_Y,X
-	LDA <World_Map_XHi,X
+	LDA World_Map_XHi,X
 	STA Map_Entered_XHi,X
-	LDA <World_Map_X,X
+	LDA World_Map_X,X
 	STA Map_Entered_X,X
 
 	LDA #$00
-	STA <Map_SkidBack
+	STA Map_SkidBack
 	STA Map_Player_SkidBack,X
 
 PRG011_A9B5:
@@ -1647,7 +1733,7 @@ Map_CompleteTile:
 	; quadrants always "poof" except fortress tiles)
 Map_ForcePoofTiles:
 	.byte TILE_TOADHOUSE, TILE_SPADEBONUS, TILE_HANDTRAP, TILE_DANCINGFLOWER, TILE_ALTTOADHOUSE
-Map_ForcePoofTiles_End
+Map_ForcePoofTiles_End:
 
 Map_PanelCompletePats:
 	.byte $88, $89, $8A, $8B	; Mario Complete panel patterns
@@ -1658,7 +1744,7 @@ Map_PanelCompletePats:
 	; will not cause the Player to end their turn (in a 2P game)
 Map_NoLoseTurnTiles:
 	.byte TILE_TOADHOUSE, TILE_ALTTOADHOUSE, TILE_SPADEBONUS, TILE_PIPE, TILE_SPIRAL
-Map_NoLoseTurnTiles_End
+Map_NoLoseTurnTiles_End:
 
 MO_DoLevelClear:
 
@@ -1689,7 +1775,7 @@ PRG011_A9FE:
 	TAY		 	; Y = upper 2 bits of map tile shifted down; the "tile quadrant"
 
 	LDX #(Map_ForcePoofTiles_End - Map_ForcePoofTiles - 1)
-	LDA <World_Map_Tile
+	LDA World_Map_Tile
 PRG011_AA0C:
 	CMP Map_ForcePoofTiles,X
 	BEQ PRG011_AA19	 ; If this tile matches, jump to PRG011_AA19
@@ -1705,10 +1791,10 @@ PRG011_AA0C:
 	; This is one of the Map_ForcePoofTiles tiles, or at least a (potentially) enterable one
 
 PRG011_AA19:
-	LDA <Map_ClearLevelFXCnt
+	LDA Map_ClearLevelFXCnt
 	BEQ PRG011_AA29	 ; If "map poof" is not currently in use, jump to PRG011_AA29
 
-	LDA <Counter_1
+	LDA Counter_1
 	AND #$03
 	BEQ PRG011_AA4C	 ; 1:4 ticks jump to PRG011_AA4C
 
@@ -1729,7 +1815,7 @@ PRG011_AA29:
 
 	; Map_ClearLevelFXCnt = 7 (begin panel flipover effect)
 	LDA #$07
-	STA <Map_ClearLevelFXCnt
+	STA Map_ClearLevelFXCnt
 
 	; Play "flip over" sound
 	LDA #SND_MAPINVENTORYFLIP
@@ -1741,7 +1827,7 @@ PRG011_AA39:
 
 	; All non-quadrant 0 tiles use the "poof" to clear
 
-	LDA <World_Map_Tile
+	LDA World_Map_Tile
 	CMP #TILE_FORT
 	BEQ PRG011_AA4C	 ; If the completed tile is a Mini-Fortress, jump to PRG011_AA4C
 
@@ -1763,10 +1849,10 @@ PRG011_AA4C:
 
 	; Updating whatever effect we're performing
 
-	INC <Map_ClearLevelFXCnt	 ; Map_ClearLevelFXCnt++
+	INC Map_ClearLevelFXCnt	 ; Map_ClearLevelFXCnt++
 
 	; Remember these compares are immediately following the INC...
-	LDA <Map_ClearLevelFXCnt
+	LDA Map_ClearLevelFXCnt
 	CMP #$07
 	BEQ PRG011_AA58	 ; If Map_ClearLevelFXCnt = $07 (end of Fortress "poof" effect), jump to PRG011_AA58
 
@@ -1777,31 +1863,32 @@ PRG011_AA58:
 
 	; Map_ClearLevelFXCnt = 0 (effect over)
 	LDA #$00
-	STA <Map_ClearLevelFXCnt
+	STA Map_ClearLevelFXCnt
 
 	LDX Player_Current	 ; X = Player_Current
 
-	LDA <World_Map_XHi,X
+	LDA World_Map_XHi,X
 	ASL A		 ; 2 byte index
 	TAY		 ; -> Y
 	LDA Tile_Mem_Addr,Y	; Get tile address low for this map screen
-	ADD #$f0	 	; Base map offset
-	STA <Map_Tile_AddrL	; -> Map_Tile_AddrL
+	CLC
+	ADC #$f0	 	; Base map offset
+	STA Map_Tile_AddrL	; -> Map_Tile_AddrL
 
 	LDA Tile_Mem_Addr+1,Y	; Get tile address high for this map screen
 	ADC #$00	 	; Apply carry
-	STA <Map_Tile_AddrH	; -> Map_Tile_AddrH
+	STA Map_Tile_AddrH	; -> Map_Tile_AddrH
 
 	; Calculate a row/column offset
-	LDA <World_Map_X,X
+	LDA World_Map_X,X
 	LSR A
 	LSR A
 	LSR A
 	LSR A
-	ORA <World_Map_Y,X
+	ORA World_Map_Y,X
 	TAY		 ; -> 'Y'
 
-	LDA [Map_Tile_AddrL],Y	 ; Get the tile here
+	LDA (Map_Tile_AddrL),Y	 ; Get the tile here
 	PHA		 ; Save tile value
 
 	AND #%11000000
@@ -1846,29 +1933,30 @@ PRG011_AA9C:
 
 PRG011_AAA7:
 	LDA Map_CompleteTile,X	; Get appropriate "complete" tile for this level
-	STA [Map_Tile_AddrL],Y	; Set it in memory
-	STA <World_Map_Tile	; ... as well as the tile detected
+	STA (Map_Tile_AddrL),Y	; Set it in memory
+	STA World_Map_Tile	; ... as well as the tile detected
 
 	JSR Map_MarkLevelComplete	 ; Mark this level as complete!
 
 	LDY Player_Current	 ; Y = Player_Current
-	LDX <World_Map_X,Y	 ; X = Player Map X
+	LDX World_Map_X,Y	 ; X = Player Map X
 	LDA World_Map_Y,Y	 ; A = Player Map Y
 	JSR Map_Calc_NT2Addr_By_XY	 ; Nametable 2 Offset -> Temp_Var15
 
 	LDX Graphics_BufCnt	 ; X = Graphics_BufCnt
 
 	; Set high byte of video address
-	LDA <Temp_Var15
+	LDA Temp_Var15
 	STA Graphics_Buffer+$00,X
 	STA Graphics_Buffer+$05,X
 
 	; Set low byte of video address for first row of level panel change
-	LDA <Temp_Var16
+	LDA Temp_Var16
 	STA Graphics_Buffer+$01,X
 
 	; Set low byte of video address for second row of level panel change
-	ADD #32		; +32 for next row
+	CLC
+	ADC #32		; +32 for next row
 	STA Graphics_Buffer+$06,X
 
 	; Run length of 2 for both
@@ -1879,7 +1967,7 @@ PRG011_AAA7:
 	LDY #$08	 ; Y = 8 (Fortress Rubble)
 
 	; If we're doing Fortress rubble, jump to PRG011_AAEF
-	LDA <World_Map_Tile
+	LDA World_Map_Tile
 	CMP #TILE_FORTRUBBLE
 	BEQ PRG011_AAEF
 	CMP #TILE_ALTRUBBLE
@@ -1909,7 +1997,8 @@ PRG011_AAEF:
 
 	; Graphics_BufCnt += 10
 	LDA Graphics_BufCnt
-	ADD #10
+	CLC
+	ADC #10
 	STA Graphics_BufCnt
 
 	JMP PRG011_AB61	 ; Jump to PRG011_AB61
@@ -1918,17 +2007,17 @@ PRG011_AB1B:
 	LDX Player_Current	 ; X = Player_Current
 
 	; Copy Player's Map Y/X -> Temp_Var1/2
-	LDA <World_Map_Y,X
-	STA <Temp_Var1
-	LDA <World_Map_X,X
-	STA <Temp_Var2
+	LDA World_Map_Y,X
+	STA Temp_Var1
+	LDA World_Map_X,X
+	STA Temp_Var2
 
-	LDY <Map_ClearLevelFXCnt
+	LDY Map_ClearLevelFXCnt
 	CPY #$07
 	BLT PRG011_AB5B	 ; If Map_ClearLevelFXCnt < 7 (doing Fortress poof rather than panel flip), jump to PRG011_AB5B
 
 	; Set "flip" sprite Y
-	LDA <Temp_Var1
+	LDA Temp_Var1
 	STA Sprite_RAM+$60
 	STA Sprite_RAM+$64
 
@@ -1953,8 +2042,9 @@ PRG011_AB1B:
 	STA Sprite_RAM+$66
 
 	; Set left panel flip sprite X
-	LDA <Temp_Var2
-	SUB <Horz_Scroll
+	LDA Temp_Var2
+	SEC
+	SBC Horz_Scroll
 	STA Sprite_RAM+$63
 
 	; Set right panel flip sprite X
@@ -1981,18 +2071,18 @@ PRG011_AB6B:
 	BEQ PRG011_AB89	 	; If this map object slot is empty, jump to PRG011_AB89
 
 	LDA Map_Objects_Y,Y
-	STA <Temp_Var1		; Temp_Var1 = this map object's Y
-	CMP <World_Map_Y,X
+	STA Temp_Var1		; Temp_Var1 = this map object's Y
+	CMP World_Map_Y,X
 	BNE PRG011_AB89	 	; If Player is not on this map object vertically, jump to PRG011_AB89
 
 	LDA Map_Objects_XHi,Y
-	CMP <World_Map_XHi,X
+	CMP World_Map_XHi,X
 	BNE PRG011_AB89	 	; If Player is not on the same screen as this map object, jump to PRG011_AB89
 
 	LDA Map_Objects_XLo,Y
-	STA <Temp_Var2		; Temp_Var2 = this map object's X
+	STA Temp_Var2		; Temp_Var2 = this map object's X
 
-	CMP <World_Map_X,X
+	CMP World_Map_X,X
 	BEQ PRG011_AB8F 	; If Player is definitely on top of this map object, jump to PRG011_AB8F
 
 PRG011_AB89:
@@ -2002,7 +2092,7 @@ PRG011_AB89:
 	JMP PRG011_ABBE	 ; Jump to PRG011_ABBE
 
 PRG011_AB8F:
-	STY <Map_HideObj	; Index of map object Player is standing on -> Map_HideObj (hide this object and can't re-enter it)
+	STY Map_HideObj	; Index of map object Player is standing on -> Map_HideObj (hide this object and can't re-enter it)
 
 	LDA Map_Objects_IDs,Y
 	CMP #MAPOBJ_AIRSHIP
@@ -2018,7 +2108,7 @@ PRG011_AB8F:
 	JMP PRG011_ABCC	 	; Jump to PRG011_ABCC (MapObjects_UpdateDrawEnter)
 
 PRG011_AB9E:
-	LDA <Map_ClearLevelFXCnt
+	LDA Map_ClearLevelFXCnt
 	BNE PRG011_ABA7	 ; If Map_ClearLevelFXCnt <> 0, jump to  PRG011_ABA7
 
 	; "Poof" sound
@@ -2026,24 +2116,24 @@ PRG011_AB9E:
 	STA Sound_QLevel1
 
 PRG011_ABA7:
-	LDA <Counter_1
+	LDA Counter_1
 	AND #$03
 	BNE PRG011_AB5B	 ; 1:4 ticks proceed, otherwise jump to PRG011_AB5B
 
-	INC <Map_ClearLevelFXCnt	; Map_ClearLevelFXCnt++
+	INC Map_ClearLevelFXCnt	; Map_ClearLevelFXCnt++
 
-	LDA <Map_ClearLevelFXCnt
+	LDA Map_ClearLevelFXCnt
 	CMP #$07
 	BNE PRG011_AB5B	 ; If Map_ClearLevelFXCnt = 7 (end of "poof" effect), jump to  PRG011_AB5B
 
 	; Map object will now disappear!
 	LDA #MAPOBJ_EMPTY
 	STA Map_Objects_IDs,Y		; Empty the slot
-	STA <Map_ClearLevelFXCnt	; Stop the clear effect (poof)
-	STA <Map_HideObj		; Clear the hidden object index
+	STA Map_ClearLevelFXCnt	; Stop the clear effect (poof)
+	STA Map_HideObj		; Clear the hidden object index
 
 PRG011_ABBE:
-	LDA <Map_ClearLevelFXCnt
+	LDA Map_ClearLevelFXCnt
 	BNE PRG011_ABCC	 ; If Map_ClearLevelFXCnt <> 0, jump to PRG011_ABCC
 
 	; Level clearing effect is over...
@@ -2065,30 +2155,35 @@ Map_DrawClearLevelPoof:
 	; Temp_Var2 = X
 
 	; Set poof top Y 8 pixels above (centered over point)
-	LDA <Temp_Var1
-	SUB #$08	
+	LDA Temp_Var1
+	SEC
+	SBC #$08	
 	STA Sprite_RAM+$60
 	STA Sprite_RAM+$64
 	STA Sprite_RAM+$68
 	STA Sprite_RAM+$6C
 
 	; Set poof bottom Y 8 pixels below (centered over point)
-	ADD #16
+	CLC
+	ADC #16
 	STA Sprite_RAM+$70
 	STA Sprite_RAM+$74
 	STA Sprite_RAM+$78
 	STA Sprite_RAM+$7C
 
 	LDY #$00	 ; Y = 0
-	LDA <Temp_Var2	 
-	SUB <Horz_Scroll 
-	SUB #$08	 ; Set X coordinate relative to screen scroll - 8
+	LDA Temp_Var2	 
+	SEC
+	SBC Horz_Scroll 
+	SEC
+	SBC #$08	 ; Set X coordinate relative to screen scroll - 8
 PRG011_ABF9:
 	; Set poof X coordinates
 	STA Sprite_RAM+$63,Y	; Top
 	STA Sprite_RAM+$73,Y	; Bottom
 
-	ADD #$08	 ; X += 8
+	CLC
+	ADC #$08	 ; X += 8
 
 	INY
 	INY
@@ -2118,7 +2213,7 @@ PRG011_ABF9:
 	STA Sprite_RAM+$7A
 	STA Sprite_RAM+$7E
 
-	LDX <Map_ClearLevelFXCnt	 ; X = Map_ClearLevelFXCnt
+	LDX Map_ClearLevelFXCnt	 ; X = Map_ClearLevelFXCnt
 	DEX		 ; X-- (off by 1)
 	TXA
 	ASL A
@@ -2143,16 +2238,16 @@ PRG011_ABF9:
 
 Map_WhiteObjects:
 	.byte MAPOBJ_NSPADE, MAPOBJ_WHITETOADHOUSE, MAPOBJ_COINSHIP, MAPOBJ_UNK0C 
-Map_WhiteObjects_End
+Map_WhiteObjects_End:
 
 MO_CheckForBonus:
 
 	; Temp_Var16 is our loop counter
 	LDA #(Map_WhiteObjects_End - Map_WhiteObjects - 1)
-	STA <Temp_Var16
+	STA Temp_Var16
 
 PRG011_AC57:
-	LDY <Temp_Var16	 	; Y = Temp_Var16
+	LDY Temp_Var16	 	; Y = Temp_Var16
 	LDX #(MAPOBJ_TOTAL-1)	; X = (MAPOBJ_TOTAL-1)
 
 	LDA Map_WhiteObjects,Y
@@ -2166,14 +2261,14 @@ PRG011_AC5E:
 	JSR MO_CheckForBonusRules	; Since we don't have one of these, check the rules to see if we've earned one!
 
 PRG011_AC69:
-	DEC <Temp_Var16	 ; Temp_Var16--
+	DEC Temp_Var16	 ; Temp_Var16--
 	BPL PRG011_AC57	 ; While Temp_Var16 >= 0, loop!
 
 	INC Map_Operation	 ; Map_Operation++
 	JMP WorldMap_UpdateAndDraw	 ; Update and draw map, and don't come back!
 
 MO_CheckForBonusRules:
-	LDA <Temp_Var16
+	LDA Temp_Var16
 	JSR DynJump
 
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
@@ -2227,7 +2322,7 @@ PRG011_ACAC:
 	STA Map_Objects_XLo,Y
 	STA Map_Object_ActX,Y
 
-	LDX <Temp_Var16	 	; X = Temp_Var16
+	LDX Temp_Var16	 	; X = Temp_Var16
 	LDA Map_WhiteObjects,X	; Load the proper bonus object ID (will always be MAPOBJ_NSPADE; this is a bit superfluous)
 	STA Map_Objects_IDs,Y	; Set the N-Spade ID
 
@@ -2237,12 +2332,13 @@ PRG011_ACAC:
 
 	; High byte of the N-Spade score
 	LDA Map_NSpade_NextScore+2
-	ADD #LOW(8000)
+	CLC
+	ADC #<(8000)
 	STA Map_NSpade_NextScore+2
 
 	; Middle byte of the N-Spade score
 	LDA Map_NSpade_NextScore+1
-	ADC #HIGH(8000)
+	ADC #>(8000)
 	STA Map_NSpade_NextScore+1
 
 	; Low byte of the N-Spade score
@@ -2462,7 +2558,7 @@ Map_Object_Do_All:
 	BNE PRG011_ADF4	 ; If Map_NoLoseTurn is set, jump to PRG011_ADF4 (RTS)
 
 	LDY #(MAPOBJ_TOTAL-1) 	; Total map objects which may exist on the map (only 8 are defined at start)
-	STY <Temp_Var13		; Temp_Var13 = $0D
+	STY Temp_Var13		; Temp_Var13 = $0D
 
 	LDA Map_Operation
 	CMP #$0b
@@ -2489,13 +2585,13 @@ PRG011_ADDE:
 	INC Map_MarchInit	 ; Set Map_MarchInit (March initialization complete!)
 
 PRG011_ADE6:
-	LDX <Temp_Var13		; X = Temp_Var13
+	LDX Temp_Var13		; X = Temp_Var13
 	LDA Map_Objects_IDs,X
 	BEQ PRG011_ADF0	 	; If the object ID is zero, nothing to do, jump to PRG011_ADF0
 	JSR Map_Object_Do 	; Process this map object!
 
 PRG011_ADF0:
-	DEC <Temp_Var13		; Temp_Var13--
+	DEC Temp_Var13		; Temp_Var13--
 	BPL PRG011_ADE6	 	; While Temp_Var13 >= 0, loop!
 
 PRG011_ADF4:
@@ -2541,19 +2637,19 @@ PRG011_AE0B:
 	.word Map_Object_Canoe		; Canoe
 
 	; Based on march travel direction, these are the movements
-Map_Object_Travel_Y:	.byte 0, 0, 1, -1
-Map_Object_Travel_X:	.byte 1, -1, 0, 0
-Map_Object_Travel_XHi:	.byte 0, -1, 0, 0
+Map_Object_Travel_Y:	.byte 0, 0, 1, <-1
+Map_Object_Travel_X:	.byte 1, <-1, 0, 0
+Map_Object_Travel_XHi:	.byte 0, <-1, 0, 0
 
 Map_Object_March_Offset:
 	; For a 32 position march, offset to the object's X coordinate
-	.byte -8, -7, -6, -5, -4, -3, -2, -1,  0,  1,  2,  3,  4,  5,  6,  7
-	.byte  8,  7,  6,  5,  4,  3,  2,  1,  0, -1, -2, -3, -4, -5, -6, -7
+	.byte <-8, <-7, <-6, <-5, <-4, <-3, <-2, <-1,  0,  1,  2,  3,  4,  5,  6,  7
+	.byte  8,  7,  6,  5,  4,  3,  2,  1,  0, <-1, <-2, <-3, <-4, <-5, <-6, <-7
 
 Map_Object_March_OffsetXHi:
 	; For a 32 position march, offset to the object's X Hi coordinate
-	.byte -1, -1, -1, -1, -1, -1, -1, -1,  0,  0,  0,  0,  0,  0,  0,  0
-	.byte  0,  0,  0,  0,  0,  0,  0,  0,  0, -1, -1, -1, -1, -1, -1, -1
+	.byte <-1, <-1, <-1, <-1, <-1, <-1, <-1, <-1,  0,  0,  0,  0,  0,  0,  0,  0
+	.byte  0,  0,  0,  0,  0,  0,  0,  0,  0, <-1, <-1, <-1, <-1, <-1, <-1, <-1
 
 Map_Object_March:
 	; For all map objects which "march" back and forth (includes Hammer/etc. Brothers, and bonuses...)
@@ -2576,7 +2672,7 @@ Map_Object_MusicBoxCheck:
 PRG011_AE93:
 	TXA
 	AND #$01
-	STA <Temp_Var16	; Temp_Var16 = object's index AND'ed 1 (mixes up the marching a little; left/right swap)
+	STA Temp_Var16	; Temp_Var16 = object's index AND'ed 1 (mixes up the marching a little; left/right swap)
 
 	LDA Map_March_Count
 	AND #$10
@@ -2586,7 +2682,7 @@ PRG011_AE93:
 	LSR A			; A = (Map_March_Count & $10) >> 4
 	STA Map_Object_Data,X	; Data in the context of a "marcher" is 0/1 depending which direction they're walking (every 16 tics, reverse direction)
 
-	LDA <Temp_Var16	; Get the march flip
+	LDA Temp_Var16	; Get the march flip
 	BEQ PRG011_AEAE	 	; If no flip needed, jump to PRG011_AEAE
 
 	; Flip the march direction
@@ -2594,20 +2690,21 @@ PRG011_AE93:
 	STA Map_Object_Data,X
 
 PRG011_AEAE:
-	LDA <Temp_Var16
+	LDA Temp_Var16
 	ASL A
 	ASL A
 	ASL A
 	ASL A
-	STA <Temp_Var16	; Temp_Var16 <<= 4
+	STA Temp_Var16	; Temp_Var16 <<= 4
 
 	LDA Map_March_Count
 	AND #$1f	 	; March count is basically 0-31, flipping at 16
-	EOR <Temp_Var16	; Flip the upper bit as appropriate
+	EOR Temp_Var16	; Flip the upper bit as appropriate
 
 	TAY		 		; Y = A (the adjusted march)
 	LDA Map_Objects_XLo,X		; A = object's X coordinate (low part)
-	ADD Map_Object_March_Offset,Y	; Add the proper offset in their march
+	CLC
+	ADC Map_Object_March_Offset,Y	; Add the proper offset in their march
 	STA Map_Object_ActX,X	 	; Store this as their display X
 
 	; X Hi offset as needed
@@ -2628,22 +2725,22 @@ Map_Object_March_NonNormal:
 	BNE PRG011_AF46	 	; If music box is active, jump to PRG011_AF46
 
 	; Hammer brothers need to march about...
-	LDY <Temp_Var13		; Y = Temp_Var13 (current object we're working on)
+	LDY Temp_Var13		; Y = Temp_Var13 (current object we're working on)
 	LDX #$01	 	; X = 1
 
 	; For both players...
 PRG011_AEDF:
 
 	; Check if Player is standing on map object
-	LDA <World_Map_Y,X
+	LDA World_Map_Y,X
 	CMP Map_Object_ActY,Y
 	BNE PRG011_AEFA	 	; If Player's Y is not equal to this map object, jump to PRG011_AEFA (do nothing)
 
-	LDA <World_Map_XHi,X
+	LDA World_Map_XHi,X
 	CMP Map_Object_ActXH,Y
 	BNE PRG011_AEFA	 	; If Player's X Hi is not equal to this map object, jump to PRG011_AEFA (do nothing)
 
-	LDA <World_Map_X,X
+	LDA World_Map_X,X
 	CMP Map_Object_ActX,Y
 	BNE PRG011_AEFA	 	; If Player's X Lo is not equal to this map object, jump to PRG011_AEFA (do nothing)
 
@@ -2664,7 +2761,7 @@ PRG011_AEFA:
 	JSR Map_MarchValidateTravel	; Validates traveling in this direction OR does not return here!
 
 PRG011_AF0C:
-	LDY <Temp_Var13		; Y = Index of current object we're working with
+	LDY Temp_Var13		; Y = Index of current object we're working with
 	LDA Map_Objects_IDs,Y	; Get this object's ID
 	BEQ PRG011_AF46	 	; If ID = 0, jump to PRG011_AF46 (shouldn't ever happen??)
 
@@ -2674,7 +2771,7 @@ PRG011_AF0C:
 	CMP #MAPOBJ_W7PLANT	 
 	BGE PRG011_AF26
 
-	LDA <Counter_1
+	LDA Counter_1
 	AND #$0f	 ; Restrict counter to 0-15
 	BNE PRG011_AF26	 ; If not zero, jump to PRG011_AF26
 
@@ -2689,12 +2786,14 @@ PRG011_AF26:
 
 	; Travel Y
 	LDA Map_Object_ActY,Y
-	ADD Map_Object_Travel_Y,X
+	CLC
+	ADC Map_Object_Travel_Y,X
 	STA Map_Object_ActY,Y
 
 	; Travel X
 	LDA Map_Object_ActX,Y	
-	ADD Map_Object_Travel_X,X
+	CLC
+	ADC Map_Object_Travel_X,X
 	STA Map_Object_ActX,Y	
 
 	; Travel X Hi byte
@@ -2704,7 +2803,7 @@ PRG011_AF26:
 
 PRG011_AF46:
 	; Jumps here if music box is active
-	LDX <Temp_Var13			; X = Temp_Var13
+	LDX Temp_Var13			; X = Temp_Var13
 	JSR Map_Object_March_UpdateXs	; Copy updated X's to the map RAM
 
 	DEC Map_March_Count,X	 	; Decrement the march counter
@@ -2717,7 +2816,7 @@ PRG011_AF46:
 	; Basically to make sure this object didn't land on top of another
 	LDY #$0d	 
 PRG011_AF57:
-	CPY <Temp_Var13
+	CPY Temp_Var13
 	BEQ PRG011_AF81		; If this is the object we're working with, skip this loop!
 
 	LDA Map_Objects_IDs,Y 	; Get this object ID
@@ -2865,7 +2964,7 @@ Map_Object_Airship:
 	BNE Map_Airship_Travel_To	; If Map_Operation <> $0D (normal), jump to Map_Airship_Travel_To
 
 	LDA #$00
-	STA <Temp_Var15		; Temp_Var15 = 0 (Airship facing to the right)
+	STA Temp_Var15		; Temp_Var15 = 0 (Airship facing to the right)
 	LDY Player_Current	; Y = Player_Current
 
 	LDA World_Map_XHi,Y	; A = Player's X Hi byte
@@ -2882,10 +2981,10 @@ PRG011_B140:
 
 PRG011_B148:
 	LDA #$01	 	
-	STA <Temp_Var15		; Temp_Var15 = 1 (Airship facing to the left)
+	STA Temp_Var15		; Temp_Var15 = 1 (Airship facing to the left)
 
 PRG011_B14C:
-	LDA <Temp_Var15	
+	LDA Temp_Var15	
 	STA Map_Object_Data+1	; Store facing direction into Airship's data
 PRG011_B151:
 	RTS		 	; Return...
@@ -2901,15 +3000,15 @@ Map_Airship_Travel_To:
 
 	; Get address into Map_Airship_Dest_YSets
 	LDA Map_Airship_Dest_YSets,Y
-	STA <Temp_Var1		 
+	STA Temp_Var1		 
 	LDA Map_Airship_Dest_YSets+1,Y
-	STA <Temp_Var2		 
+	STA Temp_Var2		 
 
 	; Get address into Map_Airship_Dest_XSets
 	LDA Map_Airship_Dest_XSets,Y
-	STA <Temp_Var3	
+	STA Temp_Var3	
 	LDA Map_Airship_Dest_XSets+1,Y
-	STA <Temp_Var4	
+	STA Temp_Var4	
 
 	LDA Map_Operation
 	CMP #$04
@@ -2929,12 +3028,12 @@ PRG011_B17A:
 	BGE PRG011_B1A2	 	; If Map_Airship_Dest >= 6, jump to PRG011_B1A2
 
 	; Get and set the destination Y of the Airship travel
-	LDA [Temp_Var1],Y	; Get the Y from the table
+	LDA (Temp_Var1),Y	; Get the Y from the table
 	STA Map_Object_ActY+1
 	STA Map_Objects_Y+1
 
 	; Get and set the destination X of the Airship travel
-	LDA [Temp_Var3],Y	; Get the X from the table
+	LDA (Temp_Var3),Y	; Get the X from the table
 	PHA		 	; Save 'A'
 
 	; High part
@@ -2958,7 +3057,7 @@ PRG011_B1A7:
 	LDA Map_March_Count+1	; Airship's "March count"
 	BEQ PRG011_B151	 	; If zero, jump to PRG011_B151 (RTS)
 
-	LDA <Map_Airship_DC
+	LDA Map_Airship_DC
 	BEQ PRG011_B1B3	 	; If Map_Airship_DC = 0 (deltas not yet computed), jump to PRG011_B1B3
 	JMP PRG011_B2B8	 	; Otherwise, jump to PRG011_B2B8...
 
@@ -2971,35 +3070,37 @@ PRG011_B1B3:
 PRG011_B1BD:
 	LDA Map_Object_ActXH+1	
 	ORA Map_Object_ActX+1	; A = Airship's current X with XHi OR'd into the low bits
-	CMP [Temp_Var3],Y	; Check if airship is at X destination yet
+	CMP (Temp_Var3),Y	; Check if airship is at X destination yet
 	BNE PRG011_B1CE	 	; If not, jump to PRG011_B1CE
 
 	LDA Map_Object_ActY+1	; A = Airship's Y
-	CMP [Temp_Var1],Y	; Check if airship is at Y destination yet
+	CMP (Temp_Var1),Y	; Check if airship is at Y destination yet
 	BEQ PRG011_B21B	 	; If it is, jump to PRG011_B21B
 
 PRG011_B1CE:
-	LDA [Temp_Var1],Y	; Get Y destination from table
-	STA <Temp_Var5		; Store into Temp_Var5
+	LDA (Temp_Var1),Y	; Get Y destination from table
+	STA Temp_Var5		; Store into Temp_Var5
 
-	LDA [Temp_Var3],Y	; Get X destination from table
+	LDA (Temp_Var3),Y	; Get X destination from table
 	AND #$0f	 	; Only keep lower part (XHi)
-	STA <Temp_Var7		; Store into Temp_Var7
+	STA Temp_Var7		; Store into Temp_Var7
 
-	LDA [Temp_Var3],Y	; Get X destination from table
+	LDA (Temp_Var3),Y	; Get X destination from table
 	AND #$f0	 	; Only keep higher part (X lo)
-	STA <Temp_Var6		; Store into Temp_Var6
+	STA Temp_Var6		; Store into Temp_Var6
 
-	LDA <Temp_Var5
-	SUB #32	
-	STA <Temp_Var5		; Temp_Var5 (Y destination) -= 32
+	LDA Temp_Var5
+	SEC
+	SBC #32	
+	STA Temp_Var5		; Temp_Var5 (Y destination) -= 32
 
-	LDA <Temp_Var6
-	SUB #32
-	STA <Temp_Var6		; Temp_Var6 (X lo destination) -= 32
-	LDA <Temp_Var7	
+	LDA Temp_Var6
+	SEC
+	SBC #32
+	STA Temp_Var6		; Temp_Var6 (X lo destination) -= 32
+	LDA Temp_Var7	
 	SBC #$00
-	STA <Temp_Var7		; Temp_Var7 (X hi destination) applies carry as appropriate
+	STA Temp_Var7		; Temp_Var7 (X hi destination) applies carry as appropriate
 
 	LDX Total_Players
 	DEX			; X = 0 for 1P mode, 1 for 2P mode
@@ -3009,19 +3110,21 @@ PRG011_B1F6:
 	; Maybe to keep the airship from landing directly on top of a Player?
 	; This may be troublesome...
 	LDA Map_Previous_Y,X	; Get previous Y position for Player
-	SUB <Temp_Var5		; Subtract the Y destination 
+	SEC
+	SBC Temp_Var5		; Subtract the Y destination 
 	CMP #$41	 
 	BGE PRG011_B215	 	; If result >= $41, jump to PRG011_B215 (What is this for??)
 
 	LDA Map_Previous_X,X	; Get previous X position for Player
-	SUB <Temp_Var6		; Subtract the X lo destination 
-	STA <Temp_Var6		; And update Temp_Var6
+	SEC
+	SBC Temp_Var6		; Subtract the X lo destination 
+	STA Temp_Var6		; And update Temp_Var6
 
 	LDA Map_Previous_XHi,X 	; Get previous X Hi position for Player
-	SBC <Temp_Var7		; Subtract carry from Temp_Var7
+	SBC Temp_Var7		; Subtract carry from Temp_Var7
 	BNE PRG011_B215	 	; If greater than zero, jump to PRG011_B215
 
-	LDA <Temp_Var6		; Get adjusted result
+	LDA Temp_Var6		; Get adjusted result
 	CMP #$41	 	; 
 	BLT PRG011_B21B	 	; If result < $41, jump to PRG011_B21B (stops Airship)
 
@@ -3037,35 +3140,37 @@ PRG011_B21B:
 
 PRG011_B221:
 	; Airship has no moves left..
-	LDX <Temp_Var13		; Retores index of object we were processing 
+	LDX Temp_Var13		; Retores index of object we were processing 
 	LDA #$00	 	
 	STA Map_March_Count+1	; Clear moves
 	RTS			; Return...
 
 PRG011_B229:
 	; After Player difference statements...
-	LDX <Temp_Var13		; X = Object we were processing
+	LDX Temp_Var13		; X = Object we were processing
 	LDY Map_Airship_Dest	; Y = Current Airship destination index (0-5)
 	LDA #$00	 
 	STA Map_Object_Data+1	; Airship's data = 0 (facing direction)
-	STA <Map_Airship_Dir	; Map_Airship_Dir = 0
+	STA Map_Airship_Dir	; Map_Airship_Dir = 0
 
-	LDA [Temp_Var1],Y	; A = Airship Y destination
-	SUB Map_Object_ActY+1	; Difference against its current Y
-	STA <Map_Airship_DY	; Store into Map_Airship_DY
+	LDA (Temp_Var1),Y	; A = Airship Y destination
+	SEC
+	SBC Map_Object_ActY+1	; Difference against its current Y
+	STA Map_Airship_DY	; Store into Map_Airship_DY
 
-	LDA [Temp_Var3],Y	; A = Airship X destination
+	LDA (Temp_Var3),Y	; A = Airship X destination
 	AND #$f0	 	; Just the X Lo part
-	SUB Map_Object_ActX+1	; Difference to its current X Lo
-	STA <Map_Airship_DX	; Store into Map_Airship_DX
+	SEC
+	SBC Map_Object_ActX+1	; Difference to its current X Lo
+	STA Map_Airship_DX	; Store into Map_Airship_DX
 
-	LDA [Temp_Var3],Y	; A = Airship X destination
+	LDA (Temp_Var3),Y	; A = Airship X destination
 	AND #$0f	 	; Just the X Hi part 
 	SBC Map_Object_ActXH+1	; Difference to its current X Hi (taking into account the low too)
-	STA <Map_Airship_DXHi	; Store into Map_Airship_DXHi
+	STA Map_Airship_DXHi	; Store into Map_Airship_DXHi
 
 
-	LDA [Temp_Var3],Y	; Get airship X target
+	LDA (Temp_Var3),Y	; Get airship X target
 	AND #$0f	 	; Only lower bits (hi part)
 	CMP Map_Object_ActXH+1	; Compare against its current X hi...
 
@@ -3074,7 +3179,7 @@ PRG011_B229:
 	BMI PRG011_B266	 	; Airship X Hi < target X Hi, jump to PRG011_B266
 PRG011_B25D:
 	; Airship X achieved
-	LDA [Temp_Var3],Y
+	LDA (Temp_Var3),Y
 	AND #$f0
 	CMP Map_Object_ActX+1
 	BGE PRG011_B27D	 ; If target X (aligned to grid) >= airship X , jump to PRG011_B27D
@@ -3082,18 +3187,18 @@ PRG011_B25D:
 PRG011_B266:
 	; Airship X Hi < target X Hi
 	LDA #$01	 	
-	STA <Map_Airship_Dir	; Map_Airship_Dir = 1 (H negation active)
+	STA Map_Airship_Dir	; Map_Airship_Dir = 1 (H negation active)
 
 	; Negate Map_Airship_DXHi
 	LDA #$ff	 	
-	EOR <Map_Airship_DXHi	
-	STA <Map_Airship_DXHi
+	EOR Map_Airship_DXHi	
+	STA Map_Airship_DXHi
 
 	; Negate Map_Airship_DX
 	LDA #$ff	 	
-	EOR <Map_Airship_DX
-	STA <Map_Airship_DX
-	INC <Map_Airship_DX
+	EOR Map_Airship_DX
+	STA Map_Airship_DX
+	INC Map_Airship_DX
 
 	LDA #$01	 
 	STA Map_Object_Data+1	; Airship's data = 1 (facing direction)
@@ -3101,20 +3206,20 @@ PRG011_B266:
 PRG011_B27D:
 	; Airship Hi > target X Hi or coming in from above...
 
-	LDA [Temp_Var1],Y	
+	LDA (Temp_Var1),Y	
 	CMP Map_Object_ActY+1	
 	BGE PRG011_B292	 	; If target Y >= current Y, jump to PRG011_B292
 
 	; Otherwise, negate Map_Airship_DY
 	LDA #$ff	
-	EOR <Map_Airship_DY
-	STA <Map_Airship_DY
-	INC <Map_Airship_DY
+	EOR Map_Airship_DY
+	STA Map_Airship_DY
+	INC Map_Airship_DY
 
 	; Set V negation active bit in Map_Airship_Dir
-	LDA <Map_Airship_Dir
+	LDA Map_Airship_Dir
 	ORA #$02	 	
-	STA <Map_Airship_Dir	
+	STA Map_Airship_Dir	
 
 PRG011_B292:
 
@@ -3125,30 +3230,30 @@ PRG011_B292:
 	LDY #$04	 	; Y = 4
 PRG011_B294:
 	CLC		 	; Clear carry
-	LSR <Map_Airship_DY	; Map_Airship_DY >> 1 
-	ROR <Map_Airship_YNib	; Accumulating the pushed out bits
+	LSR Map_Airship_DY	; Map_Airship_DY >> 1 
+	ROR Map_Airship_YNib	; Accumulating the pushed out bits
 
 	CLC			; Clear carry
-	LSR <Map_Airship_DXHi	; Map_Airship_DXHi >> 1
-	ROR <Map_Airship_DX	; Bit from above pushed into Map_Airship_DX as topmost bit, carry out
-	ROR <Map_Airship_XNib	; Accumulating the pushed out bits
+	LSR Map_Airship_DXHi	; Map_Airship_DXHi >> 1
+	ROR Map_Airship_DX	; Bit from above pushed into Map_Airship_DX as topmost bit, carry out
+	ROR Map_Airship_XNib	; Accumulating the pushed out bits
 
 	DEY		 	; Y--
 	BPL PRG011_B294	 	; While Y >= 0, loop!
 
 	; The end result here is actually a 16-bit shift to the LEFT
 	; for Map_Airship_DXHi/Map_Airship_DX
-	LDA <Map_Airship_DX
-	STA <Map_Airship_DXHi	; Map_Airship_DXHi = Map_Airship_DX
-	LDA <Map_Airship_XNib
-	STA <Map_Airship_DX	; Map_Airship_DX = Map_Airship_XNib
+	LDA Map_Airship_DX
+	STA Map_Airship_DXHi	; Map_Airship_DXHi = Map_Airship_DX
+	LDA Map_Airship_XNib
+	STA Map_Airship_DX	; Map_Airship_DX = Map_Airship_XNib
 
 	; Clear Map_Airship_XNib for next time
 	LDA #$00
-	STA <Map_Airship_XNib	; Map_Airship_XNib = 0
+	STA Map_Airship_XNib	; Map_Airship_XNib = 0
 
 	LDA #$01	 
-	STA <Map_Airship_DC	; Map_Airship_DC = 1 (deltas computed!)
+	STA Map_Airship_DC	; Map_Airship_DC = 1 (deltas computed!)
 
 	LDA #32
 	STA Map_Intro_Tick	; Map_Intro_Tick = 32
@@ -3185,23 +3290,24 @@ PRG011_B2DF:
 
 	; This ultimately controls how fast the Airship flies on the map
 	; You should see it fly with no delay :)
-	LDA <Counter_1			
+	LDA Counter_1			
 	AND #$03
 	BNE Map_Object_March_UpdateXs	; Basically only do something once every 4 ticks
 
 	; For the 1:4 tick...
-	LDA <Map_Airship_Dir
+	LDA Map_Airship_Dir
 	AND #$01	 
 	BNE PRG011_B307	 	; If Map_Airship_Dir = 1 (to the right), jump to PRG011_B307
 
 	; Reuse of Map_Airship_XNib...
-	LDA <Map_Airship_XNib	
-	ADD <Map_Airship_DX	
-	STA <Map_Airship_XNib	; Map_Airship_XNib += Map_Airship_XNib
+	LDA Map_Airship_XNib	
+	CLC
+	ADC Map_Airship_DX	
+	STA Map_Airship_XNib	; Map_Airship_XNib += Map_Airship_XNib
 
 	; Advances Airship's X Hi / X, positive
 	LDA Map_Object_ActX+1
-	ADC <Map_Airship_DXHi
+	ADC Map_Airship_DXHi
 	STA Map_Object_ActX+1
 	LDA Map_Object_ActXH+1
 	ADC #$00	
@@ -3210,29 +3316,31 @@ PRG011_B2DF:
 	JMP PRG011_B31E
 
 PRG011_B307:
-	LDA <Map_Airship_XNib
-	SUB <Map_Airship_DX
-	STA <Map_Airship_XNib	; Map_Airship_XNib -= Map_Airship_XNib
+	LDA Map_Airship_XNib
+	SEC
+	SBC Map_Airship_DX
+	STA Map_Airship_XNib	; Map_Airship_XNib -= Map_Airship_XNib
 
 	; Advances Airship's X Hi / X, negative
 	LDA Map_Object_ActX+1
-	SBC <Map_Airship_DXHi
+	SBC Map_Airship_DXHi
 	STA Map_Object_ActX+1
 	LDA Map_Object_ActXH+1
 	SBC #$00
 	STA Map_Object_ActXH+1
 
 PRG011_B31E:
-	LDA <Map_Airship_Dir
+	LDA Map_Airship_Dir
 	AND #$02	 
 	BNE PRG011_B336	 	; If traveling upward, jump to PRG011_B336
 
 	; Positive advancement of Y
-	LDA <Map_Airship_YAcc
-	ADD <Map_Airship_YNib
-	STA <Map_Airship_YAcc
+	LDA Map_Airship_YAcc
+	CLC
+	ADC Map_Airship_YNib
+	STA Map_Airship_YAcc
 	LDA Map_Object_ActY+1
-	ADC <Map_Airship_DY
+	ADC Map_Airship_DY
 	STA Map_Object_ActY+1
 
 	JMP PRG011_B345	 	; Jump to PRG011_B345
@@ -3240,11 +3348,12 @@ PRG011_B31E:
 PRG011_B336:
 
 	; Negative advancement of Y
-	LDA <Map_Airship_YAcc
-	SUB <Map_Airship_YNib
-	STA <Map_Airship_YAcc
+	LDA Map_Airship_YAcc
+	SEC
+	SBC Map_Airship_YNib
+	STA Map_Airship_YAcc
 	LDA Map_Object_ActY+1
-	SBC <Map_Airship_DY
+	SBC Map_Airship_DY
 	STA Map_Object_ActY+1
 
 PRG011_B345:
@@ -3275,14 +3384,14 @@ Map_Object_March_UpdateXs:
 
 	; Travel directions:
 	; 0 = Right, 1 = Left, 2 = Down, 3 = Up
-Map_Object_March_YOffByDir:	.byte 0, 0, 16, -16	; Travel direction Y offsets for marching map brother
-				.byte 0, 0, 32, -32	; Next tile over; if the first tile is OK, see if the destination is OK too
+Map_Object_March_YOffByDir:	.byte 0, 0, 16, <-16	; Travel direction Y offsets for marching map brother
+				.byte 0, 0, 32, <-32	; Next tile over; if the first tile is OK, see if the destination is OK too
 
-Map_Object_March_XOffByDir:	.byte 16, -16, 0, 0	; Travel direction X offsets for marching map brother
-				.byte 32, -32, 0, 0	; Next tile over; if the first tile is OK, see if the destination is OK too
+Map_Object_March_XOffByDir:	.byte 16, <-16, 0, 0	; Travel direction X offsets for marching map brother
+				.byte 32, <-32, 0, 0	; Next tile over; if the first tile is OK, see if the destination is OK too
 
-Map_Object_March_XHiOffByDir:	.byte 0, -1, 0, 0	; Travel direction X Hi offsets for marching map brother
-				.byte 0, -1, 0, 0	; Next tile over; if the first tile is OK, see if the destination is OK too
+Map_Object_March_XHiOffByDir:	.byte 0, <-1, 0, 0	; Travel direction X Hi offsets for marching map brother
+				.byte 0, <-1, 0, 0	; Next tile over; if the first tile is OK, see if the destination is OK too
 
 	; Tiles that are forbidden for the marching object to "land" on
 Map_Object_Forbid_LandingTiles:
@@ -3291,7 +3400,7 @@ Map_Object_Forbid_LandingTiles:
 	.byte TILE_SPIRAL,      TILE_ALTSPIRAL,   TILE_FORTRUBBLE,  TILE_MARIOCOMP_G
 	.byte TILE_LUIGICOMP_G, TILE_MARIOCOMP_R, TILE_LUIGICOMP_R, TILE_ALTRUBBLE
 	.byte TILE_START
-Map_Object_Forbid_LT_End
+Map_Object_Forbid_LT_End:
 
 	; This makes it safe to expand the above
 	; There's a mistake in here somewhere, I think Nintendo did their loop/indexing wrong
@@ -3303,30 +3412,30 @@ MOV_Landings2Check = (Map_Object_Forbid_LT_End - Map_Object_Forbid_LandingTiles)
 	; I don't know why these are split from the above?
 Map_MarchXtraForbidTiles:
 	.byte TILE_TOADHOUSE, TILE_ALTTOADHOUSE, TILE_CASTLEBOTTOM, TILE_PATHANDNUB	; <-- Last one is weird "enterable"!
-Map_MarchXtraForbidTiles_End
+Map_MarchXtraForbidTiles_End:
 
 
 Map_MarchValidateTravel:
 	; A = pseudo-random value, 0-3
-	STA <Temp_Var1		; Temp_Var1 = random val 0-3
+	STA Temp_Var1		; Temp_Var1 = random val 0-3
 	LDA #$04
-	STA <Temp_Var2		; Temp_Var2 = 4
+	STA Temp_Var2		; Temp_Var2 = 4
 
 PRG011_B3A3:
-	LDY <Temp_Var13		; Y = Temp_Var13 (Current object we're working on)
-	DEC <Temp_Var1		; Temp_Var1--
+	LDY Temp_Var13		; Y = Temp_Var13 (Current object we're working on)
+	DEC Temp_Var1		; Temp_Var1--
 
 	LDA RandomN,Y	 	; Get the full random value
 	ASL A		 	; A << 1
 	BCC PRG011_B3B1	 	; If the bit 7 was not set, carry is clear, and jump to PRG011_B3B1
 
-	INC <Temp_Var1
-	INC <Temp_Var1		; Otherwise, Temp_Var1 (the 0-3 input) += 2
+	INC Temp_Var1
+	INC Temp_Var1		; Otherwise, Temp_Var1 (the 0-3 input) += 2
 
 PRG011_B3B1:
-	LDA <Temp_Var1		; A = Temp_Var1 (0-5 now)
+	LDA Temp_Var1		; A = Temp_Var1 (0-5 now)
 	AND #$03	 
-	STA <Temp_Var1		; Enforcing 0-3 cap on Temp_Var1
+	STA Temp_Var1		; Enforcing 0-3 cap on Temp_Var1
 
 	; Temp_Var1 is a value from 0-3 that specifies a travel direction
 
@@ -3334,7 +3443,7 @@ PRG011_B3B1:
 	CMP #$01	 
 	BEQ PRG011_B3A3	 	; If current result = 1, jump to PRG011_B3A3
 
-	DEC <Temp_Var2		; Temp_Var2--
+	DEC Temp_Var2		; Temp_Var2--
 	BPL PRG011_B3CA	 	; If Temp_Var2 >= 0, jump to PRG011_B3CA
 
 	LDA #$00
@@ -3353,29 +3462,29 @@ PRG011_B3CA:
 	; When Temp_Var2 = 0...
 	LDA Map_Object_Data,Y	; Get march direction
 	EOR #$01	 	; Flip it
-	STA <Temp_Var1		; Store that to Temp_Var1
+	STA Temp_Var1		; Store that to Temp_Var1
 
 PRG011_B3D3:
-	LDX <Temp_Var1		; X = Temp_Var1 (0-3)
+	LDX Temp_Var1		; X = Temp_Var1 (0-3)
 	JSR Map_Object_March_PickTravel	; Sets Map_Tile_Addr, figures travel destination in Temp_Var3 (upper 4 containing target row, lower 4 containing target column)
 
-	LDA <Temp_Var1		; A = Temp_Var1 (0-3) travel dir
+	LDA Temp_Var1		; A = Temp_Var1 (0-3) travel dir
 	ASL A		 	; A << 1 (index)
 	TAX		 	; X = A
 
 	; Get address Map_Object_Valid_Tiles (on page 10), store into Temp_Var15
 	; This lists valid tiles the object may travel over...
 	LDA Map_Object_Valid_Tiles,X
-	STA <Temp_Var15	
+	STA Temp_Var15	
 	LDA Map_Object_Valid_Tiles+1,X
-	STA <Temp_Var16
+	STA Temp_Var16
 
-	LDY <Temp_Var3		; Y = Temp_Var3 (travel target)
-	LDA [Map_Tile_AddrL],Y	; Get tile here
+	LDY Temp_Var3		; Y = Temp_Var3 (travel target)
+	LDA (Map_Tile_AddrL),Y	; Get tile here
 
 	LDY #(Map_Object_Valid_Tiles2Check-1)	; Check all possible travel-over tiles
 PRG011_B3EC:
-	CMP [Temp_Var15],Y
+	CMP (Temp_Var15),Y
 	BEQ PRG011_B3F5	 	; If this tile is valid to travel over, jump to PRG011_B3F5
 	DEY		 ; Y--
 	BPL PRG011_B3EC	 ; While Y >= 0, loop!
@@ -3384,15 +3493,16 @@ PRG011_B3EC:
 PRG011_B3F5:
 	; Valid tile in front of us, now check if we can move one more!
 	; (Moves are in two tiles, not one; make sure "landing zone" is safe)
-	LDY <Temp_Var13	 ; Y = Temp_Var13 (object we're working on)
-	LDA <Temp_Var1	 ; A = Temp_Var1
-	ADD #$04	 ; Offset the travel dir +4; check next tile over (since moves are made by 2 tiles, not 1)
+	LDY Temp_Var13	 ; Y = Temp_Var13 (object we're working on)
+	LDA Temp_Var1	 ; A = Temp_Var1
+	CLC
+	ADC #$04	 ; Offset the travel dir +4; check next tile over (since moves are made by 2 tiles, not 1)
 
 	TAX		 ; X = A (travel dir)
 	JSR Map_Object_March_PickTravel	 ; Get next tile over, "landing zone"
 
-	LDY <Temp_Var3			; Y = Temp_Var3 (travel target)
-	LDA [Map_Tile_AddrL],Y		; Get tile here
+	LDY Temp_Var3			; Y = Temp_Var3 (travel target)
+	LDA (Map_Tile_AddrL),Y		; Get tile here
 
 	LDY #(MOV_Landings2Check-1)
 PRG011_B406:
@@ -3407,7 +3517,7 @@ PRG011_B40E:
 	DEY		 ; Y--
 	BNE PRG011_B406	 ; While Y > 0, loop!
 
-	LDX <Temp_Var13		 	; X = Temp_Var13
+	LDX Temp_Var13		 	; X = Temp_Var13
 	LDY #(Map_MarchXtraForbidTiles_End - Map_MarchXtraForbidTiles)	
 PRG011_B415:
 	; NOTE: Like PRG011_B406, this loop doesn't hit index 0.  Wonder why??
@@ -3443,7 +3553,7 @@ PRG011_B42A:
 
 PRG011_B435:
 	; Safe landing!
-	LDA <Temp_Var1
+	LDA Temp_Var1
 	STA Map_Object_Data,X
 
 	RTS		 ; Return
@@ -3452,12 +3562,14 @@ Map_Object_March_PickTravel:
 	; Sets Map_Tile_Addr, figures travel destination in Temp_Var3 (upper 4 containing target row, lower 4 containing target column)
 
 	LDA Map_Object_ActY,Y	 ; A = Map object's Y
-	ADD Map_Object_March_YOffByDir,X	 ; X = 0-3 travel direction; add indexed value to the Y coordinate
-	STA <Temp_Var3		 ; Result into Temp_Var3
+	CLC
+	ADC Map_Object_March_YOffByDir,X	 ; X = 0-3 travel direction; add indexed value to the Y coordinate
+	STA Temp_Var3		 ; Result into Temp_Var3
 
 	LDA Map_Object_ActX,Y	 ; A = Map object's X
-	ADD Map_Object_March_XOffByDir,X	 ; X = 0-3 travel direction; add indexed value to the X coordinate
-	STA <Temp_Var4		 ; Result into Temp_Var4
+	CLC
+	ADC Map_Object_March_XOffByDir,X	 ; X = 0-3 travel direction; add indexed value to the X coordinate
+	STA Temp_Var4		 ; Result into Temp_Var4
 
 	LDA Map_Object_ActXH,Y	 ; A = Map object's X hi byte
 	ADC Map_Object_March_XHiOffByDir,X	 ; X = 0-3 travel direction; add indexed value to the X Hi
@@ -3466,19 +3578,20 @@ Map_Object_March_PickTravel:
 
 	; Get to proper offset for where object stands, +$F0
 	LDA Tile_Mem_Addr,X
-	ADD #$f0
-	STA <Map_Tile_AddrL
+	CLC
+	ADC #$f0
+	STA Map_Tile_AddrL
 	LDA Tile_Mem_Addr+1,X
 	ADC #$00
-	STA <Map_Tile_AddrH
+	STA Map_Tile_AddrH
 
-	LDA <Temp_Var4	
+	LDA Temp_Var4	
 	LSR A		
 	LSR A		
 	LSR A		
 	LSR A		
-	ORA <Temp_Var3	; Makes an assumption that the object's Y value is row-aligned (which it generally is)
-	STA <Temp_Var3	; Temp_Var3 = (Temp_Var4 >> 4) | Temp_Var3
+	ORA Temp_Var3	; Makes an assumption that the object's Y value is row-aligned (which it generally is)
+	STA Temp_Var3	; Temp_Var3 = (Temp_Var4 >> 4) | Temp_Var3
 	RTS		; Return
 
 	; First column is for when the object is sleeping by Music Box (if applicable)
@@ -3569,7 +3682,7 @@ MapObjects_UpdateDrawEnter:
 
 	; Temp_Var13 = $0D
 	LDA #$0D	 	; Total map objects which may exist on the map (only 8 are defined at start)
-	STA <Temp_Var13
+	STA Temp_Var13
 
 	; Map_SprRAMOffDistr runs from $00 to $0A, inclusive
 	INC Map_SprRAMOffDistr
@@ -3584,14 +3697,15 @@ PRG011_B554:
 
 	; Temp_Var6 = 0
 	LDA #$00
-	STA <Temp_Var6
+	STA Temp_Var6
 
-	LDY <Temp_Var13	 ; Y = Temp_Var13 (current map slot index)
+	LDY Temp_Var13	 ; Y = Temp_Var13 (current map slot index)
 	BEQ PRG011_B56E	 ; If Temp_Var13 = 0, jump to PRG011_B56E
 
 	DEY		 ; Y--
 	TYA
-	ADD Map_SprRAMOffDistr	 ; A = Map_SprRAMOffDistr + Temp_Var13
+	CLC
+	ADC Map_SprRAMOffDistr	 ; A = Map_SprRAMOffDistr + Temp_Var13
 
 	CMP #$0b
 	BLT PRG011_B568	 ; If value didn't overflow, jump to PRG011_B568
@@ -3602,10 +3716,10 @@ PRG011_B568:
 	TAX		 ; -> 'X'
 
 	LDA Map_SpriteRAM_Offset,X	; Get Sprite_RAM offset
-	STA <Temp_Var6		 	; -> Temp_Var6
+	STA Temp_Var6		 	; -> Temp_Var6
 
 PRG011_B56E:
-	LDX <Temp_Var13		 ; X = Temp_Var13
+	LDX Temp_Var13		 ; X = Temp_Var13
 
 	LDA Map_Objects_Vis,X
 	BEQ PRG011_B578	 ; If this object isn't visible, jump to PRG011_B578
@@ -3613,7 +3727,7 @@ PRG011_B56E:
 	JSR MapObject_DrawSleepEnter	 ; Draw the map object, put it to sleep (if applicable), and enter it if it should be entered
 
 PRG011_B578:
-	DEC <Temp_Var13	 ; Temp_Var13--
+	DEC Temp_Var13	 ; Temp_Var13--
 	BPL PRG011_B554	 ; While Temp_Var13 >= 0, loop!
 
 PRG011_B57C:
@@ -3621,7 +3735,7 @@ PRG011_B57C:
 	CMP #$0d
 	BNE PRG011_B58C	 ; If the map operation <> $0D (normal), jump to PRG011_B58C (RTS)
 
-	LDA <Counter_1
+	LDA Counter_1
 	AND #$03
 	BNE PRG011_B58C
 
@@ -3635,7 +3749,7 @@ PRG011_B58C:
 MapObject_DrawSleepEnter:
 	LDA Map_Objects_IDs,X
 
-	CPX <Map_HideObj
+	CPX Map_HideObj
 	BNE PRG011_B599	 ; If this map object slot index <> Map_HideObj, jump to PRG011_B599
 
 	CPX #$00	 
@@ -3679,27 +3793,30 @@ MapObj_DrawAndEnter:
 	LDA #$07	 ; Otherwise, A = 7 (Canoe offset 7)
 
 PRG011_B5C9:
-	LDY <Temp_Var6		 ; Y = Temp_Var6 (Sprite_RAM offset)
+	LDY Temp_Var6		 ; Y = Temp_Var6 (Sprite_RAM offset)
 
 	; Set Y for map object sprite
-	ADD Map_Object_ActY,X
+	CLC
+	ADC Map_Object_ActY,X
 	STA Sprite_RAM+$98,Y
 	STA Sprite_RAM+$9C,Y
 
 	; Set X for map object sprite
 	LDA Map_Object_ActX,X
-	SUB <Horz_Scroll
+	SEC
+	SBC Horz_Scroll
 	STA Sprite_RAM+$9B,Y
 
 	; Right half
-	ADD #$08
+	CLC
+	ADC #$08
 	STA Sprite_RAM+$9F,Y
 
-	LDX <Temp_Var13		 ; X = Temp_Var13 (the map object slot index)
+	LDX Temp_Var13		 ; X = Temp_Var13 (the map object slot index)
 
 	; Map object ID -> Temp_Var8
 	LDA Map_Objects_IDs,X
-	STA <Temp_Var8
+	STA Temp_Var8
 
 	LDX #%00001000	 ; X = 8 (masking value against Counter_1 for animation)
 
@@ -3721,7 +3838,7 @@ PRG011_B5FA:
 
 	; Hammer brothers are marching around the map...
 
-	LDY <Temp_Var13		 ; Y = Temp_Var13 (the map object slot index)
+	LDY Temp_Var13		 ; Y = Temp_Var13 (the map object slot index)
 
 	; NOTE: This is improper, the Map_March_Count should be indexed by ID, not by slot index
 	LDA Map_March_Count,Y
@@ -3730,11 +3847,12 @@ PRG011_B5FA:
 	LDX #%00000100	 ; X = 4 (masking value against Counter_1 for animation)
 
 PRG011_B60A:
-	STX <Temp_Var9	 ; -> Temp_Var9 (masking value for animation)
+	STX Temp_Var9	 ; -> Temp_Var9 (masking value for animation)
 
-	LDA <Temp_Var8	 ; A = map object ID
+	LDA Temp_Var8	 ; A = map object ID
 	ASL A		 ; Multiply by 2
-	ADD <Temp_Var8	 ; Total multiply is 3
+	CLC
+	ADC Temp_Var8	 ; Total multiply is 3
 	TAX		 ; X = ID * 3
 
 	; Heh, they had to compare AFTER making it a multiple of 3... :P
@@ -3768,14 +3886,14 @@ PRG011_B623:
 PRG011_B628:
 	INX	; Use first column pattern
 
-	LDA <Counter_1
-	AND <Temp_Var9
+	LDA Counter_1
+	AND Temp_Var9
 	BEQ PRG011_B630	 ; Animation time dependent on Temp_Var9; periodically jump to PRG011_B630
 
 	INX	; Use second column pattern
 
 PRG011_B630:
-	LDY <Temp_Var6		 ; Y = Temp_Var6 (Sprite_RAM offset)
+	LDY Temp_Var6		 ; Y = Temp_Var6 (Sprite_RAM offset)
 
 	; Load the patterns of the map object
 	LDA MapObject_Pat1-3,X
@@ -3789,7 +3907,7 @@ PRG011_B630:
 	LDA MapObject_Attr2-3,X	
 	STA Sprite_RAM+$9E,Y	
 
-	LDX <Temp_Var13		 ; X = Temp_Var13 (the map object slot index)
+	LDX Temp_Var13		 ; X = Temp_Var13 (the map object slot index)
 
 	LDA Map_Objects_IDs,X
 
@@ -3840,7 +3958,7 @@ PRG011_B664:
 	STA Sprite_RAM+$9E,Y
 
 PRG011_B68B:
-	LDY <Temp_Var13		 ; Y = Temp_Var13 (the map object slot index)
+	LDY Temp_Var13		 ; Y = Temp_Var13 (the map object slot index)
 
 	; HELP bubble was already eliminated
 
@@ -3877,15 +3995,15 @@ PRG011_B6A1:
 	; If the Player is not perfectly situated on top of the map object, jump to PRG011_B6F5 (RTS)
 
 	LDA Map_Objects_Y,Y
-	CMP <World_Map_Y,X
+	CMP World_Map_Y,X
 	BNE PRG011_B6F5
 
 	LDA Map_Objects_XHi,Y
-	CMP <World_Map_XHi,X
+	CMP World_Map_XHi,X
 	BNE PRG011_B6F5
 
 	LDA Map_Objects_XLo,Y
-	CMP <World_Map_X,X
+	CMP World_Map_X,X
 	BNE PRG011_B6F5	
 
 	; Player is going to "enter" this map object...
@@ -3898,7 +4016,7 @@ PRG011_B6A1:
 
 	; Store the object ID -> Map_EnterViaID
 	LDA Map_Objects_IDs,Y
-	STA <Map_EnterViaID
+	STA Map_EnterViaID
 
 	; If this is a N-Spade or White Toad house, jump to PRG011_B6E2
 	CMP #MAPOBJ_NSPADE
@@ -3931,7 +4049,7 @@ PRG011_B6F5:
 ; $B6F6 
 	LDX Player_Current	 ; X = Player_Current
 
-	LDA <World_Map_Dir,X	; Get Player's map direction
+	LDA World_Map_Dir,X	; Get Player's map direction
 	EOR #$03
 	CMP #$03
 	BNE PRG011_B703	 	; If Player did not travel left or right, jump to PRG011_B703
@@ -3939,52 +4057,54 @@ PRG011_B6F5:
 	EOR #$0f	 ; Otherwise invert all direction bits??
 
 PRG011_B703:
-	STA <World_Map_Dir,X	 ; -> World_Map_Dir
+	STA World_Map_Dir,X	 ; -> World_Map_Dir
 
 	RTS		 ; Return
 
 	; FIXME: Anyone want to claim this?
 	; Gets a tile based on an input 'Y' value to pick from one of the offset sets below...
-PRG011_B706:	.byte -16, -16, 0, -32
-PRG011_B70A:	.byte $00, $FF, $00, $00	; 16-bit sign extensions
-PRG011_B70E:	.byte 16, -16, 0, 0
+PRG011_B706:	.byte <-16, <-16, <0, <-32
+PRG011_B70A:	.byte >16, >-16, >0, >0	; 16-bit sign extensions
+PRG011_B70E:	.byte <16, <-16, <0, <0
 
 ; $B712
 	LDX Player_Current	 ; X = Player_Current
 
-	LDA <World_Map_Y,X
-	ADD PRG011_B706,Y
-	STA <Temp_Var15	
+	LDA World_Map_Y,X
+	CLC
+	ADC PRG011_B706,Y
+	STA Temp_Var15	
 
-	LDA <World_Map_X,X
-	ADD PRG011_B70E,Y
-	STA <Temp_Var16	
+	LDA World_Map_X,X
+	CLC
+	ADC PRG011_B70E,Y
+	STA Temp_Var16	
 
-	LDA <World_Map_XHi,X
+	LDA World_Map_XHi,X
 	ADC PRG011_B70A,Y
 	ASL A		 ; 2 byte index per map screen
 	TAX		 ; -> 'X'
 
 	; Set pointer to map screen tiles
 	LDA Tile_Mem_Addr,X
-	STA <Map_Tile_AddrL
+	STA Map_Tile_AddrL
 	LDA Tile_Mem_Addr+1,X
-	STA <Map_Tile_AddrH
-	INC <Map_Tile_AddrH	; Map is always on lower part
+	STA Map_Tile_AddrH
+	INC Map_Tile_AddrH	; Map is always on lower part
 
 	; Form row/column offset
-	LDA <Temp_Var16
+	LDA Temp_Var16
 	LSR A
 	LSR A
 	LSR A
 	LSR A
-	STA <Temp_Var16
-	LDA <Temp_Var15
+	STA Temp_Var16
+	LDA Temp_Var15
 	AND #$f0
-	ORA <Temp_Var16
+	ORA Temp_Var16
 	TAY	 ; -> 'Y'
 
-	LDA [Map_Tile_AddrL],Y	; Get tile
+	LDA (Map_Tile_AddrL),Y	; Get tile
 	RTS		 ; Return
 
 
@@ -3997,7 +4117,7 @@ PRG011_B74A:
 
 	; Map_StarsState = 1
 	LDA #$01
-	STA <Map_StarsState
+	STA Map_StarsState
 
 	LDX Player_Current	; X = Player_Current
 
@@ -4010,7 +4130,7 @@ PRG011_B74A:
 	ASL A
 	ASL A
 	ASL A			; A = (A + 1) * 32 (the amount of a normal level move, two spaces on map)
-	CMP <World_Map_Move,X	
+	CMP World_Map_Move,X	
 	BEQ MapStarsIntro_DoStarFX	 ; If movement is same as Player's current movement, jump to MapStarsIntro_DoStarFX
 
 	JMP WorldMap_UpdateAndDraw	 ; Draw and update map and don't come back
@@ -4041,17 +4161,17 @@ MapStarsIntro_Init:
 	LDX #$07
 PRG011_B799:
 	LDA MSI_DefaultRadii,X
-	STA <Map_StarsRadius,X
+	STA Map_StarsRadius,X
 	DEX		 	; X--
 	BPL PRG011_B799	 	; While X >= 0, loop!
 
-	LDX <Map_StarsState
+	LDX Map_StarsState
 	BNE PRG011_B7AD	 	; If Map_StarsState <> 0, jump to PRG011_B7AD
 
 	; Stars emanating from center
 	LDA #$80	 
-	STA <Map_StarsCenterX	; Map_StarsCenterX = $80
-	STA <Map_StarsCenterY	; Map_StarsCenterY = $80
+	STA Map_StarsCenterX	; Map_StarsCenterX = $80
+	STA Map_StarsCenterY	; Map_StarsCenterY = $80
 	BNE PRG011_B800	 	; Jump (technically always) to PRG011_B800
 
 PRG011_B7AD:
@@ -4061,12 +4181,13 @@ PRG011_B7AD:
 	; Stars emanating from Player start
 	LDX Player_Current	; X = Player_Current
 
-	LDA <World_Map_X,X
-	ADD <Horz_Scroll
-	STA <Map_StarsCenterX	; Map_StarsCenterX = Player's Map X + Horz_Scroll
+	LDA World_Map_X,X
+	CLC
+	ADC Horz_Scroll
+	STA Map_StarsCenterX	; Map_StarsCenterX = Player's Map X + Horz_Scroll
 
-	LDA <World_Map_Y,X	
-	STA <Map_StarsCenterY	; Map_StarsCenterY = Player's Map Y
+	LDA World_Map_Y,X	
+	STA Map_StarsCenterY	; Map_StarsCenterY = Player's Map Y
 
 	LDA #$86
 	STA Map_Stars_PRelX	; Map_Stars_PRelX = $86
@@ -4080,52 +4201,53 @@ PRG011_B7CC:
 	; Map_StarsState = 2
 
 	LDA #$88
-	STA <Map_StarsCenterX	; Map_StarsCenterX = 136
+	STA Map_StarsCenterX	; Map_StarsCenterX = 136
 
 	LDA #$5c
-	STA <Map_StarsCenterY	; Map_StarsCenterY = 92
+	STA Map_StarsCenterY	; Map_StarsCenterY = 92
 
 	LDX Player_Current	; X = Player_Current
 
-	LDA <World_Map_X,X
-	ADD <Horz_Scroll
+	LDA World_Map_X,X
+	CLC
+	ADC Horz_Scroll
 	STA Map_Stars_PRelX	 	; Map_Stars_PRelX = Player's map X coordinate + Horz_Scroll
 
-	LDA <World_Map_Y,X
+	LDA World_Map_Y,X
 	STA Map_Stars_PRelY	 	; Map_Stars_PRelY = Player's map Y coordinate
 
-	INC <Map_StarFX_State	; Next state... (NOTE: Incremented again below!)
+	INC Map_StarFX_State	; Next state... (NOTE: Incremented again below!)
 
 PRG011_B7E6:
 
 	; Calculate step and deltas
-	LDX <Map_StarsCenterX
+	LDX Map_StarsCenterX
 	LDA Map_Stars_PRelX
 	JSR MSI_CalcDeltaAndSteps
-	STA <Map_StarsXSteps
+	STA Map_StarsXSteps
 	STX Map_StarsDeltaX
 
-	LDX <Map_StarsCenterY
+	LDX Map_StarsCenterY
 	LDA Map_Stars_PRelY
 	JSR MSI_CalcDeltaAndSteps
-	STA <Map_StarsYSteps	
+	STA Map_StarsYSteps	
 	STX Map_StarsDeltaY
 
 PRG011_B800:
 	LDA #$00
-	STA <Map_StarsFrame	; Map_StarsFrame = 0
-	STA <Map_StarsLandRad	; Map_StarsLandRad = 0
-	STA <Map_StarsOutRad	; Map_StarsOutRad = 0
+	STA Map_StarsFrame	; Map_StarsFrame = 0
+	STA Map_StarsLandRad	; Map_StarsLandRad = 0
+	STA Map_StarsOutRad	; Map_StarsOutRad = 0
 
 	LDA #$67
-	STA <Map_StarsPattern
+	STA Map_StarsPattern
 
 	LDA #$09
-	STA <Map_StarsConst9	; Map_StarsConst9 = 9 (forever?)
+	STA Map_StarsConst9	; Map_StarsConst9 = 9 (forever?)
 
 	INC Map_StarFX_State	; Next state... (technically, +2 before it gets back)
 
-	LDX <Map_StarsState
+	LDX Map_StarsState
 	CPX #$02	 
 	BEQ PRG011_B81C	 	; If Map_StarsState = 2, jump to PRG011_B81C (RTS)
 
@@ -4140,11 +4262,12 @@ PRG011_B81C:
 	JMP PRG011_B8B1	; Jump to PRG011_B8B1
 
 MapStarsIntro_Do:
-	LDA <Map_StarsLandRad
+	LDA Map_StarsLandRad
 	BNE PRG011_B834	 		; If Map_StarsLandRad <> 0 (we're doing the "landing" now), jump to PRG011_B834
 
-	LDA <Map_StarsOutRad
-	ADD #$04	 
+	LDA Map_StarsOutRad
+	CLC
+	ADC #$04	 
 	CMP #$5f	 
 	BGE PRG011_B830	 	; If Map_StarsOutRad + 4 >= $5F, jump to PRG011_B830 (change direction)
 
@@ -4153,22 +4276,22 @@ MapStarsIntro_Do:
 
 PRG011_B830:
 	LDA #$01	 
-	STA <Map_StarsLandRad		; Map_StarsLandRad = 1
+	STA Map_StarsLandRad		; Map_StarsLandRad = 1
 
 PRG011_B834:
 	; Stars landing
 
-	LDA <Map_StarsState
+	LDA Map_StarsState
 	BEQ PRG011_B874	 		; If Map_StarsState = 0, jump to PRG011_B874
 
-	LDA <Map_StarsCenterX
+	LDA Map_StarsCenterX
 	CMP Map_Stars_PRelX
 	BGE PRG011_B84B	 		; If Map_StarsCenterX >= Map_Stars_PRelX (Player's landing is to the left), jump to PRG011_B84B
 
 	; Player's landing is to the right...
 	ADC Map_StarsDeltaX		; Map_StarsCenterX += Map_StarsDeltaX
 	TAX		 		; X = A
-	DEC <Map_StarsXSteps		; Map_StarsXSteps--
+	DEC Map_StarsXSteps		; Map_StarsXSteps--
 	BMI PRG011_B854			; If Map_StarsXSteps < 0, jump to PRG011_B854
 	INX		 		; X++
 	JMP PRG011_B854	 		; Jump to PRG011_B854
@@ -4176,22 +4299,22 @@ PRG011_B834:
 PRG011_B84B:
 	SBC Map_StarsDeltaX	 	; Map_StarsCenterX -= Map_StarsDeltaX
 	TAX		 		; X = A
-	DEC <Map_StarsXSteps		; Map_StarsXSteps--
+	DEC Map_StarsXSteps		; Map_StarsXSteps--
 	BMI PRG011_B854	 		; If Map_StarsXSteps < 0, jump to PRG011_B854
 	DEX				; X--
 
 PRG011_B854:
-	STX <Map_StarsCenterX		; Update Map_StarsCenterX
+	STX Map_StarsCenterX		; Update Map_StarsCenterX
 
  
-	LDA <Map_StarsCenterY
+	LDA Map_StarsCenterY
 	CMP Map_Stars_PRelY
 	BGE PRG011_B869	 		; If Map_StarsCenterY >= Map_Stars_PRelY (Player's landing is above), jump to PRG011_B869
 
 	; Player's landing is below...
 	ADC Map_StarsDeltaY		; Map_StarsCenterY += Map_StarsDeltaY
 	TAX		 		; X = A
-	DEC <Map_StarsYSteps		; Map_StarsYSteps--
+	DEC Map_StarsYSteps		; Map_StarsYSteps--
 	BMI PRG011_B872	 		; If Map_StarsYSteps < 0, jump to PRG011_B872
 	INX		 		; X++
 	JMP PRG011_B872	 		; Jump to PRG011_B872
@@ -4199,23 +4322,24 @@ PRG011_B854:
 PRG011_B869:
 	SBC Map_StarsDeltaY	 	; Map_StarsCenterY -= Map_StarsDeltaY
 	TAX		 		; X = A
-	DEC <Map_StarsYSteps		; Map_StarsYSteps--
+	DEC Map_StarsYSteps		; Map_StarsYSteps--
 	BMI PRG011_B872	 		; If Map_StarsYSteps < 0, jump to PRG011_B872
 	DEX		 		; X--
 
 PRG011_B872:
-	STX <Map_StarsCenterY		; Update Map_StarsCenterY
+	STX Map_StarsCenterY		; Update Map_StarsCenterY
 
 PRG011_B874:
-	LDA <Map_StarsOutRad
-	SUB #$04	 
+	LDA Map_StarsOutRad
+	SEC
+	SBC #$04	 
 	BNE PRG011_B8AF	 		; If Map_StarsOutRad - 4 <> 0, jump to PRG011_B8AF
 
 	LDA #$00	 
 	STA Map_StarFX_State	 	; Map_StarFX_State = 0
-	STA <Map_StarsLandRad		; Map_StarsLandRad = 0
+	STA Map_StarsLandRad		; Map_StarsLandRad = 0
 
-	LDA <Map_StarsState
+	LDA Map_StarsState
 	CMP #$02	 
 	BEQ PRG011_B8A5			; If Map_StarsState = 2, jump to PRG011_B8A5
 
@@ -4228,7 +4352,8 @@ PRG011_B874:
 	BLT PRG011_B8A5	 ; If Map_Unused7DC6[X] FIXME < 9, jump to PRG011_B8A5
 
 	; Map_Unused7992 -= 10 (FIXME)
-	SUB #10
+	SEC
+	SBC #10
 	STA Map_Unused7992
 
 	LDX Player_Current	; X = Player_Current
@@ -4242,10 +4367,10 @@ PRG011_B874:
 	ASL A
 	ASL A
 	ASL A			; A = (A + 1) * 32 (the amount of a normal level move, two spaces on map)
-	STA <World_Map_Move,X	; Player moves by this amount (but not during the stars display??)
+	STA World_Map_Move,X	; Player moves by this amount (but not during the stars display??)
 
 PRG011_B8A5:
-	LDX <Map_StarsState
+	LDX Map_StarsState
 	CPX #$02	 
 	BEQ PRG011_B8AE	 	; If Map_StarsState = 2, jump to PRG011_B8AE (RTS)
 
@@ -4257,23 +4382,24 @@ PRG011_B8AE:
 PRG011_B8AF:
 	; Stars taking off
 
-	STA <Map_StarsOutRad	; Update Map_StarsOutRad
+	STA Map_StarsOutRad	; Update Map_StarsOutRad
 
 PRG011_B8B1:
 	; This just adds 32 each display frame and toggles the Map_StarsFrame when it overflows
-	LDA <Map_StarsAnimCnt
-	ADD #32
-	STA <Map_StarsAnimCnt	; Map_StarsAnimCnt += 32
+	LDA Map_StarsAnimCnt
+	CLC
+	ADC #32
+	STA Map_StarsAnimCnt	; Map_StarsAnimCnt += 32
 	BCC PRG011_B8C6		; If it hasn't overflowed, jump to PRG011_B8C6
 
 	; So Map_StarsFrame toggles every 8 frames
-	LDA <Map_StarsFrame	
+	LDA Map_StarsFrame	
 	EOR #$01	 
-	STA <Map_StarsFrame	; Toggle Map_StarsFrame (0/1)
+	STA Map_StarsFrame	; Toggle Map_StarsFrame (0/1)
 
 	TAX		 
 	LDA MapStarsIntro_Patterns,X	 ; Based on Map_StarsFrame, get the pattern number
-	STA <Map_StarsPattern		 ; Store into Map_StarsPattern
+	STA Map_StarsPattern		 ; Store into Map_StarsPattern
 
 PRG011_B8C6:
 	LDY #$00	 ; Y = 0
@@ -4281,31 +4407,33 @@ PRG011_B8C6:
 	LDX #$07	 ; X = 7
 
 	; This just adds $70 each display frame and toggles the Map_StarsFrame when it overflows
-	LDA <Map_StarsRadCnt
-	ADD #$70
-	STA <Map_StarsRadCnt	; Map_StarsRadCnt += $70
+	LDA Map_StarsRadCnt
+	CLC
+	ADC #$70
+	STA Map_StarsRadCnt	; Map_StarsRadCnt += $70
 	BCC PRG011_B8D5	 	; If it hasn't overflowed, jump to PRG011_B8D5
 
 	; So roughly every 2.29 display frames...
 	LDY #$01	 	; Y = 1 (+1 to the rotation)
 
 PRG011_B8D5:
-	STY <Map_StarsDeltaR	; Map_StarsDeltaR = Y (0 or 1)
+	STY Map_StarsDeltaR	; Map_StarsDeltaR = Y (0 or 1)
 
 PRG011_B8D7:
 
 	; Add to each star's radius 0 or 1, capping the value at 0-31
-	LDA <Map_StarsRadius,X	
-	ADD <Map_StarsDeltaR	
+	LDA Map_StarsRadius,X	
+	CLC
+	ADC Map_StarsDeltaR	
 	AND #$1f	 
-	STA <Map_StarsRadius,X	; Map_StarsRadius[X] = (Map_StarsRadius[X] + 1) & $1f
+	STA Map_StarsRadius,X	; Map_StarsRadius[X] = (Map_StarsRadius[X] + 1) & $1f
 
 	JSR MSI_CalcStarsXY	; Calculate this star's X and Y (and Temp_Var10 contains the X for the second sprite)
 	JSR MSI_DrawStar	; Draw this star!
 	DEX		 	; X--
 	BPL PRG011_B8D7	 	; If X >= 0, loop!
 
-	LDX <Map_StarsState
+	LDX Map_StarsState
 	CPX #$02	 
 	BEQ PRG011_B8F2		; If Map_StarsState = 2, jump to PRG011_B8F2
 	JMP WorldMap_UpdateAndDraw	 ; Jump to WorldMap_UpdateAndDraw
@@ -4317,109 +4445,112 @@ PRG011_B8F2:
 ;
 ; Calculates the current X and Y position of each star
 MSI_CalcStarsXY:
-	LDA <Map_StarsRadius,X
+	LDA Map_StarsRadius,X
 	AND #$0f		; Only using values 0-15 of the "radius"	 
 	TAY
 	LDA MSI_RadSize,Y
-	STA <Temp_Var1		; Temp_Var1 = MSI_RadSize[Y] (size for this radius)
+	STA Temp_Var1		; Temp_Var1 = MSI_RadSize[Y] (size for this radius)
 
-	LDA <Map_StarsOutRad	; A = Map_StarsOutRad
-	LDY <Map_StarsConst9	; Y = Map_StarsConst9
+	LDA Map_StarsOutRad	; A = Map_StarsOutRad
+	LDY Map_StarsConst9	; Y = Map_StarsConst9
 	JSR MSI_CalcXOffset	; Generates Temp_Var3 X offset value
 
-	LDA <Map_StarsRadius,X	
+	LDA Map_StarsRadius,X	
 	AND #$18	 
 	CMP #16
 	BLT PRG011_B917	 	; If (Map_StarsRadius[X] & $18) < 16, jump to PRG011_B917
 
 	; Otherwise...
-	LDA #-1
-	STA <Temp_Var1		; Temp_Var1 = -1
+	LDA #<-1
+	STA Temp_Var1		; Temp_Var1 = -1
 
-	LDA <Map_StarsCenterX
-	SBC <Temp_Var3		; A = Map_StarsCenterX - Temp_Var3 (calculated value from MSI_CalcXOffset)
+	LDA Map_StarsCenterX
+	SBC Temp_Var3		; A = Map_StarsCenterX - Temp_Var3 (calculated value from MSI_CalcXOffset)
 	JMP PRG011_B91F	 	; Jump to PRG011_B91F
 
 PRG011_B917:
 	LDA #$01
-	STA <Temp_Var1		; Temp_Var1 = 1
+	STA Temp_Var1		; Temp_Var1 = 1
 
-	LDA <Map_StarsCenterX
-	ADC <Temp_Var3		; A = Map_StarsCenterX + Temp_Var3
+	LDA Map_StarsCenterX
+	ADC Temp_Var3		; A = Map_StarsCenterX + Temp_Var3
 
 PRG011_B91F:
-	STA <Map_StarsX,X	; Set this as the star's X position
-	STA <Temp_Var7		; Temp_Var7 = star's X position
+	STA Map_StarsX,X	; Set this as the star's X position
+	STA Temp_Var7		; Temp_Var7 = star's X position
 
-	LDA <Map_StarsCenterX
-	STA <Temp_Var8		; Temp_Var8 = all stars center X
-
-	JSR PRG011_SUB_B9D4	; Returns 1 or -1 in Temp_Var6
-
-	LDA <Temp_Var6
-	BMI PRG011_B980	 	; If Temp_Var6 < 0, jump to PRG011_B980
-
-	LDA <Map_StarsX,X
-	ADD #8
-	STA <Temp_Var10		; Temp_Var10 = star's X + 8 (will be second sprite's offset)
-	STA <Temp_Var7		; Temp_Var7 = Temp_Var10
+	LDA Map_StarsCenterX
+	STA Temp_Var8		; Temp_Var8 = all stars center X
 
 	JSR PRG011_SUB_B9D4	; Returns 1 or -1 in Temp_Var6
 
-	LDA <Temp_Var6		
+	LDA Temp_Var6
 	BMI PRG011_B980	 	; If Temp_Var6 < 0, jump to PRG011_B980
 
-	LDA <Map_StarsRadius,X	
-	ADD #$08	 
+	LDA Map_StarsX,X
+	CLC
+	ADC #8
+	STA Temp_Var10		; Temp_Var10 = star's X + 8 (will be second sprite's offset)
+	STA Temp_Var7		; Temp_Var7 = Temp_Var10
+
+	JSR PRG011_SUB_B9D4	; Returns 1 or -1 in Temp_Var6
+
+	LDA Temp_Var6		
+	BMI PRG011_B980	 	; If Temp_Var6 < 0, jump to PRG011_B980
+
+	LDA Map_StarsRadius,X	
+	CLC
+	ADC #$08	 
 	AND #$0f	 
 	TAY		 	; Y = (radius value + 8) & $F
 	LDA MSI_RadSize,Y
-	STA <Temp_Var1		; Temp_Var1 = MSI_RadSize[Y] (size for this radius)
+	STA Temp_Var1		; Temp_Var1 = MSI_RadSize[Y] (size for this radius)
 
-	LDA <Map_StarsOutRad	; A = Map_StarsOutRad
-	LDY <Map_StarsConst9	; Y = Map_StarsConst9
+	LDA Map_StarsOutRad	; A = Map_StarsOutRad
+	LDY Map_StarsConst9	; Y = Map_StarsConst9
 	JSR MSI_CalcXOffset	; Generates Temp_Var3 X offset value
 
-	LDA <Map_StarsRadius,X
-	SUB #$08	
+	LDA Map_StarsRadius,X
+	SEC
+	SBC #$08	
 	AND #$18
 	CMP #16
 	BLT PRG011_B968	 	; If ((Map_StarsRadius[X] - 8) & $18) < 16, jump to PRG011_B968
 
-	LDA #-1
-	STA <Temp_Var1		; Temp_Var1 = -1
+	LDA #<-1
+	STA Temp_Var1		; Temp_Var1 = -1
 
-	LDA <Map_StarsCenterY
-	SBC <Temp_Var3		; A = Map_StarsCenterX - Temp_Var3 (calculated value from MSI_CalcXOffset)
+	LDA Map_StarsCenterY
+	SBC Temp_Var3		; A = Map_StarsCenterX - Temp_Var3 (calculated value from MSI_CalcXOffset)
 	JMP PRG011_B970	 	; Jump to PRG011_B970
 
 PRG011_B968:
 	LDA #1
-	STA <Temp_Var1		; Temp_Var1 = 1
+	STA Temp_Var1		; Temp_Var1 = 1
 
-	LDA <Map_StarsCenterY
-	ADC <Temp_Var3		
+	LDA Map_StarsCenterY
+	ADC Temp_Var3		
 
 PRG011_B970:
-	STA <Map_StarsY,X	; star's Y = Map_StarsCenterY + Temp_Var3
-	STA <Temp_Var7		; Temp_Var7 = star's Y
+	STA Map_StarsY,X	; star's Y = Map_StarsCenterY + Temp_Var3
+	STA Temp_Var7		; Temp_Var7 = star's Y
 
-	LDA <Map_StarsCenterY	
-	STA <Temp_Var8		; Temp_Var8 = all stars center Y
+	LDA Map_StarsCenterY	
+	STA Temp_Var8		; Temp_Var8 = all stars center Y
 
 	JSR PRG011_SUB_B9D4	; Returns 1 or -1 in Temp_Var6
 
-	LDA <Temp_Var6	
+	LDA Temp_Var6	
 	BMI PRG011_B980	 	; If Temp_Var6 < 0, jump to PRG011_B980
 	RTS		 	; Return
 
 PRG011_B980:
 	LDA #$f8
-	STA <Map_StarsY,X	; star's Y = $F8 (hides sprite)
+	STA Map_StarsY,X	; star's Y = $F8 (hides sprite)
 	LDA #$00	 
-	STA <Map_StarsX,X	; star's X = 0 (we're hiding the sprite)
+	STA Map_StarsX,X	; star's X = 0 (we're hiding the sprite)
 
-	STA <Temp_Var10		; Temp_Var10 = star's X (0) (will be second sprite's offset)
+	STA Temp_Var10		; Temp_Var10 = star's X (0) (will be second sprite's offset)
 	RTS		 	; Return
 
 MSI_CalcXOffset:
@@ -4429,25 +4560,26 @@ MSI_CalcXOffset:
 	; MAPOBJ_HAMMERBROFIXME: I don't really understand the algorithm (I think it's some kind of
 	; division or fractional multiplication routine?), produces X offset in Temp_Var3
 
-	STA <Temp_Var2	; Temp_Var2 = Map_StarsOutRad
+	STA Temp_Var2	; Temp_Var2 = Map_StarsOutRad
 
 	LDA #$00	
-	STA <Temp_Var3	; Temp_Var3 = 0
-	STA <Temp_Var4	; Temp_Var4 = 0
+	STA Temp_Var3	; Temp_Var3 = 0
+	STA Temp_Var4	; Temp_Var4 = 0
 
 PRG011_B993:
-	ASL <Temp_Var4
-	ROL <Temp_Var3
-	ASL <Temp_Var1
+	ASL Temp_Var4
+	ROL Temp_Var3
+	ASL Temp_Var1
 	BCC PRG011_B9A6
 
-	LDA <Temp_Var4
-	ADD <Temp_Var2
-	STA <Temp_Var4
+	LDA Temp_Var4
+	CLC
+	ADC Temp_Var2
+	STA Temp_Var4
 
 	BCC PRG011_B9A6
 
-	INC <Temp_Var3
+	INC Temp_Var3
 
 PRG011_B9A6:
 	DEY		 ; Y--
@@ -4466,12 +4598,12 @@ MSI_DrawStar:
 	TAY		; Y = X << 3
 
 	; Store the Y part of this star's sprites
-	LDA <Map_StarsY,X	 
+	LDA Map_StarsY,X	 
 	STA Sprite_RAM+$98,Y	 
 	STA Sprite_RAM+$9C,Y	 
 
 	; Store the patterns for this star's sprites
-	LDA <Map_StarsPattern	
+	LDA Map_StarsPattern	
 	STA Sprite_RAM+$99,Y	
 	STA Sprite_RAM+$9D,Y	
 
@@ -4484,11 +4616,11 @@ MSI_DrawStar:
 	STA Sprite_RAM+$9E,Y
 
 	; Store X coordinate for first sprite
-	LDA <Map_StarsX,X
+	LDA Map_StarsX,X
 	STA Sprite_RAM+$9B,Y
 
 	; Store X coordinate for second sprite
-	LDA <Temp_Var10
+	LDA Temp_Var10
 	STA Sprite_RAM+$9F,Y
 
 	RTS		 ; Return
@@ -4498,30 +4630,30 @@ PRG011_SUB_B9D4:
 	; Temp_Var7 = star's X position
 	; Temp_Var8 = all stars center X
 
-	LDA <Temp_Var7
-	EOR <Temp_Var8
+	LDA Temp_Var7
+	EOR Temp_Var8
 	AND #$80	 
 	BEQ PRG011_B9EA	 	; If Temp_Var7 and Temp_Var8 are oppositely signed, jump to PRG011_B9EA
 
-	LDA <Temp_Var1
+	LDA Temp_Var1
 	BPL PRG011_B9E6	 	; If Temp_Var1 >= 0, jump to PRG011_B9E6
 
-	LDA <Temp_Var7
+	LDA Temp_Var7
 	BMI PRG011_B9EF	 	; If Temp_Var7 < 0, jump to PRG011_B9EF
 	BPL PRG011_B9EA	 	; Otherwise, jump to PRG011_B9EA
 
 PRG011_B9E6:
-	LDA <Temp_Var7
+	LDA Temp_Var7
 	BPL PRG011_B9EF	 	; If Temp_Var7 >= 0, jump to PRG011_B9EF
 
 PRG011_B9EA:
 	LDA #1
-	STA <Temp_Var6		; Temp_Var6 = 1
+	STA Temp_Var6		; Temp_Var6 = 1
 	RTS		 	; Return...
 
 PRG011_B9EF:
-	LDA #-1
-	STA <Temp_Var6		; Temp_Var6 = -1
+	LDA #<-1
+	STA Temp_Var6		; Temp_Var6 = -1
 	RTS		 	; Return...
 
 MSI_CalcDeltaAndSteps:
@@ -4529,33 +4661,34 @@ MSI_CalcDeltaAndSteps:
 	; X = Map_StarsCenterX
 	; A = Map_Stars_PRelX
 
-	STX <Temp_Var4	; Temp_Var4 = Map_StarsCenterX
-	STA <Temp_Var5	; Temp_Var5 = Map_Stars_PRelX
+	STX Temp_Var4	; Temp_Var4 = Map_StarsCenterX
+	STA Temp_Var5	; Temp_Var5 = Map_Stars_PRelX
  
-	SUB <Temp_Var4	
-	STA <Temp_Var1	; Temp_Var1 = Temp_Var5 (Map_Stars_PRelX) - Temp_Var4 (Map_StarsCenterX)
+	SEC
+	SBC Temp_Var4	
+	STA Temp_Var1	; Temp_Var1 = Temp_Var5 (Map_Stars_PRelX) - Temp_Var4 (Map_StarsCenterX)
 
-	LDA <Temp_Var5	
-	CMP <Temp_Var4	
+	LDA Temp_Var5	
+	CMP Temp_Var4	
 	BGE PRG011_BA0B	; If Temp_Var5 >= Temp_Var4, jump to PRG011_BA0B
 
 	; Otherwise, Temp_Var1 is negative; negate it!
-	LDA <Temp_Var1
+	LDA Temp_Var1
 	EOR #$ff	
 	ADC #$01	
-	STA <Temp_Var1	
+	STA Temp_Var1	
 
 	; FIXME: I don't really understand the algorithm (I think it's some kind of
 	; division routine?), but it finds the delta X/Y values for the star intro
 	; and the number of steps to complete the move
 PRG011_BA0B:
 	LDA #$00
-	STA <Temp_Var3	; Temp_Var3 = 0
+	STA Temp_Var3	; Temp_Var3 = 0
 
 	LDY #$07	; Y = 7
 PRG011_BA11:
-	ASL <Temp_Var3
-	ROL <Temp_Var1
+	ASL Temp_Var3
+	ROL Temp_Var1
 	ROL A		
 	BCS PRG011_BA1C	
 
@@ -4564,18 +4697,18 @@ PRG011_BA11:
 
 PRG011_BA1C:
 	SBC #$17	
-	INC <Temp_Var3	; Temp_Var3++
+	INC Temp_Var3	; Temp_Var3++
 
 PRG011_BA20:
 	DEY		 ; Y--
 	BPL PRG011_BA11	 ; While Y >= 0, loop!
 
-	LDX <Temp_Var3	 ; X = Temp_Var3
+	LDX Temp_Var3	 ; X = Temp_Var3
 	RTS		 ; Return
 
 Map_CompleteY:
 	.byte $20, $30, $40, $50, $60, $70, $80
-Map_CompleteY_End
+Map_CompleteY_End:
 
 Map_CompleteBit:
 	.byte $80, $40, $20, $10, $08, $04, $02, $01
@@ -4587,7 +4720,7 @@ Map_MarkLevelComplete:
 	BNE PRG011_BA89	 ; If Player skid back, we didn't complete this level, so jump to PRG011_BA89 (RTS)
 
 	LDY #(Map_CompleteY_End - Map_CompleteY - 1)
-	LDA <World_Map_Y,X	 ; Get Player's Map Y
+	LDA World_Map_Y,X	 ; Get Player's Map Y
 PRG011_BA41:
 	CMP Map_CompleteY,Y
 	BEQ PRG011_BA4B	 ; If this is the Y coordinate of the level that the Player completed, jump to PRG011_BA4B
@@ -4599,21 +4732,21 @@ PRG011_BA41:
 	LDY #$07	 ; Y = $07
 
 PRG011_BA4B:
-	STY <Temp_Var13	 ; completion vertical index -> Temp_Var13
+	STY Temp_Var13	 ; completion vertical index -> Temp_Var13
 
 	; Form a column location out of Map X/Hi position
-	LDA <World_Map_XHi,X
+	LDA World_Map_XHi,X
 	ASL A
 	ASL A
 	ASL A
 	ASL A
-	STA <Temp_Var1		; Map screen * 16
-	LDA <World_Map_X,X
+	STA Temp_Var1		; Map screen * 16
+	LDA World_Map_X,X
 	LSR A
 	LSR A
 	LSR A
 	LSR A
-	ORA <Temp_Var1		; Specific column on map screen (0-15)
+	ORA Temp_Var1		; Specific column on map screen (0-15)
 	TAY		 ; -> 'Y'
 
 	CPX #$00
@@ -4621,18 +4754,19 @@ PRG011_BA4B:
 
 	; Offset to Luigi's Map_Completions
 	TYA
-	ADD #$40
+	CLC
+	ADC #$40
 	TAY
 
 PRG011_BA67:
-	LDX <Temp_Var13		 ; X = Temp_Var13 (completion vertical index)
+	LDX Temp_Var13		 ; X = Temp_Var13 (completion vertical index)
 
 	; Mark this completion!
 	LDA Map_Completions,Y
 	ORA Map_CompleteBit,X
 	STA Map_Completions,Y
 
-	LDA <World_Map_Tile
+	LDA World_Map_Tile
 	CMP #TILE_FORTRUBBLE
 	BEQ PRG011_BA7C		; If a Fortress was just completed, jump to PRG011_BA7C
 
@@ -4666,23 +4800,24 @@ Map_Object_CheckVisibility:
 	ASL A
 	ASL A
 	ASL A
-	STA <Temp_Var2		; Temp_Var2 = object's X Hi byte << 4
+	STA Temp_Var2		; Temp_Var2 = object's X Hi byte << 4
 
 	LDA Map_Objects_XLo,X
 	LSR A		 
 	LSR A		 
 	LSR A		 
 	LSR A		 
-	ORA <Temp_Var2		
-	STA <Temp_Var2		; OR'ing the low X >> 4; Temp_Var2 now contains a proper "column" position
+	ORA Temp_Var2		
+	STA Temp_Var2		; OR'ing the low X >> 4; Temp_Var2 now contains a proper "column" position
 
-	LDA <Scroll_ColumnR
-	SUB #$02	 	; A = Scroll_ColumnR - 2
-	CMP <Temp_Var2
+	LDA Scroll_ColumnR
+	SEC
+	SBC #$02	 	; A = Scroll_ColumnR - 2
+	CMP Temp_Var2
 	BLT PRG011_BAB1	 	; If object is less than the right scroll column, jump to PRG011_BAB1
 
-	LDA <Scroll_ColumnL	; A = Scroll_ColumnL
-	CMP <Temp_Var2	
+	LDA Scroll_ColumnL	; A = Scroll_ColumnL
+	CMP Temp_Var2	
 	BGE PRG011_BAB1	 	; If object is greater-equal to the left scroll column, jump to PRG011_BAB1
 
 	LDY #$01	 	; Object is visible!
@@ -4757,13 +4892,13 @@ W8D_CircSprs:
 	.byte $10, $0B, $01, $E8
 	.byte $F0, $0B, $01, $20
 	.byte $00, $0B, $01, $20
-W8D_CircSprs_Unaligned
+W8D_CircSprs_Unaligned:
 
 	.byte $10, $0B, $01, $20
 	.byte $E0, $87, $01, $F8
 	.byte $E0, $87, $01, $10
 	.byte $20, $87, $81, $F8
-W8D_CircSprs_Aligned
+W8D_CircSprs_Aligned:
 
 PRG011_BB63:
 	.byte $20, $87, $81
@@ -4788,10 +4923,11 @@ PRG011_BB7B:
 	LDA #$00	
 	STA Map_W8D_Idx	 	; Map_W8D_Idx = 0
 
-	LDA <World_Map_X,X	; Player's X coordinate -> A
-	ADD PRG011_BB66,Y	; Add an offset based on World_8_Dark
+	LDA World_Map_X,X	; Player's X coordinate -> A
+	CLC
+	ADC PRG011_BB66,Y	; Add an offset based on World_8_Dark
 
-	LDY <World_Map_Y,X	; Y = Player's Y coordinate
+	LDY World_Map_Y,X	; Y = Player's Y coordinate
 	LDX #$01	 	; X = 1
 
 	JSR Map_W8DarknessUpdate	; Update darkness around Player
@@ -4807,7 +4943,7 @@ PRG011_BB9A:
 
 	LDY #$00	 ; Y = 0
 
-	LDA <World_Map_Move,X
+	LDA World_Map_Move,X
 	AND #$07	; Cap 0-7
 	CMP #$06
 	BEQ PRG011_BBAC	 ; On "6" of every "0-7" jump to PRG011_BBAC
@@ -4820,12 +4956,12 @@ PRG011_BB9A:
 PRG011_BBAC:
 	STY Map_W8D_Idx	 ; -> Map_W8D_Idx
 
-	LDA <World_Map_X,X
+	LDA World_Map_X,X
 	PHA		 ; Save Player's map X
 
-	LDY <World_Map_Y,X	 ; Y = Player's map Y
+	LDY World_Map_Y,X	 ; Y = Player's map Y
 
-	LDA <World_Map_Dir,X
+	LDA World_Map_Dir,X
 	TAX		 ; X = Player's map direction of travel
 
 	PLA		 ; A = Player's map X
@@ -4839,10 +4975,10 @@ PRG011_BBBB:
 	LDX Player_Current	 ; X = Player_Current
 
 	; Temp_Var1/2 = Player's Map Y/X
-	LDA <World_Map_Y,X
-	STA <Temp_Var1
-	LDA <World_Map_X,X
-	STA <Temp_Var2
+	LDA World_Map_Y,X
+	STA Temp_Var1
+	LDA World_Map_X,X
+	STA Temp_Var2
 
 	LDX #(W8D_CircSprs_Unaligned - W8D_CircSprs)
 
@@ -4854,8 +4990,9 @@ PRG011_BBBB:
 PRG011_BBD0:
 
 	; Set circle sprite Y
-	LDA <Temp_Var1
-	ADD W8D_CircSprs,X
+	LDA Temp_Var1
+	CLC
+	ADC W8D_CircSprs,X
 	STA Sprite_RAM+$08,Y
 
 	; Set circle sprite pattern
@@ -4867,8 +5004,9 @@ PRG011_BBD0:
 	STA Sprite_RAM+$0A,Y
 
 	; Set circle sprite X
-	LDA <Temp_Var2
-	ADD W8D_CircSprs+3,X
+	LDA Temp_Var2
+	CLC
+	ADC W8D_CircSprs+3,X
 	STA Sprite_RAM+$0B,Y
 
 	DEY
