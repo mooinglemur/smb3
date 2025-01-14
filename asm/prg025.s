@@ -14,6 +14,12 @@
 
 	; Ending Sprite list continued from PRG024 ...
 
+.include "../inc/macros.inc"
+.include "../inc/defines.inc"
+
+; BSS imports (low RAM and cart SRAM)
+.import Graphics_Buffer, Ending_CmdBuffer
+
 .ifdef NES
 .segment "PRG025"
 .endif
@@ -24,7 +30,7 @@
 	.byte $6F, $01, $40, $E0
 	.byte $7F, $03, $00, $D8
 	.byte $7F, $03, $40, $E0
-Ending2_EndPicSprites3_End
+Ending2_EndPicSprites3_End:
 
 Ending2_EndPicSprites4:
 	.byte $21, $81, $01, $70
@@ -39,7 +45,7 @@ Ending2_EndPicSprites4:
 	.byte $3F, $49, $01, $28
 	.byte $3F, $4B, $01, $30
 	.byte $3F, $4D, $01, $38
-Ending2_EndPicSprites4_End
+Ending2_EndPicSprites4_End:
 
 Ending2_EndPicSprites5:
 	.byte $69, $29, $00, $B0
@@ -55,7 +61,7 @@ Ending2_EndPicSprites5:
 	.byte $99, $63, $01, $D8
 	.byte $A9, $65, $01, $D0
 	.byte $A9, $67, $01, $D8
-Ending2_EndPicSprites5_End
+Ending2_EndPicSprites5_End:
 
 Ending2_EndPicSprites6:
 	.byte $69, $19, $40, $20
@@ -69,7 +75,7 @@ Ending2_EndPicSprites6:
 	.byte $A9, $D5, $02, $78
 	.byte $A9, $5B, $01, $A0
 	.byte $A9, $5D, $01, $A8
-Ending2_EndPicSprites6_End
+Ending2_EndPicSprites6_End:
 
 Ending2_EndPicSprites7:
 	.byte $41, $F1, $02, $D8
@@ -81,7 +87,7 @@ Ending2_EndPicSprites7:
 	.byte $79, $65, $42, $A8
 	.byte $89, $37, $40, $A8
 	.byte $89, $35, $40, $B0
-Ending2_EndPicSprites7_End
+Ending2_EndPicSprites7_End:
 
 Ending2_EndPicSprites8:
 	.byte $79, $03, $40, $28
@@ -102,15 +108,15 @@ Ending2_EndPicSprites8:
 	.byte $B0, $7B, $01, $B8
 	.byte $B0, $7D, $01, $C0
 	.byte $B0, $7F, $01, $C8
-Ending2_EndPicSprites8_End
+Ending2_EndPicSprites8_End:
 
 
 	; Split address, parallel tables for the starting address of the end picture for each world
-EndPicByWorld_H:.byte HIGH(EndPic_World1), HIGH(EndPic_World2), HIGH(EndPic_World3), HIGH(EndPic_World4)
-		.byte HIGH(EndPic_World5), HIGH(EndPic_World6), HIGH(EndPic_World7), HIGH(EndPic_World8)
+EndPicByWorld_H:.byte >(EndPic_World1), >(EndPic_World2), >(EndPic_World3), >(EndPic_World4)
+		.byte >(EndPic_World5), >(EndPic_World6), >(EndPic_World7), >(EndPic_World8)
 
-EndPicByWorld_L:.byte LOW(EndPic_World1), LOW(EndPic_World2), LOW(EndPic_World3), LOW(EndPic_World4)
-		.byte LOW(EndPic_World5), LOW(EndPic_World6), LOW(EndPic_World7), LOW(EndPic_World8)
+EndPicByWorld_L:.byte <(EndPic_World1), <(EndPic_World2), <(EndPic_World3), <(EndPic_World4)
+		.byte <(EndPic_World5), <(EndPic_World6), <(EndPic_World7), <(EndPic_World8)
 
 	; $C0 bytes are expected to be loaded into the Ending_CmdBuffer buffer.
 	; The EndPics are mostly raw with a simple compression, specifically if
