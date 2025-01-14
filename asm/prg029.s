@@ -11,6 +11,39 @@
 ; This source file last updated: 2012-03-06 18:57:13.927921102 -0600
 ; Distribution package date: Fri Apr  6 23:46:16 UTC 2012
 ;---------------------------------------------------------------------------
+.include "../inc/macros.inc"
+.include "../inc/defines.inc"
+
+; ZP imports
+.importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var8
+.importzp Temp_Var9, Temp_Var10, Temp_Var11, Horz_Scroll_Hi, Vert_Scroll_Hi, Level_ExitToMap
+.importzp Counter_1, Scroll_LastDir, Map_Tile_AddrL, Map_Tile_AddrH, Vert_Scroll, Horz_Scroll
+.importzp Player_WalkFrame, Player_XHi, Pipe_PlayerX, Pipe_PlayerY, Player_YHi, Objects_YHi, Player_X
+.importzp Player_Y, Objects_Y, Player_SpriteX, Player_SpriteY, Player_XVel, Player_YVel, Player_InAir
+.importzp Player_SprWorkL, Player_SprWorkH, Level_Tile, Player_Suit, Player_Frame, Player_FlipBits
+.importzp Player_IsDying
+; BSS imports (low RAM and cart SRAM)
+.import Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, TileChng_VRAM_H, TileChng_VRAM_L, TileChng_Pats
+.import Level_PipeExitDir, Level_SkipStatusBarUpd, Level_JctCtl, THouse_Treasure, Level_7Vertical
+.import Level_MusicQueue, Level_MusicQueueRestore, Sound_QMusic2, Event_Countdown, Level_BlockChgXHi
+.import Level_BlockChgXLo, Level_BlockChgYHi, Level_BlockChgYLo, Level_VertScrollH, Level_VertScroll
+.import Player_AboveTop, Player_Flip, Level_AirshipH, Player_Grow, Player_FlashInv, Player_StarInv
+.import Player_SuitLost, Player_StarOff, Player_HaltTick, Player_EndLevel, Level_AirshipCtl, Counter_Wiggly
+.import Level_ChgTileEvent, Level_PSwitchCnt, Player_IsDucking, Level_PipeMove, Level_CoinHeav, Player_Kuribo
+.import Player_OffScreen, Player_Behind, Player_SandSink, Player_SprOff, Object_SprRAM, Level_TimerEn
+.import Level_AScrlConfig, Level_Tile_Head, Player_IsHolding, Level_Tileset, Map_ReturnStatus
+.import PatTable_BankSel, Pipe_TransYDelta, RandomN, Level_GetWandState, Tile_Mem, Splash_DisTimer
+; imports from PRG008
+.import PipeMove_SetPlayerFrame, PipeMove_SetPlayerFrame, Player_GetTileAndSlope, PRG008_A38E
+.import Player_WalkFramesByPUp, Player_KuriboFrame, Player_ClimbFrame, PRG008_A224, Player_DoScrolling
+.import Airship_JumpFrameByPup, Player_ApplyXVelocity, Player_ApplyYVelocity, Player_GrowFrames
+.import AutoScroll_CalcPlayerY
+; imports from PRG030
+.import Tile_Mem_Addr, Tile_Mem_AddrVH, Tile_Mem_AddrVL, LevelJct_GetVScreenH
+; imports from PRG031
+.import DynJump
+
+
 .ifdef NES
 .segment "PRG029"
 .endif
@@ -270,19 +303,48 @@ M12ASegData23:
 	; - 3 * 81 = 243, which fits the 1 byte offset
 	; But, for some reason, everything is off by 4?  The SPPF function below compensates for this, and 
 	; PRG029_CF1E loads from 4 bytes shy of the proper address.  Maybe this was a mistake?  
-SPPF .func ((\1 - SPPF_Table + 4) / 2)	; The offsets 
 SPPF_Offsets:
-	.byte SPPF(PF00), SPPF(PF01), SPPF(PF02), SPPF(PF03), SPPF(PF04), SPPF(PF05), SPPF(PF06), SPPF(PF07)
-	.byte SPPF(PF08), SPPF(PF09), SPPF(PF0A), SPPF(PF0B), SPPF(PF0C), SPPF(PF0D), SPPF(PF0E), SPPF(PF0F)
-	.byte SPPF(PF10), SPPF(PF11), SPPF(PF12), SPPF(PF13), SPPF(PF14), SPPF(PF15), SPPF(PF16), SPPF(PF17)
-	.byte SPPF(PF18), SPPF(PF19), SPPF(PF1A), SPPF(PF1B), SPPF(PF1C), SPPF(PF1D), SPPF(PF1E), SPPF(PF1F)
-	.byte SPPF(PF20), SPPF(PF21), SPPF(PF22), SPPF(PF23), SPPF(PF24), SPPF(PF25), SPPF(PF26), SPPF(PF27)
-	.byte SPPF(PF28), SPPF(PF29), SPPF(PF2A), SPPF(PF2B), SPPF(PF2C), SPPF(PF2D), SPPF(PF2E), SPPF(PF2F)
-	.byte SPPF(PF30), SPPF(PF31), SPPF(PF32), SPPF(PF33), SPPF(PF34), SPPF(PF35), SPPF(PF36), SPPF(PF37)
-	.byte SPPF(PF38), SPPF(PF39), SPPF(PF3A), SPPF(PF3B), SPPF(PF3C), SPPF(PF3D), SPPF(PF3E), SPPF(PF3F)
-	.byte SPPF(PF40), SPPF(PF41), SPPF(PF42), SPPF(PF43), SPPF(PF44), SPPF(PF45), SPPF(PF46), SPPF(PF47)
-	.byte SPPF(PF48), SPPF(PF49), SPPF(PF4A), SPPF(PF4B), SPPF(PF4C), SPPF(PF4D), SPPF(PF4E), SPPF(PF4F)
-	.byte SPPF(PF50)
+	.byte <((PF00 - SPPF_Table + 4) / 2), <((PF01 - SPPF_Table + 4) / 2)
+	.byte <((PF02 - SPPF_Table + 4) / 2), <((PF03 - SPPF_Table + 4) / 2)
+	.byte <((PF04 - SPPF_Table + 4) / 2), <((PF05 - SPPF_Table + 4) / 2)
+	.byte <((PF06 - SPPF_Table + 4) / 2), <((PF07 - SPPF_Table + 4) / 2)
+	.byte <((PF08 - SPPF_Table + 4) / 2), <((PF09 - SPPF_Table + 4) / 2)
+	.byte <((PF0A - SPPF_Table + 4) / 2), <((PF0B - SPPF_Table + 4) / 2)
+	.byte <((PF0C - SPPF_Table + 4) / 2), <((PF0D - SPPF_Table + 4) / 2)
+	.byte <((PF0E - SPPF_Table + 4) / 2), <((PF0F - SPPF_Table + 4) / 2)
+	.byte <((PF10 - SPPF_Table + 4) / 2), <((PF11 - SPPF_Table + 4) / 2)
+	.byte <((PF12 - SPPF_Table + 4) / 2), <((PF13 - SPPF_Table + 4) / 2)
+	.byte <((PF14 - SPPF_Table + 4) / 2), <((PF15 - SPPF_Table + 4) / 2)
+	.byte <((PF16 - SPPF_Table + 4) / 2), <((PF17 - SPPF_Table + 4) / 2)
+	.byte <((PF18 - SPPF_Table + 4) / 2), <((PF19 - SPPF_Table + 4) / 2)
+	.byte <((PF1A - SPPF_Table + 4) / 2), <((PF1B - SPPF_Table + 4) / 2)
+	.byte <((PF1C - SPPF_Table + 4) / 2), <((PF1D - SPPF_Table + 4) / 2)
+	.byte <((PF1E - SPPF_Table + 4) / 2), <((PF1F - SPPF_Table + 4) / 2)
+	.byte <((PF20 - SPPF_Table + 4) / 2), <((PF21 - SPPF_Table + 4) / 2)
+	.byte <((PF22 - SPPF_Table + 4) / 2), <((PF23 - SPPF_Table + 4) / 2)
+	.byte <((PF24 - SPPF_Table + 4) / 2), <((PF25 - SPPF_Table + 4) / 2)
+	.byte <((PF26 - SPPF_Table + 4) / 2), <((PF27 - SPPF_Table + 4) / 2)
+	.byte <((PF28 - SPPF_Table + 4) / 2), <((PF29 - SPPF_Table + 4) / 2)
+	.byte <((PF2A - SPPF_Table + 4) / 2), <((PF2B - SPPF_Table + 4) / 2)
+	.byte <((PF2C - SPPF_Table + 4) / 2), <((PF2D - SPPF_Table + 4) / 2)
+	.byte <((PF2E - SPPF_Table + 4) / 2), <((PF2F - SPPF_Table + 4) / 2)
+	.byte <((PF30 - SPPF_Table + 4) / 2), <((PF31 - SPPF_Table + 4) / 2)
+	.byte <((PF32 - SPPF_Table + 4) / 2), <((PF33 - SPPF_Table + 4) / 2)
+	.byte <((PF34 - SPPF_Table + 4) / 2), <((PF35 - SPPF_Table + 4) / 2)
+	.byte <((PF36 - SPPF_Table + 4) / 2), <((PF37 - SPPF_Table + 4) / 2)
+	.byte <((PF38 - SPPF_Table + 4) / 2), <((PF39 - SPPF_Table + 4) / 2)
+	.byte <((PF3A - SPPF_Table + 4) / 2), <((PF3B - SPPF_Table + 4) / 2)
+	.byte <((PF3C - SPPF_Table + 4) / 2), <((PF3D - SPPF_Table + 4) / 2)
+	.byte <((PF3E - SPPF_Table + 4) / 2), <((PF3F - SPPF_Table + 4) / 2)
+	.byte <((PF40 - SPPF_Table + 4) / 2), <((PF41 - SPPF_Table + 4) / 2)
+	.byte <((PF42 - SPPF_Table + 4) / 2), <((PF43 - SPPF_Table + 4) / 2)
+	.byte <((PF44 - SPPF_Table + 4) / 2), <((PF45 - SPPF_Table + 4) / 2)
+	.byte <((PF46 - SPPF_Table + 4) / 2), <((PF47 - SPPF_Table + 4) / 2)
+	.byte <((PF48 - SPPF_Table + 4) / 2), <((PF49 - SPPF_Table + 4) / 2)
+	.byte <((PF4A - SPPF_Table + 4) / 2), <((PF4B - SPPF_Table + 4) / 2)
+	.byte <((PF4C - SPPF_Table + 4) / 2), <((PF4D - SPPF_Table + 4) / 2)
+	.byte <((PF4E - SPPF_Table + 4) / 2), <((PF4F - SPPF_Table + 4) / 2)
+	.byte <((PF50 - SPPF_Table + 4) / 2)
 
 	; The six Patterns per Player_Frame to start each of the six Player sprites with!
 	; Note the order is the three patterns for the three sprites that make the upper 
@@ -316,7 +378,7 @@ PF16:	.byte $0B, $0D, $F1, $0F, $29, $2B
 PF17:	.byte $2D, $2F, $F1, $19, $1B, $1D
 PF18:	.byte $2D, $2F, $F1, $A9, $AB, $F1
 PF19:	.byte $2D, $2F, $F1, $A9, $AD, $F1
-PF1A	.byte $01, $03, $05, $07, $09, $0B
+PF1A:	.byte $01, $03, $05, $07, $09, $0B
 PF1B:	.byte $0D, $0F, $39, $3B, $3D, $3F
 PF1C:	.byte $19, $1B, $1D, $1F, $21, $23
 PF1D:	.byte $25, $27, $29, $2B, $2D, $2F
@@ -384,7 +446,7 @@ Player_FramePageOff:
 	.byte 3
 
 PRG029_CE88:
-	.byte -8, 10, -8, 18,  8, 10,  8, 18,  1,  9,  0,  8,  2, 10, -2, 6
+	.byte <-8, 10, <-8, 18,  8, 10,  8, 18,  1,  9,  0,  8,  2, 10, <-2, 6
 
 	; Specified root VROM page for a given power up
 Player_PUpRootPage:
@@ -401,25 +463,28 @@ Player_PUpRootPage:
 ; etc. all handled by this major subroutine...
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Player_Draw:
-	LDX <Player_Frame
+	LDX Player_Frame
 	LDA Player_FramePageOff,X
-	STA <Temp_Var1		 ; Get VROM page offset for this animation frame -> Temp_Var1
+	STA Temp_Var1		 ; Get VROM page offset for this animation frame -> Temp_Var1
 
-	LDY <Player_Suit
+	LDY Player_Suit
 	LDA Player_PUpRootPage,Y ; Get VROM root page for this power up
-	ADD <Temp_Var1		 ; Add appropriate offset to the VROM base for the animation frame
+	CLC
+	ADC Temp_Var1		 ; Add appropriate offset to the VROM base for the animation frame
 
 	STA PatTable_BankSel+2	 ; Set VROM bank switch for sprites 1/4
 
-	LDA <Player_X
-	SUB <Horz_Scroll
-	STA <Player_SpriteX	 ; Player_SpriteX = Player_X - Horz_Scroll
+	LDA Player_X
+	SEC
+	SBC Horz_Scroll
+	STA Player_SpriteX	 ; Player_SpriteX = Player_X - Horz_Scroll
 
-	LDA <Player_Y
-	SUB Level_VertScroll
-	STA <Player_SpriteY	; Player_SpriteY = Player_Y - Level_VertScroll
+	LDA Player_Y
+	SEC
+	SBC Level_VertScroll
+	STA Player_SpriteY	; Player_SpriteY = Player_Y - Level_VertScroll
 
-	LDA <Player_YHi	
+	LDA Player_YHi	
 	SBC Level_VertScrollH
 	STA Player_AboveTop	 ; Player_Above top calculated if Player is off top of screen
 
@@ -438,14 +503,14 @@ PRG029_CED7:
 	LDA Player_StarInv
 	BEQ PRG029_CF0B	 	; If Player_StarInv = 0 (not star invincible), jump to PRG029_CF0B
 
-	LDA <Counter_1
+	LDA Counter_1
 	AND #$01
 	BEQ PRG029_CEEA		; Every other tick, jump to PRG029_CEEA
 
 	DEC Player_StarInv	 ; Player_StarInv--
 
 PRG029_CEEA:
-	LDA <Counter_1
+	LDA Counter_1
 	AND #$0f	; A = 0-15 ticks
 
 	LDY Player_StarOff
@@ -477,7 +542,7 @@ PRG029_CF09:
 	AND #$03	 ; Cap it 0-3 in any case (select one of the four sprite palettes, basically)
 
 PRG029_CF0B:
-	STA <Temp_Var1	 ; Store cycle tick into Temp_Var1 (0 if not invincible, sprite palette 0)
+	STA Temp_Var1	 ; Store cycle tick into Temp_Var1 (0 if not invincible, sprite palette 0)
 
 	LDA Level_PipeMove
 	LDA Player_Behind
@@ -486,14 +551,14 @@ PRG029_CF0B:
 
 	; Set priority over background (normal most game sprite behavior)
 	LDA #$20
-	ORA <Temp_Var1
-	STA <Temp_Var1
+	ORA Temp_Var1
+	STA Temp_Var1
 
 PRG029_CF1E:
-	LDA #LOW(SPPF_Table-4)
-	STA <Player_SprWorkL
-	LDA #HIGH(SPPF_Table-4)
-	STA <Player_SprWorkH
+	LDA #<(SPPF_Table-4)
+	STA Player_SprWorkL
+	LDA #>(SPPF_Table-4)
+	STA Player_SprWorkH
 
 	; X = Player_Frame
 	LDA SPPF_Offsets,X	; Get offset value to sprite's pattern set
@@ -501,43 +566,43 @@ PRG029_CF1E:
 	TAY			; Needs to be shifted up to be correct (stored shifted right 1)
 	BCC PRG029_CF2F		; If carry is NOT set (a >= $80 value indicate "second page"), jump to PRG029_CF2F
 
-	INC <Player_SprWorkH	 ; Go to second page
+	INC Player_SprWorkH	 ; Go to second page
 
 PRG029_CF2F:
 	LDX Player_SprOff	 ; X = Root offset where Player sprite should begin
 
 	; Store pattern in this Player sprite and go to next byte
-	LDA [Player_SprWorkL],Y	 
+	LDA (Player_SprWorkL),Y	 
 	STA Sprite_RAM+$0D,X	 
 	INY		 
 
 	; Store pattern in this Player sprite and go to next byte
-	LDA [Player_SprWorkL],Y	 
+	LDA (Player_SprWorkL),Y	 
 	STA Sprite_RAM+$11,X	 
 	INY		 
 
 	; Store pattern in this Player sprite and go to next byte
-	LDA [Player_SprWorkL],Y	 
+	LDA (Player_SprWorkL),Y	 
 	STA Sprite_RAM+$15,X	 
 	INY		 
 
 	; Store pattern in this Player sprite and go to next byte
-	LDA [Player_SprWorkL],Y	 
+	LDA (Player_SprWorkL),Y	 
 	STA Sprite_RAM+$01,X	 
 	INY		 
 
 	; Store pattern in this Player sprite and go to next byte
-	LDA [Player_SprWorkL],Y	 
+	LDA (Player_SprWorkL),Y	 
 	STA Sprite_RAM+$05,X	 
 	INY		 
 
 	; Store pattern in this Player sprite and go to next byte
-	LDA [Player_SprWorkL],Y	 
+	LDA (Player_SprWorkL),Y	 
 	STA Sprite_RAM+$09,X	 
 
-	LDA <Player_FlipBits
+	LDA Player_FlipBits
 	AND #$c0
-	ORA <Temp_Var1		 ; Merge with possible other attributes (the star invincibility palette cycle)
+	ORA Temp_Var1		 ; Merge with possible other attributes (the star invincibility palette cycle)
 
 	; Store attributes to all Player sprites
 	STA Sprite_RAM+$02,X
@@ -555,7 +620,7 @@ PRG029_CF2F:
 	; So the "right half" sprites must mirror the "left half"
 
 	LDA Sprite_RAM+$0E,X
-	AND #~SPR_HFLIP	 	; Keep all attributes EXCEPT horizontal flip
+	AND #<(~SPR_HFLIP)	 	; Keep all attributes EXCEPT horizontal flip
 	STA Sprite_RAM+$02,X
 	STA Sprite_RAM+$0E,X
 	ORA #SPR_HFLIP	 	; Force horizontal flip
@@ -565,33 +630,36 @@ PRG029_CF2F:
 PRG029_CF88:
 
 	; First row sprites
-	LDA <Player_SpriteY
+	LDA Player_SpriteY
 	STA Sprite_RAM+$0C,X
 	STA Sprite_RAM+$10,X
 	STA Sprite_RAM+$14,X
 
 	; Second row sprites
-	ADD #16
+	CLC
+	ADC #16
 	STA Sprite_RAM+$00,X
 	STA Sprite_RAM+$04,X
 	STA Sprite_RAM+$08,X
 
 	; Left column
-	LDA <Player_SpriteX
+	LDA Player_SpriteX
 	STA Sprite_RAM+$03,X
 	STA Sprite_RAM+$0F,X
 
 	; Middle column
-	ADD #8
+	CLC
+	ADC #8
 	STA Sprite_RAM+$07,X
 	STA Sprite_RAM+$13,X
 
 	; Right column
-	ADD #8
+	CLC
+	ADC #8
 	STA Sprite_RAM+$0B,X
 	STA Sprite_RAM+$17,X
 
-	LDA <Player_FlipBits
+	LDA Player_FlipBits
 	AND #SPR_HFLIP
 	BEQ PRG029_D010	 ; If Player sprite is NOT horizontally flipped, jump to PRG029_D010
 
@@ -605,7 +673,8 @@ PRG029_CF88:
 
 	; Reverse these X values
 	LDA Sprite_RAM+$0B,X	 
-	ADD #-24
+	CLC
+	ADC #<-24
 	STA Sprite_RAM+$0B,X	 
 	STA Sprite_RAM+$17,X	
 
@@ -624,17 +693,20 @@ PRG029_CF88:
 	; Otherwise all of the sprites are pushed to the right by 8
 
 	LDA Sprite_RAM+$03,X	 
-	ADD #8
+	CLC
+	ADC #8
 	STA Sprite_RAM+$03,X
 	STA Sprite_RAM+$0F,X
 
 	LDA Sprite_RAM+$07,X	 
-	ADD #8
+	CLC
+	ADC #8
 	STA Sprite_RAM+$07,X
 	STA Sprite_RAM+$13,X
 	 
 	LDA Sprite_RAM+$0B,X	 
-	ADD #8
+	CLC
+	ADC #8
 	STA Sprite_RAM+$0B,X	 
 	STA Sprite_RAM+$17,X	 
 
@@ -645,16 +717,16 @@ PRG029_D010:
 
 	; In short, if Player is small, use Temp_Var1 = 6, otherwise Temp_Var1 = 0 (sprite vertical offset in shoe)
 	LDY #$00
-	LDA <Player_Suit
+	LDA Player_Suit
 	BNE PRG029_D01D
 	LDY #$06
 PRG029_D01D:
-	STY <Temp_Var1
+	STY Temp_Var1
 
-	LDA <Player_InAir
+	LDA Player_InAir
 	BEQ PRG029_D036	 ; If Player is not mid-air, jump to PRG029_D036
 
-	LDA <Player_YVel
+	LDA Player_YVel
 	BPL PRG029_D029	 ; If Player is falling, jump to PRG029_D029
 
 	EOR #$ff	 ; Otherwise negate it (sort of)
@@ -664,7 +736,8 @@ PRG029_D029:
 	LSR A
 	LSR A
 	LSR A
-	SUB #$03	; The "whole" part of the Y Velocity, minus 3
+	SEC
+	SBC #$03	; The "whole" part of the Y Velocity, minus 3
 
 	EOR #$ff	 ; Negate that (sort of)
 	BPL PRG029_D036	 ; If the result is positive, jump to PRG029_D036
@@ -672,8 +745,10 @@ PRG029_D029:
 	LDA #$00	 ; Otherwise if it slipped below zero, just use zero
 
 PRG029_D036:
-	ADD <Temp_Var1	 ; Add that to the initial offset
-	ADD <Player_SpriteY	 ; And add in the Player's sprite Y position
+	CLC
+	ADC Temp_Var1	 ; Add that to the initial offset
+	CLC
+	ADC Player_SpriteY	 ; And add in the Player's sprite Y position
 
 	; Store that as the new Y position on the "first row" sprites
 	STA Sprite_RAM+$0C,X
@@ -687,7 +762,7 @@ PRG029_D036:
 	STA Sprite_RAM+$06,X
 
 PRG029_D050:
-	LDA <Player_Frame
+	LDA Player_Frame
 	CMP #PF_KICK_BIG 
 	BNE PRG029_D076	 ; If Player_Frame <> PF_KICK_BIG (kicking shell, etc. when not small), jump to PRG029_D076
 
@@ -697,14 +772,15 @@ PRG029_D050:
 	STA Sprite_RAM+$14,X
 
 	; If Player is not horizontally flipped, A = -8, otherwise A = 16
-	LDA #-8
-	LDY <Player_FlipBits
+	LDA #<-8
+	LDY Player_FlipBits
 	BEQ PRG029_D064
 	LDA #16
 PRG029_D064:
 
 	; The aforementioned foot sprite is offset into proper X position
-	ADD Sprite_RAM+$0F,X
+	CLC
+	ADC Sprite_RAM+$0F,X
 	STA Sprite_RAM+$17,X
 
 	LDA #$1b
@@ -714,7 +790,7 @@ PRG029_D064:
 	STA Sprite_RAM+$16,X	; Attributes are copied (is this necessary?)
 
 PRG029_D076:
-	LDA <Player_FlipBits
+	LDA Player_FlipBits
 	AND #$80	 
 	BEQ PRG029_D094	 
 
@@ -725,7 +801,8 @@ PRG029_D076:
 	STA Sprite_RAM+$10,X
 	STA Sprite_RAM+$14,X
 
-	ADD #-16
+	CLC
+	ADC #<-16
 	STA Sprite_RAM+$00,X
 	STA Sprite_RAM+$04,X
 	STA Sprite_RAM+$08,X
@@ -739,8 +816,9 @@ PRG029_D094:
 	LDA Player_AboveTop
 	BPL PRG029_D0AE	 	; If Player is not above top of screen, jump to PRG029_D0AE
 
-	LDA <Player_SpriteY
-	ADD #16
+	LDA Player_SpriteY
+	CLC
+	ADC #16
 	LDA #$00
 	ADC Player_AboveTop
 
@@ -750,7 +828,7 @@ PRG029_D094:
 PRG029_D0AE:
 	BNE PRG029_D0BC	 ; Jump reserved for when Player is already known as off screen, so jump (technically always) to PRG029_D0BC
 
-	LDA <Player_SpriteY
+	LDA Player_SpriteY
 	CMP #$c0	 
 	BGE PRG029_D0BC	 ; If Player_SpriteY >= $C0, he's below the status bar, so jump to PRG029_D0BC
 
@@ -806,17 +884,20 @@ PRG029_D0E1:
 	; at the pipe entrance which masks the Player...
 
 	; Mask sprite X
-	LDA <Pipe_PlayerX
-	SUB <Horz_Scroll
+	LDA Pipe_PlayerX
+	SEC
+	SBC Horz_Scroll
 	STA Sprite_RAM+$03
 	STA Sprite_RAM+$07
-	ADD #$08
+	CLC
+	ADC #$08
 	STA Sprite_RAM+$0B
 	STA Sprite_RAM+$0F
 
 	; Mask sprite Y
-	LDA <Pipe_PlayerY
-	SUB Level_VertScroll
+	LDA Pipe_PlayerY
+	SEC
+	SBC Level_VertScroll
 	PHA
 	CMP #$f0
 	BLT PRG029_D10E
@@ -825,7 +906,8 @@ PRG029_D10E:
 	STA Sprite_RAM+$00
 	STA Sprite_RAM+$08
 	PLA
-	ADD #16
+	CLC
+	ADC #16
 	STA Sprite_RAM+$04
 	STA Sprite_RAM+$0C
 
@@ -893,7 +975,8 @@ ToadHouse_Box_X:	.byte $40, $70, $A0
 	; (Already checked for him pressing 'B'!)
 ToadHouse_ChestPressB:
 	LDA #TILE7_CHEST_LR
-	SUB Level_Tile_Head
+	SEC
+	SBC Level_Tile_Head
 	CMP #$04
 	BGE PRG029_D1B7	 ; If Player is NOT touching one of the treasure boxes, jump to PRG029_D1B7
 
@@ -901,7 +984,7 @@ ToadHouse_ChestPressB:
 
 	LDY #$00	 ; Y = 0 (first box)
 
-	LDA <Player_X
+	LDA Player_X
 	CMP #$60
 	BLT PRG029_D17F	 ; If Player_X < $60, jump to PRG029_D17F
 
@@ -945,7 +1028,8 @@ PRG029_D17F:
 	TAY		 ; Y = Random number 0 - 15
 
 	LDA ToadHouse_RandomItem,Y	; Pick a random item
-	ADD ToadHouse_ItemOff,X	 	; Add appropriate offset
+	CLC
+	ADC ToadHouse_ItemOff,X	 	; Add appropriate offset
 	TAX		 ; -> 'X'
 
 PRG029_D1B1:
@@ -989,7 +1073,7 @@ PRG029_D1CD:
 
 
 PRG029_D1CE:
-	LDA <Player_IsDying
+	LDA Player_IsDying
 	BEQ PRG029_D1D5	 ; If Player is not dying, jump to PRG029_D1D5
 
 	JMP PRG029_D6BC	 ; Jump to PRG029_D6BC (the Player's death routine)
@@ -1004,26 +1088,26 @@ PRG029_D1D5:
 	; Release holding anything and stop horizontal movement
 	LDA #$00	 
 	STA Player_IsHolding
-	STA <Player_XVel
+	STA Player_XVel
 
 	; Produces an initial burst of upward Y velocity which slows down
 	INC Level_CoinHeav	; Level_CoinHeav++
 	LDA Level_CoinHeav
-	STA <Player_YVel
+	STA Player_YVel
 	BNE PRG029_D1EE	 	; If Level_CoinHeav <> 0, jump to PRG029_D1EE
 
 	INC Level_CoinHeav	; Level_CoinHeav++
 
 PRG029_D1EE:
-	LDA <Player_YHi
+	LDA Player_YHi
 	BPL PRG029_D205	 ; If Player hasn't gone above top of screen yet, jump to PRG029_D205
 
 	; Once Player crosses top of screen, he is then placed at halfway 
 	; above the status bar (16 pixels above the death point!)
 	LDA #$01
-	STA <Player_YHi	; Player_YHi = 1 (really low)
+	STA Player_YHi	; Player_YHi = 1 (really low)
 	LDA #$b0	 
-	STA <Player_Y	; Player_Y = $B0 (near the bottom)
+	STA Player_Y	; Player_Y = $B0 (near the bottom)
 
 	LDA #$d0
 	STA Level_CoinHeav
@@ -1068,12 +1152,13 @@ PRG029_D224:
 	LSR A
 	TAX		 ; X = Player_Grow >> 2
 
-	LDY <Player_Suit ; Y = Player_Suit
+	LDY Player_Suit ; Y = Player_Suit
 	BNE PRG029_D238	 ; If Y <> 0 (small), jump to PRG029_D238
 
-	STX <Temp_Var1
+	STX Temp_Var1
 	LDA #$0b
-	SUB <Temp_Var1
+	SEC
+	SBC Temp_Var1
 	TAX		 ; Otherwise, X = $0B - (Player_Grow >> 2)
 
 PRG029_D238:
@@ -1081,7 +1166,7 @@ PRG029_D238:
 	PHP		 ; Save result
 
 	LDA Player_GrowFrames,X	 ; Get this grow frame
-	STA <Player_Frame	 ; Set as current frame
+	STA Player_Frame	 ; Set as current frame
 
 	JSR Player_Draw		 ; Draw Player
 
@@ -1091,7 +1176,8 @@ PRG029_D238:
 	ORA #$54
 	PLP		 ; Restore result
 	BEQ PRG029_D250
-	SUB #$10	
+	SEC
+	SBC #$10	
 PRG029_D250:
 	STA PatTable_BankSel+2
 
@@ -1115,13 +1201,13 @@ PRG029_D257:
 	STA Player_SuitLost	 ; Player_SuitLost = $18
 
 PRG029_D26B:
-	LDA <Player_InAir
+	LDA Player_InAir
 	BNE PRG029_D279		; If Player is mid-air, jump to PRG029_D279
 
 	DEC Player_EndLevel	; Player_EndLevel--
 
 	LDA #$14
-	STA <Player_XVel	; Player_XVel = $14
+	STA Player_XVel	; Player_XVel = $14
 	JMP PRG029_D457	 	; Jump to PRG029_D457 
 
 PRG029_D279:
@@ -1137,17 +1223,17 @@ PRG029_D281:
 	PHA		 ; Save Level_AirshipCtl
 
 	LDA #$00
-	STA <Scroll_LastDir	; Force screen to have "last moved right"
+	STA Scroll_LastDir	; Force screen to have "last moved right"
 
-	INC <Horz_Scroll	; Screen scrolls to the right
+	INC Horz_Scroll	; Screen scrolls to the right
 	BNE PRG029_D28C	 	; If it hasn't rolled over, jump to PRG029_D28C
-	INC <Horz_Scroll_Hi	; Otherwise, apply carry
+	INC Horz_Scroll_Hi	; Otherwise, apply carry
 
 PRG029_D28C:
-	LDA <Horz_Scroll_Hi
+	LDA Horz_Scroll_Hi
 	BNE PRG029_D296	 	; If Horz_Scroll_Hi <> 0, jump to PRG029_D296
 
-	LDA <Horz_Scroll
+	LDA Horz_Scroll
 	CMP #$60	
 	BLT PRG029_D2AF	 ; If Horz_Scroll < $60, jump to PRG029_D2AF
 
@@ -1155,16 +1241,18 @@ PRG029_D296:
 	INC Level_AirshipH	 ; Level_AirshipH++
 
 	LDA Level_AirshipH
-	ADD Counter_Wiggly	 ; Increase height of the airship in a bit of a wobbly way
+	CLC
+	ADC Counter_Wiggly	 ; Increase height of the airship in a bit of a wobbly way
 	BCC PRG029_D2AF	 	; If it hasn't overflowed, jump to PRG029_D2AF
 
-	INC <Vert_Scroll
+	INC Vert_Scroll
 
-	LDA <Objects_Y+4
-	SUB #$01
-	STA <Objects_Y+4	; Anchor's Y minus 1
+	LDA Objects_Y+4
+	SEC
+	SBC #$01
+	STA Objects_Y+4	; Anchor's Y minus 1
 	BCS PRG029_D2AF
-	DEC <Objects_YHi+4	; If overflow occurred, propogate the carry
+	DEC Objects_YHi+4	; If overflow occurred, propogate the carry
 PRG029_D2AF: 
 
 	PLA		 ; Restore Level_AirshipCtl
@@ -1185,27 +1273,27 @@ AirshipCtl_RunAndJump:
 	LDA #$ef
 	STA Level_VertScroll	 ; Level_VertScroll = $EF
 
-	LDA <Horz_Scroll
+	LDA Horz_Scroll
 	CMP #$80
 	BLT PRG029_D2D0	 ; If Horz_Scroll < $80, jump to PRG029_D2D0
 
 	; Player makes the jump!
-	LDA #-$60
-	STA <Player_YVel	 ; Player_YVel = -$60
+	LDA #<-$60
+	STA Player_YVel	 ; Player_YVel = -$60
 	INC Level_AirshipCtl	 ; Next Level_AirshipCtl!
 
 PRG029_D2D0:
 	LDA #$01
-	STA <Player_FlipBits	 ; Player_FlipBits = 1
+	STA Player_FlipBits	 ; Player_FlipBits = 1
 
 	LDA #$20
-	STA <Player_XVel	 ; Player_XVel = $20
+	STA Player_XVel	 ; Player_XVel = $20
 
 	JMP PRG029_D457	 ; $D2D8 
 
 
 AirshipCtl_Catch:
-	LDA <Player_X
+	LDA Player_X
 	CMP #$36	
 	BLT PRG029_D2FF	 ; If Player_X < $36, jump to PRG029_D2FF
 
@@ -1213,9 +1301,10 @@ AirshipCtl_Catch:
 	JSR Player_ApplyYVelocity
 	JSR Player_ApplyXVelocity
 
-	LDA <Player_YVel
-	ADD #$04
-	STA <Player_YVel ; Player_YVel += 4
+	LDA Player_YVel
+	CLC
+	ADC #$04
+	STA Player_YVel ; Player_YVel += 4
 
 	CMP #$0f
 	BLS PRG029_D2F5	 ; If Player_YVel < $0F, jump to PRG029_D2F5
@@ -1225,9 +1314,9 @@ AirshipCtl_Catch:
 PRG029_D2F5:
 
 	; Set mid-air jump frame as appropriate by suit and draw Player...
-	LDY <Player_Suit
+	LDY Player_Suit
 	LDA Airship_JumpFrameByPup,Y
-	STA <Player_Frame
+	STA Player_Frame
 	JMP Player_Draw	
 
 PRG029_D2FF:
@@ -1236,13 +1325,13 @@ PRG029_D2FF:
 
 AirshipCtl_HoldAnchor:
 	LDA #$02
-	STA <Player_FlipBits	 ; Player_FlipBits = 2 (use "caught anchor" frame)
+	STA Player_FlipBits	 ; Player_FlipBits = 2 (use "caught anchor" frame)
 
-	LDA #-$14
-	STA <Player_YVel ; Player_YVel = -$14
+	LDA #<-$14
+	STA Player_YVel ; Player_YVel = -$14
 	JSR PRG029_D457	 ; Continue using the "run" code
 
-	LDA <Vert_Scroll
+	LDA Vert_Scroll
 	CMP #$70
 	BLT PRG029_D31B	 ; If Vert_Scroll < $70, jump to PRG029_D31B (RTS)
 
@@ -1261,7 +1350,7 @@ AirshipCtl_LandOnDeck:
 
 	JSR Player_ApplyYVelocity	 ; Apply Player's Y velocity
 
-	LDA <Player_YVel
+	LDA Player_YVel
 	BMI PRG029_D330	 	; If Player's Y velocity is negative (still rising), jump to PRG029_D330
 
 	LDA #$00
@@ -1269,9 +1358,10 @@ AirshipCtl_LandOnDeck:
 	STA Level_TimerEn	; Level_TimerEn = 0 (level timer enabled!)
 
 PRG029_D330:
-	LDA <Player_YVel
-	ADD #$04
-	STA <Player_YVel ; Player_YVel += 4 (Player falling to airship)
+	LDA Player_YVel
+	CLC
+	ADC #$04
+	STA Player_YVel ; Player_YVel += 4 (Player falling to airship)
 
 	JSR Player_DoScrolling	; Update scrolling at Player's position
 
@@ -1290,18 +1380,19 @@ PRG029_D33E:
 	BLS PRG029_D354	 ; If Level_GetWandState < 7, jump to PRG029_D354
 
 	; Player's slow decent...
-	LDA <Player_Y
-	ADD #$02
-	STA <Player_Y	 ; Player_Y += 2
+	LDA Player_Y
+	CLC
+	ADC #$02
+	STA Player_Y	 ; Player_Y += 2
 
 	BCC PRG029_D354	 ; If no carry, jump to PRG029_D354
-	INC <Player_YHi	 ; Otherwise, apply carry
+	INC Player_YHi	 ; Otherwise, apply carry
 
 PRG029_D354:
 	; Player holding wand!
-	LDY <Player_Suit ; Y = Player_Suit
+	LDY Player_Suit ; Y = Player_Suit
 	LDA Airship_JumpFrameByPup,Y	 
-	STA <Player_Frame	; Use proper "mid-air" frame
+	STA Player_Frame	; Use proper "mid-air" frame
 	JSR Player_Draw	 	; Draw Player
 	JMP Wand_Offset_BySuit	 	; Jump to Wand_Offset_BySuit
 
@@ -1351,7 +1442,7 @@ PRG029_D384:
 	CMP #$01	 ; Although Level_JctCtl = 1 is not valid, this is used as "return to map"...
 	BNE PRG029_D395	 ; If Level_JctCtl <> 1, jump to PRG029_D395
 
-	INC <Level_ExitToMap	 ; Level_ExitToMap = 1 (return to map)
+	INC Level_ExitToMap	 ; Level_ExitToMap = 1 (return to map)
 
 	LDA #$00
 	STA Map_ReturnStatus	 ; Map_ReturnStatus = 0 (completed level, i.e. did not die)
@@ -1418,10 +1509,11 @@ PRG029_D3CB:
 
 	LDA Player_SprOff
 
-	LDX <Player_YVel
+	LDX Player_YVel
 	BPL PRG029_D3DF	 ; If Player_YVel >= 0 (going down), jump to PRG029_D3DF
 
-	ADD #$0c	 ; Remove other half of Player
+	CLC
+	ADC #$0c	 ; Remove other half of Player
 
 
 	; Gets rid of appropriate half of Player sprites as he disappears into pipe
@@ -1445,15 +1537,15 @@ PRG029_D3EC:
 
 
 	; When Player has grabbed wand, offset from Player X/Y by suit / power-up
-Wand_XOff_BySuitL:	.byte -5, -5, -5, -5, -7, -5, -5
+Wand_XOff_BySuitL:	.byte <-5, <-5, <-5, <-5, <-7, <-5, <-5
 Wand_XOff_BySuitR:	.byte  6,  6,  6,  6,  8,  6,  6
-Wand_YOff_BySuit:	.byte  1, -9, -9, -9,  3, -9, -9
+Wand_YOff_BySuit:	.byte  1, <-9, <-9, <-9,  3, <-9, <-9
 
 Wand_Offset_BySuit:
 	LDY Object_SprRAM+5	; Y = 5th index object Sprite RAM offset
-	LDX <Player_Suit	; X = Player's suit
+	LDX Player_Suit	; X = Player's suit
 
-	LDA <Player_FlipBits
+	LDA Player_FlipBits
 	PHP		 	; Save Player flip bits
 
 	LDA Wand_XOff_BySuitR,X	; Wand offset, held right
@@ -1464,29 +1556,32 @@ Wand_Offset_BySuit:
 	LDA Wand_XOff_BySuitL,X	; Wand offset, held left
 
 PRG029_D415:
-	ADD <Player_SpriteX	; Add offset to Player sprite X
+	CLC
+	ADC Player_SpriteX	; Add offset to Player sprite X
 	STA Sprite_RAM+$03,Y	; -> Sprite X
 
-	ADD #$08		; +8
+	CLC
+	ADC #$08		; +8
 	STA Sprite_RAM+$07,Y	; -> Sprite X
 
 	; Temp_Var1 = Player_YHi
-	LDA <Player_YHi
-	STA <Temp_Var1
+	LDA Player_YHi
+	STA Temp_Var1
 
 	LDA Wand_YOff_BySuit,X
 	BPL PRG029_D42C	 	; If Y offset is positive, jump to PRG029_D42C
 
-	DEC <Temp_Var1		; Otherwise, Temp_Var1--
+	DEC Temp_Var1		; Otherwise, Temp_Var1--
 
 PRG029_D42C:
-	ADD <Player_SpriteY	; Add offset to Player Y
+	CLC
+	ADC Player_SpriteY	; Add offset to Player Y
 	BCC PRG029_D433	 	; If no carry, jump to PRG029_D433
 
-	INC <Temp_Var1		; Otherwise, apply carry
+	INC Temp_Var1		; Otherwise, apply carry
 
 PRG029_D433:
-	LDX <Temp_Var1		; X = Temp_Var1
+	LDX Temp_Var1		; X = Temp_Var1
 	CPX #$01
 	BPL PRG029_D454	 	; If off-screen, jump to PRG029_D454
 
@@ -1500,7 +1595,7 @@ PRG029_D433:
 	STA Sprite_RAM+$05,Y
 
 	; Palette cycling of wand
-	LDA <Counter_1
+	LDA Counter_1
 	AND #$06
 	LSR A
 	STA Sprite_RAM+$02,Y
@@ -1520,31 +1615,31 @@ PRG029_D457:
 	; The "run forward" bit at the end of a level...
 	; OR the run & jump for the airship!
 
-	LDA <Player_FlipBits
+	LDA Player_FlipBits
 	AND #$02
 	BEQ PRG029_D468	 ; If (Player_FlipBits & 2) = 0, jump to PRG029_D468
 
 	JSR Player_ApplyYVelocity	 ; Apply Y velocity
 
 	; Used by airship only (the "caught anchor" frames)
-	LDY <Player_Suit
+	LDY Player_Suit
 	LDA Player_ClimbFrame,Y ; Get "caught anchor" frame
 	JMP PRG029_D49B	 	  ; Jump to PRG029_D49B
 
 PRG029_D468:
-	LDA <Player_FlipBits
+	LDA Player_FlipBits
 	AND #$01
 	TAY		; Y = Player_FlipBits & 1 
 	LDA Level_EndFlipBits,Y	 ; Get proper flip bit
-	ORA <Player_FlipBits	
-	STA <Player_FlipBits	 ; Level_EndFlipBits |= Level_EndFlipBits[Y]
+	ORA Player_FlipBits	
+	STA Player_FlipBits	 ; Level_EndFlipBits |= Level_EndFlipBits[Y]
 
 	JSR Player_ApplyXVelocity ; Apply X Velocity
 
-	LDA <Counter_1
+	LDA Counter_1
 	AND #$06	
 	LSR A		
-	STA <Temp_Var1	 ; Temp_Var1 = (Counter_1 & 6) >> 1  (0-3)
+	STA Temp_Var1	 ; Temp_Var1 = (Counter_1 & 6) >> 1  (0-3)
 
 
 PRG029_D47E:	; Jump point for horizontal pipe-walking
@@ -1557,25 +1652,26 @@ PRG029_D47E:	; Jump point for horizontal pipe-walking
 
 	AND #$01
 
-	LDY <Player_Suit
+	LDY Player_Suit
 	BEQ PRG029_D48B	 ; If Player_Suit = 0 (small), jump to PRG029_D48B
 
 	LDY #$01	 ; Y = 1 (small / big same)
 
 PRG029_D48B:
-	ADD Player_KuriboFrame,Y
+	CLC
+	ADC Player_KuriboFrame,Y
 	BNE PRG029_D49B	 ; If result is not zero, jump to PRG029_D49B
 
 PRG029_D491:
-	LDA <Player_Suit
+	LDA Player_Suit
 	ASL A
 	ASL A		
-	ORA <Temp_Var1
+	ORA Temp_Var1
 	TAY		; Y = (Player_Suit << 2) | Temp_Var1 (0 to 3)
 	LDA Player_WalkFramesByPUp,Y	; Get appropriate frame
 
 PRG029_D49B:
-	STA <Player_Frame	; Whatever the result, store as Player frame!
+	STA Player_Frame	; Whatever the result, store as Player frame!
 	JSR Player_Draw	 	; Draw Player
 	RTS		 ; Return
 
@@ -1589,19 +1685,19 @@ Pipe_Move_JumpTable:
 	.word Pipe_Transit		; 5 - In-level transit
 
 	; For horizontal pipe movement, X velocity right and left, respectively
-PipeMove_XVel:	.byte 8, -8
+PipeMove_XVel:	.byte 8, <-8
 
 	; For vertical pipe movement, Y velocity down and up, respectively
-PipeMove_YVel:	.byte 8, -8
+PipeMove_YVel:	.byte 8, <-8
 
 	; This sets the Scroll_LastDir variable based on travel direction (right and left, respectively)
 PipeMove_LR_Dir:	.byte 0, 1
 
 	; This adds to Horz_Scroll based on travel direction (right and left, respectively)
-PipeMove_LR:	.byte 1, -1
+PipeMove_LR:	.byte <1, <-1
 
 	; High byte sign extension to values in table immediately above
-PipeMove_LRH:	.byte $00, $FF
+PipeMove_LRH:	.byte >1, >-1
 
 Level_PipeTransitOrExit:
 	; Jump here when Level_PipeExitDir is one of the $8x varities
@@ -1618,10 +1714,10 @@ Level_PipeTransitOrExit:
 
 	; Dynamic jump based on Level_PipeExitDir index into Pipe_Move_JumpTable table 
 	LDA Pipe_Move_JumpTable,Y
-	STA <Temp_Var1	
+	STA Temp_Var1	
 	LDA Pipe_Move_JumpTable+1,Y
-	STA <Temp_Var2		
-	JMP [Temp_Var1]
+	STA Temp_Var2		
+	JMP (Temp_Var1)
 
 Player_Die_NotDying:
 	RTS		 ; Return
@@ -1652,10 +1748,10 @@ Pipe_Move_Down:
 	; Level_PipeMove = $82 (indicates Player is moving down through pipe, no additional action to be taken)
 	LDA #$82
 	STA Level_PipeMove
-	STA <Player_InAir 	; Flag Player as being mid-air (going to fall out the bottom)
+	STA Player_InAir 	; Flag Player as being mid-air (going to fall out the bottom)
 
 	LDA #$30
-	STA <Player_YVel 	; Player_YVel = $30 
+	STA Player_YVel 	; Player_YVel = $30 
 
 	JSR Player_ApplyYVelocity ; Apply Player's Y velocity
 	JSR PipeMove_UpDown	 ; Move through pipe vertically
@@ -1666,10 +1762,10 @@ Pipe_Move_Down:
 	LDA #$00	 
 	STA Player_IsDucking	; Clear ducking flag (since Player pressed down on a pipe, it's incorrectly set)
 	STA Level_PipeMove	; Not moving through a pipe anymore
-	STA <Player_XVel	; Not horizontally moving, period
+	STA Player_XVel	; Not horizontally moving, period
 
 	LDA #$38
-	STA <Player_YVel	; Player_IsDucking = $38 (fall out the bottom)
+	STA Player_YVel	; Player_IsDucking = $38 (fall out the bottom)
 
 PRG029_D50E:
 	RTS		 ; Return
@@ -1680,23 +1776,23 @@ Pipe_Move_Right:
 	STA Level_PipeMove
 
 	LDA #$40
-	STA <Player_FlipBits ; Player_FlipBits = $40 (facing right)
+	STA Player_FlipBits ; Player_FlipBits = $40 (facing right)
 
 	LDY #$00	 ; Y = 0 (moving right)
 
 PRG029_D51A:
-	LDA <Counter_1
+	LDA Counter_1
 	LSR A		
 	BCC PRG029_D53B	 ; Basically, every other tick, jump to PRG029_D53B
 
 	; And on the other ticks...
 
 	LDA PipeMove_LR_Dir,Y
-	STA <Scroll_LastDir
+	STA Scroll_LastDir
 
-	LDA <Horz_Scroll
+	LDA Horz_Scroll
 
-	LDX <Horz_Scroll_Hi
+	LDX Horz_Scroll_Hi
 	BNE PRG029_D52E	 	; If Horz_Scroll_Hi = 0, jump to PRG029_D52E
 
 	; Horz_Scroll_Hi <> 0...
@@ -1705,13 +1801,14 @@ PRG029_D51A:
 	BLT PRG029_D53B	 ; If Horz_Scroll < $80, jump to PRG029_D53B
 
 PRG029_D52E:
-	ADD PipeMove_LR,Y
-	STA <Horz_Scroll	; Horz_Scroll += PipeMove_LR[Y]
+	CLC
+	ADC PipeMove_LR,Y
+	STA Horz_Scroll	; Horz_Scroll += PipeMove_LR[Y]
 
 	; Add matching sign extension and any carry
 	LDA PipeMove_LRH,Y
-	ADC <Horz_Scroll_Hi
-	STA <Horz_Scroll_Hi
+	ADC Horz_Scroll_Hi
+	STA Horz_Scroll_Hi
 
 PRG029_D53B:
 	JSR PipeMove_LeftRight	 ; Move through pipe horizontally
@@ -1736,7 +1833,7 @@ Pipe_Move_Left:
 	STA Level_PipeMove
 
 	LDA #$00
-	STA <Player_FlipBits ; Player_FlipBits = $00 (facing left)
+	STA Player_FlipBits ; Player_FlipBits = $00 (facing left)
 
 	LDY #$01	 ; Y = 1 (moving left)
 
@@ -1764,9 +1861,9 @@ Pipe_Transit:
 	; point to the uppermost scroll point and visually act strangely
 	; if you try to go somewhere short of that at either end.
 
-	LDA #-2		 ; A = -2 (scroll upward)
+	LDA #<-2		 ; A = -2 (scroll upward)
 	LDX #$01	 ; X = 1
-	LDY <Player_YVel ; Y = Player_YVel
+	LDY Player_YVel ; Y = Player_YVel
 	BMI PRG029_D56F	 ; If Player_YVel < 0, jump to PRG029_D56F
 
 	; If Player_Vel >= 0...
@@ -1776,11 +1873,12 @@ Pipe_Transit:
 PRG029_D56F:
 	STA Pipe_TransYDelta	 ; Pipe_TransYDelta = -2 (going up) or 2 (going down)
 
-	ADD <Vert_Scroll
-	STA <Vert_Scroll 	; Vert_Scroll += A
+	CLC
+	ADC Vert_Scroll
+	STA Vert_Scroll 	; Vert_Scroll += A
 	STA Level_VertScroll	; Level_VertScroll += A
 
-	LDY <Player_YVel	; Y = Player_YVel
+	LDY Player_YVel	; Y = Player_YVel
 	BPL PRG029_D584	 	; If Player_YVel >= 0, jump to PRG029_D584
 
 	BCS PRG029_D59B	 	; If carry occurred from addition to Vert_Scroll, jump to PRG029_D59B
@@ -1800,12 +1898,12 @@ PRG029_D584:
 
 PRG029_D58A:
 	; Common termination point when exiting inter-level vertical pipe
-	STA <Vert_Scroll ; Update Vert_Scroll
+	STA Vert_Scroll ; Update Vert_Scroll
 
 	LDA #$01
 	STA Level_PipeExitDir	 ; Level_PipeExitDir = 1 (exiting up)
 
-	LDY <Player_YVel
+	LDY Player_YVel
 	BMI PRG029_D598	 	; If Player_YVel < 0, jump to PRG029_D598
 
 	INC Level_PipeExitDir	 ; Otherwise, Level_PipeExitDir = 2 (exiting down)
@@ -1817,13 +1915,14 @@ PRG029_D59B:
 	; X = 0 (going down) or 1 (going up)
 
 	LDA PipeTransit_YOff,X
-	STA <Temp_Var10	 ; Temp_Var10 = PipeTransit_YOff[X] (appropriate Y offset)
+	STA Temp_Var10	 ; Temp_Var10 = PipeTransit_YOff[X] (appropriate Y offset)
 
 	LDA #$08
-	STA <Temp_Var11	 ; Temp_Var11 = 8
+	STA Temp_Var11	 ; Temp_Var11 = 8
 
 	JSR Player_GetTileAndSlope	; Get tile
-	SUB #TILE1_PIPETB4_L	 	
+	SEC
+	SBC #TILE1_PIPETB4_L	 	
 	CMP #$02	 
 	BLT PRG029_D5C3	 	; If tile is one of the transit pipe top/bottom tiles, jump to PRG029_D5C3 (RTS)
 
@@ -1834,17 +1933,18 @@ PRG029_D59B:
 
 	; Player was going up
 
-	DEC <Player_YHi	 ; Player_YHi--
-	LDA #-16	 ; A = 16
+	DEC Player_YHi	 ; Player_YHi--
+	LDA #<-16	 ; A = 16
 
 PRG029_D5B8:
-	ADD <Player_Y	
+	CLC
+	ADC Player_Y	
 	AND #$f0	
-	STA <Player_Y	 ; Player_Y = (Player_Y + A) & $F0  (tile-aligned move)
+	STA Player_Y	 ; Player_Y = (Player_Y + A) & $F0  (tile-aligned move)
 
 	BCC PRG029_D5C3	 ; If no carry, jump to PRG029_D5C3
 
-	INC <Player_YHi	 ; Otherwise, apply carry
+	INC Player_YHi	 ; Otherwise, apply carry
 
 PRG029_D5C3:
 	RTS		 ; Return
@@ -1860,8 +1960,8 @@ PipeTransit_XYOffsets:
 	.byte  2, 14,  2,  2	; Moving down
 
 	; This is actually access as a contiguous array, but might as well be clear
-PipeTransit_YDelta:	.byte 2, -2	; Y Deltas while moving through pipes (down and up)
-PipeTransit_XDelta:	.byte 2, -2	; X Deltas while moving through pipes (right and left)
+PipeTransit_YDelta:	.byte 2, <-2	; Y Deltas while moving through pipes (down and up)
+PipeTransit_XDelta:	.byte 2, <-2	; X Deltas while moving through pipes (right and left)
 
 	; Sets Level_PipeExitDir appropriately based on direction
 Level_PipeExitDirTable:	.byte $03, $04, $02, $01
@@ -1888,16 +1988,16 @@ PRG029_D5DC:
 	LDA PipeTransit_YDelta,Y	; Get delta
 	BPL PRG029_D5FD	 		; If it's not negative, jump to PRG029_D5FD
 
-	LDA <Player_SpriteY
+	LDA Player_SpriteY
 	CMP #$68
 	LDA #$00
 	BLT PRG029_D608	 ; If Player_SpriteY < $68, jump to PRG029_D608
 
-	DEC <Player_XHi,X ; Decrement approprate Player Hi
+	DEC Player_XHi,X ; Decrement approprate Player Hi
 	JMP PRG029_D605	 ; Jump to PRG029_D605
 
 PRG029_D5FD:
-	LDA <Player_SpriteY
+	LDA Player_SpriteY
 	CMP #$38	 
 	LDA #$00	 
 	BGE PRG029_D608	 ; If Player_SpriteY >= $38, jump to PRG029_D608
@@ -1906,13 +2006,14 @@ PRG029_D605:
 	LDA PipeTransit_YDelta,Y 	; Get delta
 
 PRG029_D608:
-	ADD <Player_X,X		; Apply delta to Player X or Y (as appropriate)
+	CLC
+	ADC Player_X,X		; Apply delta to Player X or Y (as appropriate)
 	AND #$fe	 	; Align to nearest 2 pixels
-	STA <Player_X,X	 	; Store it
+	STA Player_X,X	 	; Store it
 
 	BCC PRG029_D613	 	; If no carry, jump to PRG029_D613
 
-	INC <Player_XHi,X	; Otherwise, apply carry
+	INC Player_XHi,X	; Otherwise, apply carry
 
 PRG029_D613:
 	AND #$0f	 ; Lower 4 bits of Player's X or Y
@@ -1923,25 +2024,26 @@ PRG029_D613:
 
 	; Down or up
 
-	LDA <Player_X
+	LDA Player_X
 	AND #$f0
 	ORA #$08
-	STA <Player_X	 ; Player_X = (Player_X & $F0) | 8  (nearest column, centered)
+	STA Player_X	 ; Player_X = (Player_X & $F0) | 8  (nearest column, centered)
 
 	LDA #$01
-	STA <Scroll_LastDir ; Scroll_LastDir = 1 (down)
+	STA Scroll_LastDir ; Scroll_LastDir = 1 (down)
 
 	LDA PipeTransit_YDelta,Y	; Get delta
 	BPL PRG029_D630	 		; If delta is not negative, jump to PRG029_D630
 
 	; Negative delta means up, so...
 
-	DEC <Scroll_LastDir	 ; Scroll_LastDir = 0 (up)
+	DEC Scroll_LastDir	 ; Scroll_LastDir = 0 (up)
 	DEC Level_VertScrollH	 ; Level_VertScrollH--
 
 PRG029_D630:
 	STA Pipe_TransYDelta	 ; Store into Pipe_TransYDelta
-	ADD Level_VertScroll	
+	CLC
+	ADC Level_VertScroll	
 	STA Level_VertScroll	 ; Level_VertScroll += Pipe_TransYDelta
 	BCC PRG029_D63F	 	; If no carry, jump to PRG029_D63F
 
@@ -1953,12 +2055,13 @@ PRG029_D63F:
 	JSR LevelJct_GetVScreenH ; Adjust coordinates for vertical
 
 	; Update scrolls
-	STA <Vert_Scroll
-	STY <Vert_Scroll_Hi
+	STA Vert_Scroll
+	STY Vert_Scroll_Hi
 
-	LDA <Player_Y
-	SUB Level_VertScroll
-	STA <Player_SpriteY	 ; Player_SpriteY = relative Y position
+	LDA Player_Y
+	SEC
+	SBC Level_VertScroll
+	STA Player_SpriteY	 ; Player_SpriteY = relative Y position
 
 PRG029_D651:
 	PLA		 ; Restore the lower 2 bits of Level_PipeMove (the direction)
@@ -1980,39 +2083,41 @@ PRG029_D651:
 
 PRG029_D65B:
 	LDA PipeTransit_XYOffsets,Y
-	STA <Temp_Var10	 ; Temp_Var10 = Y offset
+	STA Temp_Var10	 ; Temp_Var10 = Y offset
 
 	LDA PipeTransit_XYOffsets+1,Y
-	STA <Temp_Var11	 ; Temp_Var11 = X offset
+	STA Temp_Var11	 ; Temp_Var11 = X offset
 
 	JSR Player_GetTileAndSlope	; Get tile
-	STA <Temp_Var1		 ; Store into Temp_Var1
+	STA Temp_Var1		 ; Store into Temp_Var1
 
-	SUB #TILE8_SCENPIPE_ENDVR
+	SEC
+	SBC #TILE8_SCENPIPE_ENDVR
 	CMP #$02	
 	BGE PRG029_D674	 ; If tile is NOT a vertical scenery pipe's left or right end, jump to PRG029_D674
 
 	JMP PRG029_D69C	 ; Otherwise, jump to PRG029_D69C
 
 PRG029_D674:
-	LDA <Temp_Var1	 
+	LDA Temp_Var1	 
 	CMP #TILE8_SCENPIPE_ENDH1B
 	BNE PRG029_D67D	 ; If tile is NOT a horizontal scenery pipe's bottom tile, jump to PRG029_D67D
 
 	JMP PRG029_D69C	 ; Otherwise, jump to PRG029_D69C
 
 PRG029_D67D:
-	LDA <Temp_Var1
-	SUB #TILE8_PIPEELBOW_CUL
+	LDA Temp_Var1
+	SEC
+	SBC #TILE8_PIPEELBOW_CUL
 	CMP #$04	 
 	BGE PRG029_D696	 ; If tile is NOT a pipe elbow corner tile, jump to PRG029_D696
 
 	; Otherwise...
-	STX <Temp_Var1	 	; Temp_Var1 = 1 OR 0 (depending which iteration, which will change which way it rotates)
+	STX Temp_Var1	 	; Temp_Var1 = 1 OR 0 (depending which iteration, which will change which way it rotates)
 	LDA Level_PipeMove
 	AND #%10000010		; Keep only the up/down vs left/right bit and the "in-transit" bit
 	EOR #%00000010		; Turn corner 
-	ORA <Temp_Var1		; -> Temp_Var1
+	ORA Temp_Var1		; -> Temp_Var1
 
 	STA Level_PipeMove	; Update Level_PipeMove
 	LDX #$00	 	; X = 0
@@ -2038,9 +2143,10 @@ PRG029_D69C:
 	BNE PRG029_D6AB	 	; If direction is not rightward, jump to PRG029_D6AB
 
 	; Otherwise, add 16 to Player_X
-	LDA <Player_X
-	ADD #16
-	STA <Player_X
+	LDA Player_X
+	CLC
+	ADC #16
+	STA Player_X
 
 PRG029_D6AB:
 
@@ -2059,22 +2165,22 @@ Player_Die_JumpTable:
 PRG029_D6BC:
 	; Player is dying!
 
-	LDA <Player_IsDying
+	LDA Player_IsDying
 	ASL A		 
 	TAY		 ; Y = Player_IsDying << 1
 
 	LDA Player_Die_JumpTable,Y
-	STA <Temp_Var1
+	STA Temp_Var1
 	LDA Player_Die_JumpTable+1,Y
-	STA <Temp_Var2
+	STA Temp_Var2
 
-	JMP [Temp_Var1]	 ; Jump to appropriate "Player is dying" routine...
+	JMP (Temp_Var1)	 ; Jump to appropriate "Player is dying" routine...
 
 Player_Die_Dying:
 	LDA Player_AboveTop
 	BNE PRG029_D6DA	 ; If Player is above top of screen, jump to PRG029_D6DA
 
-	LDA <Player_SpriteY
+	LDA Player_SpriteY
 	AND #$f0
 	CMP #$b0
 	BEQ PRG029_D6E5	 ; If Player_SpriteY >= $B0 && Player_SpriteY <= $BF (Player is halfway below status bar), jump to PRG029_D6E5
@@ -2109,7 +2215,7 @@ Player_Die_FellOff:
 	BNE PRG029_D702	 ; If Event_Countdown <> 0, jump to PRG029_D702 (RTS)
 
 PRG029_D6FB:
-	INC <Level_ExitToMap	; Level_ExitToMap = 1
+	INC Level_ExitToMap	; Level_ExitToMap = 1
 
 	LDA #$01
 	STA Map_ReturnStatus	 ; Map_ReturnStatus = 1 (Player died, level is not clear)
@@ -2135,7 +2241,7 @@ Player_Die_TimeUp:
 	LDA Player_AboveTop
 	BNE PRG029_D71E	 ; If Player is off top of screen, jump to PRG029_D71E
 	
-	LDA <Player_SpriteY
+	LDA Player_SpriteY
 	AND #$f0
 	CMP #$b0
 	BEQ PRG029_D729	 ; If Player_SpriteY >= $B0 && Player_SpriteY <= $BF (Player is halfway below status bar), jump to PRG029_D729
@@ -2150,14 +2256,15 @@ PRG029_D726:
 	JMP PRG029_D771	 ; Jump to PRG029_D768 if Event_Countdown <> 0
 
 PRG029_D729:
-	DEC <Pipe_PlayerY	; Pipe_PlayerY--
+	DEC Pipe_PlayerY	; Pipe_PlayerY--
 
-	LDA <Pipe_PlayerX
+	LDA Pipe_PlayerX
 	CMP #$60
 	BLT PRG029_D73B	 ; If Pipe_PlayerX < $60, jump to PRG029_D73B
 
-	ADD <Pipe_PlayerY
-	STA <Pipe_PlayerX	; Pipe_PlayerX += Pipe_PlayerY
+	CLC
+	ADC Pipe_PlayerY
+	STA Pipe_PlayerX	; Pipe_PlayerX += Pipe_PlayerY
 
 	LDA #112
 	STA Event_Countdown	 ; Event_Countdown = 112
@@ -2172,7 +2279,7 @@ PRG029_D73B:
 	LDY #$06	 ; Y = 6 (seven sprites for T I M E - U P)
 	LDX Player_SprOff	 ; Starting from Player's sprite offset
 PRG029_D74A:
-	LDA <Pipe_PlayerX
+	LDA Pipe_PlayerX
 	STA Sprite_RAM+$00,X
 
 	LDA TIMEUP_Sprites,Y
@@ -2195,8 +2302,8 @@ PRG029_D74A:
 
 PRG029_D768:
 	; Player gravity while dying
-	INC <Player_YVel
-	INC <Player_YVel ; Player_YVel += 2
+	INC Player_YVel
+	INC Player_YVel ; Player_YVel += 2
 
 	LDX #$00	 ; X = 0 (?)
 
@@ -2204,7 +2311,7 @@ PRG029_D768:
 
 PRG029_D771:
 	LDA #PF_DIE
-	STA <Player_Frame ; Player_Frame = PF_DIE
+	STA Player_Frame ; Player_Frame = PF_DIE
 
 	JSR Player_Draw	 ; Draw Player
 	RTS		 ; Return
@@ -2217,25 +2324,25 @@ PipeMove_LeftRight:
 	TAY		 ; Y = 0 (right) or 1 (left) 
 
 	LDA PipeMove_XVel,Y	 	; Get appropriate X velocity
-	STA <Player_XVel	 	; Set it!
+	STA Player_XVel	 	; Set it!
 
 	JSR Player_ApplyXVelocity 	; Apply Player's X velocity
 
 	; A little "step up" into the pipe
-	DEC <Player_Y
-	DEC <Player_Y	 ; Player_Y -= 2
+	DEC Player_Y
+	DEC Player_Y	 ; Player_Y -= 2
 
-	LDA <Counter_1
+	LDA Counter_1
 	AND #$0c	
 	LSR A		
 	LSR A		 
-	STA <Temp_Var1	 ; Temp_Var1 = (Counter_1 & $C) >> 2 (0 to 3, walking animation)
+	STA Temp_Var1	 ; Temp_Var1 = (Counter_1 & $C) >> 2 (0 to 3, walking animation)
 
 	JSR PRG029_D47E	 ; Do walking animation and draw Player
 
 	; Undo "step up"
-	INC <Player_Y
-	INC <Player_Y	 ; Player_Y += 2
+	INC Player_Y
+	INC Player_Y	 ; Player_Y += 2
 
 	RTS		 ; Return
 
@@ -2247,7 +2354,7 @@ PipeMove_UpDown:
 	TAY		 ; Y = 0 (down) or 1 (up)
 
 	LDA PipeMove_YVel,Y	 	; Get appropriate Y velocity
-	STA <Player_YVel	 	; Set it!
+	STA Player_YVel	 	; Set it!
 
 	JSR Player_ApplyYVelocity	; Apply Player's Y velocity
 
@@ -2257,9 +2364,9 @@ PipeMove_UpDown:
 Player_StopMovement:
 	LDA #$00
 	STA Level_PipeMove	; Not moving through a pipe
-	STA <Player_XVel	; Player stopped horizontall
-	STA <Player_YVel	; Player stopped vertically
-	STA <Player_InAir	; Not mid-air
+	STA Player_XVel	; Player stopped horizontall
+	STA Player_YVel	; Player stopped vertically
+	STA Player_InAir	; Not mid-air
 	RTS		 ; Return
 
 SuitLost_Poof_Patterns:
@@ -2273,39 +2380,42 @@ Player_SuitLost_DoPoof:
 	TAY		 ; Y = 0-3, changing every 4 ticks
 
 	LDA SuitLost_Poof_Patterns,Y	; Get poof pattern
-	STA <Temp_Var2		 ; Store into Temp_Var2
+	STA Temp_Var2		 ; Store into Temp_Var2
 
 	LDY Player_SprOff	 ; Y = Player_SprOff (Player sprite beginning offset)
 
 	LDA #%11000001	; Flipped horizontal and vertical, and palette 1
-	STA <Temp_Var1	; -> Temp_Var1
+	STA Temp_Var1	; -> Temp_Var1
 
 PRG029_D7D3:
 	; Sprite Y
-	LDA <Player_SpriteY
-	ADD #$08	 	; Start at 8 pixels below Player sprite Y pos
+	LDA Player_SpriteY
+	CLC
+	ADC #$08	 	; Start at 8 pixels below Player sprite Y pos
 	STA Sprite_RAM+$00,Y	 ; Store into sprite Y
 
 	; Poof pattern
-	LDA <Temp_Var2
+	LDA Temp_Var2
 	STA Sprite_RAM+$01,Y
 
 	; Attribute
-	LDA <Temp_Var1
+	LDA Temp_Var1
 	STA Sprite_RAM+$02,Y
 
 	; Sprite X
-	LDA <Player_X
-	SUB <Horz_Scroll
+	LDA Player_X
+	SEC
+	SBC Horz_Scroll
 	STA Sprite_RAM+$03,Y
 
-	LDA <Temp_Var1
+	LDA Temp_Var1
 	AND #$f0	
 	BEQ PRG029_D7FC	 ; If we're the unflipped one, jump to PRG029_D7FC
 
 	; Otherwise, put it to the right of the first one
 	LDA Sprite_RAM+$03,Y
-	ADD #$08	
+	CLC
+	ADC #$08	
 	STA Sprite_RAM+$03,Y
 
 PRG029_D7FC:
@@ -2315,9 +2425,10 @@ PRG029_D7FC:
 	INY		 ; Y += 4
 
 	; Other sprite is not H/V flipped
-	LDA <Temp_Var1
-	SUB #%11000000
-	STA <Temp_Var1
+	LDA Temp_Var1
+	SEC
+	SBC #%11000000
+	STA Temp_Var1
 
 	BCS PRG029_D7D3	 ; Loop if not the second sprite
 
@@ -2413,14 +2524,14 @@ BlockChange_Do:
 
 	; Get tile here
 	LDA Tile_Mem_AddrVL,Y
-	STA <Map_Tile_AddrL
+	STA Map_Tile_AddrL
 	LDA Tile_Mem_AddrVH,Y
-	STA <Map_Tile_AddrH
+	STA Map_Tile_AddrH
 
 	; Temp_Var6 = block change screen Y aligned to grid
 	LDA Level_BlockChgYLo
 	AND #$f0
-	STA <Temp_Var6
+	STA Temp_Var6
 
 	; Build row/column offset value -> Temp_Var5
 	LDA Level_BlockChgXLo
@@ -2428,12 +2539,12 @@ BlockChange_Do:
 	LSR A
 	LSR A
 	LSR A
-	ORA <Temp_Var6
-	STA <Temp_Var5
+	ORA Temp_Var6
+	STA Temp_Var5
 
 	; Temp_Var7 = 0
 	LDA #$00
-	STA <Temp_Var7
+	STA Temp_Var7
 
 	BEQ PRG029_DC7C	 ; Jump (technically always) to PRG029_DC7C
 
@@ -2447,32 +2558,32 @@ PRG029_DC36:
 
 	; Set address in tile memory to Map_Tile_AddrL/H
 	LDA Tile_Mem_Addr,X
-	STA <Map_Tile_AddrL
+	STA Map_Tile_AddrL
 	LDA Tile_Mem_Addr+1,X
-	STA <Map_Tile_AddrH
+	STA Map_Tile_AddrH
 
 	; Temp_Var7 = 0
 	LDA #$00
-	STA <Temp_Var7
+	STA Temp_Var7
 
 	LDA Level_BlockChgYHi
 	BEQ PRG029_DC50	 ; If block change is not on the lower part of the screen, jump to PRG029_DC50
 
-	INC <Map_Tile_AddrH	; Otherwise, jump to lower screen address
+	INC Map_Tile_AddrH	; Otherwise, jump to lower screen address
 
 PRG029_DC50:
 
 	; Construct a row/column offset -> Temp_Var5
 	LDA Level_BlockChgYLo
 	AND #$f0
-	STA <Temp_Var6
+	STA Temp_Var6
 	LDA Level_BlockChgXLo
 	LSR A
 	LSR A
 	LSR A
 	LSR A
-	ORA <Temp_Var6
-	STA <Temp_Var5
+	ORA Temp_Var6
+	STA Temp_Var5
 
 	LDA Level_BlockChgYHi
 	BNE PRG029_DC70	 ; If Level_BlockChgYHi <> 0 (block change is down low on the lower screen space), jump to PRG029_DC70
@@ -2493,12 +2604,13 @@ PRG029_DC70:
 
 	; Temp_Var6 = 0-ish
 	LDA Level_BlockChgYLo
-	ADD #$10
-	STA <Temp_Var6
+	CLC
+	ADC #$10
+	STA Temp_Var6
 
 	; Temp_Var7 = 1 (carry)
 	LDA #$01
-	STA <Temp_Var7
+	STA Temp_Var7
 
 PRG029_DC7C:
 	LDA Level_ChgTileEvent
@@ -2578,11 +2690,11 @@ TileChng_OneTile:
 	LDX Level_ChgTileEvent
 	DEX		 ; X = Level_ChgTileEvent - 1 (because zero is no-action)
 
-	LDY <Temp_Var5	 ; Y = Temp_Var5 (row/column offset value)
+	LDY Temp_Var5	 ; Y = Temp_Var5 (row/column offset value)
 
 	; Change the tile to the proper target tile
 	LDA OneTile_ChangeToTile,X
-	STA [Map_Tile_AddrL],Y
+	STA (Map_Tile_AddrL),Y
 
 	; X *= 4 (index into OneTile_ChangeToPatterns)
 	TXA
@@ -2600,7 +2712,7 @@ PRG029_DD22:
 	CPY #$04
 	BNE PRG029_DD22	 ; While Y < 4, loop!
 
-	LDA <Temp_Var6	 ; Get tile Y (aligned to grid, so bits 0-3 are zero)
+	LDA Temp_Var6	 ; Get tile Y (aligned to grid, so bits 0-3 are zero)
 	ASL A		 ; Bit 7 -> carry
 	ADC #$00	 ; Set as bit 0
 	ASL A		 ; Bit 7 -> carry
@@ -2610,7 +2722,7 @@ PRG029_DD22:
 	AND #%00001111	 ; Only keep lower 4 bits (bits 2 and 3 are still zero)
 	ORA #$20	 ; Set high part of video address
 
-	LDY <Temp_Var7
+	LDY Temp_Var7
 	BEQ PRG029_DD41	 ; If Temp_Var7 not set (set if tile was on the fringe between upper and lower screen space), jump to PRG029_DD41
 
 	ORA #$08	 ; Set $28 high address
@@ -2620,13 +2732,13 @@ PRG029_DD41:
 
 	PLA		; Restore value from before
 	AND #%11110000	; Keep the upper 4 bits
-	STA <Temp_Var2	; -> Temp_Var2
+	STA Temp_Var2	; -> Temp_Var2
 
 	LDA Level_BlockChgXLo
 	LSR A
 	LSR A
 	LSR A		; A = Level_BlockChgXLo / 8
-	ORA <Temp_Var2	
+	ORA Temp_Var2	
 	STA TileChng_VRAM_L	 ; Store the low byte of the tile change base address
 
 	; Level_ChgTileEvent = 0 (we handled it)
@@ -2641,7 +2753,7 @@ TileChng_DoorBufCmds:
 	.byte $00, $00, VU_VERT | VU_REPEAT | 4, $FC	; Left 4 patterns of door
 	.byte $00, $00, VU_VERT | VU_REPEAT | 4, $FC	; Right 4 patterns of door
 	.byte $00	; Terminator
-TileChng_DoorBufCmds_End
+TileChng_DoorBufCmds_End:
 
 TileChng_DoorAppear:
 
@@ -2649,26 +2761,27 @@ TileChng_DoorAppear:
 	LDA #$00
 	STA Level_ChgTileEvent
 
-	LDY <Temp_Var5	 ; Y = Temp_Var5 (row/column offset value)
+	LDY Temp_Var5	 ; Y = Temp_Var5 (row/column offset value)
 
 	; Set upper tile of door
 	LDA #TILEA_DOOR1
-	STA [Map_Tile_AddrL],Y
+	STA (Map_Tile_AddrL),Y
 
 	; +16 (next row of tiles)
 	TYA
-	ADD #16
+	CLC
+	ADC #16
 	TAY
 
 	BCC PRG029_DD77	 ; If no carry, jump to PRG029_DD77
 
-	INC <Map_Tile_AddrH	; Apply carry
+	INC Map_Tile_AddrH	; Apply carry
 
 PRG029_DD77:
 
 	; Set lower tile of door
 	LDA #TILEA_DOOR1
-	STA [Map_Tile_AddrL],Y
+	STA (Map_Tile_AddrL),Y
 
 	LDY #$00	 ; Y = 0
 
@@ -2686,7 +2799,7 @@ PRG029_DD80:
 
 	LDX Graphics_BufCnt	 ; X = Graphics_BufCnt
 
-	LDA <Temp_Var6	 ; Get tile Y (aligned to grid, so bits 0-3 are zero)
+	LDA Temp_Var6	 ; Get tile Y (aligned to grid, so bits 0-3 are zero)
 	ASL A		 ; Bit 7 -> carry
 	ADC #$00	 ; Set as bit 0
 	ASL A		 ; Bit 7 -> carry
@@ -2696,7 +2809,7 @@ PRG029_DD80:
 	AND #%00001111	 ; Only keep lower 4 bits (bits 2 and 3 are still zero)
 	ORA #$20	 ; Set high part of video address
 
-	LDY <Temp_Var7
+	LDY Temp_Var7
 	BEQ PRG029_DDA2	 ; If Temp_Var7 not set (set if tile was on the fringe between upper and lower screen space), jump to PRG029_DDA2
 
 	ORA #$08	 ; Set $28 high address
@@ -2709,25 +2822,27 @@ PRG029_DDA2:
 
 	PLA		; Restore value from before
 	AND #%11110000	; Keep the upper 4 bits
-	STA <Temp_Var2	; -> Temp_Var2
+	STA Temp_Var2	; -> Temp_Var2
 
 	LDA Level_BlockChgXLo
 	LSR A
 	LSR A
 	LSR A		; A = Level_BlockChgXLo / 8
-	ORA <Temp_Var2	
+	ORA Temp_Var2	
 
 	; Set low address for left column of patterns of door
 	STA Graphics_Buffer+$01,X
 
-	ADD #$01	 ; Next column of door
+	CLC
+	ADC #$01	 ; Next column of door
 
 	; Set low address for right column of patterns of door
 	STA Graphics_Buffer+$05,X
 
 	; Add array size -1 to graphics buffer count
 	LDA Graphics_BufCnt
-	ADD #(TileChng_DoorBufCmds_End - TileChng_DoorBufCmds - 1)
+	CLC
+	ADC #(TileChng_DoorBufCmds_End - TileChng_DoorBufCmds - 1)
 	STA Graphics_BufCnt
 
 	RTS		 ; Return
@@ -2737,24 +2852,24 @@ TileChng_ToadBoxBufCmds:
 	.byte $00, $00, $04, $50, $51, $52, $53	; Chest top patterns
 	.byte $00, $00, $04, $54, $55, $56, $57	; Chest bottom patterns
 	.byte $00	; Terminator
-TileChng_ToadBoxBufCmds_End
+TileChng_ToadBoxBufCmds_End:
 
 TileChng_ToadBoxOpen:
 	; Level_ChgTileEvent = 0 (we're handling it)
 	LDA #$00
 	STA Level_ChgTileEvent
 
-	LDY <Temp_Var5	 ; Y = Temp_Var5 (row/column offset value)
+	LDY Temp_Var5	 ; Y = Temp_Var5 (row/column offset value)
 
 	; Chest open tile upper left
 	LDA #TILE7_CHEST_OPEN_UL
-	STA [Map_Tile_AddrL],Y
+	STA (Map_Tile_AddrL),Y
 
 	INY		 ; Y++
 
 	; Chest open tile upper right
 	LDA #TILE7_CHEST_OPEN_UR
-	STA [Map_Tile_AddrL],Y
+	STA (Map_Tile_AddrL),Y
 
 
 	LDY #$00	 ; Y = 0
@@ -2773,7 +2888,7 @@ PRG029_DDEC:
 
 	LDX Graphics_BufCnt	 ; X = Graphics_BufCnt
 
-	LDA <Temp_Var6	 ; Get tile Y (aligned to grid, so bits 0-3 are zero)
+	LDA Temp_Var6	 ; Get tile Y (aligned to grid, so bits 0-3 are zero)
 	ASL A		 ; Bit 7 -> carry
 	ADC #$00	 ; Set as bit 0
 	ASL A		 ; Bit 7 -> carry
@@ -2783,7 +2898,7 @@ PRG029_DDEC:
 	AND #%00001111	 ; Only keep lower 4 bits (bits 2 and 3 are still zero)
 	ORA #$20	 ; Set high part of video address
 
-	LDY <Temp_Var7
+	LDY Temp_Var7
 	BEQ PRG029_DE0E	 ; If Temp_Var7 not set (set if tile was on the fringe between upper and lower screen space), jump to PRG029_DE0E
 
 	ORA #$08	 ; Set $28 high address
@@ -2796,40 +2911,39 @@ PRG029_DE0E:
 
 	PLA		; Restore value from before
 	AND #%11110000	; Keep the upper 4 bits
-	STA <Temp_Var2	; -> Temp_Var2
+	STA Temp_Var2	; -> Temp_Var2
 
 	LDA Level_BlockChgXLo
 	LSR A
 	LSR A
 	LSR A		; A = Level_BlockChgXLo / 8
-	ORA <Temp_Var2	
+	ORA Temp_Var2	
 
 	; Set low address for first row of open chest patterns
 	STA Graphics_Buffer+$01,X
 
-	ADD #32		; +32 to next row
+	CLC
+	ADC #32		; +32 to next row
 
 	; Set low address for second row of open chest patterns
 	STA Graphics_Buffer+$08,X
 
 	; Add array size -1 to graphics buffer count
 	LDA Graphics_BufCnt
-	ADD #(TileChng_ToadBoxBufCmds_End - TileChng_ToadBoxBufCmds - 1)
+	CLC
+	ADC #(TileChng_ToadBoxBufCmds_End - TileChng_ToadBoxBufCmds - 1)
 	STA Graphics_BufCnt
 
 	RTS		 ; Return
 
-	; Change Big Buffer Command offset
-CBIG_BCOff .func \1 - Chng4Way_90Degrees
-
 	; Get initial offset to proper set of commands to be used
 CBig_Offsets:
-	.byte CBIG_BCOff(Chng4Way_90Degrees)	; 4-way cannon at 90 degrees
-	.byte CBIG_BCOff(Chng4Way_45Degrees)	; 4-way cannon at 45 degrees
+	.byte <(Chng4Way_90Degrees - Chng4Way_90Degrees)	; 4-way cannon at 90 degrees
+	.byte <(Chng4Way_45Degrees - Chng4Way_90Degrees)	; 4-way cannon at 45 degrees
 
-	.byte CBIG_BCOff(CBig_GiantBlock_BrickBust)	; GiantBlock_BrickBust
-	.byte CBIG_BCOff(CBig_GiantBlock_BlockHit)	; GiantBlock_BlockHit
-	.byte CBIG_BCOff(CBig_GiantBlock_BrickRestore)	; GiantBlock_BrickRestore
+	.byte <(CBig_GiantBlock_BrickBust - Chng4Way_90Degrees)	; GiantBlock_BrickBust
+	.byte <(CBig_GiantBlock_BlockHit - Chng4Way_90Degrees)	; GiantBlock_BlockHit
+	.byte <(CBig_GiantBlock_BrickRestore - Chng4Way_90Degrees)	; GiantBlock_BrickRestore
 
 Chng4Way_90Degrees:
 	.byte $00, $00, $04, $FF, $A6, $A7, $FF
@@ -2888,9 +3002,9 @@ ChngTile_32x32:
 
 	; 4-way cannon change only...
 
-	LDY <Temp_Var5	 ; Y = Temp_Var5 (row/column offset value)
+	LDY Temp_Var5	 ; Y = Temp_Var5 (row/column offset value)
 
-	LDA [Map_Tile_AddrL],Y	 ; Get tile currently here
+	LDA (Map_Tile_AddrL),Y	 ; Get tile currently here
 	CMP #TILE10_4WAYCANNON_45_UL
 	BEQ PRG029_DEF9	 ; If cannon is at 45 degree position, jump to PRG029_DEF9
 	BNE PRG029_DEF8	 ; Otherwise, jump to PRG029_DEF8
@@ -2898,7 +3012,8 @@ ChngTile_32x32:
 PRG029_DEF3:
 
 	; Not the 4-way cannon...
-	SUB #CHNGTILE_GIANTBRICKBUST	; Make relative
+	SEC
+	SBC #CHNGTILE_GIANTBRICKBUST	; Make relative
 	TAX		 ; -> 'X'
 	INX		 ; X++
 
@@ -2908,13 +3023,13 @@ PRG029_DEF8:
 PRG029_DEF9:
 	LDY CBig_Offsets,X	 ; Y = initial command offset
 
-	STX <Temp_Var11		 ; Temp_Var11 = X (index into CBig_Offsets)
+	STX Temp_Var11		 ; Temp_Var11 = X (index into CBig_Offsets)
 
 	LDX Graphics_BufCnt	 ; X = graphics buffer count
 
 	; Temp_Var1 = total number of bytes we're going to copy (CBIG_BCSize)
 	LDA #CBIG_BCSize
-	STA <Temp_Var1
+	STA Temp_Var1
 
 PRG029_DF05:
 	LDA Chng4Way_90Degrees,Y	; Get next command byte
@@ -2923,37 +3038,38 @@ PRG029_DF05:
 	INX		 ; X++ (one more byte in the graphics buffer)
 	INY		 ; Y++ (next command byte)
 
-	DEC <Temp_Var1	 ; Temp_Var1--
+	DEC Temp_Var1	 ; Temp_Var1--
 	BNE PRG029_DF05	 ; While Temp_Var1 > 0, loop!
 
 	; Temp_Var11 (index into CBig_Offsets) multiplied by 4
-	LDA <Temp_Var11
+	LDA Temp_Var11
 	ASL A
 	ASL A
-	STA <Temp_Var11
+	STA Temp_Var11
 
 	; Temp_Var3 = 0
 	LDA #$00
-	STA <Temp_Var3
+	STA Temp_Var3
 
 PRG029_DF1B:
-	LDA <Temp_Var5	; A = Temp_Var5 (row/column offset value)
+	LDA Temp_Var5	; A = Temp_Var5 (row/column offset value)
 	AND #$f0	; Just keep the row part
 
-	LDY <Temp_Var7	; Y = Temp_Var7
+	LDY Temp_Var7	; Y = Temp_Var7
 	BEQ PRG029_DF26	 ; If Temp_Var7 not set (set if tile was on the fringe between upper and lower screen space), jump to PRG029_DF26
 
-	ADD #$10	 ; Next row
+	CLC
+	ADC #$10	 ; Next row
 
 PRG029_DF26:
-	STA <Temp_Var6	 ; -> Temp_Var6
+	STA Temp_Var6	 ; -> Temp_Var6
 
-	LDA <Temp_Var5	; A = Temp_Var5 (row/column offset value)
+	LDA Temp_Var5	; A = Temp_Var5 (row/column offset value)
 	AND #$0f	; Just keep the column part
 	ASL A		; Multiply by 2
-	STA <Temp_Var8	; -> Temp_Var8
+	STA Temp_Var8	; -> Temp_Var8
 
-	LDA <Temp_Var6	 ; Get tile Y (aligned to grid, so bits 0-3 are zero)
+	LDA Temp_Var6	 ; Get tile Y (aligned to grid, so bits 0-3 are zero)
 	ASL A		 ; Bit 7 -> carry
 	ADC #$00	 ; Set as bit 0
 	ASL A		 ; Bit 7 -> carry
@@ -2963,17 +3079,17 @@ PRG029_DF26:
 	AND #%00000011	 ; Only keep lower 2 bits
 	ORA #$20	 ; Set high part of video address
 
-	LDY <Temp_Var7	; Y = Temp_Var7
+	LDY Temp_Var7	; Y = Temp_Var7
 	BEQ PRG029_DF42	 ; If Temp_Var7 not set (set if tile was on the fringe between upper and lower screen space), jump to PRG029_DF42
 
 	ORA #$08	 ; Set $28 high address
 
 PRG029_DF42:
-	STA <Temp_Var9	 ; -> Temp_Var9
+	STA Temp_Var9	 ; -> Temp_Var9
 
 	LDX #$00	 ; X = 0
 
-	LDA <Temp_Var3
+	LDA Temp_Var3
 	BEQ PRG029_DF4C	 ; If Temp_Var3 = 0 (loop first pass), jump to PRG029_DF4C
 
 	LDX #$0e	 ; Otherwise, X = $0E
@@ -2982,59 +3098,63 @@ PRG029_DF4C:
 
 	; X += current graphics buffer count
 	TXA
-	ADD Graphics_BufCnt
+	CLC
+	ADC Graphics_BufCnt
 	TAX
 
 	; Commit high addresses to graphics buffer
-	LDA <Temp_Var9
+	LDA Temp_Var9
 	STA Graphics_Buffer,X
 	STA Graphics_Buffer+$07,X
 
 	PLA		; Restore value from before
 	AND #%11110000	; Keep the upper 4 bits
-	ORA <Temp_Var8	; The column value
-	STA <Temp_Var4	; -> Temp_Var4
+	ORA Temp_Var8	; The column value
+	STA Temp_Var4	; -> Temp_Var4
 
 	; Set low address in graphics buffer
 	STA Graphics_Buffer+$01,X
 
-	ADD #32		; +32 is next row
+	CLC
+	ADC #32		; +32 is next row
 
 	; Set low address in graphics buffer
 	STA Graphics_Buffer+$08,X
 
-	LDY <Temp_Var5	 ; Y = Temp_Var5
-	LDX <Temp_Var11	 ; X = Temp_Var11
+	LDY Temp_Var5	 ; Y = Temp_Var5
+	LDX Temp_Var11	 ; X = Temp_Var11
 
 	LDA CBig_ChngTiles,X	 ; Get tile 
-	STA [Map_Tile_AddrL],Y	 ; Set tile
+	STA (Map_Tile_AddrL),Y	 ; Set tile
 	INY		 ; Next column
 	LDA CBig_ChngTiles+1,X	 ; Get tile
-	STA [Map_Tile_AddrL],Y	 ; Set tile
+	STA (Map_Tile_AddrL),Y	 ; Set tile
 
 	; Temp_Var5 += 16 (next tile row)
-	LDA <Temp_Var5
-	ADD #16
-	STA <Temp_Var5
+	LDA Temp_Var5
+	CLC
+	ADC #16
+	STA Temp_Var5
 
 	; Apply carry if needed
-	LDA <Map_Tile_AddrH
+	LDA Map_Tile_AddrH
 	ADC #$00
-	STA <Map_Tile_AddrH
+	STA Map_Tile_AddrH
 
 	; Temp_Var11 += 2
-	INC <Temp_Var11
-	INC <Temp_Var11
+	INC Temp_Var11
+	INC Temp_Var11
 
-	INC <Temp_Var3	; Temp_Var3++
+	INC Temp_Var3	; Temp_Var3++
 
-	LDA <Temp_Var3
+	LDA Temp_Var3
 	CMP #$02
 	BNE PRG029_DF1B	 ; While Temp_Var3 < 2, loop!
 
 	; Add array size -1 to graphics buffer count
 	LDA Graphics_BufCnt
-	ADD #(CBIG_BCSize - 1)
+	CLC
+	ADC #(CBIG_BCSize - 1)
 	STA Graphics_BufCnt
 
 	; Level_ChgTileEvent = 0 (redundant!)
@@ -3055,11 +3175,11 @@ PRG029_DFA4:
 ; FIXME: Anybody want to claim this??
 ; Appears to be coin palette cycling routine
 ; $DFB4 
-	LDA <Counter_1
+	LDA Counter_1
 	AND #$07
 	BNE PRG029_DFEB	 ; 1:8 ticks continue, otherwise jump to PRG029_DFEB (RTS)
 
-	LDA <Counter_1
+	LDA Counter_1
 	AND #$18
 	LSR A
 	TAX		 ; X = 0, 4, 8, 12
@@ -3091,7 +3211,8 @@ PRG029_DFD0:
 
 	; Graphics_BufCnt += 7
 	LDA Graphics_BufCnt
-	ADD #$07
+	CLC
+	ADC #$07
 	STA Graphics_BufCnt
 
 PRG029_DFEB:
