@@ -11,6 +11,30 @@
 ; This source file last updated: 2012-03-12 22:48:10.385348943 -0500
 ; Distribution package date: Fri Apr  6 23:46:16 UTC 2012
 ;---------------------------------------------------------------------------
+.include "../inc/macros.inc"
+.include "../inc/defines.inc"
+
+; ZP imports
+.importzp Temp_Var1, Temp_Var2, Temp_Var4, Level_ExitToMap, Counter_1, Pad_Input, Pal_Force_Set12
+.importzp Graphics_Queue, Vert_Scroll, Player_YHi, Player_X, CineKing_Var, Player_Y, Level_Tile
+.importzp Player_Suit, Player_Frame, Player_FlipBits
+; BSS imports (low RAM and cart SRAM)
+.import Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, Fade_Tick, Fade_Level, FadeOut_Cancel, Sound_QMusic1
+.import Sound_QMusic2, Sound_QMap, CineKing_Timer, Level_VertScrollH, Level_VertScroll, Player_Flip
+.import Level_Tileset, ToadTalk_VH, ToadTalk_VL, ToadTalk_CPos, CineKing_Timer2, PatTable_BankSel
+.import PAGE_C000, Player_Current, World_Num, World_EnterState, CineKing_State, PalSel_Tile_Colors
+.import PalSel_Obj_Colors, World_Map_Power, Palette_AddrHi, Palette_AddrLo, Palette_BufCnt, Palette_Buffer
+.import Palette_Term, AScroll_Anchor, Wand_Frame, Inventory_Items, Inventory_Cards, Inventory_Items2
+.import Pal_Data, CineKing_WandState, CineKing_WandFrame, CineKing_ToadFrame, CineKing_DiagHi
+.import CineKing_TimerT, CineKing_Timer3, CineKing_WandX, CineKing_WandY, CineKing_WandXVel
+.import CineKing_WandYVel, CineKing_WandXVel_Frac
+; imports from PRG024
+.import DiagBox_RowOffs, DiagBox_RowOffs_End
+; imports from PRG029
+.import Player_Draw
+; imports from PRG031
+.import PRGROM_Change_C000, DynJump, Sprite_RAM_Clear
+
 .ifdef NES
 .segment "PRG027"
 .endif
@@ -30,7 +54,7 @@ PRG027_A010:
 	LDA CineKing_Timer3
 	BEQ PRG027_A01E	 ; If CineKing_Timer3 = 0, jump to PRG027_A01E
 
-	LDA <Counter_1
+	LDA Counter_1
 	AND #$03
 	BNE PRG027_A01E	 ; 1:4 ticks proceed, otherwise jump to PRG027_A01E
 
@@ -69,7 +93,7 @@ TAndK_Init:
 	STA ToadTalk_CPos
 
 	; Set Player to top of screen
-	STA <Player_Y
+	STA Player_Y
 
 	; Clear auto scroll variables
 	LDY #$14	 ; Y = $14
@@ -80,15 +104,15 @@ PRG027_A052:
 
 	; Set Player as above the screen
 	LDA #$ff
-	STA <Player_YHi
+	STA Player_YHi
 
 	; Player_X = 112
 	LDA #112
-	STA <Player_X
+	STA Player_X
 
 	; Set Player facing Toad and King
 	LDA #SPR_HFLIP
-	STA <Player_FlipBits
+	STA Player_FlipBits
 
 	; CineKing_WandYVel = 0
 	STA CineKing_WandYVel
@@ -98,7 +122,7 @@ PRG027_A052:
 	; Set Player's current power up to the world map value 
 	; (kind of pointless in this transition, but oh well)
 	LDA World_Map_Power,Y
-	STA <Player_Suit
+	STA Player_Suit
 
 	; CineKing_WandX = $72
 	LDA #$72
@@ -144,7 +168,7 @@ PRG027_A0B2:
 
 	; Set scroll up high (the letter is actually level data)
 	LDA #$18
-	STA <Vert_Scroll
+	STA Vert_Scroll
 
 	; Level_VertScrollH = 1
 	LDA #$01
@@ -187,7 +211,7 @@ Letter_PrincessSprites:
 	.byte $88, $AF, $01, $40
 	.byte $88, $FF, $01, $C0
 	.byte $88, $FF, $41, $C8
-Letter_PrincessSprites_End
+Letter_PrincessSprites_End:
 
 TAndK_WaitForA:
 	; Load needed graphics
@@ -233,10 +257,10 @@ PRG027_A166:
 	JSR Letter_PaletteKludge	 ; Not sure what this is for; sets up the graphics buffer to patch a single palette color?
 
 PRG027_A169:
-	LDA <Pad_Input
+	LDA Pad_Input
 	BPL PRG027_A174		; If Player is NOT pressing A, jump to PRG027_A174
 
-	INC <Level_ExitToMap	; Exiting to map!
+	INC Level_ExitToMap	; Exiting to map!
 
 	; World_EnterState = 0
 	LDA #$00
@@ -245,7 +269,7 @@ PRG027_A169:
 PRG027_A174:
 	LDY #$01	 ; Y = 1
 
-	LDA <Counter_1
+	LDA Counter_1
 	AND #$38
 	BEQ PRG027_A181	 ; Periodically jump to PRG027_A181
 
@@ -260,11 +284,11 @@ PRG027_A181:
 	LDA Princess_FacePatterns,Y
 	STA Sprite_RAM+$A1
 
-	LDA <Counter_1
+	LDA Counter_1
 	AND #$18
 	BEQ PRG027_A1A7	 ; Periodically jump to PRG027_A1A7 (RTS)
 
-	LDY <CineKing_Var	 ; Y = CineKing_Var (item included with letter)
+	LDY CineKing_Var	 ; Y = CineKing_Var (item included with letter)
 
 	; Flash included item
 	LDA Letter_ItemPat_L-1,Y
@@ -325,17 +349,17 @@ PRG027_A1D5:
 Letter_GiveIncludedItem:
 	LDY World_Num			; Y = World_Num
 	LDA LetterItem_ByWorld,Y	; Get item included with letter for this world
-	STA <CineKing_Var		 ; -> CineKing_Var
+	STA CineKing_Var		 ; -> CineKing_Var
 
 	BEQ PRG027_A1FA	 ; If no item is to be given (World 7 letter only), jump to PRG027_A1FA (RTS)
 
 	LDY Player_Current	 ; Y = current Player index
 	BEQ PRG027_A1EA	 ; If Player is Mario, jump to PRG027_A1EA
 
-	LDY #(Inventory_Items2 - Inventory_Items)	; Offset to Luigi's items
+	LDY #<(Inventory_Items2 - Inventory_Items)	; Offset to Luigi's items
 
 PRG027_A1EA:
-	LDX #(Inventory_Cards - Inventory_Items - 1)	; X = total number of inventory items, -1
+	LDX #<(Inventory_Cards - Inventory_Items - 1)	; X = total number of inventory items, -1
 
 PRG027_A1EC:
 	LDA Inventory_Items,Y
@@ -349,7 +373,7 @@ PRG027_A1EC:
 PRG027_A1F5:
 
 	; Give item included with letter
-	LDA <CineKing_Var
+	LDA CineKing_Var
 	STA Inventory_Items,Y
 
 PRG027_A1FA:
@@ -363,7 +387,7 @@ DiagBox2_R3:	.byte $95, $91, $91, $91, $91, $91, $91, $91, $91, $91, $91, $91, $
 DiagBox2_RowOffs:
 	.byte (DiagBox2_R1 - DiagBox2_R1), (DiagBox2_R2 - DiagBox2_R1), (DiagBox2_R2 - DiagBox2_R1), (DiagBox2_R2 - DiagBox2_R1)
 	.byte (DiagBox2_R2 - DiagBox2_R1), (DiagBox2_R2 - DiagBox2_R1), (DiagBox2_R2 - DiagBox2_R1), (DiagBox2_R3 - DiagBox2_R1)
-DiagBox2_RowOffs_End
+DiagBox2_RowOffs_End:
 
 TAndK_DrawDiagBox2:
 	LDA CineKing_Timer2
@@ -378,14 +402,15 @@ TAndK_DrawDiagBox2:
 	STA Graphics_Buffer+1,X
 
 	; Jump to next video row
-	ADD #$20	; 32 bytes to next row
+	CLC
+	ADC #$20	; 32 bytes to next row
 	STA ToadTalk_VL
 	BCC PRG027_A264
 	INC ToadTalk_VH	 ; Apply carry
 PRG027_A264:
 	LDA #(DiagBox2_R2 - DiagBox2_R1)	; run count per row
 	STA Graphics_Buffer+2,X
-	STA <Temp_Var1		 ; -> Temp_Var1
+	STA Temp_Var1		 ; -> Temp_Var1
 
 	LDY ToadTalk_CPos	 ; Y = current dialog box row
 	LDA DiagBox2_RowOffs,Y
@@ -399,7 +424,7 @@ PRG027_A272:
 	INY		 ; Y++ (next pattern for dialog box)
 	INX		 ; X++ (next index in graphics buffer)
 
-	DEC <Temp_Var1	 ; Temp_Var1--
+	DEC Temp_Var1	 ; Temp_Var1--
 	BNE PRG027_A272	 ; While Temp_Var1 > 0, loop!
 
 	; Insert terminator
@@ -415,14 +440,14 @@ PRG027_A272:
 	INC ToadTalk_CPos	 ; Next row
 
 	LDA ToadTalk_CPos
-	CMP #(DiagBox_RowOffs_End - DiagBox_RowOffs)
+	CMP #<(DiagBox_RowOffs_End - DiagBox_RowOffs)
 	BLT PRG027_A2B3	 ; If row count < 8, jump to PRG027_A2B3
 
 	; Dialog box is complete
 
 	; Select dialog text by Player's power up suit...
 
-	LDY <Player_Suit ; Y = current Player suit
+	LDY Player_Suit ; Y = current Player suit
 
 	; Set proper offset of ToadTalk_CPos
 	LDA DiagText_BySuit_L,Y
@@ -531,22 +556,22 @@ KingText_Hammer:
 	.byte $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE
 
 DiagText_BySuit_L:
-	.byte LOW(KingText_Typical)	; Small
-	.byte LOW(KingText_Typical)	; Big
-	.byte LOW(KingText_Typical)	; Fire
-	.byte LOW(KingText_Typical)	; Raccoon
-	.byte LOW(KingText_Frog)	; Frog
-	.byte LOW(KingText_Tanooki)	; Tanooki
-	.byte LOW(KingText_Hammer)	; Hammer
+	.byte <(KingText_Typical)	; Small
+	.byte <(KingText_Typical)	; Big
+	.byte <(KingText_Typical)	; Fire
+	.byte <(KingText_Typical)	; Raccoon
+	.byte <(KingText_Frog)	; Frog
+	.byte <(KingText_Tanooki)	; Tanooki
+	.byte <(KingText_Hammer)	; Hammer
 
 DiagText_BySuit_H:
-	.byte HIGH(KingText_Typical)	; Small
-	.byte HIGH(KingText_Typical)	; Big
-	.byte HIGH(KingText_Typical)	; Fire
-	.byte HIGH(KingText_Typical)	; Raccoon
-	.byte HIGH(KingText_Frog)	; Frog
-	.byte HIGH(KingText_Tanooki)	; Tanooki
-	.byte HIGH(KingText_Hammer)	; Hammer
+	.byte >(KingText_Typical)	; Small
+	.byte >(KingText_Typical)	; Big
+	.byte >(KingText_Typical)	; Fire
+	.byte >(KingText_Typical)	; Raccoon
+	.byte >(KingText_Frog)	; Frog
+	.byte >(KingText_Tanooki)	; Tanooki
+	.byte >(KingText_Hammer)	; Hammer
 
 
 TAndK_DoKingText:
@@ -555,9 +580,9 @@ TAndK_DoKingText:
 
 	; Dialog address -> Temp_Var1/2
 	LDA ToadTalk_CPos
-	STA <Temp_Var1
+	STA Temp_Var1
 	LDA CineKing_DiagHi
-	STA <Temp_Var2
+	STA Temp_Var2
 
 	INC ToadTalk_CPos	 ; ToadTalk_CPos++
 	BNE PRG027_A4B9	 	; If ToadTalk_CPos did not overflow, jump to PRG027_A4B9
@@ -566,7 +591,7 @@ PRG027_A4B9:
 
 	; Get next character
 	LDY #$00	 ; Y = 0
-	LDA [Temp_Var1],Y
+	LDA (Temp_Var1),Y
 
 	LDY Graphics_BufCnt	 ; Y = current graphics buffer count
 
@@ -587,7 +612,8 @@ PRG027_A4B9:
 
 	; Update Graphics_BufCnt
 	TYA
-	ADD #$04
+	CLC
+	ADC #$04
 	STA Graphics_BufCnt
 
 	; Store VRAM low address
@@ -614,7 +640,7 @@ PRG027_A4F5:
 
 	LDA #$00
 	STA ToadTalk_CPos	; ToadTalk_CPos = 0
-	STA <CineKing_Var		; CineKing_Var = 0
+	STA CineKing_Var		; CineKing_Var = 0
 
 	; CineKing_Timer2 = $FF
 	LDA #$ff
@@ -713,7 +739,7 @@ Wand_SpinAttrs:
 Wand_FrameChangeMask:	.byte $03, $00
 
 	; Wand frame change delta
-Wand_FrameAdd:	.byte -$01, $01
+Wand_FrameAdd:	.byte <-$01, $01
 
 	; Base sprites for King and Toad
 KingAndToad_Sprites:
@@ -728,7 +754,7 @@ KingAndToad_Sprites:
 	.byte $80, $00, $01, $A8
 	.byte $70, $00, $01, $B0
 	.byte $70, $00, $01, $A8
-KingAndToad_Sprites_End
+KingAndToad_Sprites_End:
 
 	; Patterns for the cheering Toad sprites
 Toad_FramePatterns:
@@ -756,7 +782,7 @@ Toad_AnimDelayByFrame:
 	.byte $11, $08, $08, $08, $08, $11, $11, $14, $14, $14, $14, $14
 
 WandAndToad_DrawAndUpdate:
-	LDA <Vert_Scroll
+	LDA Vert_Scroll
 	BMI PRG027_A5F8	 ; If Vert_Scroll >= $80 (i.e. not focusing on letter), jump to PRG027_A5F8
 
 	RTS		 ; Return
@@ -811,7 +837,7 @@ PRG027_A618:
 
 	; While rendering the text, the King is "talking"
 
-	LDA <Counter_1
+	LDA Counter_1
 	AND #$10
 	BEQ PRG027_A63B	 ; 16 ticks on, 16 ticks off; jump to PRG027_A63B
 
@@ -849,12 +875,13 @@ PRG027_A63D:
 	BNE PRG027_A6CD	 ; Jump (technically always) to PRG027_A6CD
 
 PRG027_A659:
-	LDA <Counter_1
+	LDA Counter_1
 	AND Wand_FrameChangeMask,Y
 	BNE PRG027_A66C	 ; Periodically jump to PRG027_A66C
 
 	LDA CineKing_WandFrame
-	ADD Wand_FrameAdd,Y
+	CLC
+	ADC Wand_FrameAdd,Y
 	AND #$07
 	STA CineKing_WandFrame
 
@@ -880,7 +907,7 @@ PRG027_A66C:
 	; Bounce wand towards King
 	LDA #$10
 	STA CineKing_WandXVel
-	LDA #-$50
+	LDA #<-$50
 	STA CineKing_WandYVel
 
 	BNE PRG027_A69A	 ; Jump (technically always) to PRG027_A69A
@@ -926,7 +953,8 @@ PRG027_A69D:
 	STA Sprite_RAM+$43
 
 	; Right wand sprite X
-	ADD #$08
+	CLC
+	ADC #$08
 	STA Sprite_RAM+$47
 
 PRG027_A6CD:
@@ -995,7 +1023,8 @@ KingWand_ApplyVel:
 	ASL A		 
 	ASL A		 
 	ASL A		 	; Fractional part shifted up
-	ADD CineKing_WandXVel_Frac,X	 
+	CLC
+	ADC CineKing_WandXVel_Frac,X	 
 	STA CineKing_WandXVel_Frac,X	; Add to object's vel fractional accumulator
 
 	PHP		 ; Save CPU state
@@ -1037,25 +1066,26 @@ PlayerStand_Frame:
 	.byte PF_WALKBIG_BASE+2		; Hammer
 
 TAndK_PlayerFallLandDraw:
-	LDY <Player_Suit	; Y = Player's suit
+	LDY Player_Suit	; Y = Player's suit
 
-	LDA <Player_Y
+	LDA Player_Y
 	CMP #128
 	BLT PRG027_A749	 ; If Player Y < 128, jump to PRG027_A749
 
 	; Player Y > 128...
 
-	LDX <Player_YHi	
+	LDX Player_YHi	
 	BEQ PRG027_A75B	 ; If Player is vertically on-screen, jump to PRG027_A75B
 
 PRG027_A749:
 
 	; +4 to Player Y
-	ADD #$04
-	STA <Player_Y
+	CLC
+	ADC #$04
+	STA Player_Y
 
 	BCC PRG027_A752	 ; If no carry, jump to PRG027_A752
-	INC <Player_YHi		 ; Apply carry
+	INC Player_YHi		 ; Apply carry
 PRG027_A752:
 	INC CineKing_Timer2	 ; CineKing_Timer2++
 
@@ -1066,7 +1096,7 @@ PRG027_A75B:
 	LDA PlayerStand_Frame,Y	 ; Get appropriate Player standing frame
 
 PRG027_A75E:
-	STA <Player_Frame	; Set appropriate Player frame
+	STA Player_Frame	; Set appropriate Player frame
 
 	; Load page 29 @ C000
 	LDA #29
@@ -1349,7 +1379,7 @@ Letter_VRAMHi:
 	; Signature bottom row, Signature top row, Closing, Greeting
 Letter_VRAMLo:
 	.byte $A8, $8B, $6B, $06
-Letter_VRAMLo_End
+Letter_VRAMLo_End:
 
 EndWorldLetter_GenerateText:
 	LDX World_Num	; X = current world index
@@ -1361,7 +1391,7 @@ PRG027_AB6F:
 
 	; Temp_Var1 = VRAM Low address
 	LDA Letter_VRAMLo,X
-	STA <Temp_Var1
+	STA Temp_Var1
 
 PRG027_AB74:
 	LDA PPU_STAT
@@ -1371,7 +1401,7 @@ PRG027_AB74:
 	STA PPU_VRAM_ADDR
 
 	; Set VRAM Low address
-	LDA <Temp_Var1
+	LDA Temp_Var1
 	STA PPU_VRAM_ADDR
 
 	INY		 ; Y++
@@ -1385,7 +1415,7 @@ PRG027_AB74:
 	; Otherwise, push it as a pattern
 	STA PPU_VRAM_DATA
 
-	INC <Temp_Var1	 ; Temp_Var1++
+	INC Temp_Var1	 ; Temp_Var1++
 	BNE PRG027_AB74	 ; If Temp_Var1 has not overflowed, jump to PRG027_AB74
 
 PRG027_AB93:
@@ -1402,16 +1432,16 @@ PRG027_AB96:
 
 	; Base address for letter body -> Temp_Var1/2
 	LDA Letter_Bodies,X
-	STA <Temp_Var1
+	STA Temp_Var1
 	LDA Letter_Bodies+1,X
-	STA <Temp_Var2	
+	STA Temp_Var2	
 
 	LDY #$00	 ; Y = 0 (letter body offset)
 	LDX #(LetterRow_VRAM_H - LetterRow_VRAM_L - 1)	 ; init X (letter body line index)
 PRG027_ABA9:
 	; Temp_Var4 = VRAM low address starting for this line
 	LDA LetterRow_VRAM_L,X
-	STA <Temp_Var4
+	STA Temp_Var4
 
 PRG027_ABAE:
 	LDA PPU_STAT
@@ -1421,10 +1451,10 @@ PRG027_ABAE:
 	STA PPU_VRAM_ADDR
 
 	; Set VRAM Low address starting for this line
-	LDA <Temp_Var4
+	LDA Temp_Var4
 	STA PPU_VRAM_ADDR
 
-	LDA [Temp_Var1],Y ; Get next character from letter body
+	LDA (Temp_Var1),Y ; Get next character from letter body
 
 	INY		 ; Y++ (next letter body character)
 
@@ -1436,7 +1466,7 @@ PRG027_ABAE:
 
 	STA PPU_VRAM_DATA	; Store character as pattern
 
-	INC <Temp_Var4	 ; Temp_Var4++
+	INC Temp_Var4	 ; Temp_Var4++
 	BNE PRG027_ABAE	 ; Loop (assumes Temp_Var4 never overflows)
 
 PRG027_ABCE:
@@ -1772,30 +1802,30 @@ Setup_PalData:
 
 	; Point to the palette associated with this tileset!
 	LDA Palette_By_Tileset,Y
-	STA <Temp_Var1	
+	STA Temp_Var1	
 	LDA Palette_By_Tileset+1,Y
-	STA <Temp_Var2	
+	STA Temp_Var2	
 
-	LDY <Pal_Force_Set12	; Palette override
+	LDY Pal_Force_Set12	; Palette override
 	BEQ PRG027_B86D	 	; If Pal_Force_Set12 = 0, jump to PRG027_B86D
 
 	; If Pal_Force_Set12 <> 0...
 	; Point to the palette associated with this override!
 	LDA Palette_By_Tileset,Y
-	STA <Temp_Var1		
+	STA Temp_Var1		
 	LDA Palette_By_Tileset+1,Y
-	STA <Temp_Var2		
+	STA Temp_Var2		
 
 	; Copy 32 bytes of data into Pal_Data
 	LDY #31	 ; Y = 31 (32 bytes total, a whole bg/sprite palette set)
 PRG027_B85E:
-	LDA [Temp_Var1],Y
+	LDA (Temp_Var1),Y
 	STA Pal_Data,Y	
 	DEY		 ; Y--
 	BPL PRG027_B85E	 ; While Y >= 0, loop
 
 	LDA #$00	 
-	STA <Pal_Force_Set12 ; Pal_Force_Set12 = 0
+	STA Pal_Force_Set12 ; Pal_Force_Set12 = 0
 	JMP PRG027_B8F9	 ; Jump to PRG027_B8F9 (RTS)
 
 PRG027_B86D:
@@ -1809,7 +1839,7 @@ PRG027_B86D:
 
 	; Loop to copy the 16 BG colors to Pal_Data
 PRG027_B877:
-	LDA [Temp_Var1],Y	; Get byte of palette data
+	LDA (Temp_Var1),Y	; Get byte of palette data
 	STA Pal_Data,X	 	; Store it into Pal_Data
 	INY		 	; Y++
 	INX		 	; X++
@@ -1825,7 +1855,7 @@ PRG027_B877:
 
 	; Loop to copy the 16 sprite colors to Pal_Data
 PRG027_B88A:
-	LDA [Temp_Var1],Y	; Get byte of palette data
+	LDA (Temp_Var1),Y	; Get byte of palette data
 	STA Pal_Data,X	 	; Store it into Pal_Data
 	INY		 	; Y++
 	INX		 	; X++
@@ -1933,7 +1963,8 @@ PRG027_B90F:
 
 	BCS PRG027_B91C	 ; If carry is set (fade out), jump to PRG027_B91C (fade out needs the colors as they're to be targeted!)
 
-	SUB #$30	 ; Otherwise, A -= $30 (darkest shade of this color)
+	SEC
+	SBC #$30	 ; Otherwise, A -= $30 (darkest shade of this color)
 	BCS PRG027_B91C	 ; If we didn't go "less than black", jump to PRG027_B91C
 	LDA #$0f	 ; Otherwise, A = $F (black)
 
@@ -1951,7 +1982,7 @@ PRG027_B91C:
 	STA Fade_Tick	 ; Fade_Tick = 4
 
 	LDA #$06	 
-	STA <Graphics_Queue	 ; Reset the graphics buffer
+	STA Graphics_Queue	 ; Reset the graphics buffer
 	RTS		 ; Return
 
 
@@ -2001,7 +2032,8 @@ PRG027_ABF8:
 PRG027_B970:
 	CMP Pal_Data,Y	 ; Compare this against the target palette byte
 	BEQ PRG027_B97B	 ; If we reached the target, jump to PRG027_B97B
-	ADD #$10	 ; Otherwise, add $10 (brighter)
+	CLC
+	ADC #$10	 ; Otherwise, add $10 (brighter)
 
 PRG027_B978:
 	STA Palette_Buffer,Y	 ; Update the buffer!
@@ -2011,7 +2043,7 @@ PRG027_B97B:
 	BPL PRG027_ABF8	 ; While Y >= 0, loop!
 
 	LDA #$06	 
-	STA <Graphics_Queue	 ; Queue graphics routine 6
+	STA Graphics_Queue	 ; Queue graphics routine 6
 
 PRG027_B982:
 	RTS		 ; Return
@@ -2054,7 +2086,8 @@ PRG027_B99A:
 	LDY #31
 PRG027_B9AE:
 	LDA Palette_Buffer,Y	; Get this color
-	SUB #16		 	; Subtract 16 from it
+	SEC
+	SBC #16		 	; Subtract 16 from it
 	BPL PRG027_B9B8	 	; If we didn't go below zero, jump to PRG027_B9B8
 
 	LDA #$0f	 	; Otherwise, set it to safe minimum
@@ -2066,7 +2099,7 @@ PRG027_B9B8:
 
 	; Update palette
 	LDA #$06
-	STA <Graphics_Queue
+	STA Graphics_Queue
 
 PRG027_AC5F:
 	RTS		 ; Return
