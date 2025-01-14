@@ -93,6 +93,32 @@
 .import Tile_Mem_Addr
 ; imports from PRG031
 .import DynJump, PRGROM_Change_A000
+; exports
+.export AScrlURDiag_HandleWrap, AScroll_HorizontalInitMove, BlockBump_Init, BrickBust_MoveOver
+.export ConveyorEnable, DoTimeBonus, Fish_FixedYIfAppro, Fish_FixedY_ExceptHitFloor, LevelEvent_DoNothing
+.export Level_ChangeTile_ByTempVars, Level_MinTileUWByQuad, Level_ObjCalcXDiffs, Level_ObjCalcYDiffs
+.export Level_PrepareNewObject, Level_SlopeSetByQuad, MuncherJelectroSet, Negate, NonSlope_LUT_Addr
+.export Obj2Obj_EnByState, ObjHit_DoNothing, ObjInit_DoNothing, ObjNorm_DoNothing, ObjectObject_Intersect
+.export Object_AboutFace, Object_AnySprOffscreen, Object_ApplyXVel, Object_ApplyYVel, Object_ApplyYVel_NoLimit
+.export Object_AttrFlags, Object_BumpBlocks, Object_CalcBoundBox, Object_CalcBoundBox2
+.export Object_CalcCoarseXDiff, Object_CalcCoarseYDiff, Object_CalcSpriteXY_NoHi, Object_Delete
+.export Object_DeleteOffScreen, Object_DeleteOffScreen_N2, Object_DeleteOffScreen_N4
+.export Object_DetectTile, Object_DetermineHorzVis, Object_DetermineHorzVisY, Object_DetermineVertVis
+.export Object_DetermineVertVisY, Object_DoCollision, Object_Draw16x16Sprite, Object_Draw16x32Sprite
+.export Object_Draw24x16Sprite, Object_DrawTallAndHFlip, Object_DrawWide, Object_FlipFace
+.export Object_GetAttrAndMoveTiles, Object_GetRandNearUnusedSpr, Object_HandleBumpUnderneath
+.export Object_HandleConveyorBounceVel, Object_HandleConveyorCarry, Object_HitGround
+.export Object_HitTest, Object_HitTestRespond, Object_Move, Object_SetDeadAndNotSpawned
+.export Object_SetDeadEmpty, Object_SetPaletteFromAttr, Object_SetShellState, Object_ShakeAndCalcSprite
+.export Object_ShakeAndDraw, Object_ShakeAndDrawMirrored, Object_ToggleFrameBySpd, Object_WorldDetect4
+.export Object_WorldDetectN1, Objects_HandleScrollAndUpdate, PRG000_C49B, PRG000_D2B4
+.export PRG000_DC09, PSwitch_SubstTileAndAttr, Player_Die, Player_GetHurt, Player_HitEnemy
+.export Podoboo_Splash, PowerUp_Ability, Score_FindFreeSlot, Score_Get100PlusPts, Score_Get100PlusPtsY
+.export Score_PopUp, Slope_LUT, Slope_LUT_Addr, Slope_ObjectVel_Effect, Slope_PlayerVel_Effect
+.export SpecialObj_FindEmptyAbort, SpecialObj_FindEmptyAbortY, SpikesEnable, SprRamOffsets
+.export ToadHouse_GiveItem, ToadItem_PalPerItem, Video_3CMFlowBot, Video_3CMFlowDiag, Video_3CMFlowMid
+.export Video_3CMFlowStem, Video_3CMFlowTop, Video_3CMMushBot, Video_3CMMushLeft, Video_3CMMushMid
+.export Video_3CMMushRight, Video_3CMMushTop
 
 .ifdef NES
 .segment "PRG000"

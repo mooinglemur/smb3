@@ -68,6 +68,9 @@
 .import PRG030_845A, Clear_RAM_thru_ZeroPage, Tile_Mem_Addr
 ; imports from PRG031
 .import Reset_PPU_Clear_Nametables, Sprite_RAM_Clear, IntIRQ_Finish_NoDis, DynJump
+; exports
+.export Cinematic_ToadAndKing, DiagBox_RowOffs, DiagBox_RowOffs_End, Do_Ending2_IntCmd
+.export Do_Title_Screen, IntIRQ_TitleEnding, Rescue_Princess
 
 .ifdef NES
 .segment "PRG024"

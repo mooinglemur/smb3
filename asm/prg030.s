@@ -65,7 +65,7 @@
 ; imports from PRG000
 .import Level_SlopeSetByQuad, Video_3CMFlowBot, Video_3CMMushBot, Video_3CMFlowStem
 .import Video_3CMMushRight, Video_3CMFlowMid, Video_3CMMushMid, Video_3CMFlowDiag
-.import Video_3CMMushLeft, Video_3CMFlowTop, Video_3CMMushTop
+.import Video_3CMMushLeft, Video_3CMFlowTop, Video_3CMMushTop, Objects_HandleScrollAndUpdate
 ; imports from PRG006
 .import TOADO
 ; imports from PRG007
@@ -121,23 +121,30 @@
 .import LeveLoad_FixedSizeGen_TS10, LoadLevel_Generator_TS10, LevelLoad_TS10
 .import Tile_Layout_TS10, Tile_Attributes_TS10
 ; imports from PRG024
-.import Do_Title_Screen
+.import Do_Title_Screen, Rescue_Princess
 ; imports from PRG026
 .import Scroll_ToVRAM_Apply, Scroll_Commit_Column, Video_Misc_Updates, HandleLevelJunction
 .import StatusBar_Fill_Score, LevelLoad_CopyObjectList, Palette_FadeOut
 .import Map_DoInventory_And_PoofFX, Palette_FadeIn, StatusBar_Fill_World
 .import StatusBar_Fill_MorL, StatusBar_UpdateValues
 ; imports from PRG027
-.import CineKing_DoWandReturn, EndWorldLetter_GenerateText, Rescue_Princess, Setup_PalData
+.import CineKing_DoWandReturn, EndWorldLetter_GenerateText, Setup_PalData
 ; imports from PRG029
 .import BlockChange_Do
-; imports from PRG030
-.import Objects_HandleScrollAndUpdate
 ; imports from PRG031
 .import IntIRQ_32PixelPartition_Part3, IntIRQ_32PixPart_HideSprites, PRG031_FA3C, PRG031_F499
 .import DynJump, PRGROM_Change_C000, Clear_Nametable_Short, Reset_PPU_Clear_Nametables2
 .import StatusBar_Update_Cards, PRGROM_Change_A000, PRGROM_Change_Both2, Reset_PPU_Clear_Nametables
 .import Scroll_PPU_Reset, Sprite_RAM_Clear
+; exports
+.export Bonus_Prize1, Clear_RAM_thru_ZeroPage, EndLevelCard_PalData, GraphicsBuf_Prep_And_WaitVSync
+.export IntIRQ_32PixelPartition_Part2, IntIRQ_32PixelPartition_Part5, IntReset_Part2
+.export LevelJct_GetVScreenH, LevelJct_GetVScreenH2, LevelLoad, Level_RecordBlockHit, LoadLevel_Set_TileMemAddr
+.export Map_Calc_NT2Addr_By_XY, Map_Y_Starts, PRG030_845A, PRG030_897B, PRG030_9E6C, PRG030_SUB_9F40
+.export PRG030_SUB_9F50, Player_GetTileAndSlope_Normal, Player_GetTileV, Randomize, Scroll_Update
+.export Scroll_Update_Ranges, TileLayout_ByTileset, TileLayout_GetBaseAddr, Tile_Mem_Addr
+.export Tile_Mem_AddrVH, Tile_Mem_AddrVL, Tile_Mem_ClearA, Tile_Mem_ClearA, Tile_Mem_ClearB
+.export Tile_Mem_ClearB
 
 .ifdef NES
 .segment "PRG030"

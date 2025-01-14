@@ -39,6 +39,10 @@
 .import LoadLevel_Set_TileMemAddr, LevelLoad, Tile_Mem_ClearA, Tile_Mem_ClearB
 ; imports from PRG031
 .import DynJump
+; exports
+.export LeveLoad_FixedSizeGen_TS9, LevelLoad_TS9, LoadLevel_Generator_TS9, Tile_Attributes_TS9
+.export Tile_Layout_TS9, Unused8_EndL, W201L, W202_ExitL, W203L, W204L, W205L, W20FL, W2HBA, W2PYL
+.export W702L, W709L
 
 
 

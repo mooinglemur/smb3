@@ -19,6 +19,12 @@
 
 ; BSS imports (low RAM and cart SRAM)
 .import Graphics_Buffer, Ending_CmdBuffer
+; exports
+.export EndPicByWorld_H, EndPicByWorld_L, EndPic_VRAMStart_H, EndPic_VRAMStart_L, Ending2_EndPicSprites3_End
+.export Ending2_EndPicSprites4, Ending2_EndPicSprites4_End, Ending2_EndPicSprites5, Ending2_EndPicSprites5_End
+.export Ending2_EndPicSprites6, Ending2_EndPicSprites6_End, Ending2_EndPicSprites7, Ending2_EndPicSprites7_End
+.export Ending2_EndPicSprites8, Ending2_EndPicSprites8_End, Video_Upd_Table2
+
 
 .ifdef NES
 .segment "PRG025"

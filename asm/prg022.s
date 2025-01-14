@@ -244,6 +244,21 @@
 .import Randomize, Bonus_Prize1, Tile_Mem_Addr, LevelLoad, Tile_Mem_ClearA,Tile_Mem_ClearB
 ; imports from PRG031
 .import Player_GetItem, PRGROM_Change_A000, Read_Joypads, PT2_Full_CHRROM_Switch, DynJump
+; exports
+.export Background_Tiles, BonusGameBox_SpriteXs, BonusGameBox_SpriteYs, BonusGameBox_SpriteYs_End
+.export BonusGame_Do, BonusUNKTALL_Tiles, BonusUNKTALL_Tiles_End, Bonus_InstBoxBot, Bonus_InstBoxLine1
+.export Bonus_InstBoxLine2, Bonus_InstBoxLine3, Bonus_InstBoxTop, Bonus_LayoutData, Bonus_Return2_SetMapPos
+.export Card_InitGame, Draw_KTPrizeGameBox, HostHammerBro_Draw, HostHammerBro_DrawSprites
+.export HostHammerBro_SpriteXs, HostHammerBro_SpriteYs, HostHammerBro_SpriteYs_End, HostToad_Draw
+.export HostToad_DrawSprites, HostToad_SpriteXs, HostToad_SpriteYs, HostToad_SpriteYs_End
+.export HostTroopa_Draw, HostTroopa_DrawSprites, HostTroopa_DrawWithGameBits, HostTroopa_SpriteXs
+.export HostTroopa_SpriteYs, HostTroopa_SpriteYs_End, LeveLoad_FixedSizeGen_TS151617
+.export LevelLoad_TS15_TS16_TS17, LoadLevel_Generator_TS151617, NSpade_DoGame, PRG022_C51E
+.export PlayerSuit_TileBaseIndex, PlayerSuit_ToIndex, PlayerSuit_ToIndex_End, Player_BonusTiles_Big
+.export Player_BonusTiles_Raccoon, Player_BonusTiles_Small, QBoxBlue_Tiles, QBoxBlue_Tiles_End
+.export QBoxOrange_Tiles, QBoxOrange_Tiles_End, Roulette_DrawBorderSprites, Roulette_DrawShapes
+.export Tile_Layout_TS15_TS16_TS17, UpdSel_Roulette, Video_NSpadeBG, Video_RoulBordAttr
+
 
 .ifdef NES
 .segment "PRG022"

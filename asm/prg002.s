@@ -72,6 +72,10 @@
 .import EndLevelCard_PalData
 ; imports from PRG031
 .import Player_GetCard, StatusBar_DrawCardPiece, DynJump
+; exports
+.export Bank2_HotFootHaltAction, Bank2_PiranhaSpikeHaltAction, Bank2_SpikeHaltAction, Buster_DrawHoldingIceBrick
+.export EndLevelCard_Draw, Shoe_DrawGoomba
+
 
 .ifdef NES
 .segment "PRG002"

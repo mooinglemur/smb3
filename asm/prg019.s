@@ -43,6 +43,13 @@
 .import LoadLevel_Set_TileMemAddr, Randomize, LevelLoad, Tile_Mem_ClearA, Tile_Mem_ClearB
 ; imports from PRG031
 .import DynJump
+; exports
+.export LeveLoad_FixedSizeGen_TS051113, LevelLoad_TS13, LevelLoad_TS5, LoadLevel_Generator_TS051113
+.export Tile_Attributes_TS5_TS11_TS13, Tile_Layout_TS5_TS11_TS13, Unused3_CHL, W103_CoinHeavL
+.export W105_CoinHeavL, W307_CoinHeavL, W401L, W402L, W403L, W404L, W405L, W4HBA, W504L, W506L, W507L
+.export W508L, W509L, W5HBC, W5HBD, W5T2L, W5T4L, W5TDL, W604_CoinHeavL, W708_CoinHeavL, W7I1L, W7I2L
+.export W8H1L, W8H2L, W8H3L
+
 
 .ifdef NES
 .segment "PRG019"

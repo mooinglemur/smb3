@@ -67,6 +67,8 @@
 .import ObjHit_DoNothing, ObjNorm_DoNothing, ObjInit_DoNothing
 ; imports from PRG031
 .import DynJump, Player_GetItem
+; exports
+.export BobOmb_Explode
 
 .ifdef NES
 .segment "PRG003"

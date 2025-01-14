@@ -71,6 +71,8 @@
 .import Tile_Mem_Addr, Tile_Mem_ClearA, Tile_Mem_ClearB
 ; imports from PRG031
 .import DynJump
+; exports
+.export Map_PrepareLevel, Map_Reload_with_Completions, Tile_Attributes_TS0, Tile_Layout_TS0
 
 .ifdef NES
 .segment "PRG012"

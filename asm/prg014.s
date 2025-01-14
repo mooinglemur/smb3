@@ -25,6 +25,27 @@
 .import Tile_Mem_Addr, LoadLevel_Set_TileMemAddr, Randomize, LevelLoad, Tile_Mem_ClearA, Tile_Mem_ClearB
 ; imports from PRG031
 .import DynJump
+; exports
+.export LeveLoad_FixedSizeGen_TS18, LevelLoad_TS18, LoadLevel_BGBush, LoadLevel_BGOrWater
+.export LoadLevel_BigSizeBush, LoadLevel_BlockRun, LoadLevel_BrickAndShadow, LoadLevel_CCBridge
+.export LoadLevel_Cannon, LoadLevel_CloudRun, LoadLevel_CloudRun3, LoadLevel_Conveyor
+.export LoadLevel_Corner, LoadLevel_DecoCeiling, LoadLevel_DecoGround, LoadLevel_DonutLifts
+.export LoadLevel_Door1, LoadLevel_Door2, LoadLevel_EndGoal, LoadLevel_FillBackground
+.export LoadLevel_FloatingBigBlock, LoadLevel_GenerateBigBlock, LoadLevel_Generator_TS18
+.export LoadLevel_GroundRun, LoadLevel_HLeftWallPipeRun, LoadLevel_HRightWallPipeRun
+.export LoadLevel_HRightWallPipeRun3, LoadLevel_IceBricks, LoadLevel_Jelectro, LoadLevel_Lava
+.export LoadLevel_LittleBushRun, LoadLevel_LittleCloudRun, LoadLevel_LittleCloudSolidRun
+.export LoadLevel_MidSizeBush, LoadLevel_MiscBG, LoadLevel_NextColumn, LoadLevel_Nothing
+.export LoadLevel_Path45B2T, LoadLevel_Path45T2B, LoadLevel_Path625B2T, LoadLevel_Path625T2B
+.export LoadLevel_PathHorizontal, LoadLevel_PathVertical, LoadLevel_Pillar, LoadLevel_Pillar_BG
+.export LoadLevel_Pitfall, LoadLevel_PitfallW, LoadLevel_PowerBlock, LoadLevel_PrefabBlock
+.export LoadLevel_PutLittleBGCloud, LoadLevel_RandomPUpClouds, LoadLevel_Slope225B2T
+.export LoadLevel_Slope225B2TCeiling, LoadLevel_Slope225T2B, LoadLevel_Slope225T2BCeiling
+.export LoadLevel_Slope45B2T, LoadLevel_Slope45B2TCeiling, LoadLevel_Slope45T2B, LoadLevel_Slope45T2BCeiling
+.export LoadLevel_SmallSizeBush, LoadLevel_StoreJctStart, LoadLevel_ThroneRoom, LoadLevel_TopDecoBlocks
+.export LoadLevel_Tunnel, LoadLevel_VCeilingPipeRun, LoadLevel_VGroundPipe5Run, LoadLevel_VGroundPipeRun
+.export LoadLevel_VTransitPipeRun, LoadLevel_VertGroundL, LoadLevel_VertGroundR, LoadLevel_VineToGround
+.export Tile_Attributes_TS18, Tile_Layout_TS18, Vs_Battlefields
 
 
 .ifdef NES

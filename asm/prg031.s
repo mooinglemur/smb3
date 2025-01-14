@@ -54,6 +54,15 @@
 ; imports from PRG030
 .import IntReset_Part2, Clear_RAM_thru_ZeroPage, PRG030_SUB_9F50, IntIRQ_32PixelPartition_Part5
 .import IntIRQ_32PixelPartition_Part2, Randomize, PRG030_SUB_9F40
+; exports
+.export Clear_Nametable_Short, DynJump, IntIRQ_32PixPart_HideSprites, IntIRQ_32PixelPartition_Part3
+.export IntIRQ_Finish_NoDis, PRG031_F499, PRG031_FA3C, PRGROM_Change_A000, PRGROM_Change_Both2
+.export PRGROM_Change_C000, PT2_Full_CHRROM_Switch, Player_GetCard, Player_GetCardAndUpdate
+.export Player_GetItem, Read_Joypads, Reset_PPU_Clear_Nametables, Reset_PPU_Clear_Nametables2
+.export Scroll_PPU_Reset, Sound1_XCTL_YRAMP, Sound2_XCTL_YRAMP, Sound_PlayMusic, Sound_Sq1_NoteOn
+.export Sound_Sq2_NoteOn, Sound_Sq2_NoteOn_NoPAPURAMP, Sprite_RAM_Clear, StatusBar_DrawCardPiece
+.export StatusBar_Update_Cards, VertLevel_ScreenH, VertLevel_ScreenL
+
 
 .ifdef NES
 .segment "PRG031"

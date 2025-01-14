@@ -46,6 +46,13 @@
 .import LevelLoad, Tile_Mem_ClearA, Tile_Mem_ClearB
 ; imports from PRG031
 .import DynJump
+; exports
+.export GenericW4L, LeveLoad_FixedSizeGen_TS1, LevelLoad_TS1, LoadLevel_Generator_TS1
+.export Tile_Attributes_TS1, Tile_Layout_TS1, W101L, W102_BonusL, W103L, W104_EndL, W301_ExitL
+.export W303L, W303_EndL, W305_EndL, W307L, W309L, W3HBA, W3HBB, W3HBC, W404_BonusL, W405_BonusL, W46AL
+.export W501L, W503L, W503_EndL, W507_LowerL, W701L, W704L, W705L, W705_UnderL, W706L, W707L, W708L
+.export W7HBA, W801L, W802_BonusL
+
 
 
 .ifdef NES

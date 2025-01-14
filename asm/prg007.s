@@ -54,6 +54,8 @@
 .import Obj2Obj_EnByState, PSwitch_SubstTileAndAttr, Player_Die, Object_SetDeadEmpty, Tile_Mem_Addr
 ; imports from PRG031
 .import DynJump
+; exports
+.export Gameplay_UpdateAndDrawMisc, Scores_GiveAndDraw
 
 .ifdef NES
 .segment "PRG007"

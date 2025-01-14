@@ -34,6 +34,12 @@
 .import LevelLoad, Tile_Mem_ClearA, Tile_Mem_ClearB
 ; imports from PRG031
 .import DynJump
+; exports
+.export CoinShipL, LeveLoad_FixedSizeGen_TS10, LevelLoad_TS10, LoadLevel_Generator_TS10, Tile_Attributes_TS10
+.export Tile_Layout_TS10, W1AirshipL, W1Airship_IntroL, W2AirshipL, W2Airship_IntroL, W3AirshipL, W3Airship_IntroL
+.export W4AirshipL, W4Airship_IntroL, W5AirshipL, W5Airship_IntroL, W6AirshipL, W6Airship_IntroL, W7AirshipL, W7Airship_IntroL
+.export W8AirshipL, W8BSL, W8T1L, W8T2L
+
 
 .ifdef NES
 .segment "PRG023"

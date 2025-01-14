@@ -61,6 +61,12 @@
 .import Map_Calc_NT2Addr_By_XY
 ; imports from PRG031
 .import DynJump
+; exports
+.export HandleLevelJunction, LevelLoad_CopyObjectList, Level_Opening_Effect, Map_DoInventory_And_PoofFX
+.export Map_EnterLevel_Effect, Palette_FadeIn, Palette_FadeOut, Palette_PrepareFadeOut
+.export Scroll_Commit_Column, Scroll_ToVRAM_Apply, StatusBar_Fill_MorL, StatusBar_Fill_Score
+.export StatusBar_Fill_World, StatusBar_UpdateValues, TileChng_VRAMCommit, Video_Misc_Updates
+
 
 .ifdef NES
 .segment "PRG026"

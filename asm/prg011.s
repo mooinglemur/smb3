@@ -56,6 +56,11 @@
 .import Map_Calc_NT2Addr_By_XY, Tile_Mem_Addr, Map_Y_Starts
 ; imports from PRG031
 .import DynJump
+; exports
+.export GameOver_AlignToStartY, GameOver_ReturnToStartX, GameOver_TwirlFromAfar, GameOver_TwirlToStart
+.export LT0, LT0B, MO_CheckForBonus, MO_DoLevelClear, MO_HandTrap, MO_SkidAfarFinish, MO_SkidAfarPrep
+.export MO_SkidToPrev, MO_SkidToPrevAfar, MapObjects_UpdateDrawEnter, MapStarsIntro_DoStarFX
+.export Map_DoAnimations, Map_DoMap_WarpWind_FX, Map_DrawClearLevelPoof, Map_Init
 
 .ifdef NES
 .segment "PRG011"

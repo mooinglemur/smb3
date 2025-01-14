@@ -34,6 +34,8 @@
 .import Player_Draw
 ; imports from PRG031
 .import PRGROM_Change_C000, DynJump, Sprite_RAM_Clear
+; exports
+.export CineKing_DoWandReturn, EndWorldLetter_GenerateText, Setup_PalData
 
 .ifdef NES
 .segment "PRG027"

@@ -71,6 +71,9 @@
 .import ObjHit_DoNothing, ObjNorm_DoNothing, ObjInit_DoNothing
 ; imports from PRG031
 .import VertLevel_ScreenL, VertLevel_ScreenH, DynJump
+; exports
+.export LevelEvent_Do, Level_SpawnObjsAndBounce
+
 
 .ifdef NES
 .segment "PRG005"

@@ -38,6 +38,12 @@
 .import IntIRQ_32PixelPartition_Part3, IntIRQ_32PixPart_HideSprites, PRG031_FA3C, PRG031_F499
 .import Sound_Sq2_NoteOn_NoPAPURAMP, Sound_Sq2_NoteOn, Sound2_XCTL_YRAMP, Sound1_XCTL_YRAMP
 .import Sound_PlayMusic, Sound_Sq1_NoteOn
+; exports
+.export Music_Set1_Set2A_Headers, Music_Set1_Set2A_IndexOffs, Music_Set2A_Ends, Music_Set2A_Loops
+.export Music_Set2A_Starts, Music_Set2B_Ends, Music_Set2B_Headers, Music_Set2B_IndexOffs
+.export Music_Set2B_Loops, Music_Set2B_Starts, PatL1, PatL2, PatL3, PatL4, PatL5, PatL6, PatL8, PatS1
+.export PatS2, PatS3, PatS4, PatS5, PatS6, PatS8, Sound_Engine_Begin
+
 
 .ifdef NES
 .segment "PRG028"

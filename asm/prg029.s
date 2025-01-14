@@ -42,6 +42,11 @@
 .import Tile_Mem_Addr, Tile_Mem_AddrVH, Tile_Mem_AddrVL, LevelJct_GetVScreenH
 ; imports from PRG031
 .import DynJump
+; exports
+.export BlockChange_Do, M12ASegData1B, M12ASegData1C, M12ASegData1D, M12ASegData1E, M12ASegData1F
+.export M12ASegData20, M12ASegData21, M12ASegData22, M12ASegData23, M2BSegData07, M2BSegData08
+.export M2BSegData09, M2BSegData0A, M2BSegData14, M2BSegData15, M2BSegData1A, Player_Draw
+.export Player_DrawAndDoActions, ToadHouse_ChestPressB
 
 
 .ifdef NES

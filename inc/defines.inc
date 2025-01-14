@@ -1,3 +1,9 @@
+PRG_16K_BANK_COUNT = 16
+CHR_8K_BANK_COUNT = 16
+INES_MAPPER = 4
+INES_MIRROR = 0
+INES_SRAM = 0
+
 ; These are flags related to a video update stream value
 VU_VERT         = $80 ; Update in vertical (+32B) mode instead of horizontal (+1B) mode
 VU_REPEAT       = $40 ; Repeat following value several times instead of several raw values

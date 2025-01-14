@@ -45,6 +45,12 @@
 .import LevelLoad, Tile_Mem_ClearA, Tile_Mem_ClearB
 ; imports from PRG031
 .import DynJump
+; exports
+.export BigQBlock1L, BigQBlock2L, BigQBlock3L, BigQBlock4L, BigQBlock5L, BigQBlock6L, BigQBlock7L
+.export BigQBlock8L, LeveLoad_FixedSizeGen_TS14, LevelLoad_TS14, LoadLevel_Generator_TS14
+.export PJALL, PJARL, PJBLL, PJBRL, PJCLL, PJCRL, PJDLL, PJDRL, PJELL, PJERL, PJFLL, PJFRL, Tile_Attributes_TS14
+.export Tile_Layout_TS14, W105L, W304L, W308L, W40F_BonusL, W502L, W608L, W802L
+
 
 .ifdef NES
 .segment "PRG013"

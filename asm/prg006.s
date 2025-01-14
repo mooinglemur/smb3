@@ -14,6 +14,26 @@
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
 
+; exports
+.export BigQBlock1O, BigQBlock2O, BigQBlock3O, BigQBlock4O, BigQBlock5O, BigQBlock6O, BigQBlock7O, BigQBlock8O, CoinShipO
+.export CoinShip_BossO, Empty_ObjLayout, KINGO, TOADO, TOAD_SpecO, Unused2_ExitO, Unused3O, Unused3_CHO, Unused4_InnerO
+.export Unused7_EndO, Unused8_EndO, W101O, W102O, W103O, W103_CoinHeavO, W104O, W104_EndO, W105O, W105_CoinHeavO, W106O
+.export W10FO, W10F_AltO, W1AirshipO, W1Airship_BossO, W1HBO, W1UNO, W201O, W202O, W202_ExitO, W203O, W203_ExitO, W204O, W205O
+.export W20FO, W20F_AltO, W2AirshipO, W2Airship_BossO, W2FBO, W2HBO, W2P1O, W2PYO, W2PY_InsideO, W2STO, W301O, W301_ExitO
+.export W302O, W302_EndO, W303O, W303_EndO, W304O, W305O, W305_EndO, W306O, W306_EndO, W307O, W307_CoinHeavO, W308O, W309O, W309_EndO
+.export W3AirshipO, W3Airship_BossO, W3F1O, W3F1_AltO, W3F2O, W3F2_AltO, W3HBO, W3P1O, W3P2O, W3P3O, W401O, W401_BonusO, W402O
+.export W403O, W403_UnderO, W404O, W405O, W405_BonusO, W40F_BonusO, W46AO, W46BO, W4AirshipO, W4Airship_BossO, W4F1O, W4F2O
+.export W4F2_BonusO, W4HBO, W4P1O, W4P2O, W501O, W501_BonusO, W502O, W502_UnderO, W503O, W503_EndO, W503_InsideO, W504O, W504_EndO
+.export W505O, W506O, W507O, W507_LowerO, W508O, W509O, W5AirshipO, W5Airship_BossO, W5F1O, W5F1_AltO, W5F2O, W5F2_AltO, W5P1O
+.export W5T1O, W5T2O, W5T3O, W5T4O, W5TDO, W601O, W602O, W602_EndO, W603O, W604O, W604_CoinHeavO, W605O, W605_UnderO, W606O, W606_UnderO
+.export W607O, W607_EndO, W608O, W609O, W609_UnderO, W610O, W6AirshipO, W6Airship_BossO, W6F1O, W6F1_AltO, W6F2O, W6F2_AltO
+.export W6F3O, W6F3_AltO, W6P1O, W6P2O, W701O, W701_MazeO, W702O, W703O, W704O, W704_WaterO, W705O, W705_UnderO, W706O, W706_MazeO
+.export W707O, W707_MainO, W708O, W708_CoinHeavO, W709O, W709_EndO, W7AirshipO, W7Airship_BossO, W7F1O, W7F2O, W7F2_AltO
+.export W7I1O, W7I1_PrizeO, W7I2O, W7I2_PrizeO, W7P1O, W7P2O, W7P3O, W7P4O, W7P5O, W7P6O, W7P7O, W7P8O, W801O, W802O, W80FO, W80F_AltO
+.export W8AirshipO, W8Airship_BossO, W8BCO, W8BC_AltO, W8BSO, W8BS_BossO, W8H1O, W8H2O, W8H3O, W8HBO, W8H_PrizeO, W8P1O, W8P2O
+.export W8P3O, W8P4O, W8P5O, W8P6O, W8T1O, W8T2O, W8Tank1_BossO, W8Tank2_BossO, WAirship_IntroO
+
+
 .ifdef NES
 .segment "PRG006"
 .endif

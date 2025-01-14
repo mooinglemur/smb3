@@ -51,6 +51,13 @@
 .import Tile_Mem_Addr
 ; imports from PRG031
 .import DynJump
+; exports
+.export ASM_CoinShip, ASM_Terminator, ASM_UNK12, ASM_UNK4, ASM_UNK8, ASM_UNK9, ASM_W1Airship
+.export ASM_W1CoinHeaven, ASM_W3_Airship, ASM_W4Airship, ASM_W5_Airship, ASM_W6Airship, ASM_W7Airship
+.export ASM_W8Airship, ASM_W8Battleship, ASM_World8Tank1, ASM_World8Tank2, ASM_World_36_14
+.export ASM_World_56, ASM_World_62, ASM_World_67, ASM_World_74, AScroll_Movement, AutoScroll_Do
+.export Vs_2PVsPauseHandler
+
 
 .ifdef NES
 .segment "PRG009"

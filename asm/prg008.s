@@ -69,6 +69,11 @@
 .import LevelJct_GetVScreenH2
 ; imports from PRG031
 .import VertLevel_ScreenL, VertLevel_ScreenH, PRGROM_Change_C000
+; exports
+.export Airship_JumpFrameByPup, AutoScroll_CalcPlayerY, Object_BumpOffBlocks, PRG008_A224
+.export PRG008_A38E, PipeMove_SetPlayerFrame, Player_ApplyXVelocity, Player_ApplyYVelocity
+.export Player_ClimbFrame, Player_DoGameplay, Player_DoScrolling, Player_GetTileAndSlope
+.export Player_GrowFrames, Player_KuriboFrame, Player_WalkFramesByPUp
 
 .ifdef NES
 .segment "PRG008"
