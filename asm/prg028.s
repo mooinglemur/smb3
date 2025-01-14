@@ -12,6 +12,33 @@
 ; Distribution package date: Fri Apr  6 23:46:16 UTC 2012
 ;---------------------------------------------------------------------------
 
+.include "../inc/macros.inc"
+.include "../inc/defines.inc"
+
+; ZP imports
+.importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var8, Temp_Var11, Temp_Var12, Temp_Var13
+.importzp Temp_Var14, Temp_Var15, Temp_Var16, Map_Tile_AddrL, Map_Tile_AddrH, Sound_Map_EntrV
+.importzp Sound_Map_EntV2, Sound_Map_Off, Player_YHi, Player_Y, Level_TileOff, Level_Tile, Player_Slopes
+; BSS imports (low RAM and cart SRAM)
+.import Raster_State, Scroll_AttrStrip, Update_Request, SFX_Counter1, SndCur_Player, SndCur_Level1
+.import SndCur_Level2, SndCur_Music2, SndCur_Map, SndCur_Pause, SFX_Counter2, SFX_Counter3, SFX_Counter4
+.import Sound_IsPaused, Sound_QPlayer, Sound_QLevel1, Sound_QLevel2, Sound_QMusic1, Sound_QMusic2
+.import Sound_QMap, Sound_QPause, Music_RestH_Base, Level_Tileset, Sound_Map_L2Hld, Sound_Map_Len2
+.import Sound_Map_LHold, Sound_Map_Len, Sound_Map_Off2, Sound_Unused7FF, Tile_Mem, Tile_AttrTable
+; imports from PRG000
+.import Level_SlopeSetByQuad
+; imports from PRG029
+.import M2BSegData1A, M2BSegData15, M2BSegData14, M2BSegData0A, M2BSegData09, M2BSegData08, M2BSegData07
+.import M12ASegData23, M12ASegData22, M12ASegData21, M12ASegData20, M12ASegData1F, M12ASegData1E
+.import M12ASegData1D, M12ASegData1C, M12ASegData1B
+; imports from PRG030
+.import Tile_Mem_Addr, PRG030_9E6C, Tile_Mem_AddrVH, Tile_Mem_AddrVL, LevelJct_GetVScreenH
+.import TileLayout_ByTileset
+; imports from PRG031
+.import IntIRQ_32PixelPartition_Part3, IntIRQ_32PixPart_HideSprites, PRG031_FA3C, PRG031_F499
+.import Sound_Sq2_NoteOn_NoPAPURAMP, Sound_Sq2_NoteOn, Sound2_XCTL_YRAMP, Sound1_XCTL_YRAMP
+.import Sound_PlayMusic, Sound_Sq1_NoteOn
+
 .ifdef NES
 .segment "PRG028"
 .endif
@@ -153,7 +180,7 @@ PRG028_A0C5:
 
 	; Y is now an offset gleaned from the first 8 bytes of this table...
 	LDA Sound_Map_LUT,Y	; A = Offset to sound
-	STA <Sound_Map_Off	; Store offset to Sound_Map_Off
+	STA Sound_Map_Off	; Store offset to Sound_Map_Off
 
 	LDA Sound_Map_LUT+1,Y	; Offset for the second track of the sound
 	STA Sound_Map_Off2	; Store offset to Sound_Map_Off2
@@ -167,8 +194,8 @@ MapSound_Playing:
 	BNE PRG028_A136	 ; If Sound_Map_Len > 0, jump to PRG028_A136
 
 	; Sound_Map_Len = 0 ...
-	LDY <Sound_Map_Off	; Y = Sound_Map_Off
-	INC <Sound_Map_Off	; Sound_Map_Off++
+	LDY Sound_Map_Off	; Y = Sound_Map_Off
+	INC Sound_Map_Off	; Sound_Map_Off++
 	LDA SndMap_Data,Y 	; Get next byte of sound data
 
 	BEQ MapSound_Stop 	; If it's $00, sound over!  Jump to MapSound_Stop
@@ -187,8 +214,8 @@ MapSound_Stop:
 MapSound_SetLen:
 	JSR AND7F	 	; Just keep the lower 7 bits
 	STA Sound_Map_LHold	; Use this as the new length value for any following bytes
-	LDY <Sound_Map_Off	; Y = offset into sound data
-	INC <Sound_Map_Off	; Sound_Map_Off++
+	LDY Sound_Map_Off	; Y = offset into sound data
+	INC Sound_Map_Off	; Sound_Map_Off++
 	LDA SndMap_Data,Y	; Get the next (presumably not rest!) byte
 
 
@@ -214,7 +241,7 @@ PRG028_A127:
 	LDA Sound_Map_LHold	 ; Get the current length hold value
 	STA Sound_Map_Len	 ; Reset the length counter with this value!
 	LDA #$00	 	 ; 
-	STA <Sound_Map_EntrV	 ; Start at index 0 for volume ramping (sound $04, level enter, ONLY!)
+	STA Sound_Map_EntrV	 ; Start at index 0 for volume ramping (sound $04, level enter, ONLY!)
 
 PRG028_A136:
 	LDA SndCur_Map ; Get current map sound we're playing
@@ -223,8 +250,8 @@ PRG028_A136:
 
 	; $04 (entering level) specific...
 	; The volume is ramped down as the sound plays!
-	INC <Sound_Map_EntrV	 ; Sound_Map_EntrV++
-	LDY <Sound_Map_EntrV	 ; Y = Sound_Map_EntrV
+	INC Sound_Map_EntrV	 ; Sound_Map_EntrV++
+	LDY Sound_Map_EntrV	 ; Y = Sound_Map_EntrV
 	LDA SndMap_Entr_VolData-1,Y	 ; because they incremented the pointer FIRST, I have to subtract 1 from the LUT address!
 	STA PAPU_CTL1	 ; Set the new volume!
 
@@ -273,12 +300,12 @@ PRG028_A185:
 
 	; Sound_Map_EntV2 = 0
 	LDA #$00
-	STA <Sound_Map_EntV2
+	STA Sound_Map_EntV2
 
 PRG028_A18F:
-	INC <Sound_Map_EntV2	 ; Sound_Map_EntV2++
+	INC Sound_Map_EntV2	 ; Sound_Map_EntV2++
 
-	LDY <Sound_Map_EntV2	; Y = Sound_Map_EntV2
+	LDY Sound_Map_EntV2	; Y = Sound_Map_EntV2
 
 	LDA SndMap_Entr_VolData-1,Y
 	ORA #$50	 ; Envelope decay disable + 25% duty cycle
@@ -296,26 +323,24 @@ AND7F:	; This seems like a ridiculous subroutine!
 	AND #$7f
 	RTS		 ; Return
 
-MSHO .func \1-Sound_Map_LUT	; "Map Sound Header Offset"
 Sound_Map_LUT:
 	; These are offsets from here to the respective SFX data headers
-	.byte MSHO(SndMapH_Entrance),	MSHO(SndMapH_Move)
-	.byte MSHO(SndMapH_Enter),	MSHO(SndMapH_Flip)
-	.byte MSHO(SndMapH_Bonus),	MSHO(SndMapH_Unused)
-	.byte MSHO(SndMapH_Unused),	MSHO(SndMapH_Deny)
+	.byte <(SndMapH_Entrance-Sound_Map_LUT),	<(SndMapH_Move-Sound_Map_LUT)
+	.byte <(SndMapH_Enter-Sound_Map_LUT),	<(SndMapH_Flip-Sound_Map_LUT)
+	.byte <(SndMapH_Bonus-Sound_Map_LUT),	<(SndMapH_Unused-Sound_Map_LUT)
+	.byte <(SndMapH_Unused-Sound_Map_LUT),	<(SndMapH_Deny-Sound_Map_LUT)
 
 
-MSO .func \1-SndMap_Data
 	;	Offset1, Offset2
 	; Offset1 specifies a first track played on Square 1 at 50% duty cycle
 	; Offset2 specifies a second track played on Square 2 at 25% duty cycle, only used by the level entry sound...
-SndMapH_Entrance:	.byte MSO(SndMap_Data_WEnt),	$00 ; $01: World begin starry entrance sound
-SndMapH_Move:		.byte MSO(SndMap_Data_Move),	$00 ; $02: Path move
-SndMapH_Enter:		.byte MSO(SndMap_Data_Entr),	MSO(SndMap_Data_Entr2) ; $04: Enter level
-SndMapH_Flip:		.byte MSO(SndMap_Data_Flip),	$00 ; $08: Flip inventory
-SndMapH_Bonus:		.byte MSO(SndMap_Data_Bonus),	$00 ; $10: Bonus appears
-SndMapH_Deny:		.byte MSO(SndMap_Data_Deny), 	$00 ; $80: Denied
-SndMapH_Unused:		.byte MSO(SndMap_Data_Unused),	$00 ; $20/$40: ?? unused ?
+SndMapH_Entrance:	.byte <(SndMap_Data_WEnt-SndMap_Data),	$00 ; $01: World begin starry entrance sound
+SndMapH_Move:		.byte <(SndMap_Data_Move-SndMap_Data),	$00 ; $02: Path move
+SndMapH_Enter:		.byte <(SndMap_Data_Entr-SndMap_Data),	<(SndMap_Data_Entr2-SndMap_Data) ; $04: Enter level
+SndMapH_Flip:		.byte <(SndMap_Data_Flip-SndMap_Data),	$00 ; $08: Flip inventory
+SndMapH_Bonus:		.byte <(SndMap_Data_Bonus-SndMap_Data),	$00 ; $10: Bonus appears
+SndMapH_Deny:		.byte <(SndMap_Data_Deny-SndMap_Data), 	$00 ; $80: Denied
+SndMapH_Unused:		.byte <(SndMap_Data_Unused-SndMap_Data),	$00 ; $20/$40: ?? unused ?
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1190,33 +1215,32 @@ SndLev2_SkidNCtl:
 	.byte $A5, $8B, $C9, $03, $F0, $10, $C0
 
 
-	; Each segment header is 7 bytes long:
-MusSeg .macro
-   .byte \1	; Music_RestH_Base value (always divisible by $10; base part of index into PRG031's Music_RestH_LUT)
-   .word \2	; Address of music segment data (all tracks this segment, offsets to follow, except implied Square 2 zero)
-   .byte \3	; Triangle track starting offset ($00 means disabled)
-   .byte \4	; Square 1 track starting offset (cannot be disabled)
-   .byte \5	; Noise track starting offset ($00 means disabled)
-   .byte \6	; DCM track starting offset ($00 means disabled)
-   .endm	; Square 2 cannot be disabled and always starts at offset $00
-
-M12ASH .func \1-Music_Set1_Set2A_Headers	; "Music Set 1/2A Segment Header Offset"
-
 Music_Set1_Set2A_IndexOffs:
 	; Index 0 - 7 are Set 1 songs, accessed by bit weight
-	.byte M12ASH(MS1_01SegHedr), M12ASH(MS1_02SegHedr), M12ASH(MS1_04SegHedr), M12ASH(MS1_08SegHedr)	; Index $00-$03
-	.byte M12ASH(MS1_10SegHedr), M12ASH(MS1_20SegHedr), M12ASH(MS1_40SegHedr), M12ASH(MS1_80SegHedr)	; Index $04-$07
+	.byte <(MS1_01SegHedr-Music_Set1_Set2A_Headers), <(MS1_02SegHedr-Music_Set1_Set2A_Headers)
+	.byte <(MS1_04SegHedr-Music_Set1_Set2A_Headers), <(MS1_08SegHedr-Music_Set1_Set2A_Headers)	; Index $00-$03
+	.byte <(MS1_10SegHedr-Music_Set1_Set2A_Headers), <(MS1_20SegHedr-Music_Set1_Set2A_Headers)
+	.byte <(MS1_40SegHedr-Music_Set1_Set2A_Headers), <(MS1_80SegHedr-Music_Set1_Set2A_Headers)	; Index $04-$07
 
 	; 8+ are Set 2A
-	.byte M12ASH(MS2ASegHedr09), M12ASH(MS2ASegHedr0C), M12ASH(MS2ASegHedr07), M12ASH(MS2ASegHedr0A)	; Index $08-$0B
-	.byte M12ASH(MS2ASegHedr0B), M12ASH(MS2ASegHedr05), M12ASH(MS2ASegHedr08), M12ASH(MS2ASegHedr06)	; Index $0C-$0F
-	.byte M12ASH(MS2ASegHedr0F), M12ASH(MS2ASegHedr10), M12ASH(MS2ASegHedr11), M12ASH(MS2ASegHedr0E)	; Index $10-$13
-	.byte M12ASH(MS2ASegHedr04), M12ASH(MS2ASegHedr12), M12ASH(MS2ASegHedr03), M12ASH(MS2ASegHedr04)	; Index $14-$17
-	.byte M12ASH(MS2ASegHedr00), M12ASH(MS2ASegHedr01), M12ASH(MS2ASegHedr00), M12ASH(MS2ASegHedr02)	; Index $18-$1B
-	.byte M12ASH(MS2ASegHedr1A), M12ASH(MS2ASegHedr0D), M12ASH(MS2ASegHedr1B), M12ASH(MS2ASegHedr1B)	; Index $1C-$1F
-	.byte M12ASH(MS2ASegHedr1C), M12ASH(MS2ASegHedr1B), M12ASH(MS2ASegHedr1D), M12ASH(MS2ASegHedr1E)	; Index $20-$23
-	.byte M12ASH(MS2ASegHedr1E), M12ASH(MS2ASegHedr1F), M12ASH(MS2ASegHedr1F), M12ASH(MS2ASegHedr20)	; Index $24-$27
-	.byte M12ASH(MS2ASegHedr21), M12ASH(MS2ASegHedr22), M12ASH(MS2ASegHedr21), M12ASH(MS2ASegHedr23)	; Index $28-$2B
+	.byte <(MS2ASegHedr09-Music_Set1_Set2A_Headers), <(MS2ASegHedr0C-Music_Set1_Set2A_Headers)
+	.byte <(MS2ASegHedr07-Music_Set1_Set2A_Headers), <(MS2ASegHedr0A-Music_Set1_Set2A_Headers)	; Index $08-$0B
+	.byte <(MS2ASegHedr0B-Music_Set1_Set2A_Headers), <(MS2ASegHedr05-Music_Set1_Set2A_Headers)
+	.byte <(MS2ASegHedr08-Music_Set1_Set2A_Headers), <(MS2ASegHedr06-Music_Set1_Set2A_Headers)	; Index $0C-$0F
+	.byte <(MS2ASegHedr0F-Music_Set1_Set2A_Headers), <(MS2ASegHedr10-Music_Set1_Set2A_Headers)
+	.byte <(MS2ASegHedr11-Music_Set1_Set2A_Headers), <(MS2ASegHedr0E-Music_Set1_Set2A_Headers)	; Index $10-$13
+	.byte <(MS2ASegHedr04-Music_Set1_Set2A_Headers), <(MS2ASegHedr12-Music_Set1_Set2A_Headers)
+	.byte <(MS2ASegHedr03-Music_Set1_Set2A_Headers), <(MS2ASegHedr04-Music_Set1_Set2A_Headers)	; Index $14-$17
+	.byte <(MS2ASegHedr00-Music_Set1_Set2A_Headers), <(MS2ASegHedr01-Music_Set1_Set2A_Headers)
+	.byte <(MS2ASegHedr00-Music_Set1_Set2A_Headers), <(MS2ASegHedr02-Music_Set1_Set2A_Headers)	; Index $18-$1B
+	.byte <(MS2ASegHedr1A-Music_Set1_Set2A_Headers), <(MS2ASegHedr0D-Music_Set1_Set2A_Headers)
+	.byte <(MS2ASegHedr1B-Music_Set1_Set2A_Headers), <(MS2ASegHedr1B-Music_Set1_Set2A_Headers)	; Index $1C-$1F
+	.byte <(MS2ASegHedr1C-Music_Set1_Set2A_Headers), <(MS2ASegHedr1B-Music_Set1_Set2A_Headers)
+	.byte <(MS2ASegHedr1D-Music_Set1_Set2A_Headers), <(MS2ASegHedr1E-Music_Set1_Set2A_Headers)	; Index $20-$23
+	.byte <(MS2ASegHedr1E-Music_Set1_Set2A_Headers), <(MS2ASegHedr1F-Music_Set1_Set2A_Headers)
+	.byte <(MS2ASegHedr1F-Music_Set1_Set2A_Headers), <(MS2ASegHedr20-Music_Set1_Set2A_Headers)	; Index $24-$27
+	.byte <(MS2ASegHedr21-Music_Set1_Set2A_Headers), <(MS2ASegHedr22-Music_Set1_Set2A_Headers)
+	.byte <(MS2ASegHedr21-Music_Set1_Set2A_Headers), <(MS2ASegHedr23-Music_Set1_Set2A_Headers)	; Index $28-$2B
 
 Music_Set1_Set2A_Headers:
 MS2ASegHedr00:	MusSeg $00, M12ASegData00, $00, $13, $00, $00
@@ -1581,25 +1605,33 @@ PatS8:	.byte $50, $51, $51, $51, $51, $51, $51, $51, $51, $51, $51, $51, $51, $5
 
 	.byte $15, $07, $C8, $E8, $E0, $03, $D0, $F4
 
-M2BSH .func \1-Music_Set2B_Headers	; "Music Set 2B Segment Header Offset"
-
-
 	; Each "index" of music is tied to a header of a "segment" of music.  Some segments are
 	; reused where repetitious musical notes exist.  The segment headers are apparently not
 	; stored in any particular order.  This table connects an index to a header:
 Music_Set2B_IndexOffs:
-	.byte M2BSH(M2BSegHedr0F), M2BSH(M2BSegHedr10), M2BSH(M2BSegHedr11), M2BSH(M2BSegHedr10)	; Index $00-$03
-	.byte M2BSH(M2BSegHedr12), M2BSH(M2BSegHedr13), M2BSH(M2BSegHedr14), M2BSH(M2BSegHedr1B)	; Index $04-$07
-	.byte M2BSH(M2BSegHedr0C), M2BSH(M2BSegHedr0D), M2BSH(M2BSegHedr0D), M2BSH(M2BSegHedr0E)	; Index $08-$0B
-	.byte M2BSH(M2BSegHedr08), M2BSH(M2BSegHedr08), M2BSH(M2BSegHedr09), M2BSH(M2BSegHedr1C)	; Index $0C-$0F
-	.byte M2BSH(M2BSegHedr1D), M2BSH(M2BSegHedr1D), M2BSH(M2BSegHedr1E), M2BSH(M2BSegHedr0A)	; Index $10-$13
-	.byte M2BSH(M2BSegHedr0B), M2BSH(M2BSegHedr17), M2BSH(M2BSegHedr18), M2BSH(M2BSegHedr18)	; Index $14-$17
-	.byte M2BSH(M2BSegHedr19), M2BSH(M2BSegHedr19), M2BSH(M2BSegHedr1A), M2BSH(M2BSegHedr15)	; Index $18-$1B
-	.byte M2BSH(M2BSegHedr15), M2BSH(M2BSegHedr16), M2BSH(M2BSegHedr00), M2BSH(M2BSegHedr01)	; Index $1C-$1F
-	.byte M2BSH(M2BSegHedr02), M2BSH(M2BSegHedr03), M2BSH(M2BSegHedr04), M2BSH(M2BSegHedr05)	; Index $20-$23
-	.byte M2BSH(M2BSegHedr06), M2BSH(M2BSegHedr05), M2BSH(M2BSegHedr07), M2BSH(M2BSegHedr1F)	; Index $24-$27
-	.byte M2BSH(M2BSegHedr20), M2BSH(M2BSegHedr21), M2BSH(M2BSegHedr22), M2BSH(M2BSegHedr23)	; Index $28-$2B
-	.byte M2BSH(M2BSegHedr24)	; Index $2C
+	.byte <(M2BSegHedr0F-Music_Set2B_Headers), <(M2BSegHedr10-Music_Set2B_Headers)
+	.byte <(M2BSegHedr11-Music_Set2B_Headers), <(M2BSegHedr10-Music_Set2B_Headers)	; Index $00-$03
+	.byte <(M2BSegHedr12-Music_Set2B_Headers), <(M2BSegHedr13-Music_Set2B_Headers)
+	.byte <(M2BSegHedr14-Music_Set2B_Headers), <(M2BSegHedr1B-Music_Set2B_Headers)	; Index $04-$07
+	.byte <(M2BSegHedr0C-Music_Set2B_Headers), <(M2BSegHedr0D-Music_Set2B_Headers)
+	.byte <(M2BSegHedr0D-Music_Set2B_Headers), <(M2BSegHedr0E-Music_Set2B_Headers)	; Index $08-$0B
+	.byte <(M2BSegHedr08-Music_Set2B_Headers), <(M2BSegHedr08-Music_Set2B_Headers)
+	.byte <(M2BSegHedr09-Music_Set2B_Headers), <(M2BSegHedr1C-Music_Set2B_Headers)	; Index $0C-$0F
+	.byte <(M2BSegHedr1D-Music_Set2B_Headers), <(M2BSegHedr1D-Music_Set2B_Headers)
+	.byte <(M2BSegHedr1E-Music_Set2B_Headers), <(M2BSegHedr0A-Music_Set2B_Headers)	; Index $10-$13
+	.byte <(M2BSegHedr0B-Music_Set2B_Headers), <(M2BSegHedr17-Music_Set2B_Headers)
+	.byte <(M2BSegHedr18-Music_Set2B_Headers), <(M2BSegHedr18-Music_Set2B_Headers)	; Index $14-$17
+	.byte <(M2BSegHedr19-Music_Set2B_Headers), <(M2BSegHedr19-Music_Set2B_Headers)
+	.byte <(M2BSegHedr1A-Music_Set2B_Headers), <(M2BSegHedr15-Music_Set2B_Headers)	; Index $18-$1B
+	.byte <(M2BSegHedr15-Music_Set2B_Headers), <(M2BSegHedr16-Music_Set2B_Headers)
+	.byte <(M2BSegHedr00-Music_Set2B_Headers), <(M2BSegHedr01-Music_Set2B_Headers)	; Index $1C-$1F
+	.byte <(M2BSegHedr02-Music_Set2B_Headers), <(M2BSegHedr03-Music_Set2B_Headers)
+	.byte <(M2BSegHedr04-Music_Set2B_Headers), <(M2BSegHedr05-Music_Set2B_Headers)	; Index $20-$23
+	.byte <(M2BSegHedr06-Music_Set2B_Headers), <(M2BSegHedr05-Music_Set2B_Headers)
+	.byte <(M2BSegHedr07-Music_Set2B_Headers), <(M2BSegHedr1F-Music_Set2B_Headers)	; Index $24-$27
+	.byte <(M2BSegHedr20-Music_Set2B_Headers), <(M2BSegHedr21-Music_Set2B_Headers)
+	.byte <(M2BSegHedr22-Music_Set2B_Headers), <(M2BSegHedr23-Music_Set2B_Headers)	; Index $28-$2B
+	.byte <(M2BSegHedr24-Music_Set2B_Headers)	; Index $2C
 
 
 
@@ -1888,18 +1920,18 @@ M2BSegData1D:
 
 	; Set Temp_Var13/14 to point to the layout data for this Tileset		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	LDA TileLayout_ByTileset,X		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Temp_Var13		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Temp_Var13		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	LDA TileLayout_ByTileset+1,X		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Temp_Var14		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Temp_Var14		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	LDY <Temp_Var11		 ; Y = tile temp		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDY Temp_Var11		 ; Y = tile temp		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	RTS		 ; Return		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 ; VScroll_TileQuads2Attrs:		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	LDX <Temp_Var8		 ; X = Temp_Var8 (Scroll_AttrStrip offset)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDX Temp_Var8		 ; X = Temp_Var8 (Scroll_AttrStrip offset)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	LDA [Map_Tile_AddrL],Y	 ; Get the tile		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDA (Map_Tile_AddrL),Y	 ; Get the tile		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	; "Quadrant" bits (6 and 7) are pushed in as attribute bits		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	ASL A		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
@@ -1909,7 +1941,7 @@ M2BSegData1D:
 
 	DEY		 ; Y--		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	LDA [Map_Tile_AddrL],Y	 ; Get the tile		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDA (Map_Tile_AddrL),Y	 ; Get the tile		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	; "Quadrant" bits (6 and 7) are pushed in as attribute bits		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	ASL A		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
@@ -1924,45 +1956,45 @@ M2BSegData1D:
 	; Temp_Var13 / Temp_Var14 -- Y Hi and Lo		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	; Temp_Var15 / Temp_Var16 -- X Hi and Lo		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	LDA <Temp_Var13	 ; A = Temp_Var13 (Y Hi)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDA Temp_Var13	 ; A = Temp_Var13 (Y Hi)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	PHA		 ; Save it		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	TAY		 ; Y = Y Hi		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	LDA <Temp_Var14	 ; A = Temp_Var14 (Y Lo)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDA Temp_Var14	 ; A = Temp_Var14 (Y Lo)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	PHA		 ; Save it		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	JSR LevelJct_GetVScreenH		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	STA <Temp_Var14	 ; Adjusted Y for vertical -> Temp_Var14		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Temp_Var14	 ; Adjusted Y for vertical -> Temp_Var14		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	; Select root offset into tile memory		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	LDA Tile_Mem_AddrVL,Y		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Map_Tile_AddrL		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Map_Tile_AddrL		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	LDA Tile_Mem_AddrVH,Y		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Map_Tile_AddrH		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Map_Tile_AddrH		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	; Combine positions into Temp_Var15 to form tile mem offset		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	LDA <Temp_Var14		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDA Temp_Var14		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	AND #$f0		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Temp_Var15		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Temp_Var15		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	LDA <Temp_Var16		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDA Temp_Var16		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	LSR A		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	LSR A		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	LSR A		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	LSR A		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	ORA <Temp_Var15		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	ORA Temp_Var15		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	TAY		 ; Offset -> 'Y'		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	PLA		 ; Restore original value for Temp_Var14		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Temp_Var14	 ; Store it		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Temp_Var14	 ; Store it		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	PLA		 ; Restore original value for Temp_Var13		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Temp_Var13	 ; Store it		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Temp_Var13	 ; Store it		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	LDA [Map_Tile_AddrL],Y	 ; Get tile		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Level_Tile	 ; Store into Level_Tile		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDA (Map_Tile_AddrL),Y	 ; Get tile		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Level_Tile	 ; Store into Level_Tile		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	RTS		 ; Return		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
@@ -1979,7 +2011,8 @@ PRG028_BE6C:		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	CPY #$00		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	BLS PRG028_BE8E	 ; If Y < 0 (i.e. if the Player Y High is less than zero, which shouldn't happen!), jump to PRG028_BE8E (RTS)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	ADD PRG030_9E6C,Y	; Player_Y += Player_YHi[Y]		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	CLC
+	ADC PRG030_9E6C,Y	; Player_Y += Player_YHi[Y]		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	BCS PRG028_BE8A	 	; If carry set (overflow occurred), jump to PRG028_BE8A		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	CMP #$f0			; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
@@ -1987,7 +2020,8 @@ PRG028_BE6C:		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 PRG028_BE8A:		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	; Add $10 and roll over 'Y' (Considered in the lower vertical half)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	ADD #$10		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	CLC
+	ADC #$10		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	INY			; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 PRG028_BE8E:		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
@@ -2001,7 +2035,8 @@ PRG028_BE8E:		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	CPY #$00		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	BLS PRG028_BE9A	 ; If YHi < 0 (shouldn't happen?), jump to PRG028_BE9A		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	SUB PRG030_9E6C,Y		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	SEC
+	SBC PRG030_9E6C,Y		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	BCS PRG028_BE9A	 ; If carry set, jump to PRG028_BE9A		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	DEY		 ; Y--		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
@@ -2021,45 +2056,45 @@ PRG028_BE9A:		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	; Clear slope array		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	LDA #$00			; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Player_Slopes			; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Player_Slopes+1		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Player_Slopes+2		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Player_Slopes			; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Player_Slopes+1		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Player_Slopes+2		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	LDA <Temp_Var16		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDA Temp_Var16		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	LSR A		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	LSR A		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	LSR A		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	LSR A		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Level_TileOff	 ; Level_TileOff = Temp_Var16 >> 4 (current column Player is in)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Level_TileOff	 ; Level_TileOff = Temp_Var16 >> 4 (current column Player is in)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	LDA <Temp_Var15		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDA Temp_Var15		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	AND #$0f			; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	ASL A				; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	TAX		 ; X = (Temp_Var15 & $0F) << 1 (current "high" part of Player X shifted up by 1, indexing Tile Mem)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	; Set Map_Tile_AddrL/H to appropriate screen based on Player's position		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	LDA Tile_Mem_Addr,X		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Map_Tile_AddrL		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Map_Tile_AddrL		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	LDA Tile_Mem_Addr+1,X		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Map_Tile_AddrH		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Map_Tile_AddrH		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	LDA <Temp_Var13		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDA Temp_Var13		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	BEQ PRG028_BEC3	 ; If Temp_Var13 (Y Hi) = 0, jump to PRG028_BEC3		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	INC <Map_Tile_AddrH ; Otherwise, go to second half of screen		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	INC Map_Tile_AddrH ; Otherwise, go to second half of screen		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 PRG028_BEC3:		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	LDA <Temp_Var14		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDA Temp_Var14		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	AND #$f0		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	ORA <Level_TileOff	 ; Level_TileOff gets the Player's current row in the upper 4 bits		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	ORA Level_TileOff	 ; Level_TileOff gets the Player's current row in the upper 4 bits		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	; Level_TileOff is now Player's current offset in Tile Mem from the selected pointer		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	STA <Temp_Var12		 ; ... and copied into Temp_Var12		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Temp_Var12		 ; ... and copied into Temp_Var12		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	TAY		 	; Y = current offset		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	LDA [Map_Tile_AddrL],Y	; Get tile here		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Level_Tile	; Store into Level_Tile		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDA (Map_Tile_AddrL),Y	; Get tile here		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Level_Tile	; Store into Level_Tile		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	LDY Level_Tileset		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	CPY #3		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
@@ -2070,11 +2105,11 @@ PRG028_BEC3:		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 PRG028_BEDB:		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	LDA #$00		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Temp_Var1		 ; Temp_Var1 = 0		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Temp_Var1		 ; Temp_Var1 = 0		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	LDY <Temp_Var12		 ; Y = current offset in Tile Mem		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	LDA [Map_Tile_AddrL],Y	 ; Get tile here		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Temp_Var2		 ; Store into Temp_Var2		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDY Temp_Var12		 ; Y = current offset in Tile Mem		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDA (Map_Tile_AddrL),Y	 ; Get tile here		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Temp_Var2		 ; Store into Temp_Var2		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	AND #$c0		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	CLC		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
@@ -2083,7 +2118,7 @@ PRG028_BEDB:		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	ROL A		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	TAY		; Y = just the upper 2 bits of tile shifted right 6 (0 to 3)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	LDA <Temp_Var2		 ; Re-get tile		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDA Temp_Var2		 ; Re-get tile		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	CMP Tile_AttrTable,Y		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	BLT PRG028_BF0D	 	; If it's less than the tile specified in Tile_AttrTable[Y], jump to PRG028_BF0D		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
@@ -2093,20 +2128,21 @@ PRG028_BEDB:		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	; Temp_Var3/4 are loaded with address inside PRG000_C000		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	LDA Level_SlopeSetByQuad,X		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Temp_Var3		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Temp_Var3		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	LDA Level_SlopeSetByQuad+1,X		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Temp_Var4		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Temp_Var4		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	LDX <Temp_Var1	 	; X = Temp_Var1 (0)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	LDA <Temp_Var2	 	; A = Temp_Var2 (the retrieved tile)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	SUB Tile_AttrTable,Y	; Subtract the root tile value		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDX Temp_Var1	 	; X = Temp_Var1 (0)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDA Temp_Var2	 	; A = Temp_Var2 (the retrieved tile)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	SEC
+	SBC Tile_AttrTable,Y	; Subtract the root tile value		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	TAY		 	; Y = result		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	LDA [Temp_Var3],Y		; Get value 		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA <Player_Slopes,X	; Store into Player_Slopes		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDA (Temp_Var3),Y		; Get value 		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	STA Player_Slopes,X	; Store into Player_Slopes		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 PRG028_BF0D:		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	LDA <Level_Tile	; A = Level_Tile (the tile retrieved)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	LDA Level_Tile	; A = Level_Tile (the tile retrieved)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	RTS		 ; Return		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	; Probably unused space		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY

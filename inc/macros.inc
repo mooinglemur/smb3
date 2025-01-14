@@ -104,3 +104,13 @@
 	; Terminator
 	.byte $00
 .endmacro
+
+	; Each segment header is 7 bytes long:
+.macro MusSeg arg1, arg2, arg3, arg4, arg5, arg6
+   .byte arg1	; Music_RestH_Base value (always divisible by $10; base part of index into PRG031's Music_RestH_LUT)
+   .word arg2	; Address of music segment data (all tracks this segment, offsets to follow, except implied Square 2 zero)
+   .byte arg3	; Triangle track starting offset ($00 means disabled)
+   .byte arg4	; Square 1 track starting offset (cannot be disabled)
+   .byte arg5	; Noise track starting offset ($00 means disabled)
+   .byte arg6	; DCM track starting offset ($00 means disabled)
+.endmacro	; Square 2 cannot be disabled and always starts at offset $00
