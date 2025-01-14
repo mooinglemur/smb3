@@ -11,6 +11,42 @@
 ; This source file last updated: 2012-01-04 18:17:40.023928498 -0600
 ; Distribution package date: Fri Apr  6 23:46:16 UTC 2012
 ;---------------------------------------------------------------------------
+
+.include "../inc/macros.inc"
+.include "../inc/defines.inc"
+
+; ZP imports
+.importzp Temp_Var15, Temp_Var16, Level_Tile
+; BSS imports (low RAM and cart SRAM)
+.import LL_ShapeDef, Level_Tileset, Tile_Mem
+; imports from PRG006
+.import W202_ExitO, Unused4_InnerO, Unused3_CHO, Empty_ObjLayout, W606O, W609O, W605O, W2PYO
+; imports from PRG014
+.import LoadLevel_MiscBG, LoadLevel_PrefabBlock, LoadLevel_FillBackground, LoadLevel_BigSizeBush
+.import LoadLevel_SmallSizeBush, LoadLevel_MidSizeBush, LoadLevel_EndGoal, LoadLevel_PowerBlock
+.import LoadLevel_Door2, LoadLevel_Nothing, LoadLevel_Corner, LoadLevel_CloudRun, LoadLevel_Tunnel
+.import LoadLevel_CloudRun3, LoadLevel_VGroundPipe5Run, LoadLevel_BGBush, LoadLevel_DecoCeiling
+.import LoadLevel_DecoGround, LoadLevel_BGOrWater, LoadLevel_VertGroundR, LoadLevel_Slope225B2TCeiling
+.import LoadLevel_Slope225T2BCeiling, LoadLevel_Slope225B2T, LoadLevel_Slope225T2B
+.import LoadLevel_VTransitPipeRun, LoadLevel_IceBricks, LoadLevel_TopDecoBlocks, LoadLevel_CCBridge
+.import LoadLevel_Cannon, LoadLevel_HLeftWallPipeRun, LoadLevel_HRightWallPipeRun
+.import LoadLevel_VCeilingPipeRun, LoadLevel_VGroundPipeRun, LoadLevel_BlockRun, LoadLevel_VertGroundL
+.import LoadLevel_Slope45B2TCeiling, LoadLevel_Slope45T2BCeiling, LoadLevel_Slope45B2T
+.import LoadLevel_Slope45T2B
+; imports from PRG015 (Plains)
+.import W102_BonusL
+; imports from PRG017 (High&Ice)
+.import W606L, W609L, W605L
+; imports from PRG019 (SkyGiPl)
+.import Unused3_CHL
+; imports from PRG020 (Desert)
+.import W202_ExitL, W2PYL
+; imports from PRG030
+.import LevelLoad, Tile_Mem_ClearA, Tile_Mem_ClearB
+; imports from PRG031
+.import DynJump
+
+
 .ifdef NES
 .segment "PRG016"
 .endif
@@ -140,7 +176,7 @@ LoadLevel_Generator_TS3:
 	; * Temp_Var15, Temp_Var16, and LL_ShapeDef are three bytes read from the data
 
 
-	LDA <Temp_Var15
+	LDA Temp_Var15
 	AND #%11100000
 	LSR A		
 	LSR A		
@@ -154,7 +190,8 @@ LoadLevel_Generator_TS3:
 	LSR A	
 	LSR A	
 	LSR A			; A = upper 4 bits of LL_ShapeDef shifted down
-	ADD PRG016_A425,X	; Add multiple of 15
+	CLC
+	ADC PRG016_A425,X	; Add multiple of 15
 	TAX
 	DEX
 	TXA		 ; A = ((LL_ShapeDef >> 4) + PRG015_A419[X]) - 1
@@ -260,10 +297,11 @@ LeveLoad_FixedSizeGen_TS3:
 	; So the upper 3 bits of Temp_Var15 serve as the most significant bits
 	; to a value where LL_ShapeDef provide the 4 least significant bits
 
-	LDA <Temp_Var15
+	LDA Temp_Var15
 	AND #%11100000
 	LSR A		
-	ADD LL_ShapeDef	
+	CLC
+	ADC LL_ShapeDef	
 	TAX		 	; Resultant index is put into 'X'
 	JSR DynJump	 
 
@@ -336,7 +374,7 @@ LeveLoad_FixedSizeGen_TS3:
 	.word LoadLevel_MiscBG 			; 66 - Add a little background Unknown???
 
 	; Broken into another file for ease of integration in NoDice editor
-	.include "PRG/levels/Hills.asm"
+	.include "levels/Hills.asm"
 
 ; Rest of ROM bank was empty
 
