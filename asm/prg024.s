@@ -14,6 +14,7 @@
 
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
+.include "../inc/nesswitch.inc"
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var10, Temp_Var11
@@ -1494,7 +1495,7 @@ PRG024_A81C:
 
 
 IntIRQ_TitleEnding:
-	STA MMC3_IRQENABLE
+	sta_MMC3_IRQENABLE
 
 	; Some kind of delay loop?
 	LDX #$04	 ; X = 4
@@ -1503,30 +1504,30 @@ PRG024_A82B:
 	DEX		 ; X--
 	BNE PRG024_A82B	 ; While X > 0, loop
 
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	LDY #$0b
 	LDA #$00
-	STY PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sty_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
-	LDA PPU_VRAM_DATA
+	lda_PPU_VRAM_DATA
 
 	LDA PPU_CTL1_Copy	
 	ORA PPU_CTL1_Mod	; Combine bits from PPU_CTL1_Copy into PPU_CTL1_Mod
-	STA PPU_CTL1	 ; Stored to the register!
+	sta_PPU_CTL1	 ; Stored to the register!
 
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	; H-Scroll locked at 0
 	LDA #$00
-	STA PPU_SCROLL
+	sta_PPU_SCROLL
 
 	; V-Scroll locked at $EF
 	LDA #$ef
-	STA PPU_SCROLL
+	sta_PPU_SCROLL
 
-	STA MMC3_IRQDISABLE
+	sta_MMC3_IRQDISABLE
 
 	JMP IntIRQ_Finish_NoDis	 ; Jump to IntIRQ_Finish_NoDis
 
@@ -1545,12 +1546,12 @@ Video_Misc_Updates2:
 	RTS		 ; Return
 
 PRG024_A860:
-	LDX PPU_STAT	 	; Flush video
+	ldx_PPU_STAT	 	; Flush video
 
-	STA PPU_VRAM_ADDR	; Store byte into video address high
+	sta_PPU_VRAM_ADDR	; Store byte into video address high
 	INY		 	; Y++
 	LDA (Video_Upd_AddrL),Y	; Get next byte
-	STA PPU_VRAM_ADDR	; Store byte into video address low
+	sta_PPU_VRAM_ADDR	; Store byte into video address low
 
 	INY		 	; Y++
 	LDA (Video_Upd_AddrL),Y	; Get next byte...
@@ -1564,7 +1565,7 @@ PRG024_A860:
 	AND #$fb		; Otherwise, use horizontal updates! (clears vertical bit)
 
 PRG024_A879:
-	STA PPU_CTL1		; Update PPU_CTL1
+	sta_PPU_CTL1		; Update PPU_CTL1
 	STA PPU_CTL1_Copy	; Update PPU_CTL1_Copy
 
 	PLA		; Restore A
@@ -1588,7 +1589,7 @@ PRG024_A888:
 
 PRG024_A88B:
 	LDA (Video_Upd_AddrL),Y	; Get next byte
-	STA PPU_VRAM_DATA	; Store into PPU
+	sta_PPU_VRAM_DATA	; Store into PPU
 	DEX		 	; X--
 	BNE PRG024_A888	 	; While X <> 0, loop! 
 
@@ -1613,8 +1614,8 @@ Do_Title_Screen:	; $A8AF
 
 	; Basically just hiding everything
 	LDA #$00
-	STA PPU_CTL1
-	STA PPU_CTL2
+	sta_PPU_CTL1
+	sta_PPU_CTL2
 
 	; Clear the first 245 bytes of RAM
 	LDX #$f5	 ; X = 245
@@ -1661,7 +1662,7 @@ PRG024_A8C8:
 	STA Random_Pool		; Seed the randomizer
 
 	LDA #%00101000
-	STA PPU_CTL1		; use 8x16 sprites, sprites use PT2
+	sta_PPU_CTL1		; use 8x16 sprites, sprites use PT2
 	STA PPU_CTL1_Copy	; Sync with PPU_CTL1_Copy
 
 	JSR Title_Display_Curtain	; Put up the curtain!
@@ -1678,26 +1679,26 @@ PRG024_A8C8:
 
 	; Some kind of hardware thing perhaps
 	LDA #$00
-	STA PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA #$10	
-	STA PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA #$00	
-	STA PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA #$10	 
-	STA PPU_VRAM_ADDR	
-	STA PPU_VRAM_ADDR	
+	sta_PPU_VRAM_ADDR	
+	sta_PPU_VRAM_ADDR	
 
 	; Wait for V-Blank to end
 PRG024_A930:
-	LDA PPU_STAT
+	lda_PPU_STAT
 	AND #$80	
 	BNE PRG024_A930	
 
 	LDA #%10101000
-	STA PPU_CTL1	 	; Generate VBlank Resets, use 8x16 sprites, sprites use PT2
+	sta_PPU_CTL1	 	; Generate VBlank Resets, use 8x16 sprites, sprites use PT2
 	STA PPU_CTL1_Copy	; Keep PPU_CTL1_Copy in sync!
 
 	LDA #%00011110
@@ -1789,24 +1790,24 @@ PRG024_A98A:
 ; on the title screen?  Here it is...
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Title_Display_Curtain:
-	LDA PPU_STAT 	; read PPU status to reset the high/low latch
+	lda_PPU_STAT 	; read PPU status to reset the high/low latch
 
 	; Set VRAM_ADDR to $2000 (Nametable 0)
 	LDA #$20
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA #$00
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	LDX #$02	 ; X = 2 (performs loop twice)
 	LDA #$08	 ; A = 8 (the Bowser curtain tile)
 PRG024_A9A1:
 	LDY #$ff	 ; Y = $FF (fill count)
 PRG024_A9A3:
-	STA PPU_VRAM_DATA	; Write $08/$09 to this byte in the VRAM
+	sta_PPU_VRAM_DATA	; Write $08/$09 to this byte in the VRAM
 	EOR #$01	 	; Toggle between $08/$09
 	DEY		 	; Y--
 	BNE PRG024_A9A3	 	; Loop while Y not zero
-	STA PPU_VRAM_DATA	; One more write since we come up one short
+	sta_PPU_VRAM_DATA	; One more write since we come up one short
 	EOR #$01	 	; And its cooresponding flip
 	DEX		 	; X--
  	BPL PRG024_A9A1		; Loop while X >= 0...
@@ -2040,8 +2041,8 @@ Title_IntroSkip:
 
 	; Disable display a second
 	LDA #$00
-	STA PPU_CTL1
-	STA PPU_CTL2
+	sta_PPU_CTL1
+	sta_PPU_CTL2
 
 	; This will load the title graphics in reverse, $22 to $6
 	LDA #$22	
@@ -4954,8 +4955,8 @@ Rescue_Princess:
 
 	; Disable display
 	LDA #$00
-	STA PPU_CTL1
-	STA PPU_CTL2
+	sta_PPU_CTL1
+	sta_PPU_CTL2
 
 	; Disable raster effects
 	LDA #$80
@@ -4975,7 +4976,7 @@ PRG024_B876:
 	STA Vert_Scroll
 
 	LDA #%00101000	 	; use 8x16 sprites, sprites use PT2 (NOTE: No VBlank trigger!)
-	STA PPU_CTL1	 	
+	sta_PPU_CTL1	 	
 	STA PPU_CTL1_Copy	; Keep PPU_CTL1_Copy in sync!
 
 	; Entry $55 of Video_Upd_Table2
@@ -4992,7 +4993,7 @@ PRG024_B876:
 	JSR Video_Misc_Updates2	; Load those graphics!
 
 	LDA #%10101000	; In addition to anything else specified by PPU_CTL1_Mod, Generate VBlank Resets, use 8x16 sprites, sprites use PT2
-	STA PPU_CTL1	; Set above settings
+	sta_PPU_CTL1	; Set above settings
 	STA PPU_CTL1_Copy	; Keep PPU_CTL1_Copy in sync!
 
 PRG024_B8A0:
@@ -5569,7 +5570,7 @@ Ending_Credits:
 
 	; Disable display
 	LDA #$00
-	STA PPU_CTL2
+	sta_PPU_CTL2
 
 	; Clear everything
 	JSR Sprite_RAM_Clear
@@ -5831,8 +5832,8 @@ PRG024_BCAE:
 
 	; Disable display
 	LDA #$00
-	STA PPU_CTL2
-	STA PPU_CTL1
+	sta_PPU_CTL2
+	sta_PPU_CTL1
 
 	; Map_Unused7992 = 0 (used only in dead code it seems)
 	LDA #$00
@@ -6003,18 +6004,18 @@ Ending2_ClearScreen:
 	CMP #$2b
 	BEQ PRG024_BDBB	 ; If Ending2_PicVRAMH = $2b, jump to Ending2_PicVRAMH
 
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	; Set VRAM Address to Ending2_PicVRAMH/L
 	LDA Ending2_PicVRAMH
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA Ending2_PicVRAML
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	LDY #$1f	 ; Y = $1F
 	LDA Ending2_ClearPat	; Get the clearing pattern
 PRG024_BDA0:
-	STA PPU_VRAM_DATA	; Store pattern
+	sta_PPU_VRAM_DATA	; Store pattern
 
 	DEY		 ; Y--
 	BPL PRG024_BDA0	 ; While Y >= 0, loop
@@ -6040,18 +6041,18 @@ PRG024_BDB7:
 	RTS		 ; Return
 
 PRG024_BDBB:
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	; Set VRAM Address to Ending2_PicVRAMH/L
 	LDA Ending2_PicVRAMH
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA Ending2_PicVRAML
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	LDY #$07	 ; Y = $07
 	LDA #$aa	 ; Pattern $AA
 PRG024_BDCC:
-	STA PPU_VRAM_DATA	; Store pattern
+	sta_PPU_VRAM_DATA	; Store pattern
 
 	DEY		 ; Y--
 	BPL PRG024_BDCC	 ; While Y >= 0, loop
@@ -6151,13 +6152,13 @@ PRG024_BE31:
 	.byte $2D, $31, $35, $39, $3D, $43, $48, $4C
 
 Ending2_CommitPicture:
-	LDA PPU_STAT	
+	lda_PPU_STAT	
 
 	; Set VRAM Address to Ending2_PicVRAMH/L
 	LDA Ending2_PicVRAMH
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA Ending2_PicVRAML
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	LDX #$0f	 	; X = 4
 	LDY Ending2_QCmdEnd	; Y = Ending2_QCmdEnd
@@ -6165,7 +6166,7 @@ PRG024_BE4A:
 
 	; Buffer -> PPU_VRAM_DATA
 	LDA Ending_CmdBuffer,Y
-	STA PPU_VRAM_DATA
+	sta_PPU_VRAM_DATA
 
 	INY		 ; Y++
 	DEX		 ; X--

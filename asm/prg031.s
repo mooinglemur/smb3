@@ -16,6 +16,7 @@
 
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
+.include "../inc/nesswitch.inc"
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, VBlank_Tick, Horz_Scroll_Hi, PPU_CTL1_Mod
@@ -135,7 +136,7 @@ Music_StopDMC:
 	LDA #$00	 
 	STA DMC_Current ; Stop any current DMC sound
 	LDA #$0f	 
-	STA PAPU_EN	 ; Disable DMC
+	sta_PAPU_EN	 ; Disable DMC
 
 PRG031_E2E0:
 	RTS		 ; Return
@@ -145,22 +146,22 @@ PRG031_E2E1:
 	TAY		 ; Y = DMC_Current
 
 	LDA DMC_MODCTL_LUT-1,Y		; Subtract 1 from LUT address since $00 is disabled and $01 is first DMC sound
-	STA PAPU_MODCTL	 		; Update PAPU_MODCTL
+	sta_PAPU_MODCTL	 		; Update PAPU_MODCTL
 	STA PAPU_MODCTL_Copy		; ... and it's copy
 
 	LDA DMC_MODADDR_LUT-1,Y	; Subtract 1 from LUT address since $00 is disabled and $01 is first DMC sound
-	STA PAPU_MODADDR	 	; Set PAPU_MODADDR (address of sound)
+	sta_PAPU_MODADDR	 	; Set PAPU_MODADDR (address of sound)
 
 	LDA DMC_MODLEN_LUT-1,Y		; Subtract 1 from LUT address since $00 is disabled and $01 is first DMC sound
-	STA PAPU_MODLEN	 		; Set PAPU_MODLEN (length of sound)
+	sta_PAPU_MODLEN	 		; Set PAPU_MODLEN (length of sound)
 
 	LDA #$a0	 
 	STA DMC_Time	 ; DMC_Time = $A0 (always apparently)
 
 	LDA #$0f	 
-	STA PAPU_EN	 ; Disable DMC
+	sta_PAPU_EN	 ; Disable DMC
 	LDA #$1f	 
-	STA PAPU_EN	 ; Enable DMC
+	sta_PAPU_EN	 ; Enable DMC
 	RTS		 ; Return
 
 
@@ -543,9 +544,9 @@ PRG031_E4BB:
 	LDA #$0b	 ; Both squares + noise only
 
 PRG031_E4BD:
-	STA PAPU_EN
+	sta_PAPU_EN
 	LDA #$0f
-	STA PAPU_EN	 ; Enable all channels
+	sta_PAPU_EN	 ; Enable all channels
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Square 2's music track code
@@ -604,9 +605,9 @@ Music_StopAll:
 	STA Music2_Hold	 	; Clear any hold on a Set 2 song
 	STA Music_RestH_Off	; Clear any rest lookup offset
  
-	STA PAPU_EN	 ; Disable all tracks
+	sta_PAPU_EN	 ; Disable all tracks
 	LDX #$0f	 
-	STX PAPU_EN	 ; Enable all tracks
+	stx_PAPU_EN	 ; Enable all tracks
 	RTS		 ; Return
 
 PRG031_E518:
@@ -707,9 +708,9 @@ PRG031_E594:
 	LDA Music_Sq2RestH	; A = current rest value
 	LDX Music_Sq2Patch 	; X = current "patch"
 	JSR Music_PatchGetCTL 	; Gets a PAPU_CTLx value for the current patch -> A
-	STA PAPU_CTL2		; Store patch value into PAPU_CTL2
+	sta_PAPU_CTL2		; Store patch value into PAPU_CTL2
 	LDX #$7f
-	STX PAPU_RAMP2	 	; Everything but the actual ramping
+	stx_PAPU_RAMP2	 	; Everything but the actual ramping
 	BNE Music_Sq1Track
 
 PRG031_E5A7:
@@ -758,10 +759,10 @@ PRG031_E5DA:
 	; Next byte in segment was $00...
 	; Activates a ramp effect
 	LDA #$83
-	STA PAPU_CTL1
+	sta_PAPU_CTL1
 
 	LDA #$94
-	STA PAPU_RAMP1
+	sta_PAPU_RAMP1
 	STA Music_Sq1AltRamp	; Music_Sq1AltRamp holds this alternate ramp value
 
 	BNE PRG031_E5B1	 ; (technically always) jump to PRG031_E5B1
@@ -832,13 +833,13 @@ PRG031_E648:
 	LDA Music_Sq1RestH	; A = current rest value
 	LDX Music_Sq1Patch 	; X = current "patch"
 	JSR Music_PatchGetCTL 	; Gets a PAPU_CTLx value for the current patch -> A
-	STA PAPU_CTL1		; Store patch value into PAPU_CTL1
+	sta_PAPU_CTL1		; Store patch value into PAPU_CTL1
 	LDA Music_Sq1AltRamp	
 	BNE PRG031_E65B	 	; If the alternate ramp value is in effect, don't lose it!
 	LDA #$7f		; Standard ramp value
 
 PRG031_E65B:
-	STA PAPU_RAMP1	 	; Use appropriate ramp value
+	sta_PAPU_RAMP1	 	; Use appropriate ramp value
 	BNE Music_TriTrack	; (technically always) jump to Music_TriTrack
 
 PRG031_E660:
@@ -868,7 +869,7 @@ Music_TriTrack:
 	STA Music_TriRestH		; Update rest hold value
 
 	LDA #$1f	 
-	STA PAPU_TCR1	 ; $1f written to PAPU_TCR1
+	sta_PAPU_TCR1	 ; $1f written to PAPU_TCR1
 
 	LDY Music_TriTrkPos	; Y = Music_TriTrkPos
 	INC Music_TriTrkPos	; Music_TriTrkPos++
@@ -908,7 +909,7 @@ PRG031_E6B2:
 	LDA #$80
 
 PRG031_E6B4:
-	STA PAPU_TCR1	 	; Start (if note played) or Stop (if $00 after $80-$ff) the triangle sound
+	sta_PAPU_TCR1	 	; Start (if note played) or Stop (if $00 after $80-$ff) the triangle sound
 	LDX Music_TriRestH
 	STX Music_TriRest	; Music_TriRest = Music_TriRestH
 
@@ -950,11 +951,11 @@ Music_NseNoteOn:
 
 	; Plug in appropriate noise values for this "note"
 	LDA Music_NoiseLUTA,Y
-	STA PAPU_NCTL1	 	
+	sta_PAPU_NCTL1	 	
 	LDA Music_NoiseLUTB,Y	
-	STA PAPU_NFREQ1	 	
+	sta_PAPU_NFREQ1	 	
 	LDA Music_NoiseLUTC,Y	
-	STA PAPU_NFREQ2		
+	sta_PAPU_NFREQ2		
 
 	; Reset rest value
 	LDA Music_NseRestH
@@ -1101,21 +1102,21 @@ PRG031_E7A8:
 
 	; Quick and dirty function that writes X to the CTL and Y to the RAMP of Square 1
 Sound1_XCTL_YRAMP:
-	STY PAPU_RAMP1
-	STX PAPU_CTL1
+	sty_PAPU_RAMP1
+	stx_PAPU_CTL1
 	RTS		 ; Return
 
 	; Quick and dirty function that writes X to the CTL and Y to the RAMP of Square 2
 Sound2_XCTL_YRAMP:
-	STX PAPU_CTL2
-	STY PAPU_RAMP2
+	stx_PAPU_CTL2
+	sty_PAPU_RAMP2
 	RTS		 ; Return
 
 Sound_Sq1_NoteOn:
 	; Note On event for Square 1
 	; 'A' is input note to play
-	STX PAPU_CTL1
-	STY PAPU_RAMP1
+	stx_PAPU_CTL1
+	sty_PAPU_RAMP1
 
 Sound_Sq1_NoteOn_NoPAPURAMP:
 	LDX #$00
@@ -1190,12 +1191,12 @@ PRG031_E808:
 	; 'X' is 0 (Square 1), 4 (Square 2), 8 (Triangle)
 
 	LDA Sound_Sqr_FreqL
-	STA PAPU_FT1,X	 ; Store low part of frequency in appropriate register
+	sta_PAPU_FT1_x	 ; Store low part of frequency in appropriate register
 	STA Sound_Sq1_CurFL,X	 ; Store low frequency in appropriate backup variable
 
 	LDA Sound_Sqr_FreqH
 	ORA #$08	 ; Sets sort of a minimal frequency level
-	STA PAPU_CT1,X	 ; Store high frequency in appropriate register
+	sta_PAPU_CT1_x	 ; Store high frequency in appropriate register
 	RTS		 ; Return
 
 PRG031_E818:
@@ -1203,20 +1204,20 @@ PRG031_E818:
 	LDA Sound_Sqr_FreqL
 	SEC
 	SBC #$02	 	; Sound_Sqr_FreqL -= 2
-	STA PAPU_FT2	 	; Store low part of frequency in register
+	sta_PAPU_FT2	 	; Store low part of frequency in register
 	STA Sound_Sq2_CurFL
 
 	LDA Sound_Sqr_FreqH
 	ORA #$08	 ; Sets sort of a minimal frequency level
-	STA PAPU_CT2	 ; Store high frequency in register
+	sta_PAPU_CT2	 ; Store high frequency in register
 
 	RTS		 ; Return
 
 Sound_Sq2_NoteOn:
 	; Note On event for Square 2
 	; 'A' is input note to play
-	STX PAPU_CTL2
-	STY PAPU_RAMP2
+	stx_PAPU_CTL2
+	sty_PAPU_RAMP2
 
 Sound_Sq2_NoteOn_NoPAPURAMP:
 	LDX #$04	 ; Offset from Square 1 regs to Square 2
@@ -1259,7 +1260,7 @@ PRG031_E860:
 	LDA Sound_Sq1_CurFL,X	; Just get current frequency
 
 PRG031_E870:
-	STA PAPU_FT1,X	 ; Update PAPU_FT1/2!
+	sta_PAPU_FT1_x	 ; Update PAPU_FT1/2!
 	RTS		 ; Return
 
 
@@ -1565,9 +1566,9 @@ PRG031_F4C4:
 
 	; MMC3 event
 	LDA #MMC3_8K_TO_PRG_A000	; Changing PRG ROM at A000
-	STA MMC3_COMMAND 		; Set MMC3 command
+	sta_MMC3_COMMAND 		; Set MMC3 command
 	LDA #26	 			; Page 26
-	STA MMC3_PAGE	 		; Set MMC3 page
+	sta_MMC3_PAGE	 		; Set MMC3 page
 	JMP PRG031_F610	 		; 
 
 PRG031_F4D5:
@@ -1586,19 +1587,19 @@ PRG031_F4E3:
 	; "Normal" update ($C0)
 
 	LDA #$00	 ; A = 0
-	STA PPU_CTL2	 ; Hide sprites and bg (most importantly)
-	STA PPU_SPR_ADDR ; Resets to sprite 0 in memory
+	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
+	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
 	LDA #$02	 ; A = 2
-	STA SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
+	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
 
 	LDA VBlank_Tick	
 	BNE PRG031_F51D	 	; If VBlank_Tick <> 0, jump to PRG031_F51D
 
 	LDA #MMC3_8K_TO_PRG_A000	; Changing PRG ROM at A000
-	STA MMC3_COMMAND 		; Set MMC3 command
+	sta_MMC3_COMMAND 		; Set MMC3 command
 	LDA #26	 			; Page 26
-	STA MMC3_PAGE	 		; Set MMC3 page
+	sta_MMC3_PAGE	 		; Set MMC3 page
 
 	JSR Scroll_Commit_Column ; Update nametable as screen scrolls (differs from call made in UpdSel_Vertical, UpdSel_32PixPart)
 	JSR Video_Misc_Updates	 ; Various updates other than scrolling (palettes, status bar, etc.)
@@ -1620,38 +1621,38 @@ PRG031_F519:
 
 PRG031_F51D:
 
-	LDA PPU_STAT	 	; read PPU status to reset the high/low latch
+	lda_PPU_STAT	 	; read PPU status to reset the high/low latch
 
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$3f	 	; 
-	STA PPU_VRAM_ADDR	; Access PPU address #3Fxx
+	sta_PPU_VRAM_ADDR	; Access PPU address #3Fxx
 	LDA #$00	 	; 
-	STA PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
-	STA PPU_VRAM_ADDR	; 
-	STA PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
+	sta_PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
+	sta_PPU_VRAM_ADDR	; 
+	sta_PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
 
 	LDA PPU_CTL2_Copy	; Get current PPU_CTL2 settings in RAM
 	ORA #$18	; A | 18 (BG + SPR)
-	STA PPU_CTL2	; Sprites/BG are forced to be visible regardless of PPU_CTL2_Copy
+	sta_PPU_CTL2	; Sprites/BG are forced to be visible regardless of PPU_CTL2_Copy
 
 	LDA PPU_CTL1_Mod	
 	ORA #%10101000	; In addition to anything else specified by PPU_CTL1_Mod, Generate VBlank Resets, use 8x16 sprites, sprites use PT2
-	STA PPU_CTL1	; Set above settings
-	LDA PPU_STAT	; read PPU status to reset the high/low latch
+	sta_PPU_CTL1	; Set above settings
+	lda_PPU_STAT	; read PPU status to reset the high/low latch
 
 	LDA Horz_Scroll
-	STA PPU_SCROLL	; Horizontal Scroll set
+	sta_PPU_SCROLL	; Horizontal Scroll set
 	LDA Vert_Scroll
 	CLC
 	ADC Vert_Scroll_Off	; Apply vertical offset (used for??)
-	STA PPU_SCROLL		; Vertical scroll set
+	sta_PPU_SCROLL		; Vertical scroll set
 
 	; This sets the status bar scroll fix for everything after the title screen!
 	; At scanline 192, the name table scroll is fixed to always display the status bar
 	LDA #192		; A = 192
-	STA MMC3_IRQCNT		; Store 192 into the IRQ count
-	STA MMC3_IRQLATCH	; Store it into the latch (will be used later)
-	STA MMC3_IRQENABLE	; Start the IRQ counter
+	sta_MMC3_IRQCNT		; Store 192 into the IRQ count
+	sta_MMC3_IRQLATCH	; Store it into the latch (will be used later)
+	sta_MMC3_IRQENABLE	; Start the IRQ counter
 	CLI		; Enable maskable interrupts
 
 PRG031_F55B:
@@ -1670,14 +1671,14 @@ PRG031_F567:
 
 	; *** Bring the sound engine (page 28 and page 29) into ROM
 	LDA #MMC3_8K_TO_PRG_C000	; Changing PRG ROM at C000
-	STA MMC3_COMMAND 		; Set MMC3 command
+	sta_MMC3_COMMAND 		; Set MMC3 command
 	LDA #29	 			; Page 29
-	STA MMC3_PAGE	 		; Set MMC3 page
+	sta_MMC3_PAGE	 		; Set MMC3 page
 
 	LDA #MMC3_8K_TO_PRG_A000	; Changing PRG ROM at A000
-	STA MMC3_COMMAND 		; Set MMC3 command
+	sta_MMC3_COMMAND 		; Set MMC3 command
 	LDA #28	 			; Page 28
-	STA MMC3_PAGE	 		; Set MMC3 page
+	sta_MMC3_PAGE	 		; Set MMC3 page
 
 	; Jump to the sound engine, newly inserted at page A000!
 	JSR Sound_Engine_Begin
@@ -1689,7 +1690,7 @@ PRG031_F567:
 
 	; Not sure what this is for
 	LDA PAGE_CMD
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 
 	; Pull (pop) the three temp vars from the stack 
 	PLA
@@ -1715,19 +1716,19 @@ UpdSel_Vertical:
 	; COMPARE TO PRG031_F4E3
 
 	LDA #$00	 ; A = 0
-	STA PPU_CTL2	 ; Hide sprites and bg (most importantly)
-	STA PPU_SPR_ADDR ; Resets to sprite 0 in memory
+	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
+	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
 	LDA #$02	 ; A = 2
-	STA SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
+	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
 
 	LDA VBlank_Tick	 
 	BNE PRG031_F5D3	 		; If VBlank_Tick <> 0, jump to PRG031_F5D3
 
 	LDA #MMC3_8K_TO_PRG_A000	; Changing PRG ROM at A000
-	STA MMC3_COMMAND 		; Set MMC3 command
+	sta_MMC3_COMMAND 		; Set MMC3 command
 	LDA #26	 			; Page 26
-	STA MMC3_PAGE	 		; Set MMC3 page
+	sta_MMC3_PAGE	 		; Set MMC3 page
 
 	JSR Scroll_ToVRAM_Apply	 ; Applies Scroll_ToVRAMHi and Scroll_ToVRAMHA updates
 	JSR Video_Misc_Updates	 ; Various updates other than scrolling (palettes, status bar, etc.)
@@ -1749,34 +1750,34 @@ PRG031_F5CF:
 	STA Graphics_Queue	 ; Graphics Buffer reset
 
 PRG031_F5D3:
-	LDA PPU_STAT	 	; read PPU status to reset the high/low latch
+	lda_PPU_STAT	 	; read PPU status to reset the high/low latch
 
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$3f	 	; 
-	STA PPU_VRAM_ADDR	; Access PPU address #3Fxx
+	sta_PPU_VRAM_ADDR	; Access PPU address #3Fxx
 	LDA #$00	 	; 
-	STA PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
-	STA PPU_VRAM_ADDR	; 
-	STA PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
+	sta_PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
+	sta_PPU_VRAM_ADDR	; 
+	sta_PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
 
 	LDA PPU_CTL2_Copy	; Get current PPU_CTL2 settings in RAM
 	ORA #$18	; A | 18 (BG + SPR)
-	STA PPU_CTL2	; Sprites/BG are forced to be visible regardless of PPU_CTL2_Copy
+	sta_PPU_CTL2	; Sprites/BG are forced to be visible regardless of PPU_CTL2_Copy
 
 	LDA Horz_Scroll_Hi	; ?? Can specify bits? (I think this is a mistake, and this will be zero on vertical level anyway)
 	ORA #%10101000	; Generate VBlank Resets, use 8x16 sprites, sprites use PT2
-	STA PPU_CTL1	; Set above settings
-	LDA PPU_STAT	; read PPU status to reset the high/low latch
+	sta_PPU_CTL1	; Set above settings
+	lda_PPU_STAT	; read PPU status to reset the high/low latch
 
 	LDA Horz_Scroll
-	STA PPU_SCROLL	 ; Horizontal Scroll set
+	sta_PPU_SCROLL	 ; Horizontal Scroll set
 	LDA Vert_Scroll
-	STA PPU_SCROLL	 ; Vertical Scroll set
+	sta_PPU_SCROLL	 ; Vertical Scroll set
 
 	LDA #192	 ; A = 192
-	STA MMC3_IRQCNT	 ; Store 192 into the IRQ count
-	STA MMC3_IRQLATCH ; Store it into the latch (will be used later)
-	STA MMC3_IRQENABLE ; Start the IRQ counter
+	sta_MMC3_IRQCNT	 ; Store 192 into the IRQ count
+	sta_MMC3_IRQLATCH ; Store it into the latch (will be used later)
+	sta_MMC3_IRQENABLE ; Start the IRQ counter
 	CLI		 ; Enable maskable interrupts
 	JMP PRG031_F55B	 ; Jump to PRG031_F55B
 
@@ -1785,10 +1786,10 @@ PRG031_F610:
 	; Following the "Normal" Update path...
 
 	LDA #$00	 ; A = 0
-	STA PPU_CTL2	 ; Hide sprites and bg (most importantly)
-	STA PPU_SPR_ADDR ; Resets to sprite 0 in memory
+	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
+	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
 	LDA #$02	 ; A = 2
-	STA SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
+	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
 
 	LDA Map_EnterLevelFX	 
@@ -1805,65 +1806,65 @@ PRG031_F62E:
 	JSR Level_Opening_Effect	; Level "opening" effect on page 26 (unused on US release)
 
 PRG031_F631:
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	LDA PPU_CTL1_Mod
 	ORA #%10101000	; In addition to anything else specified by PPU_CTL1_Mod, Generate VBlank Resets, use 8x16 sprites, sprites use PT2
-	STA PPU_CTL1	; Set above settings
+	sta_PPU_CTL1	; Set above settings
 
 	LDA Horz_Scroll
-	STA PPU_SCROLL	 ; Horizontal Scroll set
+	sta_PPU_SCROLL	 ; Horizontal Scroll set
 	LDA Vert_Scroll
-	STA PPU_SCROLL	 ; Vertical Scroll set
+	sta_PPU_SCROLL	 ; Vertical Scroll set
 
-	LDA PPU_STAT	 	; read PPU status to reset the high/low latch
+	lda_PPU_STAT	 	; read PPU status to reset the high/low latch
 
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$3f	 	; 
-	STA PPU_VRAM_ADDR	; Access PPU address #3Fxx
+	sta_PPU_VRAM_ADDR	; Access PPU address #3Fxx
 	LDA #$00	 	; 
-	STA PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
-	STA PPU_VRAM_ADDR	; 
-	STA PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
+	sta_PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
+	sta_PPU_VRAM_ADDR	; 
+	sta_PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
 
 	LDA PPU_CTL2_Copy	; Get current PPU_CTL2 settings in RAM
 	ORA #$18	; A | 18 (BG + SPR)
-	STA PPU_CTL2	; Sprites/BG are forced to be visible regardless of PPU_CTL2_Copy
+	sta_PPU_CTL2	; Sprites/BG are forced to be visible regardless of PPU_CTL2_Copy
 
 	LDA #%10101000	; Generate VBlank Resets, use 8x16 sprites, sprites use PT2
-	STA PPU_CTL1	; Set above settings
+	sta_PPU_CTL1	; Set above settings
 
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	LDA Horz_Scroll
-	STA PPU_SCROLL	 ; Horizontal Scroll set
+	sta_PPU_SCROLL	 ; Horizontal Scroll set
 	LDA Vert_Scroll
-	STA PPU_SCROLL	 ; Vertical Scroll set
+	sta_PPU_SCROLL	 ; Vertical Scroll set
 
 	LDA #192	 ; A = 192
-	STA MMC3_IRQCNT	 ; Store 192 into the IRQ count
-	STA MMC3_IRQLATCH ; Store it into the latch (will be used later)
-	STA MMC3_IRQENABLE ; Start the IRQ counter
+	sta_MMC3_IRQCNT	 ; Store 192 into the IRQ count
+	sta_MMC3_IRQLATCH ; Store it into the latch (will be used later)
+	sta_MMC3_IRQENABLE ; Start the IRQ counter
 	CLI		 ; Enable maskable interrupts
 	DEC VBlank_Tick ; Decrement VBlank_Tick
 	JMP PRG031_F567	 ; 
 
 UpdSel_32PixPart:
 	LDA #$00	 ; A = 0
-	STA PPU_CTL2	 ; Hide sprites and bg (most importantly)
-	STA PPU_SPR_ADDR ; Resets to sprite 0 in memory
+	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
+	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
 
 	LDA #$02	 ; A = 2
-	STA SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
+	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
 
 	LDA VBlank_Tick
 	BNE PRG031_F6BC	 		; If VBlank_Tick <> 0, jump to PRG031_F6BC
 
 	LDA #MMC3_8K_TO_PRG_A000	; Changing PRG ROM at A000
-	STA MMC3_COMMAND 		; Set MMC3 command
+	sta_MMC3_COMMAND 		; Set MMC3 command
 	LDA #26	 			; Page 26
-	STA MMC3_PAGE	 		; Set MMC3 page
+	sta_MMC3_PAGE	 		; Set MMC3 page
 
 	JSR Scroll_Commit_Column ; Update nametable as screen scrolls (differs from call made in UpdSel_Vertical, UpdSel_32PixPart)
 	JSR Video_Misc_Updates	 ; Various updates other than scrolling (palettes, status bar, etc.)
@@ -1885,44 +1886,44 @@ PRG031_F6B8:
 	STA Graphics_Queue	; Graphics Buffer reset
 
 PRG031_F6BC:
-	LDA PPU_STAT	 	; read PPU status to reset the high/low latch
+	lda_PPU_STAT	 	; read PPU status to reset the high/low latch
 
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$3f	 	; 
-	STA PPU_VRAM_ADDR	; Access PPU address #3Fxx
+	sta_PPU_VRAM_ADDR	; Access PPU address #3Fxx
 	LDA #$00	 	; 
-	STA PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
-	STA PPU_VRAM_ADDR	; 
-	STA PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
+	sta_PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
+	sta_PPU_VRAM_ADDR	; 
+	sta_PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
 
 	LDA PPU_CTL2_Copy	; Get current PPU_CTL2 settings in RAM
 	ORA #$18	; A | 18 (BG + SPR)
-	STA PPU_CTL2	; Sprites/BG are forced to be visible regardless of PPU_CTL2_Copy
+	sta_PPU_CTL2	; Sprites/BG are forced to be visible regardless of PPU_CTL2_Copy
 
 	LDA PPU_CTL1_Mod	; A = PPU_CTL1_Mod
 	ORA #%10101000	; In addition to anything else specified by PPU_CTL1_Mod, Generate VBlank Resets, use 8x16 sprites, sprites use PT2
-	STA PPU_CTL1	; Set above settings
-	LDA PPU_STAT	; read PPU status to reset the high/low latch
+	sta_PPU_CTL1	; Set above settings
+	lda_PPU_STAT	; read PPU status to reset the high/low latch
 
 	LDA Horz_Scroll
-	STA PPU_SCROLL	; Horizontal Scroll set
+	sta_PPU_SCROLL	; Horizontal Scroll set
 	LDA Vert_Scroll
-	STA PPU_SCROLL	; Vertical scroll set
+	sta_PPU_SCROLL	; Vertical scroll set
 
 	; 32 pixel partition begins at line 160
 	LDA #160
-	STA MMC3_IRQCNT		; Store 160 into the IRQ count
-	STA MMC3_IRQLATCH	; Store it into the latch (will be used later)
-	STA MMC3_IRQENABLE	; Start the IRQ counter
+	sta_MMC3_IRQCNT		; Store 160 into the IRQ count
+	sta_MMC3_IRQLATCH	; Store it into the latch (will be used later)
+	sta_MMC3_IRQENABLE	; Start the IRQ counter
 	CLI		; Enable maskable interrupts
 	JMP PRG031_F55B	 ; Jump to PRG031_F55B
 
 UpdSel_Title:
 	LDA #$00	 ; A = 0
-	STA PPU_CTL2	 ; Hide sprites and bg (most importantly)
-	STA PPU_SPR_ADDR ; Resets to sprite 0 in memory
+	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
+	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
 	LDA #$02	 ; A = 2
-	STA SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
+	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
 
 	LDA VBlank_Tick
@@ -1932,14 +1933,14 @@ UpdSel_Title:
 	BEQ PRG031_F72B	 ; If Ending2_IntCmd = 0, go to PRG031_F72B
 
 	LDA #MMC3_8K_TO_PRG_C000	; Changing PRG ROM at C000
-	STA MMC3_COMMAND 		; Set MMC3 command
+	sta_MMC3_COMMAND 		; Set MMC3 command
 	LDA #25	 			; Page 25
-	STA MMC3_PAGE	 		; Set MMC3 page
+	sta_MMC3_PAGE	 		; Set MMC3 page
 
 	LDA #MMC3_8K_TO_PRG_A000	; Changing PRG ROM at A000
-	STA MMC3_COMMAND 		; Set MMC3 command
+	sta_MMC3_COMMAND 		; Set MMC3 command
 	LDA #24	 			; Page 24
-	STA MMC3_PAGE	 		; Set MMC3 page
+	sta_MMC3_PAGE	 		; Set MMC3 page
 
 	JSR Do_Ending2_IntCmd	; Perform action of Ending2_IntCmd
 
@@ -1947,9 +1948,9 @@ UpdSel_Title:
 
 PRG031_F72B:
 	LDA #MMC3_8K_TO_PRG_A000	; Changing PRG ROM at A000
-	STA MMC3_COMMAND 		; Set MMC3 command
+	sta_MMC3_COMMAND 		; Set MMC3 command
 	LDA #26	 			; Page 26
-	STA MMC3_PAGE	 		; Set MMC3 page
+	sta_MMC3_PAGE	 		; Set MMC3 page
 
 	JSR Video_Misc_Updates	 ; Various updates other than scrolling (palettes, status bar, etc.)
 
@@ -1966,31 +1967,31 @@ PRG031_F744:
 	STA Graphics_Queue	 ; Graphics Buffer reset
 
 PRG031_F748:
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	LDA #$00
-	STA PPU_VRAM_ADDR	; 
-	STA PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
+	sta_PPU_VRAM_ADDR	; 
+	sta_PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
 
 	LDA PPU_CTL2_Copy	; Get current PPU_CTL2 settings in RAM
 	ORA #$18	; A | 18 (BG + SPR)
-	STA PPU_CTL2	; Sprites/BG are forced to be visible regardless of PPU_CTL2_Copy
+	sta_PPU_CTL2	; Sprites/BG are forced to be visible regardless of PPU_CTL2_Copy
 
 	LDA PPU_CTL1_Mod	; A = PPU_CTL1_Mod
 	ORA #%10101000	; In addition to anything else specified by PPU_CTL1_Mod, Generate VBlank Resets, use 8x16 sprites, sprites use PT2
-	STA PPU_CTL1	; Set above settings
-	LDA PPU_STAT	; read PPU status to reset the high/low latch
+	sta_PPU_CTL1	; Set above settings
+	lda_PPU_STAT	; read PPU status to reset the high/low latch
 
 	LDA Horz_Scroll
-	STA PPU_SCROLL	; Horizontal Scroll set
+	sta_PPU_SCROLL	; Horizontal Scroll set
 	LDA Vert_Scroll
-	STA PPU_SCROLL	; Vertical scroll set
+	sta_PPU_SCROLL	; Vertical scroll set
 
 	; NOTE: Different from the typical 192 scanline count!
 	LDA #193		; A = 193
-	STA MMC3_IRQCNT		; Store 193 into the IRQ count
-	STA MMC3_IRQLATCH	; Store it into the latch (will be used later)
-	STA MMC3_IRQENABLE	; Start the IRQ counter
+	sta_MMC3_IRQCNT		; Store 193 into the IRQ count
+	sta_MMC3_IRQLATCH	; Store it into the latch (will be used later)
+	sta_MMC3_IRQENABLE	; Start the IRQ counter
 	CLI		; Enable maskable interrupts
 
 	LDA VBlank_TickEn	 ; Check VBlank flag
@@ -2053,7 +2054,7 @@ PRG031_F7B0:
 	LDA PAPU_MODCTL_Copy
 	PHA		 ; Save A
 	AND #$7f	 ; Basically don't disturb DMC, but disable interrupt, if active
-	STA PAPU_MODCTL	 ; 
+	sta_PAPU_MODCTL	 ; 
 
 	LDA Raster_Effect	 ; Get status bar mode
 
@@ -2089,7 +2090,7 @@ PRG031_F7DF:
 	JMP IntIRQ_Standard	 ; Otherwise, just do the standard thing (status bar used in level and map)
 
 IntIRQ_Vertical:
-	STA MMC3_IRQENABLE ; Active IRQ
+	sta_MMC3_IRQENABLE ; Active IRQ
 	NOP		 ; 
 	NOP		 ; 
 	NOP		 ; 
@@ -2111,57 +2112,57 @@ PRG031_F7F8:
 
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$00
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA #$00
-	STA PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
-	STX PPU_CTL2	 ; Sprites + BG invisible
-	LDA PPU_STAT	 ; 
+	stx_PPU_CTL2	 ; Sprites + BG invisible
+	lda_PPU_STAT	 ; 
 
 	; Because vertical scroll will not change after frame begins (second write to
 	; PPU_SCROLL will always be unused until next frame), the hack for MMC3 split
 	; vertical scrolling is to change the nametable address that the PPU is reading
 	; at to where we would like it to be...
 	; In this case, the location of the beginning of the status bar!
-	STY PPU_VRAM_ADDR	 ; This is $0B unless tileset = $11, which it is then $03
+	sty_PPU_VRAM_ADDR	 ; This is $0B unless tileset = $11, which it is then $03
 	LDA #$00
-	STA PPU_VRAM_ADDR	; ... so we're now reading at $1100 or $0300
-	LDA PPU_VRAM_DATA
+	sta_PPU_VRAM_ADDR	; ... so we're now reading at $1100 or $0300
+	lda_PPU_VRAM_DATA
 
 	; Load status bar graphics and hide any sprites from appearing over the status bar
 
 	; Load two parts of Status Bar
 	LDA #MMC3_2K_TO_PPU_0000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA StatusBarCHR_0000
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_2K_TO_PPU_0800
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA StatusBarCHR_0800
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 
 	; Use blank tiles for all sprite graphics
 	LDA SpriteHideCHR_1000
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1400
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1400
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1800
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1800
-	STA MMC3_PAGE	
+	sta_MMC3_PAGE	
 	LDA #MMC3_1K_TO_PPU_1C00
-	STA MMC3_COMMAND	
+	sta_MMC3_COMMAND	
 	LDA SpriteHideCHR_1C00
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	 
 	LDA #$18	 ; 
-	STA PPU_CTL2	 ; Sprites + BG now visible
+	sta_PPU_CTL2	 ; Sprites + BG now visible
 	JMP PRG031_F8B3
 
 PRG031_F871:
@@ -2171,51 +2172,51 @@ PRG031_F871:
 
 	; Load two parts of Status Bar
 	LDA #MMC3_2K_TO_PPU_0000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA StatusBarMTCHR_0000
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_2K_TO_PPU_0800
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA StatusBarMTCHR_0800
 
 	; Load sprite graphics appropriate for World Map / Toad House / N-Spade
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteMTCHR_1000
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1400
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteMTCHR_1400
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1800
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteMTCHR_1800
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1C00
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteMTCHR_1C00
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 
 PRG031_F8B3:
 	LDA PPU_CTL1_Copy
 	ORA PPU_CTL1_Mod	; Combine bits from PPU_CTL1_Copy into PPU_CTL1_Mod
-	STA PPU_CTL1	 ; Store result into actual register
-	LDA PPU_STAT	 ; 
+	sta_PPU_CTL1	 ; Store result into actual register
+	lda_PPU_STAT	 ; 
 
 	LDA #$00	 ; 
-	STA PPU_SCROLL	 ; Horizontal Scroll = 0
+	sta_PPU_SCROLL	 ; Horizontal Scroll = 0
 	LDA Vert_Scroll ; 
-	STA PPU_SCROLL	 ; Vertical Scroll updated
+	sta_PPU_SCROLL	 ; Vertical Scroll updated
 
 IntIRQ_Finish:
-	STA MMC3_IRQDISABLE ; Disable the IRQ generation
+	sta_MMC3_IRQDISABLE ; Disable the IRQ generation
 
 IntIRQ_Finish_NoDis:
 	LDA PAGE_CMD	 ; Get old page command
-	STA MMC3_COMMAND ; Issue it
+	sta_MMC3_COMMAND ; Issue it
 	PLA		 ; Restore A (PAPU_MODCTL_Copy)
-	STA PAPU_MODCTL	 ; Set DMC back to normal
+	sta_PAPU_MODCTL	 ; Set DMC back to normal
 
 	; Restore the other registers
 	PLA
@@ -2228,7 +2229,7 @@ IntIRQ_Finish_NoDis:
 	RTI		 ; End of IRQ interrupt!
 
 IntIRQ_Standard:	; $F8DB
-	STA MMC3_IRQENABLE ; Enable IRQ generation
+	sta_MMC3_IRQENABLE ; Enable IRQ generation
 
 	; Some kind of delay loop?
 	LDX #$02	 ; X = 2
@@ -2239,23 +2240,23 @@ PRG031_F8E0:
 
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$00
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDX #$00
-	STX PPU_VRAM_ADDR
-	STX PPU_VRAM_ADDR
-	STX PPU_VRAM_ADDR
+	stx_PPU_VRAM_ADDR
+	stx_PPU_VRAM_ADDR
+	stx_PPU_VRAM_ADDR
 
-	STX PPU_CTL2	 ; Hide BG + Sprites
-	LDA PPU_STAT	 ; 
+	stx_PPU_CTL2	 ; Hide BG + Sprites
+	lda_PPU_STAT	 ; 
 
 	; Because vertical scroll will not change after frame begins (second write to
 	; PPU_SCROLL will always be unused until next frame), the hack for MMC3 split
 	; vertical scrolling is to change the nametable address that the PPU is reading
 	; at to where we would like it to be...
 	LDY #$07
-	STY PPU_VRAM_ADDR
-	STX PPU_VRAM_ADDR	; ... so we're now reading at $0700
-	LDA PPU_VRAM_DATA
+	sty_PPU_VRAM_ADDR
+	stx_PPU_VRAM_ADDR	; ... so we're now reading at $0700
+	lda_PPU_VRAM_DATA
 
 	; Couple of tilesets have slightly different effects 
 	LDA Level_Tileset
@@ -2269,31 +2270,31 @@ PRG031_F8E0:
 
 	; Load two parts of Status Bar
 	LDA #MMC3_2K_TO_PPU_0000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA StatusBarCHR_0000
-	STA MMC3_PAGE	
+	sta_MMC3_PAGE	
  	LDA #MMC3_2K_TO_PPU_0800
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA StatusBarCHR_0800
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 
 	; Use blank tiles for all sprite graphics
 	LDA SpriteHideCHR_1000	
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1400
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1400
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1800
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1800	
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1C00
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1C00	
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 
 	JMP PRG031_F997	 ; Jump to PRG031_F997
 
@@ -2304,43 +2305,43 @@ PRG031_F955:
 
 	; Load two parts of Status Bar
 	LDA #MMC3_2K_TO_PPU_0000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA StatusBarMTCHR_0000
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_2K_TO_PPU_0800
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA StatusBarMTCHR_0800
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 
 	; Load sprite graphics appropriate for World Map / Toad House / N-Spade
 	LDA #MMC3_1K_TO_PPU_1000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteMTCHR_1000
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1400
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteMTCHR_1400
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1800
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteMTCHR_1800
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1C00
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteMTCHR_1C00
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 
 PRG031_F997:
 	LDA #$18	 ; A | 18 (BG + SPR)
-	STA PPU_CTL2	 ; Sprites/BG are visible
+	sta_PPU_CTL2	 ; Sprites/BG are visible
 	LDA PPU_CTL1_Copy	 ; PPU_CTL1 copy
 	ORA #$01	 ; Force $2400 nametable address
-	STA PPU_CTL1	 ; Set it in the register
-	LDA PPU_STAT	 ; 
+	sta_PPU_CTL1	 ; Set it in the register
+	lda_PPU_STAT	 ; 
 	LDA #$00	 ; 
-	STA PPU_SCROLL	 ; Horizontal scroll = 0
+	sta_PPU_SCROLL	 ; Horizontal scroll = 0
 	LDA Vert_Scroll ; 
-	STA PPU_SCROLL	 ; Vertical scroll update as-is
+	sta_PPU_SCROLL	 ; Vertical scroll update as-is
 	JMP IntIRQ_Finish	 ; Clean up IRQ
 
 IntIRQ_32PixelPartition:	; $F9B3 
@@ -2368,8 +2369,8 @@ PRG031_F9C3:
 	BNE PRG031_F9C3 ; While X > 0, loop
 
 	LDA #$10	 ; 
-	STA PPU_CTL2	 ; Only show sprites (?)
-	LDA PPU_STAT	 ; 
+	sta_PPU_CTL2	 ; Only show sprites (?)
+	lda_PPU_STAT	 ; 
 
 	; Because vertical scroll will not change after frame begins (second write to
 	; PPU_SCROLL will always be unused until next frame), the hack for MMC3 split
@@ -2377,9 +2378,9 @@ PRG031_F9C3:
 	; at to where we would like it to be...
 	LDY #$0a	 ; Y = $0A
 	LDA #$80	 ; A = $80
-	STY PPU_VRAM_ADDR	 ;
-	STA PPU_VRAM_ADDR	 ; ... so we're now reading at $0A80, the top of the last two rows of tiles
-	LDA PPU_VRAM_DATA	 ;
+	sty_PPU_VRAM_ADDR	 ;
+	sta_PPU_VRAM_ADDR	 ; ... so we're now reading at $0A80, the top of the last two rows of tiles
+	lda_PPU_VRAM_DATA	 ;
 
 	JMP IntIRQ_32PixelPartition_Part2	; Jump to IntIRQ_32PixelPartition_Part2
 
@@ -2394,42 +2395,42 @@ IntIRQ_32PixPart_HideSprites:	; $F9E3
 	; This part is skippable based on a flag; only loads
 	; Pattern Table 2 in this case...
 	LDA #MMC3_1K_TO_PPU_1000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1000
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1400
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1400
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1800
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1800
-	STA MMC3_PAGE	
+	sta_MMC3_PAGE	
 	LDA #MMC3_1K_TO_PPU_1C00
-	STA MMC3_COMMAND	
+	sta_MMC3_COMMAND	
 	LDA SpriteHideCHR_1C00
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 
 
 IntIRQ_32PixelPartition_Part3:
-	LDA PPU_STAT
+	lda_PPU_STAT
 	LDA PPU_CTL1_Copy	
 	ORA PPU_CTL1_Mod	; Combine bits from PPU_CTL1_Copy into PPU_CTL1_Mod
-	STA PPU_CTL1	 ; Stored to the register!
+	sta_PPU_CTL1	 ; Stored to the register!
 
 	LDA Horz_Scroll
-	STA PPU_SCROLL	 ; Set horizontal scroll 
+	sta_PPU_SCROLL	 ; Set horizontal scroll 
 	LDA Vert_Scroll
-	STA PPU_SCROLL	 ; Set vertical scroll
+	sta_PPU_SCROLL	 ; Set vertical scroll
 
 	LDA #$18	 ; 
-	STA PPU_CTL2	 ; BG + Sprites now visible
+	sta_PPU_CTL2	 ; BG + Sprites now visible
 
 	INC Raster_State ; Raster_State = 1
 
 	LDA #27		 ; 
-	STA MMC3_IRQCNT	 ; Next interrupt in 27 lines
-	STA MMC3_IRQDISABLE	 ; Disable IRQ...
+	sta_MMC3_IRQCNT	 ; Next interrupt in 27 lines
+	sta_MMC3_IRQDISABLE	 ; Disable IRQ...
 	JMP IntIRQ_32PixelPartition_Part5	 ; Jump to IntIRQ_32PixelPartition_Part5
 
 	; Dead code?  Or maybe timing/cycle filler
@@ -2455,23 +2456,23 @@ PRG031_FA41:
 
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$00
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDX #$00
-	STX PPU_VRAM_ADDR
-	STX PPU_VRAM_ADDR
-	STX PPU_VRAM_ADDR
+	stx_PPU_VRAM_ADDR
+	stx_PPU_VRAM_ADDR
+	stx_PPU_VRAM_ADDR
 
-	STX PPU_CTL2	 ; Sprites + BG hidden
-	LDA PPU_STAT	 ; 
+	stx_PPU_CTL2	 ; Sprites + BG hidden
+	lda_PPU_STAT	 ; 
 
 	; Because vertical scroll will not change after frame begins (second write to
 	; PPU_SCROLL will always be unused until next frame), the hack for MMC3 split
 	; vertical scrolling is to change the nametable address that the PPU is reading
 	; at to where we would like it to be...
 	LDY #$0b
-	STY PPU_VRAM_ADDR
-	STX PPU_VRAM_ADDR	; ... so now we're reading at $0B00
-	LDA PPU_VRAM_DATA
+	sty_PPU_VRAM_ADDR
+	stx_PPU_VRAM_ADDR	; ... so now we're reading at $0B00
+	lda_PPU_VRAM_DATA
 
 	; This loads graphics into the "BG" side (PT1)
 	; I think the only reason they're using labeled constants
@@ -2479,41 +2480,41 @@ PRG031_FA41:
 	; stay in sync if they needed to change the CHRROM banks.
 	; But that'd be the job of an assembler label, wouldn't it??
 	LDA #MMC3_2K_TO_PPU_0000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA StatusBarCHR_0000
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_2K_TO_PPU_0800
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA StatusBarCHR_0800
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1000
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1400
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1400
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1800
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1800
-	STA MMC3_PAGE	
+	sta_MMC3_PAGE	
 	LDA #MMC3_1K_TO_PPU_1C00
-	STA MMC3_COMMAND	
+	sta_MMC3_COMMAND	
 	LDA SpriteHideCHR_1C00
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 
 	LDA #$18	 ; 
-	STA PPU_CTL2	 ; Sprites + BG now visible
+	sta_PPU_CTL2	 ; Sprites + BG now visible
 	LDA PPU_CTL1_Copy
 	ORA PPU_CTL1_Mod	; Combine bits from PPU_CTL1_Copy into PPU_CTL1_Mod
-	STA PPU_CTL1	 ; Update the PPU_CTL1 register..
-	LDA PPU_STAT	 ; 
+	sta_PPU_CTL1	 ; Update the PPU_CTL1 register..
+	lda_PPU_STAT	 ; 
 
 	LDA #$00	 ; 
-	STA PPU_SCROLL	 ; Horizontal scroll locked at zero
+	sta_PPU_SCROLL	 ; Horizontal scroll locked at zero
 	LDA Vert_Scroll	
-	STA PPU_SCROLL	 ; Vertical scroll as-is
+	sta_PPU_SCROLL	 ; Vertical scroll as-is
 	LDA #$00	 ; 
 	STA Raster_State ; Clear Raster_State (no more effects)
 	JMP IntIRQ_Finish	 ; Clean up IRQ
@@ -2537,8 +2538,8 @@ IntIRQ_SpadeGame:
 
 	; Disable then enable the IRQ??  Probably to make sure
 	; last latch value gets pushed into counter...
-	STA MMC3_IRQDISABLE
-	STA MMC3_IRQENABLE
+	sta_MMC3_IRQDISABLE
+	sta_MMC3_IRQENABLE
 
 	LDY Raster_State ; Get current Raster_State
 	CPY #$03	 ;
@@ -2546,8 +2547,8 @@ IntIRQ_SpadeGame:
 
 	; Based on the current Raster_State, set next scanline delay
 	LDA Roulette_RasterDiv,Y
-	STA MMC3_IRQCNT
-	STA MMC3_IRQENABLE
+	sta_MMC3_IRQCNT
+	sta_MMC3_IRQENABLE
 
 PRG031_FAE7:
 
@@ -2569,32 +2570,32 @@ PRG031_FAEA:
 	; stay in sync if they needed to change the CHRROM banks.
 	; But that'd be the job of an assembler label, wouldn't it??
 	LDA #MMC3_2K_TO_PPU_0000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA StatusBarCHR_0000
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_2K_TO_PPU_0800
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA StatusBarCHR_0800
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1000
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1400
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1400
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1800
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1800
-	STA MMC3_PAGE	
+	sta_MMC3_PAGE	
 	LDA #MMC3_1K_TO_PPU_1C00
-	STA MMC3_COMMAND	
+	sta_MMC3_COMMAND	
 	LDA SpriteHideCHR_1C00
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 
 PRG031_FB34:
-	LDA PPU_STAT	 ; 
+	lda_PPU_STAT	 ; 
 
 	CPY #$03	 ; 
 	BEQ PRG031_FB57	 ; If Raster_State = 3, jump to PRG031_FB57
@@ -2604,11 +2605,11 @@ PRG031_FB34:
 	LDA Roulette_PosHi,Y	 ; Get position for this row
 	AND #$01	 ; Nametable swaps $2000 / $2400 every odd/even unit (??)
 	ORA PPU_CTL1_Copy	; Update PPU_CTL1_Copy
-	STA PPU_CTL1	 	; .. and the actual PPU_CTL1 register
+	sta_PPU_CTL1	 	; .. and the actual PPU_CTL1 register
 	LDA Roulette_Pos,Y	 ; Get horizontal scroll position for this row
-	STA PPU_SCROLL	 ; Store the horizontal
+	sta_PPU_SCROLL	 ; Store the horizontal
 	LDA #$00	 ; 
-	STA PPU_SCROLL	 ; Vertical = 0
+	sta_PPU_SCROLL	 ; Vertical = 0
 	INY		 ; 
 	STY Raster_State ; Raster_State++
 	JMP IntIRQ_Finish_NoDis	 ; Cleanup and finish (for THIS Raster_State)
@@ -2617,11 +2618,11 @@ PRG031_FB57:
 	; Raster_State = 3 ...
 	LDA PPU_CTL1_Copy	
 	ORA PPU_CTL1_Mod	; Combine bits from PPU_CTL1_Copy into PPU_CTL1_Mod
-	STA PPU_CTL1	 ; Update actual register
+	sta_PPU_CTL1	 ; Update actual register
 	LDA #$00	 ; 
-	STA PPU_SCROLL	 ; Horizontal Scroll = 0
+	sta_PPU_SCROLL	 ; Horizontal Scroll = 0
 	LDA Vert_Scroll ; 
-	STA PPU_SCROLL	 ; Vertical Scroll updated (should generally not be moving here :)
+	sta_PPU_SCROLL	 ; Vertical Scroll updated (should generally not be moving here :)
 	LDA #$00	 ; 
 	STA Raster_State	 ; Raster_State = 0
 	JMP IntIRQ_Finish	 ; Clean up IRQ, we're done!
@@ -2631,8 +2632,8 @@ PRG031_FB57:
 IntIRQ_A0FIXME:
 	; Disable then enable the IRQ??  Probably to make sure
 	; last latch value gets pushed into counter...
-	STA MMC3_IRQDISABLE
-	STA MMC3_IRQENABLE
+	sta_MMC3_IRQDISABLE
+	sta_MMC3_IRQENABLE
 
 	LDA Raster_State
 	BEQ PRG031_FB7E	; If Raster_State = 0, go to PRG031_FB7E
@@ -2647,39 +2648,39 @@ PRG031_FB80:
 	BNE PRG031_FB80 ; While X > 0, loop
 
 	LDA #$10	 ; 
-	STA PPU_CTL2	 ; Only show sprites
+	sta_PPU_CTL2	 ; Only show sprites
 
 	; Only loads Pattern Table 2 in this case...
 	LDA #MMC3_1K_TO_PPU_1000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1000
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1400
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1400
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1800
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1800
-	STA MMC3_PAGE	
+	sta_MMC3_PAGE	
 	LDA #MMC3_1K_TO_PPU_1C00
-	STA MMC3_COMMAND	
+	sta_MMC3_COMMAND	
 	LDA SpriteHideCHR_1C00
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 
-	LDA PPU_STAT
+	lda_PPU_STAT
 	LDA PPU_CTL1_Copy
 	ORA PPU_CTL1_Mod	; Combine bits from PPU_CTL1_Copy into PPU_CTL1_Mod
-	STA PPU_CTL1	 ; Update the actual register
+	sta_PPU_CTL1	 ; Update the actual register
 
 	LDA Horz_Scroll
-	STA PPU_SCROLL	 ; Update Horizontal Scroll
+	sta_PPU_SCROLL	 ; Update Horizontal Scroll
 	LDA Vert_Scroll
-	STA PPU_SCROLL	 ; Update Vertical Scroll
+	sta_PPU_SCROLL	 ; Update Vertical Scroll
 	INC Raster_State ; Raster_State++
 
 	LDA #27	 
-	STA MMC3_IRQCNT	 ; Next IRQ in 27 lines
+	sta_MMC3_IRQCNT	 ; Next IRQ in 27 lines
 
 	; Some kind of delay loop?
 	LDX #$02	 ; X = $14
@@ -2689,7 +2690,7 @@ PRG031_FBD3:
 	BPL PRG031_FBD3 ; While X >= 0, loop
 
 	LDA #$18	 ; 
-	STA PPU_CTL2	 ; Sprites + BG now visible
+	sta_PPU_CTL2	 ; Sprites + BG now visible
 
 	; Dead code?  Or timing/cycle filler
 	NOP
@@ -2713,23 +2714,23 @@ PRG031_FBE7:
 
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$00
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDX #$00
-	STX PPU_VRAM_ADDR
-	STX PPU_VRAM_ADDR
-	STX PPU_VRAM_ADDR
+	stx_PPU_VRAM_ADDR
+	stx_PPU_VRAM_ADDR
+	stx_PPU_VRAM_ADDR
 
-	STX PPU_CTL2	 ; Most importantly, hide BG + Sprites
-	LDA PPU_STAT	 ; 
+	stx_PPU_CTL2	 ; Most importantly, hide BG + Sprites
+	lda_PPU_STAT	 ; 
 
 	; Because vertical scroll will not change after frame begins (second write to
 	; PPU_SCROLL will always be unused until next frame), the hack for MMC3 split
 	; vertical scrolling is to change the nametable address that the PPU is reading
 	; at to where we would like it to be...
 	LDY #$0b
-	STY PPU_VRAM_ADDR
-	STX PPU_VRAM_ADDR	; ... so now we're reading at $0B00
-	LDA PPU_VRAM_DATA
+	sty_PPU_VRAM_ADDR
+	stx_PPU_VRAM_ADDR	; ... so now we're reading at $0B00
+	lda_PPU_VRAM_DATA
 
 	; This loads graphics into the "BG" side (PT1)
 	; I think the only reason they're using labeled constants
@@ -2737,42 +2738,42 @@ PRG031_FBE7:
 	; stay in sync if they needed to change the CHRROM banks.
 	; But that'd be the job of an assembler label, wouldn't it??
 	LDA #MMC3_2K_TO_PPU_0000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA StatusBarCHR_0000
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_2K_TO_PPU_0800
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA StatusBarCHR_0800
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1000
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1400
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1400
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1800
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1800
-	STA MMC3_PAGE	
+	sta_MMC3_PAGE	
 	LDA #MMC3_1K_TO_PPU_1C00
-	STA MMC3_COMMAND	
+	sta_MMC3_COMMAND	
 	LDA SpriteHideCHR_1C00
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 
 	LDA #$18	 ; 
-	STA PPU_CTL2	 ; Sprites + BG now visible
+	sta_PPU_CTL2	 ; Sprites + BG now visible
 
 	LDA PPU_CTL1_Copy
 	ORA PPU_CTL1_Mod	; Combine bits from PPU_CTL1_Copy into PPU_CTL1_Mod
-	STA PPU_CTL1	 ; Update the actual register
-	LDA PPU_STAT	 ; 
+	sta_PPU_CTL1	 ; Update the actual register
+	lda_PPU_STAT	 ; 
 
 	LDA #$00	 ; 
-	STA PPU_SCROLL	 ; Horizontal Scroll = 0
+	sta_PPU_SCROLL	 ; Horizontal Scroll = 0
 	LDA Vert_Scroll ; 
-	STA PPU_SCROLL	 ; Update Vertical Scroll
+	sta_PPU_SCROLL	 ; Update Vertical Scroll
 	LDA #$00	 ; 
 	STA Raster_State	 ; Raster_State = 0
 	JMP IntIRQ_Finish	 ; Clean up IRQ
@@ -2790,15 +2791,15 @@ PRGROM_Change_Both:	; $FC6F
 
 	; Setting PRG ROM C000 to page specified in PAGE_C000
 	LDA #MMC3_8K_TO_PRG_C000	; Changing PRG ROM at C000
-	STA MMC3_COMMAND 		; Set MMC3 command
+	sta_MMC3_COMMAND 		; Set MMC3 command
 	LDA PAGE_C000	 		; Page @ PAGE_C000
-	STA MMC3_PAGE	 		; Set MMC3 page
+	sta_MMC3_PAGE	 		; Set MMC3 page
 	
 	; Setting PRG ROM A000 to page specified in PAGE_A000
 	LDA #MMC3_8K_TO_PRG_A000	; Changing PRG ROM at A000
-	STA MMC3_COMMAND 		; Set MMC3 command
+	sta_MMC3_COMMAND 		; Set MMC3 command
 	LDA PAGE_A000	 		; Page @ PAGE_A000
-	STA MMC3_PAGE	 		; Set MMC3 page
+	sta_MMC3_PAGE	 		; Set MMC3 page
 
 	RTS		 ; Return
 
@@ -3041,12 +3042,12 @@ PRG031_FD86:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Scroll_PPU_Reset:	; $FD97
 	LDA #$00	 ; 
-	STA PPU_SCROLL	 ; Horizontal scroll = 0
+	sta_PPU_SCROLL	 ; Horizontal scroll = 0
 	STA Horz_Scroll ; Horz_Scroll = 0
-	STA PPU_SCROLL	 ; Vertical scroll = 0
+	sta_PPU_SCROLL	 ; Vertical scroll = 0
 	STA Vert_Scroll ; Vert_Scroll = 0
 	LDA #$08	 ; 
-	STA PPU_CTL1	 ; Sprites in PT2
+	sta_PPU_CTL1	 ; Sprites in PT2
 	RTS		 ; Return
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3079,7 +3080,7 @@ Reset_PPU_Clear_Nametables2:
 Clear_PPU_CTL2_Copy:	; $FDBF
 	LDA #$00	 
 	STA PPU_CTL2_Copy	; Clears PPU_CTL2_Copy (though sprites/BG overridden as visible anyway)
-	STA PPU_CTL2	 	; At this point, clearing PPU_CTL2 altogether, though likely it will shortly be updated
+	sta_PPU_CTL2	 	; At this point, clearing PPU_CTL2 altogether, though likely it will shortly be updated
 	RTS		 	; Return
 
 
@@ -3093,21 +3094,21 @@ Clear_PPU_CTL2_Copy:	; $FDBF
 Clear_Nametable:	; $FDC7:
 	STA Temp_Var1		; Save A
 
-	LDA PPU_STAT	 	; 
+	lda_PPU_STAT	 	; 
 	LDA #$00	 	; 
-	STA PPU_CTL1		; Most likely most importantly to prevent any more Resets
+	sta_PPU_CTL1		; Most likely most importantly to prevent any more Resets
 
 	LDA Temp_Var1		; Restore A (from Reset_PPU_Clear_Nametables, this is $20 or $28, Nametable 0 or Nametable 2)
-	STA PPU_VRAM_ADDR	; Write this as high byte VRAM address select
+	sta_PPU_VRAM_ADDR	; Write this as high byte VRAM address select
 	LDA #$00 
-	STA PPU_VRAM_ADDR	; $00 as low byte for VRAM address (Reset_PPU_Clear_Nametables selects nametable 1 or 2)
+	sta_PPU_VRAM_ADDR	; $00 as low byte for VRAM address (Reset_PPU_Clear_Nametables selects nametable 1 or 2)
 
 	; This writes over the entire selected name table and attribute table with $FC
 	LDX #$04	 ; X = $04
 	LDY #$00	 ; Y = $00
 	LDA #$fc	 ; A = $FC
 PRG031_FDE1:
-	STA PPU_VRAM_DATA	 ; Write $FC to NT
+	sta_PPU_VRAM_DATA	 ; Write $FC to NT
 	DEY		 ; Y--
 	BNE PRG031_FDE1	 ; While <> 0, loop (will write 256 times)
 	DEX		 ; X--
@@ -3116,16 +3117,16 @@ PRG031_FDE1:
 	LDA Temp_Var1	 ; Retrieve initial A value again
 	CLC
 	ADC #$03	 	; A += 3 (moving to attribute table)
-	STA PPU_VRAM_ADDR	; Address high byte
+	sta_PPU_VRAM_ADDR	; Address high byte
 	LDA #$c0		; Beginning of attribute table
-	STA PPU_VRAM_ADDR	; Address low byte
+	sta_PPU_VRAM_ADDR	; Address low byte
 
 	; This will write over the attribute table (technically the prior loop does an
 	; unnecessary overrun... probably just a simpler loop to code.)
 	LDY #$40	 ; Y = $40 
 	LDA #$00	 ; A = 0
 PRG031_FDFB:
-	STA PPU_VRAM_DATA	 ; Write $00 to AT
+	sta_PPU_VRAM_DATA	 ; Write $00 to AT
 	DEY		 ; Y--
 	BNE PRG031_FDFB	 ; While Y <> 0, loop (will write 64 times)
 
@@ -3139,20 +3140,20 @@ PRG031_FDFB:
 ; is the initial value of A ($20 for NT 0, $28 for NT2)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Clear_Nametable_Short:	; $FE02
-	LDA PPU_STAT	 	; 
+	lda_PPU_STAT	 	; 
 	LDA #$00	 	; 
-	STA PPU_CTL1		; Most likely most importantly to prevent any more Resets
+	sta_PPU_CTL1		; Most likely most importantly to prevent any more Resets
 
 	LDA Temp_Var1		; Restore A (from Reset_PPU_Clear_Nametables, this is $20 or $28, Nametable 0 or Nametable 2)
-	STA PPU_VRAM_ADDR	; Write this as high byte VRAM address select
+	sta_PPU_VRAM_ADDR	; Write this as high byte VRAM address select
 	LDA #$00 
-	STA PPU_VRAM_ADDR	; $00 as low byte for VRAM address (Reset_PPU_Clear_Nametables selects nametable 1 or 2)
+	sta_PPU_VRAM_ADDR	; $00 as low byte for VRAM address (Reset_PPU_Clear_Nametables selects nametable 1 or 2)
 
 	LDX #$03	 ; X = 3
 	LDY #$c0	 ; Y = $C0
 	LDA ClearPattern	 ; A = ClearPattern
 PRG031_FE1B:
-	STA PPU_VRAM_DATA	; Write this pattern
+	sta_PPU_VRAM_DATA	; Write this pattern
 
 	DEY		 ; Y--
 	BNE PRG031_FE1B	 ; While Y <> 0, loop
@@ -3199,21 +3200,21 @@ PRG031_FE40:
 	LDX #$04	 ; X = 4
 
 PRG031_FE58:
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	; Disable display
 	LDA #$00
-	STA PPU_CTL1
+	sta_PPU_CTL1
 PRG031_FE60:
 	; Set VRAM High/Low Addresses
 	LDA Temp_Var1
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA Temp_Var2
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 PRG031_FE6A:
 	LDA ClearPattern	 ; Get the clearing pattern
-	STA PPU_VRAM_DATA	 ; Store it
+	sta_PPU_VRAM_DATA	 ; Store it
 
 	DEY		 ; Y--
 	BNE PRG031_FE76	 ; If Y <> 0, jump to PRG031_FE76
@@ -3382,15 +3383,15 @@ Read_Joypad:	; $FF12
 
 	; This Resets BOTH controllers
 	LDA #$01	 ; A = 1 (strobe)
-	STA JOYPAD	 ; Strobe joypad 1 (hi)
+	sta_JOYPAD	 ; Strobe joypad 1 (hi)
 	LSR A		 ; A = 0 (clear), 1 -> Carry
-	STA JOYPAD	 ; Clear strobe joypad 1
+	sta_JOYPAD	 ; Clear strobe joypad 1
 
 	; Needs cleanup and commentary, but basically this does 8 loops to
 	; read all buttons and store the result for return
 	LDX #$08	 ; X = 8
 Read_Joypad_Loop:
-	LDA JOYPAD,Y	 ; Get joypad data
+	lda_JOYPAD_y	 ; Get joypad data
 	LSR A
 	ROL Temp_Var1
 	LSR A
@@ -3433,13 +3434,13 @@ IntReset:
 	SEI		 ; Disable maskable interrupts
 	CLD		 ; Clear decimal (no BCD math, not there should be anyway)
 	LDA #$00	 ; 
-	STA PPU_CTL2	 ; Most likely mainly to make BG and SPRITES invisible
+	sta_PPU_CTL2	 ; Most likely mainly to make BG and SPRITES invisible
 	LDA #$08	 ; 
-	STA PPU_CTL1	 ; Sprites in Pattern Table 2
+	sta_PPU_CTL1	 ; Sprites in Pattern Table 2
 	LDX #$02	 ; X = 2
 
 VBlank_Wait_Loop:
-	LDA PPU_STAT
+	lda_PPU_STAT
 	BPL VBlank_Wait_Loop	; If VBlank NOT reported as occuring, loop around and check again!
 
 	DEX		 	; X--
@@ -3449,17 +3450,17 @@ VBlank_Wait_Loop:
 	TXS		 ; X -> Stack Pointer (NMI stack)
 
 	LDA #MMC3_2K_TO_PPU_0000
-	STA MMC3_COMMAND	; Command MMC3 to change out first 2K of PPU
+	sta_MMC3_COMMAND	; Command MMC3 to change out first 2K of PPU
 	LDY #$00	 ; Y = 0
-	STY PPU_SCROLL	 ; Horizontal scroll = 0
-	STY PPU_SCROLL	 ; Vertical scroll = 0
-	STY MMC3_SRAM_EN ; Disable MMC3 SRAM (?)
-	STY MMC3_IRQDISABLE ; Disable MMC3 IRQ generation
+	sty_PPU_SCROLL	 ; Horizontal scroll = 0
+	sty_PPU_SCROLL	 ; Vertical scroll = 0
+	sty_MMC3_SRAM_EN ; Disable MMC3 SRAM (?)
+	sty_MMC3_IRQDISABLE ; Disable MMC3 IRQ generation
 
 	LDA #%00001111	 ; 
-	STA PAPU_EN	 ; Enable rectangle wave 1 & 2, triangle, and noise channels
+	sta_PAPU_EN	 ; Enable rectangle wave 1 & 2, triangle, and noise channels
 	LDA #$00	 ; 
-	STA PAPU_MODCTL	 ; disable DMC IRQs
+	sta_PAPU_MODCTL	 ; disable DMC IRQs
 
 	; Any write to $4017 resets both the frame counter, and the clock divider. 
 	; Sometimes, games will write to this register in order to synchronize the 
@@ -3469,9 +3470,9 @@ VBlank_Wait_Loop:
 	; this syncronization.
 
 	LDA #$40	 ; 
-	STA FRAMECTR_CTL ; disable APU frame IRQ
+	sta_FRAMECTR_CTL ; disable APU frame IRQ
 
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	LDA #16		 ; A = 16
 	TAX		 ; X = 16
@@ -3479,16 +3480,16 @@ VBlank_Wait_Loop:
 	; The following writes 16 twice to PPU_VRAM_ADDR a total of 16 times
 	; Not sure what the point of this is?  Must be some kind of hardware thing??
 PRG031_FF80:
-	STA PPU_VRAM_ADDR	 ; 
-	STA PPU_VRAM_ADDR	 ; 
+	sta_PPU_VRAM_ADDR	 ; 
+	sta_PPU_VRAM_ADDR	 ; 
 	EOR #$00	 ; Do nothing??
 	DEX		 ; X--
 	BNE PRG031_FF80	 ; While X > 0, loop
 
 	LDA #$01	 ; 
-	STA MMC3_MIRROR	 ; MMC3 command for Vertical mirroring
+	sta_MMC3_MIRROR	 ; MMC3 command for Vertical mirroring
 	LDA #$80	 ; 
-	STA MMC3_SRAM_EN ; Re-enable MMC3 SRAM (?)
+	sta_MMC3_SRAM_EN ; Re-enable MMC3 SRAM (?)
 
 	; Clear $07FF - $0000, excluding $01xx
 	LDY #$07		 
@@ -3514,9 +3515,9 @@ PT2_Full_CHRROM_Switch:	 ; $FFAD
 PT2_Full_CHRROM_Loop:
 	TYA		 ; A = Y 
 	ORA #$40	 ; A = 5 | $40 = $45 (When 5, MMC3_1K_TO_PPU_1C00; decrements thru other pages)
-	STA MMC3_COMMAND ; Set MMC3 command
+	sta_MMC3_COMMAND ; Set MMC3 command
 	LDA PatTable_BankSel,Y ; Offset into the Pattern Table 2 LUT for this page
-	STA MMC3_PAGE	 ; Set MMC3 page
+	sta_MMC3_PAGE	 ; Set MMC3 page
 	DEY		 ; Y--
 	BPL PT2_Full_CHRROM_Loop	 ; While Y >= 0, loop!
 
@@ -3545,9 +3546,9 @@ PRGROM_Change_Both2:	; $FFBF
 PRGROM_Change_A000:			; $FFC2
 	LDA #MMC3_8K_TO_PRG_A000	; Changing PRG ROM at A000
 	STA PAGE_CMD			; FIXME: Store @ PAGE_CMD
-	STA MMC3_COMMAND 		; Set MMC3 command
+	sta_MMC3_COMMAND 		; Set MMC3 command
 	LDA PAGE_A000			; Page @ PAGE_A000
-	STA MMC3_PAGE	 		; Set MMC3 page
+	sta_MMC3_PAGE	 		; Set MMC3 page
 	RTS		 		; Return
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3559,9 +3560,9 @@ PRGROM_Change_A000:			; $FFC2
 PRGROM_Change_C000:	; $FFD1
 	LDA #MMC3_8K_TO_PRG_C000	; Changing PRG ROM at C000
 	STA PAGE_CMD			; FIXME: Store @ PAGE_CMD
-	STA MMC3_COMMAND 		; Set MMC3 command
+	sta_MMC3_COMMAND 		; Set MMC3 command
 	LDA PAGE_C000	 		; Page @ PAGE_C000
-	STA MMC3_PAGE			; Set MMC3 page
+	sta_MMC3_PAGE			; Set MMC3 page
 	RTS				; Return
 
 

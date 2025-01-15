@@ -15,6 +15,7 @@
 
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
+.include "../inc/nesswitch.inc"
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var8
@@ -526,11 +527,11 @@ World_BGM:
 	; Part 2 of the Reset routine...
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 IntReset_Part2:
-	LDA PPU_STAT	 ;
+	lda_PPU_STAT	 ;
 	BPL IntReset_Part2 ; Wait until VBlank
 	LDA #$00	 ; 
-	STA PPU_CTL2	 ; Most importantly, hide sprites/bg
-	STA PPU_CTL1	 ; Most likely just to disable further Resets
+	sta_PPU_CTL2	 ; Most importantly, hide sprites/bg
+	sta_PPU_CTL1	 ; Most likely just to disable further Resets
 
 	; Map_Unused7992 = 0 (used only in dead code it seems)
 	LDA #$00
@@ -604,7 +605,7 @@ PRG030_845A:
 	STA Raster_Effect	 ; Raster_Effect = $20 (Title Screen style)
 
 	LDA #%10101000
-	STA PPU_CTL1	 	; Generate VBlank Resets, use 8x16 sprites, sprites use PT2
+	sta_PPU_CTL1	 	; Generate VBlank Resets, use 8x16 sprites, sprites use PT2
 	STA PPU_CTL1_Copy	; Keep PPU_CTL1_Copy in sync!
 
 	JSR Do_Title_Screen	; Do the title screen!
@@ -636,7 +637,7 @@ PRG030_84A0:
 	STA Map_UnusedGOFlag
 
 	LDA #$00	 ; 
-	STA PPU_CTL2	 ; Most importantly, hide sprites/bg
+	sta_PPU_CTL2	 ; Most importantly, hide sprites/bg
 
 	; Stop Update_Select activity temporarily while we initialize
 	INC UpdSel_Disable
@@ -762,7 +763,7 @@ PRG030_857E:
 	JSR Reset_PPU_Clear_Nametables
 
 	LDA #$01	 
-	STA MMC3_MIRROR	 ; Set vertical mirroring
+	sta_MMC3_MIRROR	 ; Set vertical mirroring
 
 	LDX Player_Current	 ; X = current Player index
 
@@ -811,7 +812,7 @@ PRG030_85A5:
 
 PRG012_85CE:
 	LDA #%00101000	 	; use 8x16 sprites, sprites use PT2 (NOTE: No VBlank trigger!)
-	STA PPU_CTL1
+	sta_PPU_CTL1
 	STA PPU_CTL1_Copy	; Keep PPU_CTL1_Copy in sync
 
 	LDY Player_Current	; Y = current Player index
@@ -838,9 +839,9 @@ PRG012_85CE:
 
 	; Switch to page 26 @ A000
 	LDA #MMC3_8K_TO_PRG_A000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA #26		
-	STA MMC3_PAGE	 
+	sta_MMC3_PAGE	 
 
 	JSR StatusBar_Update_Cards	 ; Update status bar cards
 	JSR StatusBar_UpdateValues	 ; Update other status bar stuff
@@ -1077,7 +1078,7 @@ PRG030_874F:
 	; Disable the display
 	LDA #$00	 
 	STA PPU_CTL2_Copy
-	STA PPU_CTL2	 
+	sta_PPU_CTL2	 
 
 	; Stop Update_Select activity temporarily
 	INC UpdSel_Disable
@@ -1218,12 +1219,12 @@ PRG030_881D:
 
 	; Loop until V-Blank is not occurring
 PRG030_883E:
-	LDA PPU_STAT
+	lda_PPU_STAT
 	AND #$80	
 	BNE PRG030_883E	
 
 	LDA #%10101000		; sprites on PT2, 8x16 sprites, generate V-Blank NMIs
-	STA PPU_CTL1	 
+	sta_PPU_CTL1	 
 	STA PPU_CTL1_Copy	; Keep PPU_CTL1_Copy in sync!
 
 	; The actual border rendering occurs in the interrupt's "Update_Select" routine
@@ -1319,11 +1320,11 @@ PRG030_88AD:
 
 	LDA #%00101000	 	; use 8x16 sprites, sprites use PT2 (NOTE: No VBlank trigger!)
 	STA PPU_CTL1_Copy	; Keep PPU_CTL1_Copy in sync!
-	STA PPU_CTL1	 	
+	sta_PPU_CTL1	 	
 
 	; Disable display
 	LDA #$00
-	STA PPU_CTL2
+	sta_PPU_CTL2
 
 	LDA #$04	
 	STA Level_TimerMSD	; Level_TimerMSD = 4
@@ -1535,7 +1536,7 @@ PRG030_89D1:
 
 	; Horizontal mirroring
 	LDA #$00
-	STA MMC3_MIRROR
+	sta_MMC3_MIRROR
 
 	JSR Roulette_DrawShapes	 	; Draw in the Roulette Shapes
 	JSR Roulette_DrawBorderSprites	; Draw the sprite borders
@@ -1550,9 +1551,9 @@ PRG030_89D1:
 
 	; Switch to page 26 @ A000
 	LDA #MMC3_8K_TO_PRG_A000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA #26		
-	STA MMC3_PAGE	 
+	sta_MMC3_PAGE	 
 
 	JSR StatusBar_Update_Cards	 ; Update status bar cards
 	JSR StatusBar_UpdateValues	 ; Update other status bar stuff
@@ -1602,7 +1603,7 @@ PRG030_89D1:
 
 	; Vertical mirroring
 	LDA #$01
-	STA MMC3_MIRROR
+	sta_MMC3_MIRROR
 
 	; Stop music
 	LDA #MUS1_STOPMUSIC
@@ -1731,7 +1732,7 @@ PRG030_8AE7:
 
 	; Vertical mirroring
 	LDA #$01
-	STA MMC3_MIRROR
+	sta_MMC3_MIRROR
 
 	LDA #$02	 ; A = 2
 	LDX #$c0	 ; X = $C0 (Normal style updating)
@@ -1743,7 +1744,7 @@ PRG030_8AE7:
 
 	; Horizontal mirroring
 	LDA #$00
-	STA MMC3_MIRROR
+	sta_MMC3_MIRROR
 
 	LDA #$01	 ; A = 1
 	LDX #$80	 ; X = $80 (Vertical style updating)
@@ -2134,7 +2135,7 @@ PRG030_8D23:
 	; Exiting the Bonus Game loop...
 
 	LDA #%00101000	 	; use 8x16 sprites, sprites use PT2 (NOTE: No VBlank trigger!)
-	STA PPU_CTL1	 	
+	sta_PPU_CTL1	 	
 	STA PPU_CTL1_Copy	; Keep PPU_CTL1_Copy in sync!
 
 	LDA Bonus_GameType
@@ -2176,7 +2177,7 @@ PRG030_8D4A:
 	JSR GraphicsBuf_Prep_And_WaitVSync	 ; Wait for vertical sync
 
 	LDA #$00
-	STA PPU_CTL2	 ; Most importantly, hide sprites/bg
+	sta_PPU_CTL2	 ; Most importantly, hide sprites/bg
 
 	; NOTE: This jumps to PRG030_8DC3, which returns to World Map, if the die is face value 1.
 	; Seems like the die face logic for jumping to "Roulette" / "Card" is not implemented.
@@ -2664,11 +2665,11 @@ PRG030_8FA8:
 
 	; Disable the display
 	STA PPU_CTL2_Copy
-	STA PPU_CTL2	 
+	sta_PPU_CTL2	 
 
 PRG030_8FB2:
 	LDA #$01	 
-	STA MMC3_MIRROR	 ; Set vertical mirroring
+	sta_MMC3_MIRROR	 ; Set vertical mirroring
 
 	LDX Player_Current	 ; X = LDX Player_Current
 
@@ -2727,7 +2728,7 @@ PRG030_8FFC:
 
 	LDA #%00101000	 	; use 8x16 sprites, sprites use PT2 (NOTE: No VBlank trigger!)
 	STA PPU_CTL1_Copy	; Keep PPU_CTL1_Copy in sync!
-	STA PPU_CTL1	 	
+	sta_PPU_CTL1	 	
 
 	JMP PRG030_9097	 	; Jump to PRG030_9097
 
@@ -2978,7 +2979,7 @@ PRG030_9149:
 	JSR Reset_PPU_Clear_Nametables
 
 	LDA #%00101000	 	; use 8x16 sprites, sprites use PT2 (NOTE: No VBlank trigger!)
-	STA PPU_CTL1	 	
+	sta_PPU_CTL1	 	
 	STA PPU_CTL1_Copy	; Keep PPU_CTL1_Copy in sync!
 
 	LDA World_EnterState
@@ -3043,7 +3044,7 @@ PRG030_9185:
 	STA World_Map_Dir,X
 
 	LDA #%00101000	 	; use 8x16 sprites, sprites use PT2 (NOTE: No VBlank trigger!)
-	STA PPU_CTL1	 	
+	sta_PPU_CTL1	 	
 	STA PPU_CTL1_Copy	; Keep PPU_CTL1_Copy in sync!
 
 	LDY #$00	 ; Y = 0
@@ -3425,8 +3426,8 @@ PRG030_93B1:
 
 	; Disable display
 	LDA #$00
-	STA PPU_CTL1
-	STA PPU_CTL2
+	sta_PPU_CTL1
+	sta_PPU_CTL2
 
 	LDX Map_PlayerLost2PVs
 	DEX
@@ -6007,9 +6008,9 @@ PRG030_9F52:
 	BPL PRG030_9F52 ; While X > 0, loop
 
 	; Latch this value, and force it into the counter!
-	STA MMC3_IRQLATCH
-	STA MMC3_IRQDISABLE
-	STA MMC3_IRQENABLE
+	sta_MMC3_IRQLATCH
+	sta_MMC3_IRQDISABLE
+	sta_MMC3_IRQENABLE
 	RTS		 ; Return
 
 	; Probably unused space
@@ -6030,8 +6031,8 @@ PRG030_9F80:
 	NOP
 	NOP
 
-	STA MMC3_IRQLATCH ; Latch A (last set to 27!)
-	STA MMC3_IRQENABLE ; Enable IRQ again
+	sta_MMC3_IRQLATCH ; Latch A (last set to 27!)
+	sta_MMC3_IRQENABLE ; Enable IRQ again
 	JMP PRG031_FA3C	 ; Jump to PRG031_FA3C
 
 	; Unused space

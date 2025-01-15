@@ -13,6 +13,7 @@
 ;---------------------------------------------------------------------------
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
+.include "../inc/nesswitch.inc"
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var4, Level_ExitToMap, Counter_1, Pad_Input, Pal_Force_Set12
@@ -1396,15 +1397,15 @@ PRG027_AB6F:
 	STA Temp_Var1
 
 PRG027_AB74:
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	; Set VRAM High address
 	LDA Letter_VRAMHi,X
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	; Set VRAM Low address
 	LDA Temp_Var1
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	INY		 ; Y++
 
@@ -1415,7 +1416,7 @@ PRG027_AB74:
 	BEQ PRG027_AB96	 ; If character = $FF (letter header terminator), jump to PRG027_AB96
 
 	; Otherwise, push it as a pattern
-	STA PPU_VRAM_DATA
+	sta_PPU_VRAM_DATA
 
 	INC Temp_Var1	 ; Temp_Var1++
 	BNE PRG027_AB74	 ; If Temp_Var1 has not overflowed, jump to PRG027_AB74
@@ -1446,15 +1447,15 @@ PRG027_ABA9:
 	STA Temp_Var4
 
 PRG027_ABAE:
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	; Set VRAM High address starting for this line
 	LDA LetterRow_VRAM_H,X
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	; Set VRAM Low address starting for this line
 	LDA Temp_Var4
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	LDA (Temp_Var1),Y ; Get next character from letter body
 
@@ -1466,7 +1467,7 @@ PRG027_ABAE:
 	CMP #$ff
 	BEQ PRG027_ABD1	 ; If character = $FF (terminator), jump to PRG027_ABD1 (RTS)
 
-	STA PPU_VRAM_DATA	; Store character as pattern
+	sta_PPU_VRAM_DATA	; Store character as pattern
 
 	INC Temp_Var4	 ; Temp_Var4++
 	BNE PRG027_ABAE	 ; Loop (assumes Temp_Var4 never overflows)

@@ -13,6 +13,7 @@
 ;---------------------------------------------------------------------------
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
+.include "../inc/nesswitch.inc"
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var9, Temp_Var11, Temp_Var13
@@ -1602,7 +1603,7 @@ PRG026_A936:
 	JSR GraphicsBuf_Prep_And_WaitVSync	; Wait VSync
 
 	LDA #$00
-	STA PPU_CTL2	 	; Disable display
+	sta_PPU_CTL2	 	; Disable display
 	STA Level_AScrlConfig	; Level_AScrlConfig = 0
 
 	; Stop Update_Select activity temporarily
@@ -2267,27 +2268,27 @@ Palette_FadeIn:		; AC69
 
 	; Some kind of hardware thing??
 	LDA #$00
-	STA PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA #$10
-	STA PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA #$00
-	STA PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA #$10
-	STA PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 PRG026_AC8C:
-	LDA PPU_STAT	 ; Get PPU_STAT
+	lda_PPU_STAT	 ; Get PPU_STAT
 	AND #$80	 
 	BNE PRG026_AC8C	 ; If VBlank is NOT occurring, loop!
 
 	LDA #%10101000	 ; PT2 is sprites, use 8x16 sprites, generate VBlanks
 
 	; Update PPU_CTL1 and local copy
-	STA PPU_CTL1	 
+	sta_PPU_CTL1	 
 	STA PPU_CTL1_Copy
 
 	LDA #%00011000	 	; Show sprites + BG
@@ -2314,13 +2315,13 @@ Palette_FadeOut:
 
 	; Wait for V-Blank
 PRG026_ACAD:
-	LDA PPU_STAT
+	lda_PPU_STAT
 	AND #$80	
 	BNE PRG026_ACAD	
 
 	LDA #%10101000	 ; PT2 is sprites, use 8x16 sprites, generate VBlanks
 	; Update PPU_CTL1 and local copy
-	STA PPU_CTL1	 
+	sta_PPU_CTL1	 
 	STA PPU_CTL1_Copy
 
 	LDA #%00011000	 	; Show sprites + BG
@@ -2340,7 +2341,7 @@ PRG026_ACBF:
 PRG026_ACCB:	.byte $40, $40, $20, $00, $00, $00
 
 Map_EnterLevel_Effect:		; routine called while entering a level
-	LDA PPU_STAT
+	lda_PPU_STAT
 	LDX Map_EntTran_BorderLoop	; X = current border index (0-3: Top 0, bottom 1, right 2, left 3)
 
 	; Copy this border's VRAM addresses to Map_EntTran_VAddrH/L
@@ -2372,17 +2373,17 @@ PRG026_ACF6:
 
 PRG026_ACFF:
 	LDA PPU_CTL1_Copy
-	STA PPU_CTL1	 	; Commit changes to PPU_CTL1
+	sta_PPU_CTL1	 	; Commit changes to PPU_CTL1
 
 	; Set this border's VRAM addresses
 	LDA Map_EntTran_VAddrH
-	STA PPU_VRAM_ADDR	
+	sta_PPU_VRAM_ADDR	
 	LDA Map_EntTran_VAddrL
-	STA PPU_VRAM_ADDR	
+	sta_PPU_VRAM_ADDR	
 
 PRG026_AD10:
 	LDA #$ff		; black pattern	
-	STA PPU_VRAM_DATA	; Store into VRAM
+	sta_PPU_VRAM_DATA	; Store into VRAM
 
 	LDA Map_EntTran_BorderLoop
 	AND #$02
@@ -2430,12 +2431,12 @@ PRG026_AD37:
 
 	; Set VRAM address to [$2B][PRG026_ACCB[Y]]
 	LDA #$2b
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA PRG026_ACCB,Y
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 PRG026_AD5F:
 	LDA #$ff	 
-	STA PPU_VRAM_DATA
+	sta_PPU_VRAM_DATA
 	DEX		 ; X--
 	BPL PRG026_AD5F	 ; While X >= 0, loop!
 
@@ -2528,7 +2529,7 @@ Border_Left:
 
 Level_Opening_Effect:	; Unused in the US release; this is the reverse effect of the map entry
 
-	LDA PPU_STAT
+	lda_PPU_STAT
 	LDA Map_EntTran_BorderLoop	; A = current border index (0-3: Top 0, bottom 1, right 2, left 3)
 	AND #$02
 	BEQ PRG026_AE07	 		; If updating top/bottom, jump to PRG026_AE07
@@ -2552,18 +2553,18 @@ PRG026_AE07:
 
 PRG026_AE10:
 	LDA PPU_CTL1_Copy
-	STA PPU_CTL1	 	; Commit changes to PPU_CTL1
+	sta_PPU_CTL1	 	; Commit changes to PPU_CTL1
 	LDX Map_EntTran_BorderLoop	; X = current border index 
 
 	; Set VRAM address for this border
 	LDA Map_EntTran_BVAddrH,X
-	STA PPU_VRAM_ADDR	 
+	sta_PPU_VRAM_ADDR	 
 	LDA Map_EntTran_BVAddrL,X
-	STA PPU_VRAM_ADDR	 
+	sta_PPU_VRAM_ADDR	 
 
 PRG026_AE24:
 	LDA Scroll_ColorStrip,Y	 
-	STA PPU_VRAM_DATA	 ; Store attribute data to VRAM
+	sta_PPU_VRAM_DATA	 ; Store attribute data to VRAM
 
 	CPY Map_EntTran_Temp
 	BEQ PRG026_AE35	 	; If Y = Map_EntTran_Temp, jump to PRG026_AE35
@@ -2578,16 +2579,16 @@ PRG026_AE35:
 
 	; Set VRAM address to [$28][Map_EntTran_BVAddrL & $1f]
 	LDA #$28	 
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA Map_EntTran_BVAddrL,X
 	AND #$1f	 
-	STA PPU_VRAM_ADDR	
+	sta_PPU_VRAM_ADDR	
 
 	DEY		 	; Y--
 
 PRG026_AE48:
 	LDA Scroll_ColorStrip,Y	 
-	STA PPU_VRAM_DATA	 ; Store attribute data to VRAM
+	sta_PPU_VRAM_DATA	 ; Store attribute data to VRAM
 	DEY		 	; Y--
 	BPL PRG026_AE48	 ; While Y >= 0, loop
 
@@ -3407,12 +3408,12 @@ Video_Misc_Updates:
 	LDA (Video_Upd_AddrL),Y	; Get byte
 	BEQ PRG026_B292	 	; If 0, jump to PRG026_B292 (RTS)
 
-	LDX PPU_STAT	 	; Flush video
+	ldx_PPU_STAT	 	; Flush video
 
-	STA PPU_VRAM_ADDR	; Store byte into video address high
+	sta_PPU_VRAM_ADDR	; Store byte into video address high
 	INY		 	; Y++
 	LDA (Video_Upd_AddrL),Y	; Get next byte
-	STA PPU_VRAM_ADDR	; Store byte into video address low
+	sta_PPU_VRAM_ADDR	; Store byte into video address low
 
 	INY		 	; Y++
 	LDA (Video_Upd_AddrL),Y	; Get next byte...
@@ -3426,7 +3427,7 @@ Video_Misc_Updates:
 	AND #$fb		; Otherwise, use horizontal updates! (clears vertical bit)
 
 PRG026_B2B2:
-	STA PPU_CTL1		; Update PPU_CTL1
+	sta_PPU_CTL1		; Update PPU_CTL1
 	STA PPU_CTL1_Copy	; Update PPU_CTL1_Copy
 
 	PLA		; Restore A
@@ -3449,7 +3450,7 @@ PRG026_B2C1:
 	INY		 ; Y++
 PRG026_B2C4:
 	LDA (Video_Upd_AddrL),Y	; Get next byte
-	STA PPU_VRAM_DATA	; Store into PPU
+	sta_PPU_VRAM_DATA	; Store into PPU
 	DEX		 	; X--
 	BNE PRG026_B2C1	 	; While X <> 0, loop! 
 
@@ -3475,32 +3476,32 @@ PRG026_B2C4:
 ; Used by both the world map and a standard horizontally scrolling level
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Scroll_Commit_Column:
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	LDA Scroll_ToVRAMHi	; A = Scroll_ToVRAMHi
 	BEQ PRG026_B354	 	; If Scroll_ToVRAMHi = 0, jump to PRG030_B354
 	LDX #$00	 	; X = 0
 	LDA Scroll_ToVRAMHi	; A = Scroll_ToVRAMHi
-	STA PPU_VRAM_ADDR	; Write as high byte to VRAM address
+	sta_PPU_VRAM_ADDR	; Write as high byte to VRAM address
 	LDA Scroll_LastCol8	
-	STA PPU_VRAM_ADDR	; Low byte is Scroll_LastCol8
+	sta_PPU_VRAM_ADDR	; Low byte is Scroll_LastCol8
 	LDA PPU_CTL1_Copy	; Get the PPU_CTL1
 	ORA #$04	 	; Use vertical update mode
-	STA PPU_CTL1	 	; Set PPU_CTL1
+	sta_PPU_CTL1	 	; Set PPU_CTL1
 
 PRG026_B2F9:
 
 	; Push 5 blocks in
 	LDA Scroll_PatStrip,X	 
-	STA PPU_VRAM_DATA	 
+	sta_PPU_VRAM_DATA	 
 	LDA Scroll_PatStrip+1,X
-	STA PPU_VRAM_DATA	
+	sta_PPU_VRAM_DATA	
 	LDA Scroll_PatStrip+2,X
-	STA PPU_VRAM_DATA	
+	sta_PPU_VRAM_DATA	
 	LDA Scroll_PatStrip+3,X
-	STA PPU_VRAM_DATA	
+	sta_PPU_VRAM_DATA	
 	LDA Scroll_PatStrip+4,X
-	STA PPU_VRAM_DATA	
+	sta_PPU_VRAM_DATA	
 
 	INX
 	INX
@@ -3514,20 +3515,20 @@ PRG026_B2F9:
 	; Begin update on Nametable 2
 	LDA Scroll_ToVRAMHi	
 	ORA #$08	 	
-	STA PPU_VRAM_ADDR	
+	sta_PPU_VRAM_ADDR	
 	LDA Scroll_LastCol8	
-	STA PPU_VRAM_ADDR	
+	sta_PPU_VRAM_ADDR	
 
 PRG026_B32E:
 	; Push another 4
 	LDA Scroll_PatStrip,X
-	STA PPU_VRAM_DATA	
+	sta_PPU_VRAM_DATA	
 	LDA Scroll_PatStrip+1,X
-	STA PPU_VRAM_DATA	
+	sta_PPU_VRAM_DATA	
 	LDA Scroll_PatStrip+2,X
-	STA PPU_VRAM_DATA	
+	sta_PPU_VRAM_DATA	
 	LDA Scroll_PatStrip+3,X
-	STA PPU_VRAM_DATA	 
+	sta_PPU_VRAM_DATA	 
 
 	INX		
 	INX		
@@ -3548,16 +3549,16 @@ PRG026_B354:
 
 	; Commiting attribute updates...
 	LDA PPU_CTL1_Copy
-	STA PPU_CTL1	 	; Update PPU_CTL1
+	sta_PPU_CTL1	 	; Update PPU_CTL1
 
 	LDX #$00	 	; X = 0
 	LDY Scroll_LastAttr	; Y = Scroll_LastAttr (low part)
 PRG026_B363:
 	LDA Scroll_ToVRAMHA	; A = Scroll_ToVRAMHA (high part)
-	STA PPU_VRAM_ADDR	; Set high address
-	STY PPU_VRAM_ADDR	; Set low address
+	sta_PPU_VRAM_ADDR	; Set high address
+	sty_PPU_VRAM_ADDR	; Set low address
 	LDA Scroll_AttrStrip,X	; Get next attribute byte
-	STA PPU_VRAM_DATA	; Commit it!
+	sta_PPU_VRAM_DATA	; Commit it!
 	TYA		 
 	CLC
 	ADC #$08	 
@@ -3582,7 +3583,7 @@ PRG026_B38E:
 
 
 Scroll_ToVRAM_Apply:
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	LDA Scroll_ToVRAMHi
 	BEQ PRG026_B3BD	 ; If Scroll_ToVRAMHi = 0 (no scrolled pattern update required), jump to PRG026_B3BD
@@ -3591,20 +3592,20 @@ Scroll_ToVRAM_Apply:
 
 	; Set high byte of VRAM address
 	LDA Scroll_ToVRAMHi
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	; Set low byte of VRAM address
 	LDA Scroll_LastCol8
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	; Do increment by 1
 	LDA PPU_CTL1_Copy
 	AND #<(~$04)
-	STA PPU_CTL1
+	sta_PPU_CTL1
 
 PRG026_B3AC:
 	LDA Scroll_PatStrip,X	; Get next block
-	STA PPU_VRAM_DATA	; Write to VRAM
+	sta_PPU_VRAM_DATA	; Write to VRAM
 	INX		 	; X++
 	CPX #32			
 	BNE PRG026_B3AC		; While X < 32, loop!
@@ -3622,21 +3623,21 @@ PRG026_B3BD:
 
 	; Reset PPU_CTL1
 	LDA PPU_CTL1_Copy
-	STA PPU_CTL1
+	sta_PPU_CTL1
 
 	LDX #$00	 ; X = 0
 	; Set high byte of VRAM address
 	LDA Scroll_ToVRAMHA
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	; Set low byte of VRAM address
 	LDA Scroll_LastAttr
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 PRG026_B3D5:
 	; Set next byte of attribute data
 	LDA Scroll_AttrStrip,X
-	STA PPU_VRAM_DATA
+	sta_PPU_VRAM_DATA
 
 	INX		 ; X++ (next attribute byte)
 	CPX #$08
@@ -3653,35 +3654,35 @@ TileChng_VRAMCommit:
 	LDY TileChng_VRAM_H
 	BEQ PRG026_B38E	 ; If TileChng_VRAM_H = 0 (no tile change to do), jump to PRG026_B38E (RTS)
 
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	; Switch to +1 increment mode
 	LDA PPU_CTL1_Copy
 	AND #<(~$04)
-	STA PPU_CTL1
+	sta_PPU_CTL1
 
 	LDA TileChng_VRAM_L	; Get VRAM low address
-	STY PPU_VRAM_ADDR	; Set VRAM high address
-	STA PPU_VRAM_ADDR	; Set VRAM low address
+	sty_PPU_VRAM_ADDR	; Set VRAM high address
+	sta_PPU_VRAM_ADDR	; Set VRAM low address
 
 	; Commit the top two patterns
 	LDA TileChng_Pats
-	STA PPU_VRAM_DATA
+	sta_PPU_VRAM_DATA
 	LDA TileChng_Pats+1
-	STA PPU_VRAM_DATA
+	sta_PPU_VRAM_DATA
 
 	; Set VRAM address at base +32
 	LDA TileChng_VRAM_L
 	CLC
 	ADC #32		; +32 to jump to next line
-	STY PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sty_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	; Commit the lower two patterns
 	LDA TileChng_Pats+2
-	STA PPU_VRAM_DATA
+	sta_PPU_VRAM_DATA
 	LDA TileChng_Pats+3
-	STA PPU_VRAM_DATA
+	sta_PPU_VRAM_DATA
 
 	; TileChng_VRAM_H = 0 (Tile update commit completed!)
 	LDA #$00

@@ -209,6 +209,7 @@
 ; -- Possible in-joke no one got after all these years? :P
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
+.include "../inc/nesswitch.inc"
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var10, Temp_Var11
@@ -2604,11 +2605,11 @@ UpdSel_Roulette:
 	; Performing some work that got skipped because we diverted here in the interrupt
 
 	LDA #$00	 ; A = 0
-	STA PPU_CTL2	 ; Hide sprites and bg (most importantly)
-	STA PPU_SPR_ADDR ; Resets to sprite 0 in memory
+	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
+	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
 
 	LDA #$02	 ; A = 2
-	STA SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
+	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
 
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
 
@@ -2631,58 +2632,58 @@ UpdSel_Roulette:
 	STA Graphics_BufCnt	; Reset Graphics_Buffer counter
 	STA Graphics_Buffer+$00	; Terminate it
 
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	; Unknown hardware thing?  Is this for synchronization?
 	LDX #$3f	 	; 
-	STX PPU_VRAM_ADDR	; Access PPU address #3Fxx
+	stx_PPU_VRAM_ADDR	; Access PPU address #3Fxx
 	LDA #$00	 	; 
-	STA PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
-	STA PPU_VRAM_ADDR	; 
-	STA PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
+	sta_PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
+	sta_PPU_VRAM_ADDR	; 
+	sta_PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
 
 	LDA PPU_CTL2_Copy
 	ORA #%00011000
-	STA PPU_CTL2	 ; Show BG+Sprites
+	sta_PPU_CTL2	 ; Show BG+Sprites
 
 	; Generate VBlank Resets, use 8x16 sprites, sprites use PT2
 	LDA #$a8
-	STA PPU_CTL1
+	sta_PPU_CTL1
 
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	LDA #$00
-	STA PPU_SCROLL
-	STA PPU_SCROLL
+	sta_PPU_SCROLL
+	sta_PPU_SCROLL
 
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	LDA #$ff
-	STA MMC3_IRQCNT
-	STA MMC3_IRQLATCH
+	sta_MMC3_IRQCNT
+	sta_MMC3_IRQLATCH
 
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$00
-	STA PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA #$10
-	STA PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA #$00
-	STA PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA #$10
-	STA PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA #$00
-	STA PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	; Fire on scanline 32
 	LDA #$20
-	STA MMC3_IRQCNT
-	STA MMC3_IRQLATCH
-	STA MMC3_IRQENABLE
+	sta_MMC3_IRQCNT
+	sta_MMC3_IRQLATCH
+	sta_MMC3_IRQENABLE
 
 	CLI		; Enable maskable interrupts
 
@@ -2718,17 +2719,17 @@ PRG022_CF7C:
 
 	; Switch to page 26 @ A000
 	LDA #MMC3_8K_TO_PRG_A000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA #26		
-	STA MMC3_PAGE	 
+	sta_MMC3_PAGE	 
 
 	JSR StatusBar_UpdateValues	 ; Update Status Bar (not really used)
 
 	; Switch to page 28 @ A000
 	LDA #MMC3_8K_TO_PRG_A000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA #28	
-	STA MMC3_PAGE	 
+	sta_MMC3_PAGE	 
 
 	; Jump to the sound engine, newly inserted at page A000!
 	JSR Sound_Engine_Begin
@@ -3537,14 +3538,14 @@ PRG022_D57D:
 	LDA #$80
 	STA Temp_Var1
 PRG022_D581:
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	; Set VRAM address high
-	STY PPU_VRAM_ADDR
+	sty_PPU_VRAM_ADDR
 
 	; Set VRAM address low
 	LDA Temp_Var1
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	; Fills in a row with the pinkish "background" color
 	LDX #31		; X = 31 (32 tiles per row)
@@ -3552,7 +3553,7 @@ PRG022_D58E:
 
 	; Insert a background tile
 	LDA #$fe
-	STA PPU_VRAM_DATA
+	sta_PPU_VRAM_DATA
 
 	DEX		 ; X--
 	BPL PRG022_D58E	 ; While X >= 0, loop!
@@ -3607,18 +3608,18 @@ PRG022_D5BB:
 	STA Temp_Var4
 
 PRG022_D5C9:
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	; Set VRAM address
 	LDA Temp_Var1
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA Temp_Var2
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	LDX #$00	; X = 0
 PRG022_D5D8:
 	LDA (Temp_Var3),Y	; Get pattern for shape
-	STA PPU_VRAM_DATA	; Store into VRAM
+	sta_PPU_VRAM_DATA	; Store into VRAM
 
 	INY		; Y++ (next shape pattern)
 	INX		; X++ (column counter)

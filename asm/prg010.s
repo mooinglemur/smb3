@@ -13,6 +13,7 @@
 ;---------------------------------------------------------------------------
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
+.include "../inc/nesswitch.inc"
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var11
@@ -580,20 +581,20 @@ Map_IntroAttrSave:
 	ADC #$08
 	STA Temp_Var2
 
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	LDX #$00	 ; X = 0
 
 PRG010_C2DA:
 	; Set the address to $2Bxx (attribute table 2, all that the map effects)
 	LDA #$2B
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA Temp_Var1	
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
-	LDA PPU_VRAM_DATA
+	lda_PPU_VRAM_DATA
 
-	LDA PPU_VRAM_DATA
+	lda_PPU_VRAM_DATA
 	STA Scroll_ColorStrip,X
 
 	LDY Temp_Var1	 ; Y = Temp_Var1
@@ -745,25 +746,25 @@ Map_ConfigWorldIntro:
 
 	; Cover map screen with black
 Map_W8DarknessFill:
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	; Use horizontal updates
 	LDA PPU_CTL1_Copy
 	AND #<(~$04)
-	STA PPU_CTL1
+	sta_PPU_CTL1
 
 	LDY #$02	 ; Y = $02
 
 	LDX #$60	 ; X = $60 (low VRAM address)
 	LDA #$28	 ; A = $28 (high VRAM address)
-	STA PPU_VRAM_ADDR	; Set VRAM high address
+	sta_PPU_VRAM_ADDR	; Set VRAM high address
 
 	LDA #$80	 ; A = $80
-	STA PPU_VRAM_ADDR	 ; Set VRAM low address
+	sta_PPU_VRAM_ADDR	 ; Set VRAM low address
 
 	LDA #$ff	 ; A = $FF (the black tile)
 PRG010_C3AC:
-	STA PPU_VRAM_DATA	 ; Store black pattern tile
+	sta_PPU_VRAM_DATA	 ; Store black pattern tile
 
 	DEX		 ; X--
 	BNE PRG010_C3AC	 ; While X <> 0, loop
@@ -2392,9 +2393,9 @@ Scroll_ColumnLOff:	.byte $00, $0F, $00
 Map_PanRight:
 	; Switch to page 12 @ A000 (for map tile 8x8 layout data)
 	LDA #MMC3_8K_TO_PRG_A000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA #12
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 
 	LDY Map_ScrollOddEven		 ; Y = Map_ScrollOddEven
 
@@ -2502,9 +2503,9 @@ PRG010_CCC0:
 PRG010_CCD7:
 	; Switch to page 11 @ A000
 	LDA #MMC3_8K_TO_PRG_A000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA #11
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 
 	JMP Scroll_Map_SpriteBorder	 ; Draw map sprite border and don't come back
 
@@ -3927,9 +3928,9 @@ W8D_GetNext8x8:
 
 	; Switch to page 12 @ A000 (for map tile 8x8 layout data)
 	LDA #MMC3_8K_TO_PRG_A000
-	STA MMC3_COMMAND
+	sta_MMC3_COMMAND
 	LDA #12
-	STA MMC3_PAGE
+	sta_MMC3_PAGE
 
 	JSR TileLayout_GetBaseAddr	 ; Set Temp_Var13/14 to layout pointer, and reload Y = Temp_Var11 (the tile)
 

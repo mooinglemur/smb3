@@ -14,6 +14,7 @@
 
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
+.include "../inc/nesswitch.inc"
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var8, Temp_Var11, Temp_Var12, Temp_Var13
@@ -50,7 +51,7 @@
 .endif
 Sound_Engine_Begin:
 	LDA #$ff	 ; 
-	STA FRAMECTR_CTL ; Resets the frame counter clock (sync sound hardware), disables IRQ generation
+	sta_FRAMECTR_CTL ; Resets the frame counter clock (sync sound hardware), disables IRQ generation
 
 	LDA Sound_QPause
 	BNE SndPause	 ; If a "pause/resume" was requested, jump to SndPause
@@ -71,22 +72,22 @@ SndPause:	; $A017
 	LDA #$00
 	STA Sound_IsPaused	 ; Clear IsPaused
 	STA SndCur_Pause	 ; Clear the pause sound hold
-	STA PAPU_EN	 ; Disable all channels
+	sta_PAPU_EN	 ; Disable all channels
 	LDA #$0f	 ;  
-	STA PAPU_EN	 ; Enable all channels
+	sta_PAPU_EN	 ; Enable all channels
 	BNE Sound_Process	 ; (Technically always) jump to Sound_Process
 
 PRG028_A033:
 	; Want to PAUSE sound
 	LDA #$00
-	STA PAPU_EN	; Disable all sound channels
+	sta_PAPU_EN	; Disable all sound channels
 
 	; Clear other sound counters
 	STA SndCur_Player	; Kill player sound
 	STA SndCur_Level1	; Kill level 1 sound
 	STA SndCur_Level2	; Kill level 2 sound
 	LDA #$0f	
-	STA PAPU_EN	; Enable all sound channels
+	sta_PAPU_EN	; Enable all sound channels
 	LDA #$2a	
 	STA SFX_Counter1 ; SFX_Counter1 = $2A
 
@@ -117,7 +118,7 @@ PRG028_A067:
 
 	; Pause sound over!
 	LDA #$00	 ; 
-	STA PAPU_EN	 ; Disable all sound channels
+	sta_PAPU_EN	 ; Disable all sound channels
 	LDA #$00	 ; 
 	STA SndCur_Pause	 ; Stop the pause sound hold
 	BEQ PRG028_A08F	 ; (technically always) go to PRG028_A08F
@@ -162,9 +163,9 @@ MapSound_Queued:
 	; Entering level sound only:
 	LDX #$00	 ; 
 	STX SndCur_Music2	 ; Halt any playing BGM
-	STX PAPU_EN	 ; Disable all sound channels
+	stx_PAPU_EN	 ; Disable all sound channels
 	LDX #$0f	 ; 
-	STX PAPU_EN	 ; Enable all sound channels
+	stx_PAPU_EN	 ; Enable all sound channels
 
 PRG028_A0BD:
 	STA SndCur_Map ; Lock in this sound as playing!
@@ -210,9 +211,9 @@ MapSound_Playing:
 
 MapSound_Stop:
 	LDA #$08	 ; 
-	STA PAPU_EN	 ; Only noise channel left enabled
+	sta_PAPU_EN	 ; Only noise channel left enabled
 	LDA #$0f	 ; 
-	STA PAPU_EN	 ; All channels enabled
+	sta_PAPU_EN	 ; All channels enabled
 	LDA #$00	 ; 
 	STA SndCur_Map ; Release hold, no longer playing a sound
 	RTS		 ; Return
@@ -226,18 +227,18 @@ MapSound_SetLen:
 
 
 MapSound_PlayFreqL:
-	STA PAPU_FT1	 ; Byte goes directly into frequency register
+	sta_PAPU_FT1	 ; Byte goes directly into frequency register
 	LDA SndCur_Map ; Get the hold value
 	BPL PRG028_A120	 ; If $80 not set, jump to PRG028_A120
 
 	LDA #$0e	 ; 
-	STA PAPU_CT1	 ; Fairly high frequency, short length
+	sta_PAPU_CT1	 ; Fairly high frequency, short length
 	LDX #%10011111	 ; Square 1's CTL settings: Max volume, envelope decay disabled, 50% duty cycle
 	BNE PRG028_A127	 ; (technically always) jump to PRG028_A127
 
 PRG028_A120:
 	LDA #$08	 ; 
-	STA PAPU_CT1	 ; Short length
+	sta_PAPU_CT1	 ; Short length
 	LDX #%10010111	 ; Square 1's CTL settings: Half volume, envelope decay disabled, 50% duty cycle
 
 PRG028_A127:
@@ -259,7 +260,7 @@ PRG028_A136:
 	INC Sound_Map_EntrV	 ; Sound_Map_EntrV++
 	LDY Sound_Map_EntrV	 ; Y = Sound_Map_EntrV
 	LDA SndMap_Entr_VolData-1,Y	 ; because they incremented the pointer FIRST, I have to subtract 1 from the LUT address!
-	STA PAPU_CTL1	 ; Set the new volume!
+	sta_PAPU_CTL1	 ; Set the new volume!
 
 PRG028_A147:
 	; For any sound...
@@ -287,15 +288,15 @@ MapSound_Play2FreqL:
 	CMP #$7e	 ; 
 	BNE PRG028_A176	 ; Is the next byte $7e? If not, jump to PRG028_A176
 	LDA #%00010000	 ; 
-	STA PAPU_CTL2	 ; Disables envelope decay, but that's it
+	sta_PAPU_CTL2	 ; Disables envelope decay, but that's it
 	BNE PRG028_A185	 ; (technically always) jump to PRG028_A185
 
 PRG028_A176:
 	; Every other byte...
-	STA PAPU_FT2
+	sta_PAPU_FT2
 
 	LDX #$08	 ; 
-	STX PAPU_CT2	 ; Short length
+	stx_PAPU_CT2	 ; Short length
 	LDX #%01010101	 ; Square 2's CTL settings: 33% volume, envelope decay disabled, 25% duty cycle
 	LDY #$7f	 ; Ramp settings: Everything except actually enabling the ramp!
 	JSR Sound2_XCTL_YRAMP
@@ -315,7 +316,7 @@ PRG028_A18F:
 
 	LDA SndMap_Entr_VolData-1,Y
 	ORA #$50	 ; Envelope decay disable + 25% duty cycle
-	STA PAPU_CTL2	 ; Set the register
+	sta_PAPU_CTL2	 ; Set the register
 
 PRG028_A19B:
 	RTS		 ; Return
@@ -492,7 +493,7 @@ PlayerSnd_FirBmpCont:
 
 	; SFX_Counter1 = 6...
 	LDA #%10111011	 ; 
-	STA PAPU_RAMP1	 ; right shift 3, decrease wavelength, sweep rate 3, enable sweep
+	sta_PAPU_RAMP1	 ; right shift 3, decrease wavelength, sweep rate 3, enable sweep
 
 PRG028_A2A6:
 	BNE PRG028_A325	 ; A <> 0, jump to PRG028_A325
@@ -576,11 +577,11 @@ PlayerSnd_Swim:
 PlayerSnd_SwimCont:
 	LDY SFX_Counter1 
 	LDA SwimCTL1_LUT-1,Y	; SFX_Counter1 is used as an index into SwimCTL1_LUT; we subtract 1 because SFX_Counter1 must be at least 1
-	STA PAPU_CTL1	 	; Store next swim CTL1 command
+	sta_PAPU_CTL1	 	; Store next swim CTL1 command
 	CPY #$06	 ; 
 	BNE PRG028_A325	 ; If SFX_Counter1 <> 6, jump to PRG028_A325
 	LDA #$9e	 ;
-	STA PAPU_FT1	 ; Update PAPU_FT1
+	sta_PAPU_FT1	 ; Update PAPU_FT1
 
 PRG028_A325:
 	BNE PlayerSnd_CounterUpd	 ; (technically always) jump to PlayerSnd_CounterUpd
@@ -600,7 +601,7 @@ PlayerSnd_KickCont:
 	CPY #$08	 ; 
 	BNE PRG028_A34A	 ; If SFX_Counter1 <> 8, go to PRG028_A34A
 	LDA #$a0	 ; 
-	STA PAPU_FT1	 ; Update register
+	sta_PAPU_FT1	 ; Update register
 	LDA #$9f	 ; 
 	BNE PRG028_A34C	 ; (technically always) jump to PRG028_A34C
 
@@ -608,7 +609,7 @@ PRG028_A34A:
 	LDA #$90	 
 
 PRG028_A34C:
-	STA PAPU_CTL1
+	sta_PAPU_CTL1
 
 PlayerSnd_CounterUpd:
 	DEC SFX_Counter1 ; SFX_Counter1--
@@ -619,9 +620,9 @@ PlayerSnd_Stop:
 	LDX #$00	 	;
 	STX SndCur_Player	; Clear Player sound hold
 	LDX #$1e	 	; 
-	STX PAPU_EN	 	; Disable square wave 1
+	stx_PAPU_EN	 	; Disable square wave 1
 	LDX #$0f	 	; 
-	STX PAPU_EN	 	; Enable every channel
+	stx_PAPU_EN	 	; Enable every channel
 
 PRG028_A363:
 	RTS		 ; Return
@@ -685,7 +686,7 @@ SndLev1_Coin_Cont2:
 	BNE PRG028_A3EF	 ; If SFX_Counter2 <> $30, jump to PRG028_A3EF
 
 	LDA #$54
-	STA PAPU_FT2
+	sta_PAPU_FT2
 
 PRG028_A3EF:
 	BNE SndLev1_PUp_Cont2	 ; $A3EF 
@@ -737,9 +738,9 @@ PRG028_A42D:
 
 	; Disable and re-enable square 2
 	LDX #$0d
-	STX PAPU_EN
+	stx_PAPU_EN
 	LDX #$0f
-	STX PAPU_EN
+	stx_PAPU_EN
 
 PRG028_A43C:
 	RTS		 ; Return
@@ -841,7 +842,7 @@ PRG028_A4B3:
 
 	TAY		 	; Y = A
 	LDA SndLev1_1upData-1,Y	; As in other parts of sound code, -1 because SFX_Counter2 must be > 0
-	STA PAPU_FT2	 	; Store this into PAPU_FT2
+	sta_PAPU_FT2	 	; Store this into PAPU_FT2
 
 	LDX #$82	 	; PAPU_CTL2
 	LDY #$7f	 	; PAPU_RAMP2
@@ -849,7 +850,7 @@ PRG028_A4B3:
 
 	; PAPU_CT2 = 8
 	LDA #$08
-	STA PAPU_CT2
+	sta_PAPU_CT2
 
 	JMP SndLev1_PUp_Cont2	 ; Jump to SndLev1_PUp_Cont2
 
@@ -867,7 +868,7 @@ PRG028_A4DB:
 	STA SFX_Counter2	 ; Set SFX_Counter2
 
 	LDA #$7f
-	STA PAPU_RAMP2	 ;  [NES] Audio -> Square 2
+	sta_PAPU_RAMP2	 ;  [NES] Audio -> Square 2
 
 	; SFX_Counter3 = 0
 	LDA #$00
@@ -883,7 +884,7 @@ SndLev1_PUpRise_Cont:
 	BEQ PRG028_A501	 ; If SFX_Counter3 / 2 = SFX_Counter2, jump to PRG028_A501 (PRG028_A42D)
 
 	LDA #$9d
-	STA PAPU_CTL2	 ;  [NES] Audio -> Square 2
+	sta_PAPU_CTL2	 ;  [NES] Audio -> Square 2
 
 	LDA SndLev1_PUpRiseData-1,Y	 ; As in other parts of sound code, -1 because SFX_Counter2 must be > 0
 	JSR Sound_Sq2_NoteOn_NoPAPURAMP
@@ -953,10 +954,10 @@ SndLev1_SuitLost_Cont2:
 
 PRG028_A544:
 	LDX #$7f
-	STX PAPU_RAMP2	 ;  [NES] Audio -> Square 2
+	stx_PAPU_RAMP2	 ;  [NES] Audio -> Square 2
 
 	LDX SFX_Counter3
-	STX PAPU_CTL2	 ;  [NES] Audio -> Square 2
+	stx_PAPU_CTL2	 ;  [NES] Audio -> Square 2
 
 	JSR Sound_Sq2_NoteOn_NoPAPURAMP
 
@@ -1016,11 +1017,11 @@ SndLev2_SkidCont:
 	TAY		 ; Y = SFX_Counter4
 
 	LDA SndLev2_SkidTFreq,Y
-	STA PAPU_TFREQ1	 ; [NES] Audio -> Triangle
+	sta_PAPU_TFREQ1	 ; [NES] Audio -> Triangle
 
 	LDA #$18
-	STA PAPU_TCR1	 ; [NES] Audio -> Triangle
-	STA PAPU_TFREQ2	 ; [NES] Audio -> Triangle
+	sta_PAPU_TCR1	 ; [NES] Audio -> Triangle
+	sta_PAPU_TFREQ2	 ; [NES] Audio -> Triangle
 	BNE PRG028_A64C	 ; Jump (technically always) to PRG028_A64C
 
 SndLev2_Crumble:
@@ -1042,20 +1043,20 @@ SndLev2_CrumbleCont:
 PRG028_A641:
 
 	; Set both
-	STA PAPU_NCTL1
-	STX PAPU_NFREQ1
+	sta_PAPU_NCTL1
+	stx_PAPU_NFREQ1
 
 	LDA #$18
-	STA PAPU_NFREQ2	 ; [NES] Audio -> Noise Frequency reg #2
+	sta_PAPU_NFREQ2	 ; [NES] Audio -> Noise Frequency reg #2
 
 PRG028_A64C:
 	DEC SFX_Counter4 ; SFX_Counter4--
 	BNE PRG028_A660	 ; If SFX_Counter4 <> 0, jump to PRG028_A660 (RTS)
 
 	LDA #$f0
-	STA PAPU_NCTL1	 ; [NES] Audio -> Noise control reg
+	sta_PAPU_NCTL1	 ; [NES] Audio -> Noise control reg
 	LDA #$00
-	STA PAPU_TCR1	 ; [NES] Audio -> Triangle
+	sta_PAPU_TCR1	 ; [NES] Audio -> Triangle
 
 	; SndCur_Level2 = 0
 	LDA #$00
@@ -2177,9 +2178,9 @@ PRG028_BF52:		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	BPL PRG028_BF52 ; While X > 0, loop		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	; Latch this value, and force it into the counter!		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA MMC3_IRQLATCH		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA MMC3_IRQDISABLE		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA MMC3_IRQENABLE		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	sta_MMC3_IRQLATCH		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	sta_MMC3_IRQDISABLE		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	sta_MMC3_IRQENABLE		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	RTS		 ; Return		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	; Probably unused space		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
@@ -2200,8 +2201,8 @@ PRG028_BF80:		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	NOP		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	NOP		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
-	STA MMC3_IRQLATCH ; Latch A (last set to 27!)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
-	STA MMC3_IRQENABLE ; Enable IRQ again		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	sta_MMC3_IRQLATCH ; Latch A (last set to 27!)		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
+	sta_MMC3_IRQENABLE ; Enable IRQ again		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 	JMP PRG031_FA3C	 ; Jump to PRG031_FA3C		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
 
 	; Unused space		; UNUSED COPY FROM PRG030, DELETE DON'T MODIFY
