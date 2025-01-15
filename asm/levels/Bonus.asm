@@ -1,0 +1,5 @@
+BonusLayout_Typical:	.include "Bonus/Typical.asm"
+BonusLayout_NoTable:	.include "Bonus/NoTable.asm"
+BonusLayout_BlueBox:	.include "Bonus/BlueBox.asm"
+BonusLayout_Empty1:	.include "Bonus/Empty1.asm"
+BonusLayout_Empty2:	.include "Bonus/Empty2.asm"

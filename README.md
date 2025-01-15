@@ -1,14 +1,16 @@
 # smb3
 Disassembly of Super Mario Bros 3
 
-Specifically for use with NESASM (https://github.com/camsaul/nesasm), this will reassemble into a byte-for-byte perfect clone of Super Mario Bros. 3 US (PRG1)
+Specifically for use with cc65 (https://github.com/cc65/cc65), this will reassemble into a byte-for-byte perfect clone of Super Mario Bros. 3 US (PRG1)
 
-NOTE: Included are support files for my "NoDice" level editor (game.xml and "icons" subdirectory) and "MusConv" (musconv.xml) utilities. They are not part of the actual source code required to build the ROM, but are necessary if you intend to use these tools.
+This is a conversion of the nesasm/DCC6502 disassembly by Southbird.
 
 -------------
 
 To assemble, simply run:
 
-nesasm smb3.asm
+`make`
 
-Intended for use for research into the inner workings of SMB3 and highly technical ROM hacks (such as Super Mario Bros. 3Mix)
+Requires:
+* A recent version of python3 with the PIL module to let the conversion script interpret the PCX assets into CHR ROM format
+* cc65 and make

@@ -1,0 +1,8 @@
+*.NES
+*.nes
+*.fns
+*.PRG
+*.map
+*.sym
+obj/
+asm/chr*.s
