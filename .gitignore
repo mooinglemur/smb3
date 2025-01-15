@@ -1,4 +1,6 @@
 *.NES
+*.nes
+*.fns
 *.PRG
 *.map
 *.sym
