@@ -5183,7 +5183,8 @@ PRG007_B92A:
 	BPL PRG007_B979	 ; If SpecialObj_Var2 <> $FF, jump to PRG007_B979
 
 	TXA		 ; Keep things interesting
- 	ADD Counter_1	
+ 	CLC
+	ADC Counter_1	
 	LSR A	
 	BCS PRG007_B979	 ; Every other tick, jump to PRG007_B979 (RTS)
 

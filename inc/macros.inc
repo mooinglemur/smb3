@@ -16,19 +16,10 @@
 .endmacro
 
 ; Clarifying pseudo instructions
-.macro ADD arg1 ; RegEx S&R "CLC.*\n.*?ADC" -> "ADD"
-	CLC
-	ADC arg1
-.endmacro
-
-.macro SUB arg1 ; RegEx S&R "SEC.*\n.*?SBC" -> "SUB"
-	SEC
-	SBC arg1
-.endmacro
-
 .macro NEG      ; RegEx S&R "EOR #\$ff.*\n.*ADD #\$01" -> "NEG"
 	EOR #$ff
-	ADD #$01
+	CLC
+	ADC #$01
 .endmacro
 
 ; This is used in video update streams; since the video address register
