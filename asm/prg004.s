@@ -14,10 +14,7 @@
 	; CAUTION!! ObjectGroup03 labels MUST appear at the 
 	; address specified by the predefined constants!  I can't
 	; verify this at the assembler level, so be careful!!
-	; I'm using a ".org" directive to help enforce it, but
-	; the assembler does not warn you if you overwrite and
-	; instead will simply "stomp" on your code if you passed
-	; that limit ... sorry, original coders assumed a constant
+	; sorry, original coders assumed a constant
 	; position on banks 1 - 5 and didn't use a LUT this time...
 
 	; Object group $03 (i.e. objects starting at ID $6C) State 1 jump table
@@ -396,7 +393,7 @@ ObjectGroup03_KillAction:
 	; Object group $03 (i.e. objects starting at ID $6C) pattern index starts
 	; These are used for all states except "normal"
 
-	.org ObjectGroup_PatternStarts	; <-- help enforce this table *here*
+.assert * = ObjectGroup_PatternStarts, error	; <-- help enforce this table *here*
 ObjectGroup03_PatternStarts:
 	; Index by object group relative index (ObjGroupRel_Idx)
 	.byte <(ObjP6C - ObjectGroup03_PatternSets), <(ObjP6D - ObjectGroup03_PatternSets)

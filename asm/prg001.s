@@ -15,10 +15,7 @@
 	; CAUTION!! ObjectGroup00 labels MUST appear at the 
 	; address specified by the predefined constants!  I can't
 	; verify this at the assembler level, so be careful!!
-	; I'm using a ".org" directive to help enforce it, but
-	; the assembler does not warn you if you overwrite and
-	; instead will simply "stomp" on your code if you passed
-	; that limit ... sorry, original coders assumed a constant
+	; sorry, original coders assumed a constant
 	; position on banks 1 - 5 and didn't use a LUT this time...
 
 	; Object group $00 (i.e. objects starting at ID $00) State 1 jump table
