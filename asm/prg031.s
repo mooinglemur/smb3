@@ -3580,7 +3580,7 @@ PRGROM_Change_C000:	; $FFD1
 ; VECTORS
 ; Must appear at $FFFA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	.org $FFFA
+.segment "VECTORS"
 Vector_Table:
 	.word IntNMI   	; $FFFA - NMI Interrupt (VBlank)
 	.word IntReset	; $FFFC - Reset Interrupt (boot up)
