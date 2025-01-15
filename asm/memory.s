@@ -1963,7 +1963,7 @@ Level_Tile_Quad:      ; $0608-$060B Quadrant of tile for each of the positions a
 ; 2: "in front" of Player ("lower", at feet)
 ; 3: "in front" of Player ("upper", at face)
 Level_Tile_Slope:     ; $060D-$0610
-	.res 6
+	.res 4
 
 ; unused ($611)
 	.res 1

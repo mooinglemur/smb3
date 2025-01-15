@@ -4491,7 +4491,7 @@ Platform_SplitVar5:
 	LDA Player_HaltGame
 	BNE PRG005_B581	 ; If gameplay is halted, jump to PRG005_B581
 
-	LDA Objects_Var5,X
+	LDA a:Objects_Var5,X
 	PHA		 ; Save Var5
 
 	ASL A
@@ -6043,7 +6043,7 @@ LevelEvent_TreasureBox:
 	BNE PRG005_BCB5	 	; If LevelEvent_Cnt <> 0, jump to PRG005_BCB5 (RTS)
 
 	; Exit to map
-	INC Level_ExitToMap
+	INC a:Level_ExitToMap
 	LDA #$00
 	STA Map_ReturnStatus
 

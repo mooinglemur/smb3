@@ -730,7 +730,7 @@ Inventory_DoPowerupUse:
 
 PRG026_A41A:
 	; Not using item
-	LDA Pad_Input	 ; Get Player 
+	LDA a:Pad_Input	 ; Get Player 
 	AND #(PAD_B | PAD_START)	; B or START close the Inventory panel
 	BEQ PRG026_A436	 ; If neither B nor START are pressed, jump to PRG026_A436
 
@@ -747,7 +747,7 @@ Inventory_ForceFlip:
 
 PRG026_A436:
 	; Neither B nor START pressed
-	LDA Pad_Input
+	LDA a:Pad_Input
 	AND #(PAD_DOWN | PAD_UP)
 	BEQ PRG026_A491	 	; If neither up nor down pressed, jump to PRG026_A491
 

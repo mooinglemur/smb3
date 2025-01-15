@@ -820,7 +820,7 @@ Score_PopUp:
 	PLA		 	; Restore input value
 	STA Scores_Value,Y	; Store input value
 
-	LDA Objects_SpriteY,X
+	LDA a:Objects_SpriteY,X
 	SEC
 	SBC #16
 	CMP #192
@@ -832,7 +832,7 @@ PRG000_C47D:
 	STA Scores_Y,Y	 ; Set score Y
 
 	; Set score X to spawning object
-	LDA Objects_SpriteX,X	
+	LDA a:Objects_SpriteX,X	
 	STA Scores_X,Y	 
 
 	; Set score counter to $30
@@ -2644,7 +2644,7 @@ PRG000_CC94:
 	JMP PRG000_CCF7	 ; Otherwise, jump to PRG000_CCF7
 
 PRG000_CC9D:
-	LDA Objects_SpriteX,X 
+	LDA a:Objects_SpriteX,X 
 
 	LDY Objects_XVel,X 
 	BPL PRG000_CCAA	 ; If object is not moving to the left, jump to PRG000_CCAA

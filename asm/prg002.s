@@ -2772,7 +2772,7 @@ EnemyEnterXVel:	.byte <-$08, $08
 ObjInit_TowardsPlayer:
 
 	; Get last scroll direction so we know which way to face
-	LDY Scroll_LastDir
+	LDY a:Scroll_LastDir
 
 	; Enemy faces Player relative to which direction he's headed
 	LDA EnemyEnterFlip,Y
@@ -3826,7 +3826,7 @@ ObjInit_Toad:
 	BEQ PRG002_B21A	 ; If Toad is high up, jump to PRG002_B21A
 
 	; If you came via a Map Entry override, we assume it's a white toad house!
-	LDA Map_EnterViaID
+	LDA a:Map_EnterViaID
 	BEQ PRG002_B21A		; If not an override, jump to PRG002_B21A
 
 	INY		 ; Otherwise, Y = 1 
@@ -4263,7 +4263,7 @@ PRG002_B523:
 	; Timer expired!  Returning to map
 
 	STA Map_ReturnStatus	 ; Clear level
-	INC Level_ExitToMap	 ; Exit to map
+	INC a:Level_ExitToMap	 ; Exit to map
 
 PRG002_B534:
 	LDA InvFlip_Counter
@@ -4831,7 +4831,7 @@ PRG002_B7FB:
 	CMP #OBJ_DRYBONES
 	BNE PRG002_B80E	 ; If Dry Bones bumped into something that's not a Dry Bones, jump to PRG002_B80E
 
-	LDA Objects_Var5,X
+	LDA a:Objects_Var5,X
 	BNE PRG002_B815	 ; If Dry Bones bumped into a crumpled Dry Bones, jump to PRG002_B815
 
 PRG002_B80E:
@@ -4847,8 +4847,8 @@ PRG002_B815:
 	LDX SlotIndexBackup		 ; X = object slot index
 	RTS		 ; Return
 
-Respawn_XLo:	.byte $40, <-$40
-Respawn_XHi:	.byte $00, $FF
+Respawn_XLo:	.byte <$40, <-$40
+Respawn_XHi:	.byte >$40, >-$40
 
 Fish_Repawn:
 	LDY Scroll_LastDir	 ; Y = last scroll direction value
@@ -5969,7 +5969,7 @@ EndLevelCard_Exit:
 	; Timer expired, and we're outta here
 
 	STA Map_ReturnStatus	 ; Return Status = 0 (clear level)
-	INC Level_ExitToMap	 ; Flag to exit to map
+	INC a:Level_ExitToMap	 ; Flag to exit to map
 
 	LDA Inventory_Cards+2,Y
 	BEQ PRG002_BD6B		; If we didn't have three cards, jump to PRG002_BD6B

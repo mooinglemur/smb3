@@ -126,7 +126,7 @@ PRG024_A03A:
 	LDA #$02
 	STA Player_HaltTick
 
-	LDA Player_HaltGame
+	LDA a:Player_HaltGame
 	BNE PRG024_A04A	 ; If gameplay is halted, jump to PRG024_A04A
 
 	JSR King_Animate  ; Do King's animation logic
@@ -368,7 +368,7 @@ PRG024_A27A:
 	; Standard exit to map
 	LDA #$00
 	STA Map_ReturnStatus
-	INC Level_ExitToMap
+	INC a:Level_ExitToMap
 
 PRG024_A282:
 	RTS		 ; Return
@@ -2193,7 +2193,7 @@ Title_LoadSMB3:
 
 	; Queue next item to load
 	LDA Title_EventGrafX
-	STA Graphics_Queue	
+	STA a:Graphics_Queue	
 
 	; Increment Title_EventGrafX
 	INC Title_EventGrafX	
@@ -5154,7 +5154,7 @@ PRG024_B93D:
 	CLC
 	ADC #$56	; ... run command scripts $59, $58, $57, $56 (the "fade in" effect)
 
-	STA Graphics_Queue	 ; Execute appropriate scripe
+	STA a:Graphics_Queue	 ; Execute appropriate scripe
 
 	RTS		 ; Return
 
@@ -5353,11 +5353,11 @@ PRG024_BA19:
 	LDA #$5a
 	SEC
 	SBC Temp_Var1
-	STA Graphics_Queue
+	STA a:Graphics_Queue
 
 	; Second ending timer = $10
 	LDA #$10
-	STA Ending_Timer+1
+	STA a:Ending_Timer+1
 
 	RTS		 ; Return
 
@@ -5639,7 +5639,7 @@ PRG024_BBB0:
 
 	; Curtain extension
 	LDA #$24
-	STA Graphics_Queue
+	STA a:Graphics_Queue
 
 	JSR GraphicsBuf_Prep_And_WaitVSyn2
 
@@ -5665,7 +5665,7 @@ PRG024_BBE9:
 
 	; Queue next event
 	LDA Title_EventGrafX
-	STA Graphics_Queue
+	STA a:Graphics_Queue
 
 	INC Title_EventGrafX	 ; Title_EventGrafX++
 
@@ -5788,7 +5788,7 @@ PRG024_BC6C:
 
 	; Graphics_Queue = $5B
 	LDA #$5b
-	STA Graphics_Queue
+	STA a:Graphics_Queue
 
 PRG024_BC82:
 	JSR GraphicsBuf_Prep_And_WaitVSyn2	 ; V Sync
@@ -6274,7 +6274,7 @@ Ending2_FadeIn:
 
 	; Queue graphics command
 	LDA Ending2_QueueCmd
-	STA Graphics_Queue
+	STA a:Graphics_Queue
 
 	CMP #$2a
 	BNE PRG024_BEF9	 ; If Ending2_QueueCmd <> $2A, jump to PRG024_BEF9
@@ -6285,7 +6285,7 @@ Ending2_FadeIn:
 	LDA Ending2_CurWorld	; A = current world we're depicting
 	CLC
 	ADC #$4d
-	STA Graphics_Queue
+	STA a:Graphics_Queue
 
 	; Ending2_TimerH = $F
 	LDA #$0f
@@ -6348,7 +6348,7 @@ Ending2_FadeOut:
 
 	; Queue next fade command
 	LDA Ending2_FadeOutQs,X
-	STA Graphics_Queue
+	STA a:Graphics_Queue
 
 	CMP #$25
 	BNE PRG024_BF35	 ; If current queue command <> $25, jump to PRG024_BF35

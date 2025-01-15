@@ -2959,7 +2959,7 @@ PRG030_9133:
 
 	; Set Player as twirling (in case they Continue...)
 	LDA #$01	 
-	STA World_Map_Twirl,X
+	STA a:World_Map_Twirl,X
 
 	; Init map vars
 	LDA #$00
@@ -3405,7 +3405,7 @@ PRG030_93B1:
 	JSR Sprite_RAM_Clear	 ; Clear Sprite RAM 
 	JSR Vs_2PVsPauseHandler	 ; Handle pausing
 
-	LDA Level_ExitToMap
+	LDA a:Level_ExitToMap
 	BEQ PRG030_939A	 ; If not exiting to map, loop 2P Vs!
 
 	; Set page @ A000 to 26

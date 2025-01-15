@@ -1180,7 +1180,7 @@ PRG010_C5B0:
 	JMP PRG010_C622	 		; Jump to PRG010_C622
 
 PRG010_C5C5:
-	LDA Map_IntBoxErase	 
+	LDA a:Map_IntBoxErase	 
 	STA Temp_Var1		 	; Temp_Var1 = Map_IntBoxErase
 
 	LDX #$00	 		; X = 0
@@ -1394,7 +1394,7 @@ PRG010_C6BB:
 
 WorldIntro_CompleteStars:
 	JSR MapStarsIntro_DoStarFX	; Continue updating starry intro until complete
-	LDA Map_StarFX_State	 
+	LDA a:Map_StarFX_State	 
 	BNE PRG010_C6D7		; If Map_StarFX_State <> 0, jump to PRG010_C6D7 (RTS)
 
 	; Star intro is over!
@@ -3103,7 +3103,7 @@ PRG010_D045:
 
 PRG010_D088:
 	LDX Player_Current	; X = Player_Current
-	LDA World_Map_Twirl,X
+	LDA a:World_Map_Twirl,X
 	BNE Map_DoPlayer_As_Twirl	 	; If this player is "twirling", jump to Map_DoPlayer_As_Twirl
 
 	; Player isn't twirling ...
@@ -3554,7 +3554,7 @@ PRG010_D2D8:
 PRG010_D2E1:
 	; On a dock, not in a canoe!  But let's see if there's one to hop into...
 
-	LDY World_Map_Tile
+	LDY a:World_Map_Tile
 	CPY #TILE_DOCK	
 	BNE PRG010_D310	 	; If Player is not standing on a dock tile, jump to PRG010_D310
 
@@ -3584,7 +3584,7 @@ PRG010_D306:
 	BNE PRG010_D306	 	; If X > 0, loop! (NOTE: Does not check map object index 0 as a canoe
 
 PRG010_D310:
-	LDA Pad_Input
+	LDA a:Pad_Input
 	AND #(PAD_LEFT | PAD_RIGHT | PAD_UP | PAD_DOWN)
 	BEQ PRG010_D31C	 	; If Player is not pressing left/right/down/up, jump to PRG010_D31C (RTS)
 

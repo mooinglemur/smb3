@@ -2316,7 +2316,7 @@ PRG022_CD6F:
 
 	; Coin prizes
 
-	LDA BonusCoins_State
+	LDA a:BonusCoins_State
 	JSR DynJump
 
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
@@ -2359,7 +2359,7 @@ PRG022_CD8F:
 	DEY		 ; Y--
 	BPL PRG022_CD7C	 ; While Y >= 0, loop!
 
-	INC BonusCoins_State	; BonusCoins_State = 1
+	INC a:BonusCoins_State	; BonusCoins_State = 1
 	RTS		 ; Return
 
 BonusCoins_UpdateAndDraw:

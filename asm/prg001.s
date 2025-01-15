@@ -1387,7 +1387,7 @@ PRG001_A63F:
 	; Screen-relative X position for sprite position
 	LDA Objects_X,X
 	SEC
-	SBC Horz_Scroll	
+	SBC a:Horz_Scroll	
 	STA Objects_SpriteX,X
 
 	; Store two pieces of bounce block sprite X
@@ -1967,7 +1967,7 @@ PRG001_A8F7:
 	STA Sprite_RAM+6,Y
 
 	; Set sprite X's side by side
-	LDA Objects_SpriteX,X
+	LDA a:Objects_SpriteX,X
 	STA Sprite_RAM+3,Y
 	CLC
 	ADC #$08
@@ -4413,7 +4413,7 @@ PRG001_B505:
 
 	LSR A
 	STA Map_ReturnStatus	 ; Map status = 0 (level cleared)
-	INC Level_ExitToMap	 ; Fall into king's room (in this context)
+	INC a:Level_ExitToMap	 ; Fall into king's room (in this context)
 
 PRG001_B525:
 	RTS		 ; Return
@@ -6450,7 +6450,7 @@ PRG001_BF4C:
 	STA Player_RescuePrincess	; Flag for princess rescue! 
 	LDA #$00 
 	STA Map_ReturnStatus 
-	INC Level_ExitToMap 
+	INC a:Level_ExitToMap 
 
 PRG001_BF9B:
 	LDA Counter_1 
@@ -6465,7 +6465,7 @@ PRG001_BF9B:
 
 	; Queue palette update!
 	LDA #$06
-	STA Graphics_Queue 
+	STA a:Graphics_Queue 
 
 	LDX SlotIndexBackup	; X = object slot index 
 	RTS		 ; Return
