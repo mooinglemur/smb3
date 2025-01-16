@@ -52,9 +52,9 @@
 .export Tile_Layout_TS14, W105L, W304L, W308L, W40F_BonusL, W502L, W608L, W802L
 
 
-.ifdef NES
+
 .segment "PRG013"
-.endif
+
 Tile_Layout_TS14:
 	; This defines the individual 8x8 blocks used to construct one of the tiles
 	; Referenced by Address_Per_Tileset, addressed by Level_Tileset

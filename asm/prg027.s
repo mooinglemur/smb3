@@ -38,9 +38,9 @@
 ; exports
 .export CineKing_DoWandReturn, EndWorldLetter_GenerateText, Setup_PalData
 
-.ifdef NES
+
 .segment "PRG027"
-.endif
+
 CineKing_DoWandReturn:
 	LDA CineKing_Timer2
 	BEQ PRG027_A008	 ; If CineKing_Timer2 = 0, jump to PRG027_A008

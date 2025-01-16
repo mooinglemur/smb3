@@ -14,6 +14,7 @@
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
 .include "../inc/nesswitch.inc"
+.include "../inc/x16.inc"
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var9, Temp_Var11, Temp_Var13
@@ -69,9 +70,9 @@
 .export StatusBar_Fill_World, StatusBar_UpdateValues, TileChng_VRAMCommit, Video_Misc_Updates
 
 
-.ifdef NES
+
 .segment "PRG026"
-.endif
+
 ; FIXME: Appears to be unused Video_Upd_Table format data??
 	.byte $20, $E6, $05, $F1, $FC, $9D, $9C, $9E, $21, $26, $05, $F2, $FC, $9D, $9C, $9E ; $0000 - $000F
 	.byte $21, $66, $05, $F3, $FC, $9D, $9C, $9E, $21, $A6, $05, $F4, $FC, $9D, $9C, $9E ; $0010 - $001F
@@ -3842,15 +3843,32 @@ PRG026_B4F5:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LevelLoad_CopyObjectList:
 	LDY #$00	 ; Y = 0
+.ifdef X16
+	php
+	sei
+	phx
 
+	lda #Level_ObjPtr_AddrL
+	ldx #X16_PRG006_BANK
+	jsr X16::Kernal::FETCH
+.endif
+.ifdef NES
 	LDA (Level_ObjPtr_AddrL),Y	; Get first byte from object layout data
+.endif
 	STA Level_Objects,Y	 	; Copy to beginning of Level_Objects array
 
 PRG026_B506:
 
 	; Next byte is ID of object (or $FF to terminate the list)
 	INY
+.ifdef X16
+	lda #Level_ObjPtr_AddrL
+	ldx #X16_PRG006_BANK
+	jsr X16::Kernal::FETCH
+.endif
+.ifdef NES
 	LDA (Level_ObjPtr_AddrL),Y
+.endif
 	STA Level_Objects,Y
 
 	CMP #$ff	 
@@ -3858,17 +3876,35 @@ PRG026_B506:
 
 	; Copy in start column of object
 	INY		 
+.ifdef X16
+	lda #Level_ObjPtr_AddrL
+	ldx #X16_PRG006_BANK
+	jsr X16::Kernal::FETCH
+.endif
+.ifdef NES
 	LDA (Level_ObjPtr_AddrL),Y
+.endif
 	STA Level_Objects,Y
 
 	; Copy in start row of object
 	INY
+.ifdef X16
+	lda #Level_ObjPtr_AddrL
+	ldx #X16_PRG006_BANK
+	jsr X16::Kernal::FETCH
+.endif
+.ifdef NES
 	LDA (Level_ObjPtr_AddrL),Y
+.endif
 	STA Level_Objects,Y
 
 	JMP PRG026_B506		; Loop!
 
 PRG026_B51F:
+.ifdef X16
+	plx
+	plp
+.endif
 	RTS		 ; Return
 
 ; Rest of ROM bank was empty...

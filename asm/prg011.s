@@ -62,9 +62,9 @@
 .export MO_SkidToPrev, MO_SkidToPrevAfar, MapObjects_UpdateDrawEnter, MapStarsIntro_DoStarFX
 .export Map_DoAnimations, Map_DoMap_WarpWind_FX, Map_DrawClearLevelPoof, Map_Init
 
-.ifdef NES
+
 .segment "PRG011"
-.endif
+
 PRG011_A000:
 	.byte $00, $01, $02, $03, $04, $05, $06, $07
 

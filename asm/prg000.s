@@ -120,9 +120,7 @@
 .export Video_3CMFlowStem, Video_3CMFlowTop, Video_3CMMushBot, Video_3CMMushLeft, Video_3CMMushMid
 .export Video_3CMMushRight, Video_3CMMushTop
 
-.ifdef NES
 .segment "PRG000"
-.endif
 
 Level_SlopeSetByQuad:
 	.word Level_SlopeQuad00	; Tile quad $00
@@ -955,7 +953,7 @@ Object_HandleConveyorBounceVel:
 
 	LDY #<-$01	 ; Y = -$01
 
-	EOR <Objects_XVel,X	 ; Check if object is not going with conveyor
+	EOR Objects_XVel,X	 ; Check if object is not going with conveyor
 	BMI PRG000_C511	 ; If the signs differ (going against conveyor), jump to PRG000_C511
 
 	LDY #$01	 ; Y = $01
@@ -1237,7 +1235,7 @@ PRG000_C62E:
 	JSR Negate	 ; Otherwise, negate (absolute value)
 
 PRG000_C635:
-	STX <Temp_Var1	 ; -> Temp_Var1
+	STX Temp_Var1	 ; -> Temp_Var1
 
 	LDX SlotIndexBackup	 ; X = object slot index
 	STA Objects_Slope,X	 ; Absolute value slope
@@ -1965,7 +1963,7 @@ PRG000_C973:
 	LDX #$07	 
 
 PRG000_C975:
-	STX <SlotIndexBackup	 ; Backup current object index -> SlotIndexBackup
+	STX SlotIndexBackup	 ; Backup current object index -> SlotIndexBackup
 
 	LDA Player_HaltGame
 	BNE PRG000_C9B6	 ; If gameplay is halted, jump to PRG000_C9B6
@@ -2946,7 +2944,7 @@ ObjState_Held:
 
 PRG000_CE28:
 	JSR Object_ShellDoWakeUp ; Wake up while Player is holding object... 
-	BIT <Pad_Holding 
+	BIT Pad_Holding 
 	BVC Player_KickObject	 ; If Player is NOT holding B button, jump to Player_KickObject  
 
 PRG000_CE2F:
@@ -3095,7 +3093,7 @@ PRG000_CEC6:
 
 	LDA Player_XVel 	; Get the Player's X velocity
 	STA Temp_Var1		; -> Temp_Var1 (yyyy xxxx)
-	ASL <Temp_Var1		; Shift 1 bit left (bit 7 into carry) (y yyyx xxx0)
+	ASL Temp_Var1		; Shift 1 bit left (bit 7 into carry) (y yyyx xxx0)
 	ROR A			; A is now arithmatically shifted to the right (yyyyy xxx) (signed division by 2)
 	CLC
 	ADC ObjectKickXVelMoving,Y	 ; Add base "moving" X velocity of object
@@ -3288,7 +3286,7 @@ PRG000_CFA5:
 PRG000_CFA8:
 	RTS		 ; Return
 
-
+.ifdef NES
 	; Unused space... deleted code?
 	NOP
 	NOP
@@ -3298,6 +3296,7 @@ PRG000_CFA8:
 	NOP
 	NOP
 	NOP
+.endif
 
 ObjState_Killed:
 	JSR Object_FallAndDelete	; Have object fall and delete if it gets too low (at which point we don't return)
@@ -3857,7 +3856,7 @@ PRG000_D1DB:
 
 	LDA Player_XVel	; Get Player X velocity
 	STA Temp_Var1		; -> Temp_Var1 (yyyy xxxx)
-	ASL <Temp_Var1		; Shift 1 bit left (bit 7 into carry) (y yyyx xxx0)
+	ASL Temp_Var1		; Shift 1 bit left (bit 7 into carry) (y yyyx xxx0)
 	ROR A			; A is now arithmatically shifted to the right (yyyyy xxx) (signed division by 2)
 	CLC
 	ADC Objects_XVel,X	; Add the existing velocity to this (so object velocity is influenced by half Player velocity)
@@ -3961,7 +3960,7 @@ PRG000_D22E:
 
 	PHP		 ; Save CPU state (the comparison)
 
-	LSR <Temp_Var1		; Restore the carry bit
+	LSR Temp_Var1		; Restore the carry bit
 	LDA Objects_YHi,X	
 	SBC #$00	 	; Apply the carry bit to the Objects_YHi as needed for the height subtraction
 
@@ -4193,7 +4192,7 @@ PRG000_D343:
 	LDA Player_ISHolding_OLD
 	BNE PRG000_D39F	 ; If Player WAS holding something, jump to PRG000_D39F (RTS)
 
-	BIT <Pad_Holding
+	BIT Pad_Holding
 	BVS PRG000_D34F	 	; If Player is holding B, jump to PRG000_D34F
 	JMP Player_KickObject	 ; Kick away the object and don't come back!
 
@@ -4231,7 +4230,7 @@ PRG000_D355:
 PRG000_D373:
 	STY Temp_Var1		 ; Temp_Var1 = 0 (Player moving left) or 1 (Player moving right)
 
-	EOR <Objects_XVel,X	 ; Check for X velocity sign difference between Player and object
+	EOR Objects_XVel,X	 ; Check for X velocity sign difference between Player and object
 	BMI PRG000_D382	 	; If there's a difference in sign, jump to PRG000_D382
 
 	; Object and Player are moving in the same horizontal direction...
@@ -4380,7 +4379,7 @@ PRG000_D3EF:
 	PHP		 	; Save CPU state
 
 	LDA Horz_Scroll_Hi	 
-	LSR <Temp_Var1		 
+	LSR Temp_Var1		 
 	ADC PRG000_D3D2,Y	 ; Add high part of offset
 
 	PLP		 	; Restore CPU state
@@ -4470,7 +4469,7 @@ PRG000_D479:
 	PHP		 ; Save CPU state
 
 	LDA Level_VertScrollH
-	LSR <Temp_Var1	
+	LSR Temp_Var1	
 	ADC PRG000_D3CA,Y
 
 	PLP		 ; Restore CPU state
@@ -4845,7 +4844,7 @@ Object_Draw16x32Sprite:
 PRG000_D62D:
 	JSR Object_Draw16x16Sprite	 ; Draw sprite
 
-	LSR <Temp_Var5	 ; Objects_SprVVis
+	LSR Temp_Var5	 ; Objects_SprVVis
 
 	; 'Y' += 8 (Sprite RAM 2 sprites over)
 	TYA
@@ -4961,7 +4960,7 @@ Object_Draw16x16Sprite:
 
 	LDA Temp_Var1	; Get sprite Y
 
-	BIT <Temp_Var8	; Testing bit 7 of horizontal sprite visibility
+	BIT Temp_Var8	; Testing bit 7 of horizontal sprite visibility
 	BMI PRG000_D68E	; If bit 7 is set (this sprite is horizontally off-screen), jump to PRG000_D68E
 
 	STA Sprite_RAM+$00,Y	 ; Otherwise, OK to set sprite Y
@@ -4990,7 +4989,7 @@ PRG000_D693:
 	STA Sprite_RAM+$02,Y	 ; Store into both sprite's attributes
 	STA Sprite_RAM+$06,Y	 ; Store into both sprite's attributes
 
-	BIT <Temp_Var3		
+	BIT Temp_Var3		
 	BVC PRG000_D6C6	 ; If sprite is not horizontally flipped, jump to PRG000_D6C6 (RTS)
 
 	; If flipped, swap sprite attributes
@@ -5026,7 +5025,7 @@ Object_Draw24x16Sprite:
 	STA Sprite_RAM+$00,Y	 ; Set sprite Y in RAM
 
 PRG000_D6D8:
-	BIT <Temp_Var10	 
+	BIT Temp_Var10	 
 	BMI PRG000_D6DF	 ; If this sprite is off-screen, jump to PRG000_D6DF
 
 	STA Sprite_RAM+$04,Y	 ; Set sprite Y in RAM
@@ -5061,7 +5060,7 @@ PRG000_D6E4:
 	STA Sprite_RAM+$06,Y
 	STA Sprite_RAM+$0A,Y
 
-	BIT <Temp_Var3
+	BIT Temp_Var3
 	BVC PRG000_D6C6	 ; If sprite is not horizontally flipped, jump to PRG000_D6C6 (RTS)
 
 	; Swap end sprites patterns
@@ -5172,7 +5171,7 @@ PRG000_D776:
 	JMP PRG000_D752	 ; Jump to PRG000_D752
 
 PRG000_D789:
-	STX <Temp_Var7	 ; Temp_Var7 = offset to blank sprite
+	STX Temp_Var7	 ; Temp_Var7 = offset to blank sprite
 
 	TXA
 	TAY		; Y = same offset
@@ -5309,7 +5308,7 @@ PRG000_D7FE:
 
 	BCC PRG000_D809	 ; If no carry, jump to Objects_SprVVis
 
-	INC <Temp_Var1		 ; Otherwise, apply carry
+	INC Temp_Var1		 ; Otherwise, apply carry
 
 PRG000_D809:
 	LDA Temp_Var2		
@@ -5334,7 +5333,7 @@ PRG000_D81E:
 	STA Objects_SprVVis,X	 ; Mark this part as invisible
 
 PRG000_D826:
-	ASL <Temp_Var3	 ; Temp_Var3 <<= 1
+	ASL Temp_Var3	 ; Temp_Var3 <<= 1
 	DEY		 ; Y--
 	BPL PRG000_D7FE	 ; While Y >= 0, loop!
 
@@ -5713,9 +5712,9 @@ ObjectObject_Intersect:
 	LDA Temp_Var11
 	EOR #$ff
 	STA Temp_Var11		 
-	INC <Temp_Var11	
+	INC Temp_Var11	
 
-	INC <Temp_Var12		 ; Temp_Var12 = 1 (Player's bbox is to the LEFT of object's left edge)
+	INC Temp_Var12		 ; Temp_Var12 = 1 (Player's bbox is to the LEFT of object's left edge)
 
 	LDA Temp_Var4		 ; Get the Player's right edge bounding box offset
 
@@ -5726,7 +5725,7 @@ PRG000_D997:
 
 	; That didn't happen...
 
-	ASL <Temp_Var12		 ; Push result bit up
+	ASL Temp_Var12		 ; Push result bit up
 
 	LDA Temp_Var7		 ; Player's bounding box bottom
 	SEC
@@ -5743,9 +5742,9 @@ PRG000_D997:
 	LDA Temp_Var11
 	EOR #$ff	
 	STA Temp_Var11	
-	INC <Temp_Var11	
+	INC Temp_Var11	
 
-	INC <Temp_Var12		 ; Set bit 0 of Temp_Var12
+	INC Temp_Var12		 ; Set bit 0 of Temp_Var12
 
 	LDA Temp_Var8		 ; Get Player's bounding box top edge offset
 
@@ -6400,7 +6399,7 @@ PRG000_DC7B:
 	LDA Temp_Var13	
 	BEQ PRG000_DC8F	 ; If Y Hi = 0, jump to PRG000_DC8F
 
-	INC <Temp_Var2	 ; Otherwise, offset to lower screen area
+	INC Temp_Var2	 ; Otherwise, offset to lower screen area
 
 PRG000_DC8F:
 	LDA Temp_Var14	 ; A = Y lo
@@ -6721,7 +6720,7 @@ PRG000_DD65:
 
 	BCC PRG000_DD75	 ; If no carry, jump to PRG000_DD75
 
-	INC <Temp_Var13		 ; Apply carry
+	INC Temp_Var13		 ; Apply carry
 
 PRG000_DD75:
 	LDA Temp_Var13
@@ -6734,7 +6733,7 @@ PRG000_DD75:
 	STA Temp_Var14
 	BCS PRG000_DD84	 ; If carry set, jump to PRG000_DD84
 
-	DEC <Temp_Var13		 ; Apply carry
+	DEC Temp_Var13		 ; Apply carry
 
 PRG000_DD84:
 
@@ -6745,7 +6744,7 @@ PRG000_DD84:
 	LDA Temp_Var11
 	BPL PRG000_DD8E	 ; If Temp_Var11 (? input var?) >= 0, jump to PRG000_DD8E
 
-	DEC <Temp_Var15		 ; Otherwise, Temp_Var15--
+	DEC Temp_Var15		 ; Otherwise, Temp_Var15--
 
 PRG000_DD8E:
 
@@ -6756,12 +6755,12 @@ PRG000_DD8E:
 	STA Temp_Var16
 	BCC PRG000_DD99	 ; If no carry, jump to PRG000_DD99
 
-	INC <Temp_Var15		 ; Apply carry
+	INC Temp_Var15		 ; Apply carry
 
 PRG000_DD99:
 	; Backup X/Y
 	STY Temp_Var10
-	STX <Temp_Var11
+	STX Temp_Var11
 
 	JSR Player_GetTileAndSlope_Normal
 
@@ -6925,7 +6924,7 @@ PRG000_DE53:
 	STA Player_X	 ; Player_X += Level_ScrollDiffH
 	BCC PRG000_DE65	 ; If no carry, jump to PRG000_DE65
 
-	INC <Player_XHi	 ; Otherwise, apply carry
+	INC Player_XHi	 ; Otherwise, apply carry
 
 PRG000_DE65:
 	LDY #$00	 ; Y = 0
@@ -6972,7 +6971,7 @@ AScrlURDiag_CheckWrapping:
 	ADC AScrlURDiag_OffsetX	
 	STA Objects_X,X
 	BCC PRG000_DEA3	 ; If no carry, jump to PRG000_DEA3
-	INC <Objects_XHi,X	 ; Otherwise, apply carry
+	INC Objects_XHi,X	 ; Otherwise, apply carry
 PRG000_DEA3:
 
 	LDA Objects_Y,X
@@ -6980,7 +6979,7 @@ PRG000_DEA3:
 	ADC AScrlURDiag_OffsetY	
 	STA Objects_Y,X
 	BCC PRG000_DEAF	 ; If no carry, jump to PRG000_DEAF
-	INC <Objects_YHi,X	 ; Otherwise, apply carry 
+	INC Objects_YHi,X	 ; Otherwise, apply carry 
 
 PRG000_DEAF:
 	RTS		 ; Return

@@ -75,9 +75,9 @@
 .export Player_ClimbFrame, Player_DoGameplay, Player_DoScrolling, Player_GetTileAndSlope
 .export Player_GrowFrames, Player_KuriboFrame, Player_WalkFramesByPUp
 
-.ifdef NES
+
 .segment "PRG008"
-.endif
+
 Level_TilesetIdx_ByTileset:
 	; Basically Level_TilesetIdx is just Level_Tileset - 1
 	.byte $FF	;  0 Map (UNUSED)

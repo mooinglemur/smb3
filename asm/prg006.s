@@ -34,9 +34,9 @@
 .export W8P3O, W8P4O, W8P5O, W8P6O, W8T1O, W8T2O, W8Tank1_BossO, W8Tank2_BossO, WAirship_IntroO
 
 
-.ifdef NES
+
 .segment "PRG006"
-.endif
+
 _C000:		.include "objects/C000.asm"
 W2UNO:		.include "objects/EmptyW2.asm"	; Unused/empty object set linked to World 2 Start Panel
 _C004:		.include "objects/C004.asm"

@@ -147,9 +147,9 @@
 .export Tile_Mem_AddrVH, Tile_Mem_AddrVL, Tile_Mem_ClearA, Tile_Mem_ClearA, Tile_Mem_ClearB
 .export Tile_Mem_ClearB
 
-.ifdef NES
+
 .segment "PRG030"
-.endif
+
 Tile_Mem_Addr:	
 	; This breaks up the overall "tile" layout memory into screen-based chunks
 	; With a screen width of 256 pixels, that makes 16 blocks across every "screen",

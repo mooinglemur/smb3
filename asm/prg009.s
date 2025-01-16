@@ -59,9 +59,9 @@
 .export Vs_2PVsPauseHandler
 
 
-.ifdef NES
+
 .segment "PRG009"
-.endif
+
 	; Number of lives per card combination; mainly to give the 2, 3, 5
 Vs_LivesReward:
 	.byte $00, $02, $03, $01, $05, $01, $01, $01	; None, Mushroom, Flower, Mix, Star, Mix, Mix, Mix

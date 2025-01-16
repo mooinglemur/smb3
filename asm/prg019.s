@@ -51,9 +51,9 @@
 .export W8H1L, W8H2L, W8H3L
 
 
-.ifdef NES
+
 .segment "PRG019"
-.endif
+
 Tile_Layout_TS5_TS11_TS13:
 	; This defines the individual 8x8 blocks used to construct one of the tiles
 	; Referenced by Address_Per_Tileset, addressed by Level_Tileset

@@ -1,3 +1,65 @@
+.ifdef X16
+
+.import X16_lda_JOYPAD_y
+.import X16_lda_PPU_STAT
+.import X16_lda_PPU_VRAM_DATA
+
+.import X16_ldx_PPU_STAT
+
+.import X16_sta_FRAMECTR_CTL
+.import X16_sta_JOYPAD
+.import X16_sta_MMC3_COMMAND
+.import X16_sta_MMC3_IRQCNT
+.import X16_sta_MMC3_IRQDISABLE
+.import X16_sta_MMC3_IRQENABLE
+.import X16_sta_MMC3_IRQLATCH
+.import X16_sta_MMC3_MIRROR
+.import X16_sta_MMC3_PAGE
+.import X16_sta_PAPU_CT1
+.import X16_sta_PAPU_CT1_x
+.import X16_sta_PAPU_CT2
+.import X16_sta_PAPU_CTL1
+.import X16_sta_PAPU_CTL2
+.import X16_sta_PAPU_EN
+.import X16_sta_PAPU_FT1
+.import X16_sta_PAPU_FT1_x
+.import X16_sta_PAPU_FT2
+.import X16_sta_PAPU_MODADDR
+.import X16_sta_PAPU_MODCTL
+.import X16_sta_PAPU_MODLEN
+.import X16_sta_PAPU_NCTL1
+.import X16_sta_PAPU_NFREQ1
+.import X16_sta_PAPU_NFREQ2
+.import X16_sta_PAPU_RAMP1
+.import X16_sta_PAPU_RAMP2
+.import X16_sta_PAPU_TCR1
+.import X16_sta_PAPU_TFREQ1
+.import X16_sta_PAPU_TFREQ2
+.import X16_sta_PPU_CTL1
+.import X16_sta_PPU_CTL2
+.import X16_sta_PPU_SCROLL
+.import X16_sta_PPU_SPR_ADDR
+.import X16_sta_PPU_VRAM_ADDR
+.import X16_sta_PPU_VRAM_DATA
+.import X16_sta_SPR_DMA
+
+.import X16_stx_PAPU_CT2
+.import X16_stx_PAPU_CTL1
+.import X16_stx_PAPU_CTL2
+.import X16_stx_PAPU_EN
+.import X16_stx_PAPU_NFREQ1
+.import X16_stx_PAPU_RAMP2
+.import X16_stx_PPU_CTL2
+.import X16_stx_PPU_VRAM_ADDR
+
+.import X16_sty_MMC3_IRQDISABLE
+.import X16_sty_PAPU_RAMP1
+.import X16_sty_PAPU_RAMP2
+.import X16_sty_PPU_SCROLL
+.import X16_sty_PPU_VRAM_ADDR
+
+.endif
+
 .macro sta_PPU_CTL1
 .ifdef NES
     sta PPU_CTL1

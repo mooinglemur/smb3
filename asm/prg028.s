@@ -46,9 +46,9 @@
 .export PatS2, PatS3, PatS4, PatS5, PatS6, PatS8, Sound_Engine_Begin
 
 
-.ifdef NES
+
 .segment "PRG028"
-.endif
+
 Sound_Engine_Begin:
 	LDA #$ff	 ; 
 	sta_FRAMECTR_CTL ; Resets the frame counter clock (sync sound hardware), disables IRQ generation

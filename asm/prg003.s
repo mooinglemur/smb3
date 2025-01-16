@@ -67,9 +67,8 @@
 ; exports
 .export BobOmb_Explode
 
-.ifdef NES
 .segment "PRG003"
-.endif
+
 .assert * = ObjectGroup_InitJumpTable, error	; <-- help enforce this table *here*
 ObjectGroup02_InitJumpTable:
 	.word ObjInit_TinyCheepCheep	; Object $48 - OBJ_TINYCHEEPCHEEP

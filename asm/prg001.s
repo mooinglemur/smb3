@@ -76,9 +76,8 @@
 ; imports from PRG031
 .import DynJump, Player_GetCardAndUpdate
 
-.ifdef NES
 .segment "PRG001"
-.endif
+
 .assert * = ObjectGroup_InitJumpTable, error	; <-- help enforce this table *here*
 ObjectGroup00_InitJumpTable:
 	.word ObjInit_DoNothing	; Object $00

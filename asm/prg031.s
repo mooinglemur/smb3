@@ -65,8 +65,11 @@
 .export StatusBar_Update_Cards, VertLevel_ScreenH, VertLevel_ScreenL
 
 
-.ifdef NES
 .segment "PRG031"
+
+.ifdef X16
+.pushseg
+.segment "DMC"
 .endif
 DMC01:	.byte $55, $55, $55, $95, $AA, $2A, $95, $E0, $7F, $FC, $C0, $F1, $03, $28, $FE, $FF 
 	.byte $FF, $F1, $5F, $3F, $00, $00, $00, $00, $00, $00, $08, $80, $C0, $F1, $FF, $C7 
@@ -108,6 +111,11 @@ DMC02:	.byte $55, $60, $6B, $79, $EA, $F8, $FF, $43, $82, $24, $00, $20, $8E, $E
 	.byte $AA, $AA, $6A, $59, $69, $55, $55, $B5, $AA, $AA, $B2, $2C, $2B, $55, $55, $55 
 DMC02_End:
 
+.ifdef X16
+.popseg
+.endif
+
+.ifdef NES
 	;
 
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF 
@@ -118,6 +126,7 @@ DMC02_End:
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF 
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF 
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF 
+.endif
 
 Music_PlayDMC:
 	LDA DMC_Queue	 ; Get value queued for DMC
@@ -1291,7 +1300,7 @@ Music_RestH_LUT:
 	; NOTE NOTE NOTE!!
 	; If you're creating a custom hack, delete these $FFs and use the following line instead:
 ; .AlignDMC04:	DMCAlign .AlignDMC04
-
+.ifdef NES
 	.byte $FF, $FF, $FF
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
@@ -1302,7 +1311,12 @@ Music_RestH_LUT:
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 
 	; END UNUSED SPACE
+.endif
 
+.ifdef X16
+.pushseg
+.segment "DMC"
+.endif
 DMC04:	.byte $55, $55, $55, $55, $55, $55, $55, $55, $55, $55, $55, $55, $55, $B5, $82, $DC
 	.byte $7F, $00, $E0, $FF, $03, $E8, $FF, $03, $00, $F8, $FF, $00, $F0, $FF, $62, $0B
 	.byte $40, $DF, $8B, $EA, $27, $00, $FC, $BF, $00, $14, $FD, $FF, $03, $00, $F6, $FF
@@ -1487,6 +1501,9 @@ DMC05_C:.byte $AB, $8A, $42, $A5, $F6, $B2, $25, $49, $56, $6D, $B5, $A9, $94, $
 	.byte $A9, $65, $55, $95, $AD, $2A, $95, $A5, $D4, $6A, $57, $25, $92, $AA, $DA, $6D
 DMC05_End:
 
+.ifdef X16
+.popseg
+.endif
 
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2035,6 +2052,7 @@ IntIRQ:	 ; $F795 IRQ Interrupt (scanline from MMC3)
 	TYA		 ; Reg Y -> A
 	PHA		 ; Push A (Y) onto stack
 
+.ifdef NES
 	LDA Reset_Latch
 	CMP #$5a
 	BEQ PRG031_F7B0	 ; If Reset_Latch = $5A, go to PRG031_F7B0
@@ -2049,6 +2067,7 @@ IntIRQ:	 ; $F795 IRQ Interrupt (scanline from MMC3)
 
 	; Jump to the Reset instead...
 	JMP (Temp_Var1)
+.endif
 
 PRG031_F7B0:
 	LDA PAPU_MODCTL_Copy
@@ -3401,6 +3420,7 @@ Read_Joypad_Loop:
 
 	RTS		 ; Return
 
+.ifdef NES
 	; Most likely filler / reserved space here
 	.byte $ff
 	.byte $ff
@@ -3424,7 +3444,7 @@ Read_Joypad_Loop:
 	.byte $ff
 	.byte $ff
 	.byte $ff
-
+.endif
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; IntReset
 ; Game begins here...
@@ -3581,9 +3601,10 @@ PRGROM_Change_C000:	; $FFD1
 ; VECTORS
 ; Must appear at $FFFA
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.ifdef NES
 .segment "VECTORS"
 Vector_Table:
 	.word IntNMI   	; $FFFA - NMI Interrupt (VBlank)
 	.word IntReset	; $FFFC - Reset Interrupt (boot up)
 	.word IntIRQ	; $FFFE - IRQ Interrupt (scanline from MMC3)
-
+.endif

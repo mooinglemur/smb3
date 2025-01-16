@@ -74,9 +74,8 @@
 .export EndLevelCard_Draw, Shoe_DrawGoomba
 
 
-.ifdef NES
 .segment "PRG002"
-.endif
+
 .assert * = ObjectGroup_InitJumpTable, error	; <-- help enforce this table *here*
 ObjectGroup01_InitJumpTable:
 	.word ObjInit_CloudPlatFast	; Object $24 - OBJ_CLOUDPLATFORM_FAST

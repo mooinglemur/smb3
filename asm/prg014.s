@@ -48,9 +48,9 @@
 .export Tile_Attributes_TS18, Tile_Layout_TS18, Vs_Battlefields
 
 
-.ifdef NES
+
 .segment "PRG014"
-.endif
+
 Tile_Layout_TS18:
 	; This defines the individual 8x8 blocks used to construct one of the tiles
 	; Referenced by Address_Per_Tileset, addressed by Level_Tileset

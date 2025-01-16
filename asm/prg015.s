@@ -55,9 +55,9 @@
 
 
 
-.ifdef NES
+
 .segment "PRG015"
-.endif
+
 Tile_Layout_TS1:
 	; This defines the individual 8x8 blocks used to construct one of the tiles
 	; Referenced by Address_Per_Tileset, addressed by Level_Tileset

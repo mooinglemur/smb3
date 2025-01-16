@@ -47,9 +47,8 @@
 .export W601L, W602L, W603L, W604L, W605L, W606L, W607L, W609L, W610L, W6F2L, W6HBA, W6HBB, W707_MainL
 
 
-.ifdef NES
 .segment "PRG017"
-.endif
+
 Tile_Layout_TS4_TS12:
 	; This defines the individual 8x8 blocks used to construct one of the tiles
 	; Referenced by Address_Per_Tileset, addressed by Level_Tileset

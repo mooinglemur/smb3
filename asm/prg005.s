@@ -72,9 +72,8 @@
 .export LevelEvent_Do, Level_SpawnObjsAndBounce
 
 
-.ifdef NES
 .segment "PRG005"
-.endif
+
 .assert * = ObjectGroup_InitJumpTable, error	; <-- help enforce this table *here*
 ObjectGroup04_InitJumpTable:
 	.word ObjInit_RotatePlatform	; Object $90 - OBJ_TILTINGPLATFORM

@@ -49,9 +49,9 @@
 .export Player_DrawAndDoActions, ToadHouse_ChestPressB
 
 
-.ifdef NES
+
 .segment "PRG029"
-.endif
+
 M2BSegData14:
 	.byte $98, $56, $56, $90, $54, $56, $94, $7E, $98, $56, $5A, $5A, $90, $58, $5A, $94 ; $C000 - $C00F
 	.byte $7E, $98, $5A, $00, $98, $5C, $5C, $90, $5A, $5C, $94, $7E, $98, $5C, $60, $60 ; $C010 - $C01F
@@ -195,6 +195,7 @@ M12ASegData23:
 	.byte $7E, $08, $88, $08, $8D, $09, $09, $09, $94, $08
 
 
+.ifdef NES
 	;; BEGIN HUGE UNUSED SPACE
 
 	.byte $FF, $FF, $FF, $FF, $FF, $FF ; $C5E0 - $C5EF
@@ -297,7 +298,7 @@ M12ASegData23:
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; $CBF0 - $CBFF
 
 	;; END HUGE UNUSED SPACE
-
+.endif
 
 	; This defines a table of offsets that point to the start of
 	; each Player_Frame's six patterns
@@ -2439,6 +2440,7 @@ PRG029_D7FC:
 
 	RTS		 ; Return
 
+.ifdef NES
 	;; BEGIN HUGE UNUSED SPACE
 
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; $D80A - $D819
@@ -2507,7 +2509,7 @@ PRG029_D7FC:
 	.byte $FF, $FF, $FF, $FF, $FF, $FF  ; $DBFA - $DBFF
 
 	;; END HUGE UNUSED SPACE
-
+.endif
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; BlockChange_Do

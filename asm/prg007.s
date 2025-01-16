@@ -57,9 +57,9 @@
 ; exports
 .export Gameplay_UpdateAndDrawMisc, Scores_GiveAndDraw
 
-.ifdef NES
+
 .segment "PRG007"
-.endif
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Player_DoLavaDonutArrowBounce
 ;

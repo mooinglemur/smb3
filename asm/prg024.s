@@ -73,9 +73,8 @@
 .export Cinematic_ToadAndKing, DiagBox_RowOffs, DiagBox_RowOffs_End, Do_Ending2_IntCmd
 .export Do_Title_Screen, IntIRQ_TitleEnding, Rescue_Princess
 
-.ifdef NES
 .segment "PRG024"
-.endif
+
 Cinematic_ToadAndKing:
 	LDA Cine_ToadKing
 	LSR A

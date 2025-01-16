@@ -74,9 +74,9 @@
 ; exports
 .export Map_PrepareLevel, Map_Reload_with_Completions, Tile_Attributes_TS0, Tile_Layout_TS0
 
-.ifdef NES
+
 .segment "PRG012"
-.endif
+
 Tile_Layout_TS0:
 	; This defines the individual 8x8 blocks used to construct one of the tiles
 	; Referenced by Address_Per_Tileset, addressed by Level_Tileset

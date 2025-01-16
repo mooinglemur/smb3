@@ -53,9 +53,8 @@
 ; imports from PRG031
 .import DynJump
 
-.ifdef NES
 .segment "PRG004"
-.endif
+
 .assert * = ObjectGroup_InitJumpTable, error	; <-- help enforce this table *here*
 ObjectGroup03_InitJumpTable:
 	.word ObjInit_GroundTroop	; Object $6C - OBJ_GREENTROOPA
