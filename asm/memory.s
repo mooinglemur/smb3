@@ -922,8 +922,10 @@ Update_Select:        ; Changes which path of "update routines" are selected; $0
 Raster_Effect:        ; $00 is standard status bar, $20 is title/ending, $40 = 32 pixel partition, $60 = Spade Bonus Game (3 sliding rows), $80 is nothing (e.g. as in 2P versus), $A0 = ???
 	.res 1
 
+.ifdef NES
 ; unused ($102-$15F)
 	.res 94
+.endif
 
 Debug_Flag:           ; Set to $80 by the debug menu, enables debug functionality like power level cycling and not dying from time over
 	.res 1

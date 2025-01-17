@@ -10,7 +10,7 @@
 .endif
 
 .ifdef X16
-.segment "CBMHDR"
+.segment "CBMSTUB"
 	.word $0801
 	.word *+9
 	.word $0000

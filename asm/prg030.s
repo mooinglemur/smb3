@@ -2421,7 +2421,7 @@ PRG030_8E79:
 	BEQ PRG030_8EAD	 	; If not paused, jump to PRG030_8EAD
 
 	; When game is paused...
-
+.ifdef NES
 	; Wow, what the heck did they remove here??
 	NOP
 	NOP
@@ -2444,6 +2444,7 @@ PRG030_8E79:
 	NOP
 	NOP
 	NOP
+.endif
 
 	LDA #$32
 	STA PatTable_BankSel+5	; Set patterns needed for P A U S E sprites
@@ -5982,11 +5983,12 @@ PRG030_9F0D:
 	LDA Level_Tile	; A = Level_Tile (the tile retrieved)
 	RTS		 ; Return
 
+.ifdef NES
 	; Probably unused space
 	.byte $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff
 	.byte $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff
 	.byte $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff
-
+.endif
 
 PRG030_SUB_9F40:
 	LDA #$00
@@ -6013,9 +6015,11 @@ PRG030_9F52:
 	sta_MMC3_IRQENABLE
 	RTS		 ; Return
 
+.ifdef NES
 	; Probably unused space
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+.endif
 
 IntIRQ_32PixelPartition_Part5:
 

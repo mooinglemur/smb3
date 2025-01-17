@@ -905,8 +905,8 @@ PRG000_C4A7:
 	RTS		 ; Return
 
 
-Conveyor_CarryX:	.byte <-$01, $01	; Left, Right
-Conveyor_CarryXHi:	.byte $FF, $00	; 16-bit sign extension
+Conveyor_CarryX:	.byte <-$01, <$01	; Left, Right
+Conveyor_CarryXHi:	.byte >-$01, >$01	; 16-bit sign extension
 
 	; Checks for and handles object touching conveyor belt by carrying object
 ; $C4D6

@@ -58,18 +58,6 @@
 .export Video_DoGameOver80, Video_DoW2WZ, Video_DoWXLuigi00, Video_DoWXLuigi80, Video_DoWXMario00, Video_DoWXMario80
 .export World5_Sky_AddCloudDeco, WorldMap_UpdateAndDraw
 
-.ifdef X16
-
-.import X16_lda_PPU_STAT
-.import X16_lda_PPU_VRAM_DATA
-.import X16_sta_PPU_VRAM_ADDR
-.import X16_sta_MMC3_COMMAND
-.import X16_sta_MMC3_PAGE
-.import X16_sta_PPU_CTL1
-.import X16_sta_PPU_VRAM_DATA
-
-.endif
-
 .segment "PRG010"
 
 Video_DoWXMario00:
