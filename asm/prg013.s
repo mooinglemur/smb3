@@ -205,6 +205,8 @@ LoadLevel_Generator_TS14:
 
 	JSR DynJump
 
+	; XXX PRG014 call (every single one of these)
+
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word LoadLevel_Slope45T2B		;  0 - Above ground (UG only) 45 degree slope top-to-bottom
 	.word LoadLevel_Slope45B2T		;  1 - Above ground (UG only) 45 degree slope bottom-to-top
@@ -308,6 +310,8 @@ LeveLoad_FixedSizeGen_TS14:
 	ADC LL_ShapeDef	
 	TAX		 	; Resultant index is put into 'X'
 	JSR DynJump	 
+
+	; XXX PRG014 call (every single one of these)
 
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word LoadLevel_Corner			;  0 - Above Ground upper-left corner tile

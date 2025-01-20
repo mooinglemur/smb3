@@ -203,6 +203,8 @@ LoadLevel_Generator_TS4_TS12:
 
 	JSR DynJump
 
+	; XXX PRG014 calls (some of these below, the rest are local)
+
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word LoadLevel_LongWoodBlock		;  0 - Long wooden block
 	.word LoadLevel_BigWoodBlocks		;  1 - Big wood blocks
@@ -284,12 +286,15 @@ LeveLoad_FixedSizeGen_TS4_TS12:
 	TAX		 	; Resultant index is put into 'X'
 	JSR DynJump	 
 
+	; XXX PRG014 calls, some of these are.  The rest are local
+
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word LoadLevel_LilCloud		;  0 - Inserts little background cloud
 	.word LoadLevel_WideCloud		;  1 - Inserts wide background cloud
 	.word LoadLevel_SuspensionCableR	;  2 - Right hooked suspension cable
 	.word LoadLevel_SuspensionCableL	;  3 - Left hooked suspension cable
 	.word LoadLevel_FatTrunk		;  4 - Fat trunk
+	; XXX PRG014 call
 	.word LoadLevel_Door2			;  5 - Door style 2
 	.word LoadLevel_PlatformPuller		;  6 - Unknown?? Alternate puller?
 	.word LoadLevel_PlatformPuller		;  7 - Platform puller tile
@@ -301,6 +306,7 @@ LeveLoad_FixedSizeGen_TS4_TS12:
 	.word $0000				; 13 - NULL?
 	.word $0000				; 14 - NULL?
 	.word $0000				; 15 - NULL?
+	; XXX PRG014 call (all below)
 	.word LoadLevel_PowerBlock		; 16 - ? block with flower
 	.word LoadLevel_PowerBlock		; 17 - ? block with leaf 
 	.word LoadLevel_PowerBlock		; 18 - ? block with star
@@ -368,6 +374,7 @@ PRG017_A538:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 PRG017_A53C:
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEX		 	 ; X-- (width decrement)
 	BNE PRG017_A538	 	 ; While X > 0, loop!
@@ -425,6 +432,7 @@ PRG017_A57A:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 PRG017_A57F:
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column 
 	DEC Temp_Var3		 ; Temp_Var3-- 
 	BNE PRG017_A57A	 	 ; While Temp_Var3 > 0, loop
@@ -475,6 +483,7 @@ LoadLevel_LittleBushRun17:
 PRG017_A5B8:
 	LDA #TILE4_LITTLEBUSH
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEX		 	; X-- (Width decrement)
 	BPL PRG017_A5B8	 	; While X >= 0, loop!
@@ -491,6 +500,7 @@ PRG017_A5B8:
 PRG017_A5CE:
 	LDA #TILE12_SNOWY_M	 ; Snow block middle
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEX		 	; X--
 	BPL PRG017_A5CE		; While X >= 0, loop!
@@ -520,6 +530,7 @@ PRG017_A5EA:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 PRG017_A5EE:
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var3		 ; Temp_Var3--
 	BNE PRG017_A5EA	 	; While Temp_Var3 > 0, loop!
@@ -589,6 +600,7 @@ PRG017_A633:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 PRG017_A638:
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var3		 ; Temp_Var3-- (width decrement)
 	BNE PRG017_A633	 	; While Temp_Var3 > 0, loop!
@@ -645,6 +657,7 @@ PRG017_A675:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 PRG017_A67A:
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var4		 ; Temp_Var4--
 	BNE PRG017_A675	 	; While Temp_Var4 > 0, loop!
@@ -690,6 +703,7 @@ LoadLevel_IceBlocks:
 PRG017_A6A6:
 	LDA LL_IceBlocks,X	 ; Get appropriate ice block
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var3		 ; Temp_Var3-- (width decrement)
 	BPL PRG017_A6A6	 	; While Temp_Var3 >= 0, loop!
@@ -727,10 +741,12 @@ PRG017_A6CB:
 PRG017_A6CF:
 	LDA LL_LargeIceBlock,X	 ; Get left tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	LDA LL_LargeIceBlock+2,X ; Get right tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	DEC Temp_Var4		 ; Temp_Var4-- (width decrement)
@@ -780,6 +796,7 @@ PRG017_A712:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 PRG017_A717:
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var4		 ; Temp_Var4-- (width decrement)
 	BNE PRG017_A712	 	 ; While Temp_Var4 > 0, loop!
@@ -818,6 +835,7 @@ LoadLevel_WideCloud:
 	LDY TileAddr_Off	 ; Y = TileAddr_Off
 	LDA #TILE4_BGCLOUD_L	 ; Get left cloud tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	LDA #TILE4_BGCLOUD_R	 ; Get right cloud tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
@@ -917,6 +935,7 @@ LoadLevel_Muncher17:
 PRG017_A795:
 	LDA #TILE4_MUNCHER	 	; Muncher
 	STA (Map_Tile_AddrL),Y	 	; Store into tile mem
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	; Next column
 	DEX		 ; X--
 	CPX #$ff	

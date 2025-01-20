@@ -25,6 +25,9 @@
 	;	5) If tile is in range, it is subtracted, so using the Hills example:
 	;	   Tile $25 -- first table, index 0.  Tile $26 -- first table, index 1.
 	;	   Tile $5F -- second table, index 0.  Etc...
+
+; X16 porting note: CHR000 is always loaded
+
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
 

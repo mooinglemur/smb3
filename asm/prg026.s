@@ -1173,6 +1173,7 @@ Inv_UseItem_Hammer:
 
 PRG026_A6BF:
 	LDY Temp_Var1	 		; Y = LDY <Temp_Var1
+	; XXX PRG010 call
 	JSR MapTile_Get_By_Offset	; Get map tile nearby player (on page 10)
 
 	; Rock tiles:

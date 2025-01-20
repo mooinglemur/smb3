@@ -186,6 +186,8 @@ LoadLevel_Generator_TS10:
 
 	JSR DynJump
 
+	; XXX PRG014 calls, some of these are
+
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word LoadLevel_WoodBody		;  0 - Wood body
 	.word LoadLevel_WoodBodyLong		;  1 - Long wood body
@@ -268,6 +270,8 @@ LeveLoad_FixedSizeGen_TS10:
 	TAX		 	; Resultant index is put into 'X'
 	JSR DynJump	 
 
+	; XXX PRG014 calls, some of these are
+
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word LoadLevel_AirshipMisc		;  0 - Horizontal screw tile
 	.word LoadLevel_AirshipMisc		;  1 - Horizontal flamejet tile
@@ -344,6 +348,7 @@ PRG023_A532:
 	LDA LL_WoodBody,X	; Get wood body left tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEC Temp_Var3		 ; Temp_Var3--
@@ -353,12 +358,14 @@ PRG023_A541:
 	LDA LL_WoodBody+2,X	 ; Get wood body middle 1
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var3		 ; Temp_Var3--
 	BEQ PRG023_A559	 	; If Temp_Var3 = 0, jump to PRG023_A559
 
 	LDA LL_WoodBody+4,X	 ; Get wood body middle 2
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	DEC Temp_Var3		 ; Temp_Var3--
@@ -473,6 +480,7 @@ PRG023_A5BA:
 	STA Map_Tile_AddrH
 
 	LDY TileAddr_Off 		; Y = TileAddr_Off
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	; Next column
 	STY TileAddr_Off 		; TileAddr_Off = Y
 
@@ -576,6 +584,7 @@ PRG023_A639:
 
 	LDY TileAddr_Off ; Y = TileAddr_Off
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	STY TileAddr_Off ; TileAddr_Off = Y
@@ -608,6 +617,7 @@ PRG023_A665:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 PRG023_A669:
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEX		 	; X--
 	BPL PRG023_A665	 	; While X >= 0, loop
@@ -634,6 +644,7 @@ PRG023_A67D:
 	LDA #TILE10_THREAD_H	; Horizontal thread
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X--
@@ -734,6 +745,7 @@ PRG023_A6D8:
 	LDA #TILE10_METSUPPORT_UM	; Metal support upper middle
 	STA (Map_Tile_AddrL),Y	 	; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	; Next column
 
 	DEX		 ; X--
@@ -927,6 +939,7 @@ PRG023_A795:
 	LDA #TILE10_WOODFLOOR_THK_R
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X--
@@ -950,6 +963,7 @@ PRG023_A7A9:
 	LDA #TILE10_ROPERAIL	; Rope railing
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X--
@@ -992,6 +1006,7 @@ PRG023_A7D4:
 	LDA LL_WarGround,X	 ; Get war ground left tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEC Temp_Var4		 ; Temp_Var4--
@@ -1000,6 +1015,7 @@ PRG023_A7D4:
 	LDA LL_WarGround+2,X	 ; Get war ground right tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEC Temp_Var4	 ; Temp_Var4--
@@ -1054,6 +1070,7 @@ PRG023_A822:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 PRG023_A827:
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var4		 ; Temp_Var4--
 	BNE PRG023_A822	 	; While Temp_Var4 >= 0, loop
@@ -1108,6 +1125,7 @@ PRG023_A868:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 PRG023_A86D:
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEC Temp_Var4	 ; Temp_Var4-- (width decrement)
@@ -1194,6 +1212,7 @@ PRG023_A8CE:
 	LDA LL_4WayCannon90,X	 ; Get tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEC Temp_Var3	 ; Temp_Var3-- (tile counter decrement)
@@ -1262,6 +1281,7 @@ LoadLevel_WoodTipsUnderside:
 	LDA LL_WoodTipsUnderside,X	; Wooden tips and underside left tile
 	STA (Map_Tile_AddrL),Y	 	; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	; Next column
 
 	LDA LL_WoodTipsUnderside+2,X	; Wooden tips and underside right tile
@@ -1286,7 +1306,9 @@ PRG023_A91E:
 	LDA #TILE10_PORTHOLE	 ; Porthole (circular window) tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X--
@@ -1312,6 +1334,7 @@ PRG023_A939:
 	LDA #TILE10_WOODH_M1	; Wood body horizontal middle 1
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	DEX		 ; X--
@@ -1321,6 +1344,7 @@ PRG023_A939:
 
 PRG023_A945:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 	DEX		 ; X--
 	BNE PRG023_A939	 ; If X <> 0, jump to PRG023_A939
@@ -1365,6 +1389,7 @@ PRG023_A974:
 PRG023_A977:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var4		 ; Temp_Var4--
 	BPL PRG023_A974	 	; While Temp_Var4 >= 0, loop
@@ -1404,6 +1429,7 @@ PRG023_A9A1:
 	LDA LL_BigCannon+2,X	 ; Get big cannon middle tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var4		 ; Temp_Var4--
 	BNE PRG023_A9A1	 	; While Temp_Var4 > 0, loop
@@ -1439,6 +1465,7 @@ PRG023_A9C9:
 
 PRG023_A9CB:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X--
@@ -1467,6 +1494,7 @@ PRG023_A9E2:
 PRG023_A9E4:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	DEX		 ; X--
@@ -1557,6 +1585,7 @@ PRG023_AA7C:
 
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	INX		 ; X++ (next prefab tile)
@@ -1604,6 +1633,7 @@ PRG023_AB23:
 
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	INX		 ; X++
@@ -1690,6 +1720,7 @@ PRG023_AB8B:
 	BEQ PRG023_AB9B	 	; If byte is terminator, jump to PRG023_AB9B
 
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	INX			 ; X++ (next tile to mini ship)
 	JMP PRG023_AB8B	 	 ; Jump to PRG023_AB8B

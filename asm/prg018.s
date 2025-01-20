@@ -269,6 +269,8 @@ LoadLevel_Generator_TS678:
 
 	JSR DynJump
 
+	; XXX PRG014 calls, some of these are
+
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word LoadLevel_SceneryVPipe		;  0 - Vertical scenery pipe (with pipe-cross detection)
 	.word LoadLevel_ScenHPipe_RightWall	;  1 - "Right wall" Horizontal scenery pipe (with pipe-cross detection)
@@ -350,6 +352,8 @@ LeveLoad_FixedSizeGen_TS678:
 	ADC LL_ShapeDef	
 	TAX		 	; Resultant index is put into 'X'
 	JSR DynJump	 
+
+	; XXX PRG014 calls, some of these are
 
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word LoadLevel_PipeElbows		;  0 - Upper left pipe elbow
@@ -1120,6 +1124,7 @@ PRG018_A86C:
 	LDA #TILE6_WATER	; Water
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEC Temp_Var4		 ; Temp_Var4-- (width decrement)
@@ -1189,6 +1194,7 @@ PRG018_A8BB:
 PRG018_A8BE:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var4		 ; Temp_Var4-- (width decrement)
 	BNE PRG018_A8BB	 	; While Temp_Var4 >= 0, loop
@@ -1271,6 +1277,7 @@ PRG018_A922:
 
 PRG018_A925:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	DEC Temp_Var5		 ; Temp_Var5-- (width decrement)
@@ -1318,6 +1325,7 @@ PRG018_A95C:
 	LDA #TILE7_BLACK
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X-- (width decrement)
@@ -1372,6 +1380,7 @@ PRG018_A98C:
 	LDA #TILE6_UNDERWATERCIRCLE
 	STA (Map_Tile_AddrL),Y	 	; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X-- (width of run)
@@ -1417,6 +1426,7 @@ PRG018_A9BE:
 	LDA #TILE6_WATERTOP	; Top of water tile 
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X-- 
@@ -1430,6 +1440,7 @@ PRG018_A9CD:
 PRG018_A9CF:
 	LDA #TILE6_WATER	; Water tile 
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X-- 
@@ -1530,6 +1541,7 @@ PRG018_AA3A:
 	LDA #TILE6_WATERTOP	; Top of water
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X--
@@ -1541,6 +1553,7 @@ PRG018_AA3A:
 PRG018_AA49:
 	LDA #TILE6_WATER	 ; Water tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 	DEX		 ; X--
 	CPX #$ff
@@ -1630,6 +1643,7 @@ PRG018_AAA8:
 	LDA LL_ToadHouseBlocks,X ; Get toad house tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	DEC Temp_Var3		 ; Temp_Var3--

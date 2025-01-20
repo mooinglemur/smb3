@@ -49,6 +49,9 @@
 ; imports from PRG000
 .import Level_PrepareNewObject
 ; imports from PRG022
+; All of these imports are for the orphaned/unused copy of code in PRG022 itself.
+; They're not used, so the imports are only to satisfy the assembler
+; There's no need for the non-NES ports to worry about far calls for any of these.
 .import BonusGameBox_SpriteXs, BonusGameBox_SpriteYs, BonusGameBox_SpriteYs_End
 .import HostHammerBro_SpriteXs, HostHammerBro_SpriteYs, HostHammerBro_SpriteYs_End
 .import HostTroopa_SpriteXs, HostTroopa_SpriteYs, HostTroopa_SpriteYs_End
@@ -1471,8 +1474,10 @@ GraphicsBuf_Prep_And_WaitVSyn2:
 	TAY		 	; Y = Graphics_Queue << 1
 
 	; Get the address where the video update data is
+	; XXX PRG025 data
 	LDA Video_Upd_Table2,Y
 	STA Video_Upd_AddrL
+	; XXX PRG025 data
 	LDA Video_Upd_Table2+1,Y
 	STA Video_Upd_AddrH	
 
@@ -1670,8 +1675,10 @@ PRG024_A8C8:
 	LDA #$01	 ; A = 1
 	ASL A		 ; A = 2
 	TAY		 ; Y = 2 (Palette + Checkerboard floor)
+	; XXX PRG025 data
 	LDA Video_Upd_Table2,Y
 	STA Video_Upd_AddrL
+	; XXX PRG025 data
 	LDA Video_Upd_Table2+1,Y
 	STA Video_Upd_AddrH
 	JSR Video_Misc_Updates2
@@ -2053,8 +2060,10 @@ PRG024_AB04:
 	TAY		 	; Y = Title_EventGrafX << 1 (2 byte index)
 
 	; Get address, store into [Video_Upd_AddrH][Video_Upd_AddrL]
+	; XXX PRG025 data
 	LDA Video_Upd_Table2,Y
 	STA Video_Upd_AddrL	
+	; XXX PRG025 data
 	LDA Video_Upd_Table2+1,Y
 	STA Video_Upd_AddrH	
 
@@ -4984,8 +4993,10 @@ PRG024_B876:
 	TAY
 
 	; Load base address of graphics
+	; XXX PRG025 data
 	LDA Video_Upd_Table2,Y
 	STA Video_Upd_AddrL	
+	; XXX PRG025 data
 	LDA Video_Upd_Table2+1,Y
 	STA Video_Upd_AddrH	
 
@@ -5619,8 +5630,10 @@ PRG024_BBB0:
 	LDA #$23
 	ASL A
 	TAY
+	; XXX PRG025 data
 	LDA Video_Upd_Table2,Y
 	STA Video_Upd_AddrL
+	; XXX PRG025 data
 	LDA Video_Upd_Table2+1,Y
 	STA Video_Upd_AddrH
 	JSR Video_Misc_Updates2
@@ -6075,8 +6088,10 @@ Ending2_PrepEndPic:
 	LDY Ending2_CurWorld	; Y = current world we're depicting
 
 	; Temp_Var2/1 hold the address to the end world picture
+	; XXX PRG025 data
 	LDA EndPicByWorld_H,Y
 	STA Temp_Var2
+	; XXX PRG025 data
 	LDA EndPicByWorld_L,Y
 	STA Temp_Var1
 
@@ -6120,8 +6135,10 @@ PRG024_BE02:
 	LDY Ending2_CurWorld	; Y = current world we're depicting
 
 	; Set starting VRAM address
+	; XXX PRG025 data
 	LDA EndPic_VRAMStart_H,Y
 	STA Ending2_PicVRAMH
+	; XXX PRG025 data
 	LDA EndPic_VRAMStart_L,Y
 	STA Ending2_PicVRAML
 

@@ -2623,6 +2623,7 @@ UpdSel_Roulette:
 	LDA Video_Upd_TableRoulette+1,X
 	STA Video_Upd_AddrH
 
+	; XXX PRG026 call
 	JSR Video_Misc_Updates	 ; Various updates other than scrolling (palettes, status bar, etc.)
 
 	; Graphics_Queue = 0
@@ -2723,6 +2724,7 @@ PRG022_CF7C:
 	LDA #26		
 	sta_MMC3_PAGE	 
 
+	; XXX PRG026 call
 	JSR StatusBar_UpdateValues	 ; Update Status Bar (not really used)
 
 	; Switch to page 28 @ A000
@@ -2732,6 +2734,7 @@ PRG022_CF7C:
 	sta_MMC3_PAGE	 
 
 	; Jump to the sound engine, newly inserted at page A000!
+	; XXX PRG028 call
 	JSR Sound_Engine_Begin
 
 	; Change A000 back to whatever it was before the sound engine 
@@ -3235,6 +3238,7 @@ Roulette_FadeOut:
 
 	INC Roulette_StopState	 ; Roulette_StopState = 1
 
+	; XXX PRG026 call
 	JMP Palette_PrepareFadeOut	 ; Prepare to fade out
 
 PRG022_D250:

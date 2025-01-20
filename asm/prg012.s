@@ -912,8 +912,10 @@ MO_NSpade:
 	; but in final version, Y = 0 (see PRG022 for more)
 
 	; Bonus game layout
+	; XXX PRG022 data
 	LDA Bonus_LayoutData,Y
 	STA Level_LayPtr_AddrL
+	; XXX PRG022 data
 	LDA Bonus_LayoutData+1,Y
 	STA Level_LayPtr_AddrH	
 
@@ -1078,8 +1080,10 @@ PRG012_B384:
 	ASL A
 	TAY		 ; -> 'Y'
 
+	; XXX PRG022 data
 	LDA Bonus_LayoutData,Y
 	STA Level_LayPtr_AddrL
+	; XXX PRG022 data
 	LDA Bonus_LayoutData+1,Y
 	STA Level_LayPtr_AddrH
 

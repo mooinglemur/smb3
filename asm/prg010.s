@@ -40,16 +40,28 @@
 .import Map_Unused7995, Map_Completions, Map_GameOver_CursorY, Map_PrevMoveDir, Tile_AttrTable
 .import Map_BorderAttrFromTiles, Map_Objects_Y, Map_Objects_XLo, Map_Objects_XHi, Map_Objects_IDs
 .import StatusBar_LivesH, StatusBar_LivesL, Map_MusicBox_Cnt
-; imports from PRG011
-.import MapObjects_UpdateDrawEnter, Map_DrawClearLevelPoof, GameOver_ReturnToStartX
-.import GameOver_AlignToStartY, GameOver_TwirlFromAfar, GameOver_TwirlToStart, MapStarsIntro_DoStarFX
-.import MO_HandTrap, MO_CheckForBonus, MO_DoLevelClear, MO_SkidAfarFinish, MO_SkidAfarPrep
-.import MO_SkidToPrevAfar, MO_SkidToPrev, Map_DoMap_WarpWind_FX
 ; imports from PRG030
 .import TileLayout_GetBaseAddr, TileLayout_ByTileset, Tile_Mem_Addr, Scroll_Update
 .import Scroll_Update_Ranges
 ; imports from PRG031
 .import PRGROM_Change_A000, DynJump
+; far imports
+.import FAR011_Map_DoMap_WarpWind_FX
+.import FAR011_MapObjects_UpdateDrawEnter
+.import FAR011_Map_DrawClearLevelPoof
+.import FAR011_GameOver_ReturnToStartX
+.import FAR011_GameOver_AlignToStartY
+.import FAR011_GameOver_TwirlFromAfar
+.import FAR011_GameOver_TwirlToStart
+.import FAR011_MapStarsIntro_DoStarFX
+.import FAR011_MO_HandTrap
+.import FAR011_MO_CheckForBonus
+.import FAR011_MO_DoLevelClear
+.import FAR011_MO_SkidAfarFinish
+.import FAR011_MO_SkidAfarPrep
+.import FAR011_MO_SkidToPrevAfar
+.import FAR011_MO_SkidToPrev
+
 ; exports
 .exportzp Map_Object_Valid_Tiles2Check
 .export DMC03, DMC03_End, DMC07, DMC07_End, DMC08, DMC08_End, FX_MonoFlash_By_MapTick, GameOver_Loop, GameOver_PatchPlayerName
@@ -850,7 +862,7 @@ PRG010_C403:
 PRG010_C40C:
 	LDA Map_WarpWind_FX
 	BEQ PRG010_C413	 		; If Map_WarpWind_FX = 0 (no warp wind happening), jump to PRG010_C413
-	JMP Map_DoMap_WarpWind_FX	; Do the warp wind effect!
+	JMP FAR011_Map_DoMap_WarpWind_FX	; Do the warp wind effect!
 
 PRG010_C413:
 	LDA Map_Pan_Count
@@ -958,19 +970,19 @@ Map_DoOperation:
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word MO_WorldXIntro	; 0 - "World X" Intro (the box, erasing it, and the stars)
 	.word MO_SwitchToMO_D	; 1 - Just switches to Map_Operation = $D
-	.word MO_SkidToPrev	; 2 - "Skid" backwards from death (short distance, same map screen)
-	.word MO_SkidToPrevAfar	; 3 - "Skid" backwards from death, from far away (different map screen); this skids from the far end...
-	.word MO_SkidAfarPrep	; 4 - Prepare to finish skid from afar
-	.word MO_SkidAfarFinish	; 5 - Finish the far away skidding
+	.word FAR011_MO_SkidToPrev	; 2 - "Skid" backwards from death (short distance, same map screen)
+	.word FAR011_MO_SkidToPrevAfar	; 3 - "Skid" backwards from death, from far away (different map screen); this skids from the far end...
+	.word FAR011_MO_SkidAfarPrep	; 4 - Prepare to finish skid from afar
+	.word FAR011_MO_SkidAfarFinish	; 5 - Finish the far away skidding
 	.word MO_Wait14Ticks	; 6 - Loads 14 ticks and wait for it
-	.word MO_DoLevelClear	; 7 - Do level completion effect
+	.word FAR011_MO_DoLevelClear	; 7 - Do level completion effect
 	.word MO_DoFortressFX	; 8 - If any Poof-then-Fortress effect (e.g. busting a lock) to do, do it!
-	.word MO_CheckForBonus	; 9 - Check for any map bonuses to appear (White Toad House, Coin Ship)
+	.word FAR011_MO_CheckForBonus	; 9 - Check for any map bonuses to appear (White Toad House, Coin Ship)
 	.word MO_Wait14Ticks	; A - Loads 14 ticks and wait for it
 	.word MO_HammerBroMarch	; B - Map Hammer brother march around (mostly handled elsewhere instead of this state routine)
 	.word MO_Wait8Proceed	; C - After 8 ticks, resume normal operations (if 1P game or didn't end turn), or else go to state $0F
 	.word MO_NormalMoveEnter; D - "Normal" map operations; move on map (paths, canoe, bridges etc.), enter levels (including 2P vs and hand trap random)
-	.word MO_HandTrap	; E - Hand trap gotcha!
+	.word FAR011_MO_HandTrap	; E - Hand trap gotcha!
 
 	; NOTE: There is a Map_Operation $F (edge scroll) and Map_Operation $10 (enter level)
 	; that are not in this jump table, but handled explicitly...
@@ -1082,7 +1094,7 @@ PRG010_C52D:
 
 WorldIntro_EraseAndStars:
 	JSR Map_Intro_Erase1Strip	; Erase one strip of the "World X" Intro box
-	JMP MapStarsIntro_DoStarFX	 		; Jump to PRG010_B76C
+	JMP FAR011_MapStarsIntro_DoStarFX	 		; Jump to PRG010_B76C
 
 	; Provides "Video_Upd_Table" format Graphics_Buffer data specifically
 	; for eradicating the "World X" intro from a dark World 8 map
@@ -1392,7 +1404,7 @@ PRG010_C6BB:
 	RTS		 ; Return
 
 WorldIntro_CompleteStars:
-	JSR MapStarsIntro_DoStarFX	; Continue updating starry intro until complete
+	JSR FAR011_MapStarsIntro_DoStarFX	; Continue updating starry intro until complete
 	LDA a:Map_StarFX_State	 
 	BNE PRG010_C6D7		; If Map_StarFX_State <> 0, jump to PRG010_C6D7 (RTS)
 
@@ -1439,10 +1451,10 @@ GameOver_Loop:
 	; Player selected CONTINUE...
 	.word Map_Intro_Erase1Strip	; 2: Erase the Gameover box
 	.word GameOver_Timeout		; 3: Short timeout before we decide what to do next
-	.word GameOver_TwirlToStart	; 4: Player twirls back to map start (jumps to State 8 after this)
-	.word GameOver_TwirlFromAfar	; 5: Player twirling in from far away; pretty much straight left
-	.word GameOver_AlignToStartY	; 6: Player aligns to starting map Y
-	.word GameOver_ReturnToStartX	; 7: Player slides back to starting X
+	.word FAR011_GameOver_TwirlToStart	; 4: Player twirls back to map start (jumps to State 8 after this)call
+	.word FAR011_GameOver_TwirlFromAfar	; 5: Player twirling in from far away; pretty much straight left
+	.word FAR011_GameOver_AlignToStartY	; 6: Player aligns to starting map Y
+	.word FAR011_GameOver_ReturnToStartX	; 7: Player slides back to starting X
 	.word GameOver_Complete		; 8: Complete the sequence
 
 	; NOTE: GameOver_State = 9 is handled specially outside of this routine
@@ -1895,7 +1907,7 @@ PRG010_C9B2:
 	STA Temp_Var2
 
 	LDY Map_ClearLevelFXCnt		 ; Y = Map_ClearLevelFXCnt
-	JSR Map_DrawClearLevelPoof	 ; Draw the "poof"
+	JSR FAR011_Map_DrawClearLevelPoof	 ; Draw the "poof"
 	JMP WorldMap_UpdateAndDraw	 ; Jump to WorldMap_UpdateAndDraw
 
 PRG010_C9C9:
@@ -3252,7 +3264,7 @@ PRG010_D16F:
 	CMP #$01	
 	BLT PRG010_D179	 ; If Map_Operation < 1, jump to PRG010_D179
 
-	JSR MapObjects_UpdateDrawEnter	; Update all objects, draw them, enter them
+	JSR FAR011_MapObjects_UpdateDrawEnter	; Update all objects, draw them, enter them
 
 PRG010_D179:
 	LDA World_Num

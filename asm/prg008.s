@@ -62,13 +62,16 @@
 .import BlockBump_Init, Level_PrepareNewObject, NonSlope_LUT_Addr, Slope_LUT_Addr
 .import PSwitch_SubstTileAndAttr, Negate, Level_MinTileUWByQuad, AScrlURDiag_HandleWrap
 .import Player_Die, PowerUp_Ability
-; imports from PRG029
-.import ToadHouse_ChestPressB, Player_DrawAndDoActions, Player_Draw
 ; imports from PRG030
 .import Level_RecordBlockHit, Player_GetTileV, Player_GetTileAndSlope_Normal, LevelJct_GetVScreenH
 .import LevelJct_GetVScreenH2
 ; imports from PRG031
 .import VertLevel_ScreenL, VertLevel_ScreenH, PRGROM_Change_C000
+; imports from far.s
+.import FAR029_Player_Draw
+.import FAR029_Player_DrawAndDoActions
+.import FAR029_ToadHouse_ChestPressB
+
 ; exports
 .export Airship_JumpFrameByPup, AutoScroll_CalcPlayerY, Object_BumpOffBlocks, PRG008_A224
 .export PRG008_A38E, PipeMove_SetPlayerFrame, Player_ApplyXVelocity, Player_ApplyYVelocity
@@ -492,7 +495,7 @@ PRG008_A20C:
 	; Just amounts to calling Player_Draw, but takes care of switching to page 29 and back
 Player_Draw29:
 	JSR PChg_C000_To_29	 ; Change page @ C000 to 29
-	JSR Player_Draw	 	; Draw Player
+	JSR FAR029_Player_Draw	 	; Draw Player
 	JMP PChg_C000_To_0	 ; Change page @ C000 to 0 and don't come back!
 
 Player_DrawAndDoActions29:
@@ -501,7 +504,7 @@ Player_DrawAndDoActions29:
 	LDA #$00	 
 	STA Player_InPipe 	; Player_InPipe = 0
 
-	JSR Player_DrawAndDoActions	 ; Draw Player and do actions (going to coin heaven, the airship intro, going through pipes, ...)
+	JSR FAR029_Player_DrawAndDoActions	 ; Draw Player and do actions (going to coin heaven, the airship intro, going through pipes, ...)
 
 	INC Player_InPipe	 ; Player_InPipe = 1
 
@@ -512,6 +515,8 @@ PRG008_A224:
 	; Pull return address (so we do NOT return to the original Player_DrawAndDoActions 
 	; call, thus not setting Player_InPipe flag... seems like a stupid way to 
 	; conditionalize that, but hey, I didn't program in the 80s...)
+
+	; XXX ensure none of our far calls will break with this
 	PLA
 	PLA
 
@@ -6854,7 +6859,7 @@ PRG008_BEE5:
 	BVC PRG008_BF03	 ; If Player is not pressing 'B', jump to PRG008_BF03 (RTS)
 
 	JSR PChg_C000_To_29	 	; Change page @ C000 to 29
-	JSR ToadHouse_ChestPressB	; Attempt to open a chest!
+	JSR FAR029_ToadHouse_ChestPressB	; Attempt to open a chest!
 	JSR PChg_C000_To_0 		; Change page @ C000 to 0
 
 	TXA		 ; X -> A 

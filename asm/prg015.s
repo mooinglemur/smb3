@@ -202,6 +202,8 @@ LoadLevel_Generator_TS1:
 
 	JSR DynJump
 
+	; XXX PRG014 calls, some of these are
+
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word LoadLevel_GenerateBigBlock	; 0 - White big blocks which auto generate to the ground
 	.word LoadLevel_GenerateBigBlock	; 1 - Orange big blocks which auto generate to the ground
@@ -272,6 +274,8 @@ LeveLoad_FixedSizeGen_TS1:
 	ADC LL_ShapeDef	
 	TAX		 	; Resultant index is put into 'X'
 	JSR DynJump	 
+
+	; XXX PRG014 call (all of these)
 
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word LoadLevel_MidSizeBush		;  0 - Place a mid-sized large green bush

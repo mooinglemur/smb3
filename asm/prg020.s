@@ -197,6 +197,8 @@ LoadLevel_Generator_TS9:
 
 	JSR DynJump
 
+	; XXX PRG014 calls, some of these are
+
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word LoadLevel_LittleBlocks		;  0 - Side-by-side small horizontal blocks
 	.word LoadLevel_BigBlocks		;  1 - Side-by-side big horizontal blocks
@@ -281,6 +283,8 @@ LeveLoad_FixedSizeGen_TS9:
 	TAX		 	; Resultant index is put into 'X'
 	JSR DynJump	 
 
+	; XXX PRG014 calls, some of these are
+
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word LoadLevel_SmallBlock_Pyramid	;  0 - Builds a pyramid out of small blocks
 	.word LoadLevel_BigBlock_Pyramid	;  1 - Builds a pyramid out of big blocks
@@ -342,11 +346,13 @@ PRG020_A526:
 	LDA #TILE9_THINHBLOCK_L	 ; Thin horizontal block left
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	LDA #TILE9_THINHBLOCK_R	 ; Thin horizontal block right
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X--
@@ -389,6 +395,7 @@ PRG020_A55A:
 	LDA LL_BigBlocks,X	 ; Get big block tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	INX		 ; X++
@@ -453,6 +460,7 @@ PRG020_A5AD:
 	LDA LL_BiggerBlock,X	 ; Get big block tile 
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	INX		 ; X++ (next tile)
@@ -522,6 +530,7 @@ PRG020_A612:
 	LDA LL_BiggestBlock,X	 ; Get big block tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	INX		 ; X++ (next block)
@@ -632,11 +641,13 @@ PRG020_A687:
 	LDA #TILE9_BRICK_LL	; Lower left of sand brick
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	LDA #TILE9_BRICK_LR	; Lower right of sand brick
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X--
@@ -679,6 +690,7 @@ PRG020_A6BB:
 	LDA LL_SandBrick,X	 ; Get sand brick tile
 
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	INX		 ; X++ (next tile)
@@ -743,6 +755,7 @@ PRG020_A70E:
 	LDA LL_BigSandBrick,X	 ; Get sand brick tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	INX		 ; X++ (next tile)
@@ -810,6 +823,7 @@ PRG020_A773:
 	LDA LL_BiggerSandBrick,X	; Get sand brick tile 
 	STA (Map_Tile_AddrL),Y	 	; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	INX		 ; X++ (next sand brick tile)
@@ -1236,6 +1250,7 @@ LoadLevel_ThinGround:
 	LDA #TILE9_THINGROUND_REDGE 	; Brick ruin right edge
 	STA (Map_Tile_AddrL),Y	 	; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	; Next column
 
 	DEX		 ; X-- (width decrement)
@@ -1243,6 +1258,7 @@ LoadLevel_ThinGround:
 PRG020_A972:
 	LDA #TILE9_THINGROUND_BLUE	; blue colored thin ground
 	STA (Map_Tile_AddrL),Y	 	; Store into tile mem
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X-- (width decrement)
@@ -1320,6 +1336,7 @@ PRG020_A9BC:
 	LDA LL20_MiscTiles,X	 ; Get misc tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	DEC Temp_Var3	 ; Temp_Var3--
@@ -1389,6 +1406,7 @@ PRG020_A9F9:
 	LDA #TILE9_SKY
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X-- (width decrement)
@@ -1459,6 +1477,7 @@ PRG020_AA22:
 	LDA #TILE9_PIPEWORKS_H	 ; Horizontal pipeworks tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	DEC Temp_Var4		 ; Temp_Var4--
@@ -1608,6 +1627,7 @@ PRG020_AAD2:
 	LDA #TILE9_SKY		; Sky tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X-- (width decrement)
@@ -1673,11 +1693,13 @@ PRG020_AB0C:
 	LDA #TILE9_THINHBLOCK_L	; Small block left tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	LDA #TILE9_THINHBLOCK_R	 ; Small block right tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEC Temp_Var6		 ; Temp_Var6--
@@ -1771,6 +1793,7 @@ PRG020_AB82:
 PRG020_AB89:
 	LDA LL_BigBlocks,X	 ; Get big block tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 	INX		 	; X++
 	CPX #$04
@@ -1893,6 +1916,7 @@ PRG020_AC24:
 	LDA LL_BiggerBlock,X	 ; Get bigger block tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	INX		 ; X++
@@ -2019,6 +2043,7 @@ PRG020_ACC4:
 	LDA LL_BiggestBlock,X	 ; Get biggest tile block
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	INX		 ; X++
@@ -2145,6 +2170,7 @@ PRG020_AD64:
 	LDA LL_DesertTree,X	 ; Get tree top tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X--
@@ -2218,6 +2244,7 @@ LoadLevel_DesertCloud:
 	LDA #TILE9_CLOUD_L
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	LDA #TILE9_CLOUD_R
@@ -2257,6 +2284,7 @@ PRG020_ADDA:
 PRG020_ADDC:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X--
@@ -2268,6 +2296,7 @@ PRG020_ADDC:
 PRG020_ADE8:
 	LDA #TILE9_PYRAMIDSH	; Shaded pyramid fill tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	DEX		 ; X--
@@ -2384,6 +2413,7 @@ PRG020_AE70:
 	LDA LL_CannonPlatform,X	 ; Get cannon platform block
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X--
@@ -2484,6 +2514,7 @@ PRG020_AED8:
 	LDA LL_PipeworksGround,X ; Get pipeworks ground junction
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
+	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	INX		 ; X++

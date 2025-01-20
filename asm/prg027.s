@@ -1106,6 +1106,7 @@ PRG027_A75E:
 	STA PAGE_C000
 	JSR PRGROM_Change_C000
 
+	; XXX PRG029 call
 	JSR Player_Draw		; Draw Player!
 
 	; Load page 0 @ C000

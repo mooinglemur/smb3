@@ -50,12 +50,16 @@
 .import StatusBar_Score, Map_MusicBox_Cnt
 ; imports from PRG010
 .importzp Map_Object_Valid_Tiles2Check ; a constant that we've corrupted into a label
-.import Map_W8DarknessUpdate, Map_Object_Valid_Tiles, Map_GetTile, WorldMap_UpdateAndDraw
-.import FX_MonoFlash_By_MapTick
+.import Map_Object_Valid_Tiles
 ; imports from PRG030
 .import Map_Calc_NT2Addr_By_XY, Tile_Mem_Addr, Map_Y_Starts
 ; imports from PRG031
 .import DynJump
+; far imports
+.import FAR010_FX_MonoFlash_By_MapTick
+.import FAR010_Map_W8DarknessUpdate
+.import FAR010_Map_GetTile
+.import FAR010_WorldMap_UpdateAndDraw
 ; exports
 .export GameOver_AlignToStartY, GameOver_ReturnToStartX, GameOver_TwirlFromAfar, GameOver_TwirlToStart
 .export LT0, LT0B, MO_CheckForBonus, MO_DoLevelClear, MO_HandTrap, MO_SkidAfarFinish, MO_SkidAfarPrep
@@ -308,7 +312,7 @@ Inventory_OffsetByPlayer:	.byte <(Inventory_Items - Inventory_Items), <(Inventor
 	CMP #$01
 	BEQ PRG011_A2C8	 ; If inventory item = 1 (Mushroom??), jump to PRG011_A2C8
 
-	JMP WorldMap_UpdateAndDraw	 ; Update and draw world map and don't come back
+	JMP FAR010_WorldMap_UpdateAndDraw	 ; Update and draw world map and don't come back
 
 PRG011_A2C8:
 	LDX Map_Unused738	 ; X = Map_Unused738
@@ -336,7 +340,7 @@ PRG011_A2C8:
 	.word PRG011_B74A		; 15
 
 WorldMap_UpdateAndDrawInd:
-	JMP WorldMap_UpdateAndDraw
+	JMP FAR010_WorldMap_UpdateAndDraw
 
 Map_WW_StartX:	.byte 0, 240	; Map warp wind starting X position, depending which direction it comes from
 Map_WW_DeltaX:	.byte 2, <-2	; Position change depending on the direction of travel
@@ -462,7 +466,7 @@ PRG011_A381:
 	; But that's okay, because technically this routine isn't used anyway! :X
 
 	STX Map_WarpWind_FX		; Map_WarpWind_FX = ... 5 if backup already performed, 1 if not 
-	JMP WorldMap_UpdateAndDraw	 ; Update and draw world map and don't come back
+	JMP FAR010_WorldMap_UpdateAndDraw	 ; Update and draw world map and don't come back
 
 
 WWFX_WarpWhistleFlash:
@@ -478,7 +482,7 @@ WWFX_WarpWhistleFlash:
 	INC Map_WarpWind_FX		; Otherwise, next state!
 
 PRG011_A396:
-	JMP WorldMap_UpdateAndDraw	 ; Update and draw world map and don't come back
+	JMP FAR010_WorldMap_UpdateAndDraw	 ; Update and draw world map and don't come back
 
 
 WWFX_WarpDoWind:
@@ -526,7 +530,7 @@ PRG011_A3D0:
 	RTS		 ; Return
 
 PRG011_A3D9:
-	JSR WorldMap_UpdateAndDraw	; Update and draw map
+	JSR FAR010_WorldMap_UpdateAndDraw	; Update and draw map
 
 	LDA Map_WWOrHT_X
 	STA Temp_Var2			; Temp_Var2 = Map_WWOrHT_X
@@ -645,7 +649,7 @@ HT_Init:
 	STA Map_WWOrHT_X
 
 	INC Map_HandState		; Next state...
-	JMP WorldMap_UpdateAndDraw	 ; Update and draw world map and don't come back
+	JMP FAR010_WorldMap_UpdateAndDraw	 ; Update and draw world map and don't come back
 
 HT_Flash:
 	JSR WarpWhistle_Flash	 	; Reused flashing effect
@@ -659,7 +663,7 @@ HT_Flash:
 	STA Sound_QLevel1		; "Rising" sound
 
 PRG011_A494:
-	JMP WorldMap_UpdateAndDraw	 ; Update and draw world map and don't come back
+	JMP FAR010_WorldMap_UpdateAndDraw	 ; Update and draw world map and don't come back
 
 
 HT_GrabPlayer:
@@ -684,7 +688,7 @@ HT_GrabPlayer:
 
 
 PRG011_A4B8:
-	JSR WorldMap_UpdateAndDraw	; Do WorldMap_UpdateAndDraw
+	JSR FAR010_WorldMap_UpdateAndDraw	; Do WorldMap_UpdateAndDraw
 
 	LDX Player_Current
 	LDA World_Map_Y,X
@@ -1104,7 +1108,7 @@ PRG011_A698:
 	STA Map_Previous_X,X
 
 PRG011_A6BC:
-	JMP WorldMap_UpdateAndDraw	 ; Update and draw world map and don't come back
+	JMP FAR010_WorldMap_UpdateAndDraw	 ; Update and draw world map and don't come back
 
 
 GameOver_TwirlFromAfar:
@@ -1139,7 +1143,7 @@ PRG011_A6E4:
 
 	JSR Map_DrawBorderForPlayer	 ; Draw border sprites to cover twirling Player
 
-	JMP WorldMap_UpdateAndDraw	 ; Update and draw world map and don't come back
+	JMP FAR010_WorldMap_UpdateAndDraw	 ; Update and draw world map and don't come back
 
 
 Map_DrawBorderForPlayer:
@@ -1489,7 +1493,7 @@ PRG011_A88F:
 	DEC Map_Skid_Counter		 ; Map_Skid_Counter--
 
 PRG011_A891:
-	JSR WorldMap_UpdateAndDraw	 ; Update and draw map
+	JSR FAR010_WorldMap_UpdateAndDraw	 ; Update and draw map
 
 	LDA Map_Skid_Counter
 	ORA Map_March_Count+1	; <--- Airship's movement counter
@@ -1584,7 +1588,7 @@ PRG011_A90E:
 
 	JSR Map_DrawBorderForPlayer	 ; Draw border to block Player sprite
 
-	JMP WorldMap_UpdateAndDraw	 ; Update and draw map and don't come back!
+	JMP FAR010_WorldMap_UpdateAndDraw	 ; Update and draw map and don't come back!
 
 MO_SkidAfarPrep:
 	LDX Player_Current	 ; X = Player_Current
@@ -1754,7 +1758,7 @@ Map_NoLoseTurnTiles_End:
 MO_DoLevelClear:
 
 	; Check if this one of the tiles that does not cause a Player to lose their turn
-	JSR Map_GetTile	 	; Get current tile Player is standing on
+	JSR FAR010_Map_GetTile	 	; Get current tile Player is standing on
 
 	LDX #(Map_NoLoseTurnTiles_End - Map_NoLoseTurnTiles - 1)
 PRG011_A9F0:
@@ -1770,7 +1774,7 @@ PRG011_A9FB:
 	INC Map_NoLoseTurn	 ; Set Map_NoLoseTurn
 
 PRG011_A9FE:
-	JSR Map_GetTile	 	; Get current tile Player is standing on
+	JSR FAR010_Map_GetTile	 	; Get current tile Player is standing on
 
 	AND #$c0	 	; Only keeping the upper 2 bits of it
 	CLC		 
@@ -2270,7 +2274,7 @@ PRG011_AC69:
 	BPL PRG011_AC57	 ; While Temp_Var16 >= 0, loop!
 
 	INC Map_Operation	 ; Map_Operation++
-	JMP WorldMap_UpdateAndDraw	 ; Update and draw map, and don't come back!
+	JMP FAR010_WorldMap_UpdateAndDraw	 ; Update and draw map, and don't come back!
 
 MO_CheckForBonusRules:
 	LDA Temp_Var16
@@ -3268,7 +3272,7 @@ PRG011_B2B8:
 	; Do a 32 tick "flash" effect first before moving...
 	LDA Map_Intro_Tick
 	BEQ PRG011_B2C0	 		; If ticks = 0, jump to PRG011_B2C0
-	JMP FX_MonoFlash_By_MapTick	; Otherwise, jump to FX_MonoFlash_By_MapTick (on Page 10)
+	JMP FAR010_FX_MonoFlash_By_MapTick	; Otherwise, jump to FX_MonoFlash_By_MapTick (on Page 10)
 
 PRG011_B2C0:
 	LDA Map_Anchored
@@ -3479,8 +3483,10 @@ PRG011_B3D3:
 
 	; Get address Map_Object_Valid_Tiles (on page 10), store into Temp_Var15
 	; This lists valid tiles the object may travel over...
+	; XXX PRG010 data
 	LDA Map_Object_Valid_Tiles,X
 	STA Temp_Var15	
+	; XXX PRG010 data
 	LDA Map_Object_Valid_Tiles+1,X
 	STA Temp_Var16
 
@@ -4138,7 +4144,7 @@ PRG011_B74A:
 	CMP World_Map_Move,X	
 	BEQ MapStarsIntro_DoStarFX	 ; If movement is same as Player's current movement, jump to MapStarsIntro_DoStarFX
 
-	JMP WorldMap_UpdateAndDraw	 ; Draw and update map and don't come back
+	JMP FAR010_WorldMap_UpdateAndDraw	 ; Draw and update map and don't come back
 
 MapStarsIntro_DoStarFX:
 	LDA a:Map_StarFX_State
@@ -4256,7 +4262,7 @@ PRG011_B800:
 	CPX #$02	 
 	BEQ PRG011_B81C	 	; If Map_StarsState = 2, jump to PRG011_B81C (RTS)
 
-	JMP WorldMap_UpdateAndDraw	 ; Jump to WorldMap_UpdateAndDraw
+	JMP FAR010_WorldMap_UpdateAndDraw	 ; Jump to WorldMap_UpdateAndDraw
 
 PRG011_B81C:
 	RTS		 	; Return
@@ -4379,7 +4385,7 @@ PRG011_B8A5:
 	CPX #$02	 
 	BEQ PRG011_B8AE	 	; If Map_StarsState = 2, jump to PRG011_B8AE (RTS)
 
-	JMP WorldMap_UpdateAndDraw	 ; Jump to WorldMap_UpdateAndDraw
+	JMP FAR010_WorldMap_UpdateAndDraw	 ; Jump to WorldMap_UpdateAndDraw
 
 PRG011_B8AE:
 	RTS		 ; Return
@@ -4441,7 +4447,7 @@ PRG011_B8D7:
 	LDX Map_StarsState
 	CPX #$02	 
 	BEQ PRG011_B8F2		; If Map_StarsState = 2, jump to PRG011_B8F2
-	JMP WorldMap_UpdateAndDraw	 ; Jump to WorldMap_UpdateAndDraw
+	JMP FAR010_WorldMap_UpdateAndDraw	 ; Jump to WorldMap_UpdateAndDraw
 
 PRG011_B8F2:
 	RTS		 ; Return
@@ -4935,7 +4941,7 @@ PRG011_BB7B:
 	LDY World_Map_Y,X	; Y = Player's Y coordinate
 	LDX #$01	 	; X = 1
 
-	JSR Map_W8DarknessUpdate	; Update darkness around Player
+	JSR FAR010_Map_W8DarknessUpdate	; Update darkness around Player
 
 	INC World_8_Dark	; World_8_Dark++
 
@@ -4972,7 +4978,7 @@ PRG011_BBAC:
 	PLA		 ; A = Player's map X
 
 	; Update darkness around Player
-	JSR Map_W8DarknessUpdate
+	JSR FAR010_Map_W8DarknessUpdate
 
 PRG011_BBBB:
 	LDY #(W8D_CircSprs_Unaligned - W8D_CircSprs)

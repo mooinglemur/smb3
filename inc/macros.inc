@@ -105,3 +105,13 @@
    .byte arg5	; Noise track starting offset ($00 means disabled)
    .byte arg6	; DCM track starting offset ($00 means disabled)
 .endmacro	; Square 2 cannot be disabled and always starts at offset $00
+
+.ifdef X16
+.macro PJFAR addr, bank
+	php
+	sei
+	JSRFAR addr, bank
+	plp
+	rts
+.endmacro
+.endif
