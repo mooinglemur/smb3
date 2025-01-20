@@ -3460,7 +3460,8 @@ PRG011_B3B1:
 
 	; ******!!!
 	; NOTE: Don't actually return to caller; return to caller's caller!
-	PLA		 
+	; XXX ensure none of our far calls will break with this
+	PLA
 	PLA
 	RTS		 ; Return
 
@@ -3483,10 +3484,8 @@ PRG011_B3D3:
 
 	; Get address Map_Object_Valid_Tiles (on page 10), store into Temp_Var15
 	; This lists valid tiles the object may travel over...
-	; XXX PRG010 data
 	LDA Map_Object_Valid_Tiles,X
-	STA Temp_Var15	
-	; XXX PRG010 data
+	STA Temp_Var15
 	LDA Map_Object_Valid_Tiles+1,X
 	STA Temp_Var16
 

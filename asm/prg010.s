@@ -3421,6 +3421,9 @@ Map_HoldPadDir:	.byte $01, $02, $04, $08	; R01 L02 D04 U08
 	; Lookup indexed same as above to see if Player reversed direction from their last move
 Map_RevDir:	.byte $02, $01, $08, $04	; R01 L02 D04 U08
 
+.ifdef X16
+.pushseg
+.segment "PRG010LOW"
 	; LUT based on map object's travel direction to get a list of
 	; valid tiles to travel over in that direction...
 	;
@@ -3446,7 +3449,8 @@ Map_Object_Valid_Down:
 Map_Object_Valid_Up:
 	.byte TILE_VERTPATH,    TILE_VERTPATH,    TILE_VERTPATH,    TILE_DRAWBRIDGEV, TILE_VERTPATHWLU
 	.byte TILE_VERTPATHWLL, TILE_VERTPATHW,   TILE_VERTPATHSKY, TILE_VERTPATHWLB
-
+.popseg
+.endif
 	; This makes it safe to expand the above
 .exportzp Map_Object_Valid_Tiles2Check
 Map_Object_Valid_Tiles2Check := <(Map_Object_Valid_Right - Map_Object_Valid_Left)

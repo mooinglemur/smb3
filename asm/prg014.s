@@ -2276,6 +2276,7 @@ PRG014_CFBD:
 LoadLevel_LittleCloudSolidRun:
 	LDX #$01	 	; X = 1 (use TILE1_JCLOUDSOLID)
 
+.ifdef NES
 	; BUG!! This jump will always fail, dropping into the table below!!
 	; The table is misinterpreted as a BIT xxxx instruction followed by
 	; a BRK, which triggers the NMI but ultimately is MOSTLY harmless...
@@ -2283,6 +2284,10 @@ LoadLevel_LittleCloudSolidRun:
 	; misinterpreted as an "ASL <$07"... in one trial, I got $CF as
 	; the run length!  Big oops there Nintendo...
 	BEQ PRG014_CFD8		; <-- MISTAKE!! This is never true!  They wanted a BNE!!
+.endif
+.ifdef X16
+	bra PRG014_CFD8
+.endif
 
 PRG014_CFD4:
 	.byte TILE1_JCLOUD, TILE1_JCLOUDSOLID
