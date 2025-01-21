@@ -3424,6 +3424,7 @@ Map_RevDir:	.byte $02, $01, $08, $04	; R01 L02 D04 U08
 .ifdef X16
 .pushseg
 .segment "PRG010LOW"
+.endif
 	; LUT based on map object's travel direction to get a list of
 	; valid tiles to travel over in that direction...
 	;
@@ -3449,6 +3450,7 @@ Map_Object_Valid_Down:
 Map_Object_Valid_Up:
 	.byte TILE_VERTPATH,    TILE_VERTPATH,    TILE_VERTPATH,    TILE_DRAWBRIDGEV, TILE_VERTPATHWLU
 	.byte TILE_VERTPATHWLL, TILE_VERTPATHW,   TILE_VERTPATHSKY, TILE_VERTPATHWLB
+.ifdef X16
 .popseg
 .endif
 	; This makes it safe to expand the above

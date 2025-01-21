@@ -5137,6 +5137,7 @@ PRG014_DFA1:
 .ifdef X16
 .pushseg
 .segment "PRG014LOW"
+.endif
 
 LoadLevel_NextColumn:
 	INY		 ; Y++
@@ -5161,6 +5162,7 @@ LoadLevel_NextColumn:
 
 PRG014_DFCC:
 	RTS		 ; Return
+.ifdef X16
 .popseg
 .endif
 
