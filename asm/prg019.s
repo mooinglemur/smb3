@@ -382,12 +382,10 @@ LoadLevel_GiantBlock:
 PRG019_A552:
 	LDA LL_GiantBlocks,X	 ; Get tile for upper left
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	LDA LL_GiantBlocks+7,X	 ; Get tile for upper right
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	DEC Temp_Var4		 ; Temp_Var4-- (width decrement)
@@ -399,12 +397,10 @@ PRG019_A552:
 PRG019_A569:
 	LDA LL_GiantBlocks+14,X	 ; Get tile for lower left
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	LDA LL_GiantBlocks+21,X	 ; Get tile for lower right
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	DEC Temp_Var3		 ; Temp_Var3-- (width decrement)
@@ -442,12 +438,10 @@ LoadLevel_GiantPipe:
 PRG019_A59B:
 	LDA LL_GiantPipe,X	 ; Get tile for pipe left
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	LDA LL_GiantPipe+3,X	 ; Get tile for pipe middle
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	LDA LL_GiantPipe+6,X	 ; Get tile for pipe right
@@ -527,7 +521,6 @@ PRG019_A5D9:
 	STA Map_Tile_AddrH
 
 	LDY TileAddr_Off	 ; Y = TileAddr_Off
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	STY TileAddr_Off	 ; TileAddr_Off = Y
@@ -646,7 +639,6 @@ PRG019_A671:
 PRG019_A678:
 	LDA LL_HPipeTB,X	 ; Get horizontal pipe tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var4		 ; Temp_Var4-- (width decrement)
 	BPL PRG019_A678	 	; While Temp_Var4 >= 0, loop!
@@ -766,7 +758,6 @@ PRG019_A73A:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 PRG019_A73C:
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	INX		 	; X++
 	JMP PRG019_A6F3	 	; Jump to PRG019_A6F3
@@ -945,7 +936,6 @@ PRG019_A7FF:
 
 PRG019_A802:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	DEC Temp_Var4		 ; Temp_Var4-- (width decrement)
@@ -997,7 +987,6 @@ PRG019_A83F:
 
 PRG019_A842:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	DEC Temp_Var5		 ; Temp_Var5-- (width decrement)
@@ -1066,7 +1055,6 @@ PRG019_A882:
 PRG019_A88C:
 	TXA		 	; Tile to store 'X' -> 'A'
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var3		 ; Temp_Var3--
 	BNE PRG019_A882	 	; While Temp_Var3 >= 0, loop!
@@ -1132,7 +1120,6 @@ PRG019_A8D0:
 PRG019_A8D3:
 	LDX Temp_Var4		 ; X = Temp_Var4
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	DEC Temp_Var5		 ; Temp_Var5-- (width decrement)
@@ -1205,7 +1192,6 @@ PRG019_A91C:
 	LDX Temp_Var4		 ; X = Temp_Var4
 
 	STA (Map_Tile_AddrL),Y	 ; Store appropriate cloud top tile into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	DEC Temp_Var5		 ; Temp_Var5-- (width decrement)
@@ -1254,7 +1240,6 @@ PRG019_A951:
 
 PRG019_A953:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEX		 ; X--
 	BNE PRG019_A951	 ; While X > 0, loop
@@ -1360,7 +1345,6 @@ PRG019_A9E9:
 	BEQ PRG019_A9F9	 	; If it's a terminator, jump to PRG019_A9F9
 
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	INX		 ; X++
 	JMP PRG019_A9E9	 ; Jump to PRG019_A9E9
@@ -1398,7 +1382,6 @@ PRG019_AA0B:
 PRG019_AA12:
 	LDA #TILE13_CLOUD	 ; White cloudspace
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	DEC Temp_Var4		 ; Temp_Var4-- (width decrement)

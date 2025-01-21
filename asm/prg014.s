@@ -5134,6 +5134,10 @@ PRG014_DFA1:
 	LDY Temp_Var13
 	RTS		 	; Return
 
+.ifdef X16
+.pushseg
+.segment "PRG014LOW"
+
 LoadLevel_NextColumn:
 	INY		 ; Y++
 	TYA		 ; A = Y
@@ -5157,7 +5161,8 @@ LoadLevel_NextColumn:
 
 PRG014_DFCC:
 	RTS		 ; Return
-
+.popseg
+.endif
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LoadLevel_StoreJctStart

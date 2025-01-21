@@ -23,8 +23,10 @@
 ; imports from PRG006
 .import W601O, W707O, W609_UnderO, W607_EndO, W606_UnderO, Unused7_EndO, W604_CoinHeavO, W104_EndO
 .import Empty_ObjLayout, W602_EndO, W605_UnderO, W6F2_AltO, W306_EndO, W302_EndO
+; imports from PRG014 (PRG014LOW segment on X16)
+.import LoadLevel_NextColumn
 ; imports from PRG014
-.import LoadLevel_NextColumn, LoadLevel_EndGoal, LoadLevel_PowerBlock, LoadLevel_Door2
+.import LoadLevel_EndGoal, LoadLevel_PowerBlock, LoadLevel_Door2
 .import LoadLevel_LittleCloudRun, LoadLevel_Jelectro, LoadLevel_Conveyor, LoadLevel_DonutLifts
 .import LoadLevel_VTransitPipeRun, LoadLevel_IceBricks, LoadLevel_TopDecoBlocks, LoadLevel_CCBridge
 .import LoadLevel_Cannon, LoadLevel_HLeftWallPipeRun, LoadLevel_HRightWallPipeRun
@@ -374,7 +376,6 @@ PRG017_A538:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 PRG017_A53C:
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEX		 	 ; X-- (width decrement)
 	BNE PRG017_A538	 	 ; While X > 0, loop!
@@ -432,7 +433,6 @@ PRG017_A57A:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 PRG017_A57F:
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column 
 	DEC Temp_Var3		 ; Temp_Var3-- 
 	BNE PRG017_A57A	 	 ; While Temp_Var3 > 0, loop
@@ -483,7 +483,6 @@ LoadLevel_LittleBushRun17:
 PRG017_A5B8:
 	LDA #TILE4_LITTLEBUSH
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEX		 	; X-- (Width decrement)
 	BPL PRG017_A5B8	 	; While X >= 0, loop!
@@ -500,7 +499,6 @@ PRG017_A5B8:
 PRG017_A5CE:
 	LDA #TILE12_SNOWY_M	 ; Snow block middle
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEX		 	; X--
 	BPL PRG017_A5CE		; While X >= 0, loop!
@@ -530,7 +528,6 @@ PRG017_A5EA:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 PRG017_A5EE:
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var3		 ; Temp_Var3--
 	BNE PRG017_A5EA	 	; While Temp_Var3 > 0, loop!
@@ -600,7 +597,6 @@ PRG017_A633:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 PRG017_A638:
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var3		 ; Temp_Var3-- (width decrement)
 	BNE PRG017_A633	 	; While Temp_Var3 > 0, loop!
@@ -657,7 +653,6 @@ PRG017_A675:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 PRG017_A67A:
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var4		 ; Temp_Var4--
 	BNE PRG017_A675	 	; While Temp_Var4 > 0, loop!
@@ -703,7 +698,6 @@ LoadLevel_IceBlocks:
 PRG017_A6A6:
 	LDA LL_IceBlocks,X	 ; Get appropriate ice block
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var3		 ; Temp_Var3-- (width decrement)
 	BPL PRG017_A6A6	 	; While Temp_Var3 >= 0, loop!
@@ -741,12 +735,10 @@ PRG017_A6CB:
 PRG017_A6CF:
 	LDA LL_LargeIceBlock,X	 ; Get left tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	LDA LL_LargeIceBlock+2,X ; Get right tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	DEC Temp_Var4		 ; Temp_Var4-- (width decrement)
@@ -796,7 +788,6 @@ PRG017_A712:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 PRG017_A717:
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var4		 ; Temp_Var4-- (width decrement)
 	BNE PRG017_A712	 	 ; While Temp_Var4 > 0, loop!
@@ -835,7 +826,6 @@ LoadLevel_WideCloud:
 	LDY TileAddr_Off	 ; Y = TileAddr_Off
 	LDA #TILE4_BGCLOUD_L	 ; Get left cloud tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	LDA #TILE4_BGCLOUD_R	 ; Get right cloud tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
@@ -935,7 +925,6 @@ LoadLevel_Muncher17:
 PRG017_A795:
 	LDA #TILE4_MUNCHER	 	; Muncher
 	STA (Map_Tile_AddrL),Y	 	; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	; Next column
 	DEX		 ; X--
 	CPX #$ff	

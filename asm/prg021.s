@@ -393,7 +393,6 @@ LoadLevel_ShadowBGBrick:
 PRG021_A565:
 	LDA LL_ShadowBrick,X	 ; Get BGBRICK shadow tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var3		 ; Temp_Var3--
 	BPL PRG021_A565	 	; While Temp_Var3 >= 0, loop!
@@ -536,7 +535,6 @@ PRG021_A5F2:
 	LDX #$03	 	; X = 3 (windows are gapped by 3)
 	LDY TileAddr_Off	; Y = TileAddr_Off
 PRG021_A5FB:
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEX		 	; X--
 	BPL PRG021_A5FB	 	; While X >= 0, loop!
@@ -590,7 +588,6 @@ PRG021_A61E:
 	LDX #$03	 	; X = 3 (gap by 3)
 	LDY TileAddr_Off 	; Y = TileAddr_Off
 PRG021_A632:
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEX		 ; X--
 	BPL PRG021_A632	 ; While X >= 0, loop!
@@ -641,7 +638,6 @@ PRG021_A65E:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 PRG021_A663:
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var3		 ; Temp_Var3-- 
 	BNE PRG021_A65E	 	; While Temp_Var3 <> 0, loop!
@@ -681,7 +677,6 @@ PRG021_A67B:
 PRG021_A67F:
 	LDA LL_DiamondBrick,X	 ; Get appropriate tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var5		 ; Temp_Var5-- (width decrement)
 
@@ -758,7 +753,6 @@ PRG021_A6DB:
 PRG021_A6DD:
 	LDA #TILE2_DIAMONDBRIGHT ; Bright diamond block
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEX		 	 ; X--
 	BPL PRG021_A6DD	 	 ; While X >= 0, loop!
@@ -800,7 +794,6 @@ PRG021_A6F7:
 PRG021_A701:
 	LDA LL_Spike,X	 	 ; Get appropriate spike tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 	DEC Temp_Var4		 ; Temp_Var4--
 	BPL PRG021_A701	 	; While Temp_Var4 >= 0, loop!
@@ -831,7 +824,6 @@ PRG021_A720:
 PRG021_A722:
 	LDA #TILE2_BGBRICK_SHADOW2	; Shadow tile
 	STA (Map_Tile_AddrL),Y	 	; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn	; Next column
 	DEX		 		; X--
 	BPL PRG021_A722	 		; While X >= 0, loop!
@@ -897,7 +889,6 @@ PRG021_A762:
 PRG021_A769:
 	LDA LL21_Background,X	 ; Get appropriate background tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	; XXX PRG014 call
 	JSR LoadLevel_NextColumn ; Next column
 
 	DEC Temp_Var5		 ; Temp_Var5-- (width decrement)

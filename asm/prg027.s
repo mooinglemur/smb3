@@ -31,10 +31,10 @@
 .import CineKing_WandYVel, CineKing_WandXVel_Frac
 ; imports from PRG024
 .import DiagBox_RowOffs, DiagBox_RowOffs_End
-; imports from PRG029
-.import Player_Draw
 ; imports from PRG031
 .import PRGROM_Change_C000, DynJump, Sprite_RAM_Clear
+; far imports
+.import FAR029_Player_Draw
 ; exports
 .export CineKing_DoWandReturn, EndWorldLetter_GenerateText, Setup_PalData
 
@@ -1106,8 +1106,7 @@ PRG027_A75E:
 	STA PAGE_C000
 	JSR PRGROM_Change_C000
 
-	; XXX PRG029 call
-	JSR Player_Draw		; Draw Player!
+	JSR FAR029_Player_Draw		; Draw Player!
 
 	; Load page 0 @ C000
 	LDA #0
