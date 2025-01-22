@@ -6420,18 +6420,18 @@ Ending2_PicVRAM_NextLineWrap:
 PRG024_BF5D:
 	RTS		 ; Return
 
+	; PatTable_BankSel+X values (sprite pattern tables) loaded per "world" of ending picture
+Ending2_EndPicPatTable2:	.byte $57, $53, $51, $00, $43, $02, $44, $54
+Ending2_EndPicPatTable3:	.byte $00, $04, $00, $76, $76, $76, $04, $76
+Ending2_EndPicPatTable4:	.byte $57, $4E, $1A, $1A, $00, $0B, $00, $00
+Ending2_EndPicPatTable5:	.byte $4F, $4F, $00, $00, $4F, $4F, $4F, $00
+
 ; avoid splitting up these tables
 ; on X16, they'll all be in PRG025 rather than spanning across
 ; multiple banks
 .ifdef X16
 .segment "PRG025PRE"
 .endif
-
-	; PatTable_BankSel+X values (sprite pattern tables) loaded per "world" of ending picture
-Ending2_EndPicPatTable2:	.byte $57, $53, $51, $00, $43, $02, $44, $54
-Ending2_EndPicPatTable3:	.byte $00, $04, $00, $76, $76, $76, $04, $76
-Ending2_EndPicPatTable4:	.byte $57, $4E, $1A, $1A, $00, $0B, $00, $00
-Ending2_EndPicPatTable5:	.byte $4F, $4F, $00, $00, $4F, $4F, $4F, $00
 
 	; Split address, parallel tables for the starting address of the end picture sprite lists for each world
 Ending2_EndPicSpriteListH:	

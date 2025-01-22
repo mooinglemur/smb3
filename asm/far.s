@@ -25,6 +25,9 @@
 .import MO_SkidToPrev
 .import MO_SkidToPrevAfar
 
+; PRG022 imports
+.import UpdSel_Roulette
+
 ; PRG029 imports
 .import Player_Draw
 .import Player_DrawAndDoActions
@@ -50,6 +53,7 @@
 .export FAR011_MO_SkidAfarPrep
 .export FAR011_MO_SkidToPrev
 .export FAR011_MO_SkidToPrevAfar
+.export FAR022_UpdSel_Roulette
 .export FAR029_Player_Draw
 .export FAR029_Player_DrawAndDoActions
 .export FAR029_ToadHouse_ChestPressB
@@ -74,6 +78,7 @@
 	FAR011_MO_SkidAfarPrep := MO_SkidAfarPrep
 	FAR011_MO_SkidToPrev := MO_SkidToPrev
 	FAR011_MO_SkidToPrevAfar := MO_SkidToPrevAfar
+	FAR022_UpdSel_Roulette := UpdSel_Roulette
 	FAR029_Player_Draw := Player_Draw
 	FAR029_Player_DrawAndDoActions := Player_DrawAndDoActions
 	FAR029_ToadHouse_ChestPressB := ToadHouse_ChestPressB
@@ -139,6 +144,9 @@ FAR011_MO_SkidToPrev:
 
 FAR011_MO_SkidToPrevAfar:
 	PJFAR MO_SkidToPrevAfar, 11
+
+FAR022_UpdSel_Roulette:
+	PJFAR UpdSel_Roulette, 22
 
 FAR029_Player_Draw:
 	PJFAR Player_Draw, 29

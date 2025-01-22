@@ -39,8 +39,6 @@
 .import Inventory_Items, Inventory_Cards, Inventory_Items2, Inventory_Cards2
 ; imports from PRG010
 .import DMC08_End, DMC07_End, DMC03_End, DMC08, DMC07, DMC03
-; imports from PRG022
-.import UpdSel_Roulette
 ; imports from PRG024
 .import IntIRQ_TitleEnding, Do_Ending2_IntCmd
 ; imports from PRG026
@@ -55,6 +53,8 @@
 ; imports from PRG030
 .import IntReset_Part2, Clear_RAM_thru_ZeroPage, PRG030_SUB_9F50, IntIRQ_32PixelPartition_Part5
 .import IntIRQ_32PixelPartition_Part2, Randomize, PRG030_SUB_9F40
+; far imports
+.import FAR022_UpdSel_Roulette
 ; exports
 .export Clear_Nametable_Short, DynJump, IntIRQ_32PixPart_HideSprites, IntIRQ_32PixelPartition_Part3
 .export IntIRQ_Finish_NoDis, PRG031_F499, PRG031_FA3C, PRGROM_Change_A000, PRGROM_Change_Both2
@@ -1575,7 +1575,7 @@ PRG031_F4B3:
 PRG031_F4BD: 
 	CMP #$40	 ; 
 	BNE PRG031_F4C4	 ; If Update_Select <> $40 (Spade Game), jump to PRG031_F4C4
-	JMP UpdSel_Roulette	 ; Otherwise, jump to UpdSel_Roulette
+	JMP FAR022_UpdSel_Roulette	 ; Otherwise, jump to UpdSel_Roulette
 
 PRG031_F4C4:
 	CMP #$00	 ; 
