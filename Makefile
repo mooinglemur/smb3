@@ -5,9 +5,15 @@ message:
 	@printf 'Choose a target: use "make nes" or "make x16".\n'
 
 nes:
-	make -f Makefile-nes clean all
+	if [ -f obj/chrspr000.o ]; then make clean; fi
+	make -f Makefile-nes
 
 x16:
-	make -f Makefile-x16 clean all
+	if [ -f obj/chr000.o ]; then make clean; fi
+	make -f Makefile-x16
 
-.PHONY: message
+clean:
+	make -f Makefile-nes clean
+	make -f Makefile-x16 clean
+
+.PHONY: message clean
