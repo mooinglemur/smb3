@@ -21,18 +21,6 @@
 ; imports from PRG006
 .import W303O, W303_EndO, W307_CoinHeavO, W705_UnderO, W101O, W4F1O, W105_CoinHeavO, Empty_ObjLayout
 .import W502_UnderO
-; imports from PRG014
-.import LoadLevel_MiscBG, LoadLevel_PrefabBlock, LoadLevel_FillBackground, LoadLevel_BigSizeBush
-.import LoadLevel_SmallSizeBush, LoadLevel_MidSizeBush, LoadLevel_EndGoal, LoadLevel_PowerBlock
-.import LoadLevel_Door2, LoadLevel_Nothing, LoadLevel_Corner, LoadLevel_CloudRun, LoadLevel_Tunnel
-.import LoadLevel_CloudRun3, LoadLevel_VGroundPipe5Run, LoadLevel_BGBush, LoadLevel_DecoCeiling
-.import LoadLevel_DecoGround, LoadLevel_BGOrWater, LoadLevel_VertGroundR, LoadLevel_Slope225B2TCeiling
-.import LoadLevel_Slope225T2BCeiling, LoadLevel_Slope225B2T, LoadLevel_Slope225T2B
-.import LoadLevel_VTransitPipeRun, LoadLevel_IceBricks, LoadLevel_TopDecoBlocks, LoadLevel_CCBridge
-.import LoadLevel_Cannon, LoadLevel_HLeftWallPipeRun, LoadLevel_HRightWallPipeRun
-.import LoadLevel_VCeilingPipeRun, LoadLevel_VGroundPipeRun, LoadLevel_BlockRun, LoadLevel_VertGroundL
-.import LoadLevel_Slope45B2TCeiling, LoadLevel_Slope45T2BCeiling, LoadLevel_Slope45B2T
-.import LoadLevel_Slope45T2B
 ; imports from PRG015 (Plains)
 .import W303L, W303_EndL, W705_UnderL, W101L, W802_BonusL
 ; imports from PRG018 (WatToPM)
@@ -45,6 +33,46 @@
 .import LevelLoad, Tile_Mem_ClearA, Tile_Mem_ClearB
 ; imports from PRG031
 .import DynJump
+; far imports
+.import FAR014_LoadLevel_BGBush
+.import FAR014_LoadLevel_BGOrWater
+.import FAR014_LoadLevel_BigSizeBush
+.import FAR014_LoadLevel_BlockRun
+.import FAR014_LoadLevel_CCBridge
+.import FAR014_LoadLevel_Cannon
+.import FAR014_LoadLevel_CloudRun
+.import FAR014_LoadLevel_CloudRun3
+.import FAR014_LoadLevel_Corner
+.import FAR014_LoadLevel_DecoCeiling
+.import FAR014_LoadLevel_DecoGround
+.import FAR014_LoadLevel_Door2
+.import FAR014_LoadLevel_EndGoal
+.import FAR014_LoadLevel_FillBackground
+.import FAR014_LoadLevel_HLeftWallPipeRun
+.import FAR014_LoadLevel_HRightWallPipeRun
+.import FAR014_LoadLevel_IceBricks
+.import FAR014_LoadLevel_MidSizeBush
+.import FAR014_LoadLevel_MiscBG
+.import FAR014_LoadLevel_Nothing
+.import FAR014_LoadLevel_PowerBlock
+.import FAR014_LoadLevel_PrefabBlock
+.import FAR014_LoadLevel_Slope225B2T
+.import FAR014_LoadLevel_Slope225B2TCeiling
+.import FAR014_LoadLevel_Slope225T2B
+.import FAR014_LoadLevel_Slope225T2BCeiling
+.import FAR014_LoadLevel_Slope45B2T
+.import FAR014_LoadLevel_Slope45B2TCeiling
+.import FAR014_LoadLevel_Slope45T2B
+.import FAR014_LoadLevel_Slope45T2BCeiling
+.import FAR014_LoadLevel_SmallSizeBush
+.import FAR014_LoadLevel_TopDecoBlocks
+.import FAR014_LoadLevel_Tunnel
+.import FAR014_LoadLevel_VCeilingPipeRun
+.import FAR014_LoadLevel_VGroundPipe5Run
+.import FAR014_LoadLevel_VGroundPipeRun
+.import FAR014_LoadLevel_VTransitPipeRun
+.import FAR014_LoadLevel_VertGroundL
+.import FAR014_LoadLevel_VertGroundR
 ; exports
 .export BigQBlock1L, BigQBlock2L, BigQBlock3L, BigQBlock4L, BigQBlock5L, BigQBlock6L, BigQBlock7L
 .export BigQBlock8L, LeveLoad_FixedSizeGen_TS14, LevelLoad_TS14, LoadLevel_Generator_TS14
@@ -205,87 +233,85 @@ LoadLevel_Generator_TS14:
 
 	JSR DynJump
 
-	; XXX PRG014 call (every single one of these)
-
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
-	.word LoadLevel_Slope45T2B		;  0 - Above ground (UG only) 45 degree slope top-to-bottom
-	.word LoadLevel_Slope45B2T		;  1 - Above ground (UG only) 45 degree slope bottom-to-top
-	.word LoadLevel_Slope45T2BCeiling	;  2 - Above ground (UG only) 45 degree ceiling slope top-to-bottom
-	.word LoadLevel_Slope45B2TCeiling	;  3 - Above ground (UG only) 45 degree ceiling slope bottom-to-top
-	.word LoadLevel_Slope45T2B		;  4 - Underground/Hills normal 45 degree slope top-to-bottom
-	.word LoadLevel_Slope45B2T		;  5 - Underground/Hills normal 45 degree slope bottom-to-top
-	.word LoadLevel_Slope45T2BCeiling	;  6 - Underground/Hills normal 45 degree ceiling slope top-to-bottom
-	.word LoadLevel_Slope45B2TCeiling	;  7 - Underground/Hills normal 45 degree ceiling slope bottom-to-top
-	.word LoadLevel_Slope45T2B		;  8 - Underwater 45 degree slope top-to-bottom
-	.word LoadLevel_Slope45B2T		;  9 - Underwater 45 degree slope bottom-to-top
-	.word LoadLevel_Slope45T2BCeiling	; 10 - Underwater 45 degree ceiling slope top-to-bottom
-	.word LoadLevel_Slope45B2TCeiling	; 11 - Underwater 45 degree ceiling slope bottom-to-top
-	.word LoadLevel_VertGroundL		; 12 - Above ground (UG only) Left vertical edge tiles
-	.word LoadLevel_VertGroundL		; 13 - Underground/Hills normal Left vertical edge tiles
-	.word LoadLevel_VertGroundL		; 14 - Underwater Left vertical edge tiles
-	.word LoadLevel_BlockRun		; 15 - Run of bricks
-	.word LoadLevel_BlockRun		; 16 - Run of '?' blocks with a coin
-	.word LoadLevel_BlockRun		; 17 - Run of bricks with a coin
-	.word LoadLevel_BlockRun		; 18 - Run of wood blocks
-	.word LoadLevel_BlockRun		; 19 - Run of green note blocks (?)
-	.word LoadLevel_BlockRun		; 20 - Run of note blocks
-	.word LoadLevel_BlockRun		; 21 - Run of bouncing wood blocks
-	.word LoadLevel_BlockRun		; 22 - Run of coins
-	.word LoadLevel_VGroundPipeRun		; 23 - Vertical ground pipe 1 (alt level)
-	.word LoadLevel_VGroundPipeRun		; 24 - Vertical ground pipe 2 (Big [?] area)
-	.word LoadLevel_VGroundPipeRun		; 25 - Vertical ground pipe 3 (no entrance)
-	.word LoadLevel_VCeilingPipeRun		; 26 - Vertical ceiling pipe 1 (alt level)
-	.word LoadLevel_VCeilingPipeRun		; 27 - Vertical ceiling pipe 2 (no entrance)
-	.word LoadLevel_HRightWallPipeRun	; 28 - Horizontal right-hand wall pipe (bonus)
-	.word LoadLevel_HRightWallPipeRun	; 29 - Horizontal right-hand wall pipe (no entrance)
-	.word LoadLevel_HLeftWallPipeRun	; 30 - Horizontal left-hand wall pipe (bonus)
-	.word LoadLevel_HLeftWallPipeRun	; 31 - Horizontal left-hand wall pipe (no entrance)
-	.word LoadLevel_Cannon			; 32 - Bullet bill cannon
-	.word LoadLevel_CCBridge		; 33 - Cheep-Cheep style 'oo' bridge
-	.word LoadLevel_CCBridge		; 34 - Would result in empty tiles?  (form of 33)
-	.word LoadLevel_TopDecoBlocks		; 35 - Top-Deco Rectangle Waterfall
-	.word LoadLevel_TopDecoBlocks		; 36 - Top-Deco Rectangle Left waving water pool
-	.word LoadLevel_TopDecoBlocks		; 37 - Top-Deco Rectangle No current waving water pool
-	.word LoadLevel_TopDecoBlocks		; 38 - Top-Deco Rectangle Right waving water pool
-	.word LoadLevel_TopDecoBlocks		; 39 - Top-Deco Rectangle Water wrong-way BG
-	.word LoadLevel_TopDecoBlocks		; 40 - Top-Deco Rectangle Diamond blocks (not really any deco on top)
-	.word LoadLevel_TopDecoBlocks		; 41 - Top-Deco Rectangle Sand ground 
-	.word LoadLevel_TopDecoBlocks		; 42 - Top-Deco Rectangle orange block??
-	.word LoadLevel_IceBricks		; 43 - Run of ice bricks
-	.word LoadLevel_VTransitPipeRun		; 44 - Vertical in-level transit pipe
-	.word LoadLevel_Slope225T2B		; 45 - Above ground (UG only) 22.5 degree slope top-to-bottom
-	.word LoadLevel_Slope225B2T		; 46 - Above ground (UG only) 22.5 degree slope bottom-to-top
-	.word LoadLevel_Slope225T2BCeiling	; 47 - Above ground (UG only) 22.5 degree ceiling slope top-to-bottom
-	.word LoadLevel_Slope225B2TCeiling	; 47 - Above ground (UG only) 22.5 degree ceiling slope bottom-to-top
-	.word LoadLevel_Slope225T2B		; 49 - Underground/Hills normal 22.5 degree slope top-to-bottom
-	.word LoadLevel_Slope225B2T		; 50 - Underground/Hills normal 22.5 degree slope bottom-to-top
-	.word LoadLevel_Slope225T2BCeiling	; 51 - Underground/Hills normal 22.5 degree ceiling slope top-to-bottom
-	.word LoadLevel_Slope225B2TCeiling	; 52 - Underground/Hills normal 22.5 degree ceiling slope bottom-to-top
-	.word LoadLevel_Slope225T2B		; 53 - Underwater 22.5 degree slope top-to-bottom
-	.word LoadLevel_Slope225B2T		; 54 - Underwater 22.5 degree slope bottom-to-top
-	.word LoadLevel_Slope225T2BCeiling	; 55 - Underwater 22.5 degree ceiling slope top-to-bottom
-	.word LoadLevel_Slope225B2TCeiling	; 56 - Underwater 22.5 degree ceiling slope bottom-to-top
-	.word LoadLevel_VertGroundR		; 57 - Above ground (UG only) right vertical edge tiles
-	.word LoadLevel_VertGroundR		; 58 - Underground/Hills normal right vertical edge tiles
-	.word LoadLevel_VertGroundR		; 59 - Underwater right vertical edge tiles
-	.word LoadLevel_BGOrWater		; 60 - Above ground rectangle of sky
-	.word LoadLevel_BGOrWater		; 61 - Underground rectangle of speckle
-	.word LoadLevel_BGOrWater		; 62 - Underwater top or water fill
-	.word LoadLevel_DecoGround		; 63 - Rectangle of Above Ground (UG only) middle ground fill
-	.word LoadLevel_DecoGround		; 64 - Rectangle of Underground/Hills normal (UG only) middle ground fill
-	.word LoadLevel_DecoGround		; 65 - Rectangle of Underwater middle ground fill
-	.word LoadLevel_DecoGround		; 66 - Rectangle of Above Ground (UG only) horizontal ground topped middle ground fill
-	.word LoadLevel_DecoGround		; 67 - Rectangle of Underground/Hills normal (UG only) horizontal ground topped middle ground fill
-	.word LoadLevel_DecoGround		; 68 - Rectangle of Underwater horizontal ground topped middle ground fill
-	.word LoadLevel_DecoCeiling		; 69 - Rectangle of Above Ground (UG only) ceiling fill
-	.word LoadLevel_DecoCeiling		; 70 - Rectangle of Underground/Hills normal ceiling fill
-	.word LoadLevel_DecoCeiling		; 71 - Rectangle of Underwater ceiling fill
-	.word LoadLevel_BGBush			; 72 - Run of little background bushes
-	.word LoadLevel_VGroundPipe5Run		; 73 - Vertical ground pipe 5 (exits to common end area)
-	.word LoadLevel_CloudRun3		; 74 - Run of the clouds (alt tiles)
-	.word LoadLevel_Tunnel			; 75 - Add a run of "tunnel" tiles
-	.word LoadLevel_Tunnel			; 76 - DOES NOTHING, see LoadLevel_Tunnel
-	.word LoadLevel_CloudRun		; 77 - Run of the clouds
+	.word FAR014_LoadLevel_Slope45T2B		;  0 - Above ground (UG only) 45 degree slope top-to-bottom
+	.word FAR014_LoadLevel_Slope45B2T		;  1 - Above ground (UG only) 45 degree slope bottom-to-top
+	.word FAR014_LoadLevel_Slope45T2BCeiling	;  2 - Above ground (UG only) 45 degree ceiling slope top-to-bottom
+	.word FAR014_LoadLevel_Slope45B2TCeiling	;  3 - Above ground (UG only) 45 degree ceiling slope bottom-to-top
+	.word FAR014_LoadLevel_Slope45T2B		;  4 - Underground/Hills normal 45 degree slope top-to-bottom
+	.word FAR014_LoadLevel_Slope45B2T		;  5 - Underground/Hills normal 45 degree slope bottom-to-top
+	.word FAR014_LoadLevel_Slope45T2BCeiling	;  6 - Underground/Hills normal 45 degree ceiling slope top-to-bottom
+	.word FAR014_LoadLevel_Slope45B2TCeiling	;  7 - Underground/Hills normal 45 degree ceiling slope bottom-to-top
+	.word FAR014_LoadLevel_Slope45T2B		;  8 - Underwater 45 degree slope top-to-bottom
+	.word FAR014_LoadLevel_Slope45B2T		;  9 - Underwater 45 degree slope bottom-to-top
+	.word FAR014_LoadLevel_Slope45T2BCeiling	; 10 - Underwater 45 degree ceiling slope top-to-bottom
+	.word FAR014_LoadLevel_Slope45B2TCeiling	; 11 - Underwater 45 degree ceiling slope bottom-to-top
+	.word FAR014_LoadLevel_VertGroundL		; 12 - Above ground (UG only) Left vertical edge tiles
+	.word FAR014_LoadLevel_VertGroundL		; 13 - Underground/Hills normal Left vertical edge tiles
+	.word FAR014_LoadLevel_VertGroundL		; 14 - Underwater Left vertical edge tiles
+	.word FAR014_LoadLevel_BlockRun		; 15 - Run of bricks
+	.word FAR014_LoadLevel_BlockRun		; 16 - Run of '?' blocks with a coin
+	.word FAR014_LoadLevel_BlockRun		; 17 - Run of bricks with a coin
+	.word FAR014_LoadLevel_BlockRun		; 18 - Run of wood blocks
+	.word FAR014_LoadLevel_BlockRun		; 19 - Run of green note blocks (?)
+	.word FAR014_LoadLevel_BlockRun		; 20 - Run of note blocks
+	.word FAR014_LoadLevel_BlockRun		; 21 - Run of bouncing wood blocks
+	.word FAR014_LoadLevel_BlockRun		; 22 - Run of coins
+	.word FAR014_LoadLevel_VGroundPipeRun		; 23 - Vertical ground pipe 1 (alt level)
+	.word FAR014_LoadLevel_VGroundPipeRun		; 24 - Vertical ground pipe 2 (Big [?] area)
+	.word FAR014_LoadLevel_VGroundPipeRun		; 25 - Vertical ground pipe 3 (no entrance)
+	.word FAR014_LoadLevel_VCeilingPipeRun		; 26 - Vertical ceiling pipe 1 (alt level)
+	.word FAR014_LoadLevel_VCeilingPipeRun		; 27 - Vertical ceiling pipe 2 (no entrance)
+	.word FAR014_LoadLevel_HRightWallPipeRun	; 28 - Horizontal right-hand wall pipe (bonus)
+	.word FAR014_LoadLevel_HRightWallPipeRun	; 29 - Horizontal right-hand wall pipe (no entrance)
+	.word FAR014_LoadLevel_HLeftWallPipeRun	; 30 - Horizontal left-hand wall pipe (bonus)
+	.word FAR014_LoadLevel_HLeftWallPipeRun	; 31 - Horizontal left-hand wall pipe (no entrance)
+	.word FAR014_LoadLevel_Cannon			; 32 - Bullet bill cannon
+	.word FAR014_LoadLevel_CCBridge		; 33 - Cheep-Cheep style 'oo' bridge
+	.word FAR014_LoadLevel_CCBridge		; 34 - Would result in empty tiles?  (form of 33)
+	.word FAR014_LoadLevel_TopDecoBlocks		; 35 - Top-Deco Rectangle Waterfall
+	.word FAR014_LoadLevel_TopDecoBlocks		; 36 - Top-Deco Rectangle Left waving water pool
+	.word FAR014_LoadLevel_TopDecoBlocks		; 37 - Top-Deco Rectangle No current waving water pool
+	.word FAR014_LoadLevel_TopDecoBlocks		; 38 - Top-Deco Rectangle Right waving water pool
+	.word FAR014_LoadLevel_TopDecoBlocks		; 39 - Top-Deco Rectangle Water wrong-way BG
+	.word FAR014_LoadLevel_TopDecoBlocks		; 40 - Top-Deco Rectangle Diamond blocks (not really any deco on top)
+	.word FAR014_LoadLevel_TopDecoBlocks		; 41 - Top-Deco Rectangle Sand ground 
+	.word FAR014_LoadLevel_TopDecoBlocks		; 42 - Top-Deco Rectangle orange block??
+	.word FAR014_LoadLevel_IceBricks		; 43 - Run of ice bricks
+	.word FAR014_LoadLevel_VTransitPipeRun		; 44 - Vertical in-level transit pipe
+	.word FAR014_LoadLevel_Slope225T2B		; 45 - Above ground (UG only) 22.5 degree slope top-to-bottom
+	.word FAR014_LoadLevel_Slope225B2T		; 46 - Above ground (UG only) 22.5 degree slope bottom-to-top
+	.word FAR014_LoadLevel_Slope225T2BCeiling	; 47 - Above ground (UG only) 22.5 degree ceiling slope top-to-bottom
+	.word FAR014_LoadLevel_Slope225B2TCeiling	; 47 - Above ground (UG only) 22.5 degree ceiling slope bottom-to-top
+	.word FAR014_LoadLevel_Slope225T2B		; 49 - Underground/Hills normal 22.5 degree slope top-to-bottom
+	.word FAR014_LoadLevel_Slope225B2T		; 50 - Underground/Hills normal 22.5 degree slope bottom-to-top
+	.word FAR014_LoadLevel_Slope225T2BCeiling	; 51 - Underground/Hills normal 22.5 degree ceiling slope top-to-bottom
+	.word FAR014_LoadLevel_Slope225B2TCeiling	; 52 - Underground/Hills normal 22.5 degree ceiling slope bottom-to-top
+	.word FAR014_LoadLevel_Slope225T2B		; 53 - Underwater 22.5 degree slope top-to-bottom
+	.word FAR014_LoadLevel_Slope225B2T		; 54 - Underwater 22.5 degree slope bottom-to-top
+	.word FAR014_LoadLevel_Slope225T2BCeiling	; 55 - Underwater 22.5 degree ceiling slope top-to-bottom
+	.word FAR014_LoadLevel_Slope225B2TCeiling	; 56 - Underwater 22.5 degree ceiling slope bottom-to-top
+	.word FAR014_LoadLevel_VertGroundR		; 57 - Above ground (UG only) right vertical edge tiles
+	.word FAR014_LoadLevel_VertGroundR		; 58 - Underground/Hills normal right vertical edge tiles
+	.word FAR014_LoadLevel_VertGroundR		; 59 - Underwater right vertical edge tiles
+	.word FAR014_LoadLevel_BGOrWater		; 60 - Above ground rectangle of sky
+	.word FAR014_LoadLevel_BGOrWater		; 61 - Underground rectangle of speckle
+	.word FAR014_LoadLevel_BGOrWater		; 62 - Underwater top or water fill
+	.word FAR014_LoadLevel_DecoGround		; 63 - Rectangle of Above Ground (UG only) middle ground fill
+	.word FAR014_LoadLevel_DecoGround		; 64 - Rectangle of Underground/Hills normal (UG only) middle ground fill
+	.word FAR014_LoadLevel_DecoGround		; 65 - Rectangle of Underwater middle ground fill
+	.word FAR014_LoadLevel_DecoGround		; 66 - Rectangle of Above Ground (UG only) horizontal ground topped middle ground fill
+	.word FAR014_LoadLevel_DecoGround		; 67 - Rectangle of Underground/Hills normal (UG only) horizontal ground topped middle ground fill
+	.word FAR014_LoadLevel_DecoGround		; 68 - Rectangle of Underwater horizontal ground topped middle ground fill
+	.word FAR014_LoadLevel_DecoCeiling		; 69 - Rectangle of Above Ground (UG only) ceiling fill
+	.word FAR014_LoadLevel_DecoCeiling		; 70 - Rectangle of Underground/Hills normal ceiling fill
+	.word FAR014_LoadLevel_DecoCeiling		; 71 - Rectangle of Underwater ceiling fill
+	.word FAR014_LoadLevel_BGBush			; 72 - Run of little background bushes
+	.word FAR014_LoadLevel_VGroundPipe5Run		; 73 - Vertical ground pipe 5 (exits to common end area)
+	.word FAR014_LoadLevel_CloudRun3		; 74 - Run of the clouds (alt tiles)
+	.word FAR014_LoadLevel_Tunnel			; 75 - Add a run of "tunnel" tiles
+	.word FAR014_LoadLevel_Tunnel			; 76 - DOES NOTHING, see LoadLevel_Tunnel
+	.word FAR014_LoadLevel_CloudRun		; 77 - Run of the clouds
 
 
 
@@ -311,80 +337,79 @@ LeveLoad_FixedSizeGen_TS14:
 	TAX		 	; Resultant index is put into 'X'
 	JSR DynJump	 
 
-	; XXX PRG014 call (every single one of these)
-
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
-	.word LoadLevel_Corner			;  0 - Above Ground upper-left corner tile
-	.word LoadLevel_Corner			;  1 - Underground/Hills normal upper-left corner tile
-	.word LoadLevel_Corner			;  2 - Underwater upper-left corner tile
-	.word LoadLevel_Corner			;  3 - Above Ground upper-right corner tile
-	.word LoadLevel_Corner			;  4 - Underground/Hills normal upper-right corner tile
-	.word LoadLevel_Corner			;  5 - Underwater upper-right corner tile
-	.word LoadLevel_Corner			;  6 - Above Ground lower-left corner tile
-	.word LoadLevel_Corner			;  7 - Underground/Hills normal lower-left corner tile
-	.word LoadLevel_Corner			;  8 - Underwater lower-left corner tile
-	.word LoadLevel_Corner			;  9 - Above Ground lower-right corner tile
-	.word LoadLevel_Corner			; 10 - Underground/Hills normal lower-right corner tile
-	.word LoadLevel_Corner			; 11 - Underwater lower-right corner tile
-	.word LoadLevel_Nothing			; 12 - NOTHING!  (Old removed? unknown?)
-	.word LoadLevel_Nothing			; 13 - NOTHING!  (Old removed? unknown?)
-	.word LoadLevel_Nothing			; 14 - NOTHING!  (Old removed? unknown?)
-	.word LoadLevel_Door2			; 15 - Door style 2
-	.word LoadLevel_PowerBlock		; 16 - ? block with flower
-	.word LoadLevel_PowerBlock		; 17 - ? block with leaf 
-	.word LoadLevel_PowerBlock		; 18 - ? block with star
-	.word LoadLevel_PowerBlock		; 19 - ? block with coin OR star
-	.word LoadLevel_PowerBlock		; 20 - ? block with coin (??)
-	.word LoadLevel_PowerBlock		; 21 - Muncher Plant!
-	.word LoadLevel_PowerBlock		; 22 - Brick with flower
-	.word LoadLevel_PowerBlock		; 23 - Brick with leaf
-	.word LoadLevel_PowerBlock		; 24 - Brick with star
-	.word LoadLevel_PowerBlock		; 25 - Brick with coin OR star
-	.word LoadLevel_PowerBlock		; 26 - Brick with 10-coin
-	.word LoadLevel_PowerBlock		; 27 - Brick with 1-up
-	.word LoadLevel_PowerBlock		; 28 - Brick with vine
-	.word LoadLevel_PowerBlock		; 29 - Brick with P-Switch
-	.word LoadLevel_PowerBlock		; 30 - Invisible coin
-	.word LoadLevel_PowerBlock		; 31 - Invisible 1-up
-	.word LoadLevel_PowerBlock		; 32 - Invisible note
-	.word LoadLevel_PowerBlock		; 33 - Note block with flower
-	.word LoadLevel_PowerBlock		; 34 - Note block with leaf
-	.word LoadLevel_PowerBlock		; 35 - Note block with star
-	.word LoadLevel_PowerBlock		; 36 - Wood block with flower
-	.word LoadLevel_PowerBlock		; 37 - Wood block with leaf
-	.word LoadLevel_PowerBlock		; 38 - Wood block with star
-	.word LoadLevel_PowerBlock		; 39 - Invisible note to coin heaven
-	.word LoadLevel_PowerBlock		; 40 - P-Switch
-	.word LoadLevel_EndGoal			; 41 - The end goal
-	.word LoadLevel_MidSizeBush		; 42 - Place a mid-sized large green bush
-	.word LoadLevel_SmallSizeBush		; 43 - Place a small sized large green bush
-	.word LoadLevel_BigSizeBush		; 44 - Place a big sized large green bush
-	.word LoadLevel_FillBackground		; 45 - Sky fill
-	.word LoadLevel_FillBackground		; 46 - Underground speckle fill
-	.word LoadLevel_FillBackground		; 47 - Unknown?? fill
-	.word LoadLevel_PrefabBlock		; 48 - 8x7 prefab block (Entry 0)
-	.word LoadLevel_PrefabBlock		; 49 - 8x7 prefab block (Entry 1)
-	.word LoadLevel_PrefabBlock		; 50 - 8x7 prefab block (Entry 2)
-	.word LoadLevel_PrefabBlock		; 51 - 8x7 prefab block (Entry 3)
-	.word LoadLevel_PrefabBlock		; 52 - 8x7 prefab block (Entry 4)
-	.word LoadLevel_PrefabBlock		; 53 - 8x7 prefab block (Entry 5)
-	.word LoadLevel_PrefabBlock		; 54 - 8x7 prefab block (Entry 6)
-	.word LoadLevel_PrefabBlock		; 55 - 8x7 prefab block (Entry 7) 
-	.word LoadLevel_PrefabBlock		; 56 - 8x7 prefab block (Entry 8)
-	.word LoadLevel_PrefabBlock		; 57 - 8x7 prefab block (Entry 9)
-	.word LoadLevel_PrefabBlock		; 58 - 8x7 prefab block (Entry 10)
-	.word LoadLevel_PrefabBlock		; 59 - 8x7 prefab block (Entry 11)
-	.word LoadLevel_PrefabBlock		; 60 - 8x7 prefab block (Entry 12)
-	.word LoadLevel_PrefabBlock		; 61 - 8x7 prefab block (Entry 13)
-	.word LoadLevel_PrefabBlock		; 62 - 8x7 prefab block (Entry 14)
-	.word LoadLevel_PrefabBlock		; 63 - 8x7 prefab block (Entry 15)
-	.word LoadLevel_MiscBG			; 64 - Add a little background cloud
-	.word LoadLevel_MiscBG			; 65 - Add a little background Unknown???
-	.word LoadLevel_MiscBG 			; 66 - Add a little background Unknown???
+	.word FAR014_LoadLevel_Corner			;  0 - Above Ground upper-left corner tile
+	.word FAR014_LoadLevel_Corner			;  1 - Underground/Hills normal upper-left corner tile
+	.word FAR014_LoadLevel_Corner			;  2 - Underwater upper-left corner tile
+	.word FAR014_LoadLevel_Corner			;  3 - Above Ground upper-right corner tile
+	.word FAR014_LoadLevel_Corner			;  4 - Underground/Hills normal upper-right corner tile
+	.word FAR014_LoadLevel_Corner			;  5 - Underwater upper-right corner tile
+	.word FAR014_LoadLevel_Corner			;  6 - Above Ground lower-left corner tile
+	.word FAR014_LoadLevel_Corner			;  7 - Underground/Hills normal lower-left corner tile
+	.word FAR014_LoadLevel_Corner			;  8 - Underwater lower-left corner tile
+	.word FAR014_LoadLevel_Corner			;  9 - Above Ground lower-right corner tile
+	.word FAR014_LoadLevel_Corner			; 10 - Underground/Hills normal lower-right corner tile
+	.word FAR014_LoadLevel_Corner			; 11 - Underwater lower-right corner tile
+	.word FAR014_LoadLevel_Nothing			; 12 - NOTHING!  (Old removed? unknown?)
+	.word FAR014_LoadLevel_Nothing			; 13 - NOTHING!  (Old removed? unknown?)
+	.word FAR014_LoadLevel_Nothing			; 14 - NOTHING!  (Old removed? unknown?)
+	.word FAR014_LoadLevel_Door2			; 15 - Door style 2
+	.word FAR014_LoadLevel_PowerBlock		; 16 - ? block with flower
+	.word FAR014_LoadLevel_PowerBlock		; 17 - ? block with leaf 
+	.word FAR014_LoadLevel_PowerBlock		; 18 - ? block with star
+	.word FAR014_LoadLevel_PowerBlock		; 19 - ? block with coin OR star
+	.word FAR014_LoadLevel_PowerBlock		; 20 - ? block with coin (??)
+	.word FAR014_LoadLevel_PowerBlock		; 21 - Muncher Plant!
+	.word FAR014_LoadLevel_PowerBlock		; 22 - Brick with flower
+	.word FAR014_LoadLevel_PowerBlock		; 23 - Brick with leaf
+	.word FAR014_LoadLevel_PowerBlock		; 24 - Brick with star
+	.word FAR014_LoadLevel_PowerBlock		; 25 - Brick with coin OR star
+	.word FAR014_LoadLevel_PowerBlock		; 26 - Brick with 10-coin
+	.word FAR014_LoadLevel_PowerBlock		; 27 - Brick with 1-up
+	.word FAR014_LoadLevel_PowerBlock		; 28 - Brick with vine
+	.word FAR014_LoadLevel_PowerBlock		; 29 - Brick with P-Switch
+	.word FAR014_LoadLevel_PowerBlock		; 30 - Invisible coin
+	.word FAR014_LoadLevel_PowerBlock		; 31 - Invisible 1-up
+	.word FAR014_LoadLevel_PowerBlock		; 32 - Invisible note
+	.word FAR014_LoadLevel_PowerBlock		; 33 - Note block with flower
+	.word FAR014_LoadLevel_PowerBlock		; 34 - Note block with leaf
+	.word FAR014_LoadLevel_PowerBlock		; 35 - Note block with star
+	.word FAR014_LoadLevel_PowerBlock		; 36 - Wood block with flower
+	.word FAR014_LoadLevel_PowerBlock		; 37 - Wood block with leaf
+	.word FAR014_LoadLevel_PowerBlock		; 38 - Wood block with star
+	.word FAR014_LoadLevel_PowerBlock		; 39 - Invisible note to coin heaven
+	.word FAR014_LoadLevel_PowerBlock		; 40 - P-Switch
+	.word FAR014_LoadLevel_EndGoal			; 41 - The end goal
+	.word FAR014_LoadLevel_MidSizeBush		; 42 - Place a mid-sized large green bush
+	.word FAR014_LoadLevel_SmallSizeBush		; 43 - Place a small sized large green bush
+	.word FAR014_LoadLevel_BigSizeBush		; 44 - Place a big sized large green bush
+	.word FAR014_LoadLevel_FillBackground		; 45 - Sky fill
+	.word FAR014_LoadLevel_FillBackground		; 46 - Underground speckle fill
+	.word FAR014_LoadLevel_FillBackground		; 47 - Unknown?? fill
+	.word FAR014_LoadLevel_PrefabBlock		; 48 - 8x7 prefab block (Entry 0)
+	.word FAR014_LoadLevel_PrefabBlock		; 49 - 8x7 prefab block (Entry 1)
+	.word FAR014_LoadLevel_PrefabBlock		; 50 - 8x7 prefab block (Entry 2)
+	.word FAR014_LoadLevel_PrefabBlock		; 51 - 8x7 prefab block (Entry 3)
+	.word FAR014_LoadLevel_PrefabBlock		; 52 - 8x7 prefab block (Entry 4)
+	.word FAR014_LoadLevel_PrefabBlock		; 53 - 8x7 prefab block (Entry 5)
+	.word FAR014_LoadLevel_PrefabBlock		; 54 - 8x7 prefab block (Entry 6)
+	.word FAR014_LoadLevel_PrefabBlock		; 55 - 8x7 prefab block (Entry 7) 
+	.word FAR014_LoadLevel_PrefabBlock		; 56 - 8x7 prefab block (Entry 8)
+	.word FAR014_LoadLevel_PrefabBlock		; 57 - 8x7 prefab block (Entry 9)
+	.word FAR014_LoadLevel_PrefabBlock		; 58 - 8x7 prefab block (Entry 10)
+	.word FAR014_LoadLevel_PrefabBlock		; 59 - 8x7 prefab block (Entry 11)
+	.word FAR014_LoadLevel_PrefabBlock		; 60 - 8x7 prefab block (Entry 12)
+	.word FAR014_LoadLevel_PrefabBlock		; 61 - 8x7 prefab block (Entry 13)
+	.word FAR014_LoadLevel_PrefabBlock		; 62 - 8x7 prefab block (Entry 14)
+	.word FAR014_LoadLevel_PrefabBlock		; 63 - 8x7 prefab block (Entry 15)
+	.word FAR014_LoadLevel_MiscBG			; 64 - Add a little background cloud
+	.word FAR014_LoadLevel_MiscBG			; 65 - Add a little background Unknown???
+	.word FAR014_LoadLevel_MiscBG 			; 66 - Add a little background Unknown???
 
 	; Broken into another file for ease of integration in NoDice editor
 	.include "levels/Under.asm"
 
+.ifdef NES
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;; BEGIN UNUSED PLAINS COPY DATA ;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -418,3 +443,4 @@ LeveLoad_FixedSizeGen_TS14:
 	.include "levels/Plains/3-3End.asm"		; 3-3 Exit
 
 ; Rest of ROM bank was empty
+.endif

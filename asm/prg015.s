@@ -25,15 +25,6 @@
 .import W705O, W507O
 ; imports from PRG013 (Under)
 .import W802L
-; imports from PRG014
-.import LoadLevel_EndGoal, LoadLevel_PowerBlock, LoadLevel_PutLittleBGCloud, LoadLevel_VineToGround
-.import LoadLevel_Door1, LoadLevel_Door2, LoadLevel_RandomPUpClouds, LoadLevel_BigSizeBush
-.import LoadLevel_SmallSizeBush, LoadLevel_MidSizeBush, LoadLevel_LittleCloudSolidRun
-.import LoadLevel_VTransitPipeRun, LoadLevel_IceBricks, LoadLevel_TopDecoBlocks, LoadLevel_CCBridge
-.import LoadLevel_Cannon, LoadLevel_HLeftWallPipeRun, LoadLevel_HRightWallPipeRun
-.import LoadLevel_VCeilingPipeRun, LoadLevel_VGroundPipeRun, LoadLevel_BlockRun, LoadLevel_PitfallW
-.import LoadLevel_CloudRun, LoadLevel_GroundRun, LoadLevel_LittleCloudRun, LoadLevel_Pitfall
-.import LoadLevel_LittleBushRun, LoadLevel_FloatingBigBlock, LoadLevel_GenerateBigBlock
 ; imports from PRG016 (Hills)
 .import W102L
 ; imports from PRG017 (High&Ice)
@@ -46,6 +37,38 @@
 .import LevelLoad, Tile_Mem_ClearA, Tile_Mem_ClearB
 ; imports from PRG031
 .import DynJump
+; far imports
+.import FAR014_LoadLevel_BigSizeBush
+.import FAR014_LoadLevel_BlockRun
+.import FAR014_LoadLevel_CCBridge
+.import FAR014_LoadLevel_Cannon
+.import FAR014_LoadLevel_CloudRun
+.import FAR014_LoadLevel_Door1
+.import FAR014_LoadLevel_Door2
+.import FAR014_LoadLevel_EndGoal
+.import FAR014_LoadLevel_FloatingBigBlock
+.import FAR014_LoadLevel_GenerateBigBlock
+.import FAR014_LoadLevel_GroundRun
+.import FAR014_LoadLevel_HLeftWallPipeRun
+.import FAR014_LoadLevel_HRightWallPipeRun
+.import FAR014_LoadLevel_IceBricks
+.import FAR014_LoadLevel_LittleBushRun
+.import FAR014_LoadLevel_LittleCloudRun
+.import FAR014_LoadLevel_LittleCloudSolidRun
+.import FAR014_LoadLevel_MidSizeBush
+.import FAR014_LoadLevel_Pitfall
+.import FAR014_LoadLevel_PitfallW
+.import FAR014_LoadLevel_PowerBlock
+.import FAR014_LoadLevel_PutLittleBGCloud
+.import FAR014_LoadLevel_RandomPUpClouds
+.import FAR014_LoadLevel_SmallSizeBush
+.import FAR014_LoadLevel_TopDecoBlocks
+.import FAR014_LoadLevel_VCeilingPipeRun
+.import FAR014_LoadLevel_VGroundPipeRun
+.import FAR014_LoadLevel_VTransitPipeRun
+.import FAR014_LoadLevel_VineToGround
+
+
 ; exports
 .export GenericW4L, LeveLoad_FixedSizeGen_TS1, LevelLoad_TS1, LoadLevel_Generator_TS1
 .export Tile_Attributes_TS1, Tile_Layout_TS1, W101L, W102_BonusL, W103L, W104_EndL, W301_ExitL
@@ -202,55 +225,53 @@ LoadLevel_Generator_TS1:
 
 	JSR DynJump
 
-	; XXX PRG014 calls, some of these are
-
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
-	.word LoadLevel_GenerateBigBlock	; 0 - White big blocks which auto generate to the ground
-	.word LoadLevel_GenerateBigBlock	; 1 - Orange big blocks which auto generate to the ground
-	.word LoadLevel_GenerateBigBlock	; 2 - Green big blocks which auto generate to the ground
-	.word LoadLevel_GenerateBigBlock	; 3 - Blue big blocks which auto generate to the ground
-	.word LoadLevel_FloatingBigBlock	; 4 - White big blocks which generate in the sky
-	.word LoadLevel_FloatingBigBlock	; 5 - Orange big blocks which generate in the sky
-	.word LoadLevel_FloatingBigBlock	; 6 - Green big blocks which generate in the sky
-	.word LoadLevel_FloatingBigBlock	; 7 - Blue big blocks which generate in the sky
-	.word LoadLevel_LittleBushRun		; 8 - Put in a run of those cute little bushes
-	.word LoadLevel_Pitfall			; 9 - Generate pitfall at the bottom of the level
-	.word LoadLevel_LittleCloudRun		; 10 - Put in a run of those little smiling Judgem's type clouds
-	.word LoadLevel_GroundRun		; 11 - Do a run of solid ground
-	.word LoadLevel_GroundRun		; 12 - Do a run of solid ground, underwater
-	.word LoadLevel_CloudRun		; 13 - Run of the clouds
-	.word LoadLevel_PitfallW		; 14 - Same as 9, except underwater ground tiles instead
-	.word LoadLevel_BlockRun		; 15 - Run of bricks
-	.word LoadLevel_BlockRun		; 16 - Run of '?' blocks with a coin
-	.word LoadLevel_BlockRun		; 17 - Run of bricks with a coin
-	.word LoadLevel_BlockRun		; 18 - Run of wood blocks
-	.word LoadLevel_BlockRun		; 19 - Run of green note blocks (?)
-	.word LoadLevel_BlockRun		; 20 - Run of note blocks
-	.word LoadLevel_BlockRun		; 21 - Run of bouncing wood blocks
-	.word LoadLevel_BlockRun		; 22 - Run of coins
-	.word LoadLevel_VGroundPipeRun		; 23 - Vertical ground pipe 1 (alt level)
-	.word LoadLevel_VGroundPipeRun		; 24 - Vertical ground pipe 2 (Big [?] area)
-	.word LoadLevel_VGroundPipeRun		; 25 - Vertical ground pipe 3 (no entrance)
-	.word LoadLevel_VCeilingPipeRun		; 26 - Vertical ceiling pipe 1 (alt level)
-	.word LoadLevel_VCeilingPipeRun		; 27 - Vertical ceiling pipe 2 (no entrance)
-	.word LoadLevel_HRightWallPipeRun	; 28 - Horizontal right-hand wall pipe (alt level)
-	.word LoadLevel_HRightWallPipeRun	; 29 - Horizontal right-hand wall pipe (no entrance)
-	.word LoadLevel_HLeftWallPipeRun	; 30 - Horizontal left-hand wall pipe (alt level)
-	.word LoadLevel_HLeftWallPipeRun	; 31 - Horizontal left-hand wall pipe (no entrance)
-	.word LoadLevel_Cannon			; 32 - Bullet bill cannon
-	.word LoadLevel_CCBridge		; 33 - Cheep-Cheep style 'oo' bridge
-	.word LoadLevel_CCBridge		; 34 - Would result in empty tiles?  (form of 33)
-	.word LoadLevel_TopDecoBlocks		; 35 - Top-Deco Rectangle Waterfall
-	.word LoadLevel_TopDecoBlocks		; 36 - Top-Deco Rectangle Left waving water pool
-	.word LoadLevel_TopDecoBlocks		; 37 - Top-Deco Rectangle No current waving water pool
-	.word LoadLevel_TopDecoBlocks		; 38 - Top-Deco Rectangle Right waving water pool
-	.word LoadLevel_TopDecoBlocks		; 39 - Top-Deco Rectangle Water wrong-way BG
-	.word LoadLevel_TopDecoBlocks		; 40 - Top-Deco Rectangle Diamond blocks (not really any deco on top)
-	.word LoadLevel_TopDecoBlocks		; 41 - Top-Deco Rectangle Sand ground 
-	.word LoadLevel_TopDecoBlocks		; 42 - Top-Deco Rectangle orange block??
-	.word LoadLevel_IceBricks		; 43 - Run of ice bricks
-	.word LoadLevel_VTransitPipeRun		; 44 - Vertical in-level transit pipe
-	.word LoadLevel_LittleCloudSolidRun	; 45 - Run of the all-solid Judgem's type clouds (BROKEN, check function def for notes)
+	.word FAR014_LoadLevel_GenerateBigBlock	; 0 - White big blocks which auto generate to the ground
+	.word FAR014_LoadLevel_GenerateBigBlock	; 1 - Orange big blocks which auto generate to the ground
+	.word FAR014_LoadLevel_GenerateBigBlock	; 2 - Green big blocks which auto generate to the ground
+	.word FAR014_LoadLevel_GenerateBigBlock	; 3 - Blue big blocks which auto generate to the ground
+	.word FAR014_LoadLevel_FloatingBigBlock	; 4 - White big blocks which generate in the sky
+	.word FAR014_LoadLevel_FloatingBigBlock	; 5 - Orange big blocks which generate in the sky
+	.word FAR014_LoadLevel_FloatingBigBlock	; 6 - Green big blocks which generate in the sky
+	.word FAR014_LoadLevel_FloatingBigBlock	; 7 - Blue big blocks which generate in the sky
+	.word FAR014_LoadLevel_LittleBushRun		; 8 - Put in a run of those cute little bushes
+	.word FAR014_LoadLevel_Pitfall			; 9 - Generate pitfall at the bottom of the level
+	.word FAR014_LoadLevel_LittleCloudRun		; 10 - Put in a run of those little smiling Judgem's type clouds
+	.word FAR014_LoadLevel_GroundRun		; 11 - Do a run of solid ground
+	.word FAR014_LoadLevel_GroundRun		; 12 - Do a run of solid ground, underwater
+	.word FAR014_LoadLevel_CloudRun		; 13 - Run of the clouds
+	.word FAR014_LoadLevel_PitfallW		; 14 - Same as 9, except underwater ground tiles instead
+	.word FAR014_LoadLevel_BlockRun		; 15 - Run of bricks
+	.word FAR014_LoadLevel_BlockRun		; 16 - Run of '?' blocks with a coin
+	.word FAR014_LoadLevel_BlockRun		; 17 - Run of bricks with a coin
+	.word FAR014_LoadLevel_BlockRun		; 18 - Run of wood blocks
+	.word FAR014_LoadLevel_BlockRun		; 19 - Run of green note blocks (?)
+	.word FAR014_LoadLevel_BlockRun		; 20 - Run of note blocks
+	.word FAR014_LoadLevel_BlockRun		; 21 - Run of bouncing wood blocks
+	.word FAR014_LoadLevel_BlockRun		; 22 - Run of coins
+	.word FAR014_LoadLevel_VGroundPipeRun		; 23 - Vertical ground pipe 1 (alt level)
+	.word FAR014_LoadLevel_VGroundPipeRun		; 24 - Vertical ground pipe 2 (Big [?] area)
+	.word FAR014_LoadLevel_VGroundPipeRun		; 25 - Vertical ground pipe 3 (no entrance)
+	.word FAR014_LoadLevel_VCeilingPipeRun		; 26 - Vertical ceiling pipe 1 (alt level)
+	.word FAR014_LoadLevel_VCeilingPipeRun		; 27 - Vertical ceiling pipe 2 (no entrance)
+	.word FAR014_LoadLevel_HRightWallPipeRun	; 28 - Horizontal right-hand wall pipe (alt level)
+	.word FAR014_LoadLevel_HRightWallPipeRun	; 29 - Horizontal right-hand wall pipe (no entrance)
+	.word FAR014_LoadLevel_HLeftWallPipeRun	; 30 - Horizontal left-hand wall pipe (alt level)
+	.word FAR014_LoadLevel_HLeftWallPipeRun	; 31 - Horizontal left-hand wall pipe (no entrance)
+	.word FAR014_LoadLevel_Cannon			; 32 - Bullet bill cannon
+	.word FAR014_LoadLevel_CCBridge		; 33 - Cheep-Cheep style 'oo' bridge
+	.word FAR014_LoadLevel_CCBridge		; 34 - Would result in empty tiles?  (form of 33)
+	.word FAR014_LoadLevel_TopDecoBlocks		; 35 - Top-Deco Rectangle Waterfall
+	.word FAR014_LoadLevel_TopDecoBlocks		; 36 - Top-Deco Rectangle Left waving water pool
+	.word FAR014_LoadLevel_TopDecoBlocks		; 37 - Top-Deco Rectangle No current waving water pool
+	.word FAR014_LoadLevel_TopDecoBlocks		; 38 - Top-Deco Rectangle Right waving water pool
+	.word FAR014_LoadLevel_TopDecoBlocks		; 39 - Top-Deco Rectangle Water wrong-way BG
+	.word FAR014_LoadLevel_TopDecoBlocks		; 40 - Top-Deco Rectangle Diamond blocks (not really any deco on top)
+	.word FAR014_LoadLevel_TopDecoBlocks		; 41 - Top-Deco Rectangle Sand ground 
+	.word FAR014_LoadLevel_TopDecoBlocks		; 42 - Top-Deco Rectangle orange block??
+	.word FAR014_LoadLevel_IceBricks		; 43 - Run of ice bricks
+	.word FAR014_LoadLevel_VTransitPipeRun		; 44 - Vertical in-level transit pipe
+	.word FAR014_LoadLevel_LittleCloudSolidRun	; 45 - Run of the all-solid Judgem's type clouds (BROKEN, check function def for notes)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -275,17 +296,15 @@ LeveLoad_FixedSizeGen_TS1:
 	TAX		 	; Resultant index is put into 'X'
 	JSR DynJump	 
 
-	; XXX PRG014 call (all of these)
-
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
-	.word LoadLevel_MidSizeBush		;  0 - Place a mid-sized large green bush
-	.word LoadLevel_SmallSizeBush		;  1 - Place a small sized large green bush
-	.word LoadLevel_BigSizeBush		;  2 - Place a big sized large green bush
-	.word LoadLevel_RandomPUpClouds		;  3 - Add 60 random "power up clouds"
-	.word LoadLevel_Door2			;  4 - Door style 2
-	.word LoadLevel_Door1			;  5 - Door style 1
-	.word LoadLevel_VineToGround		;  6 - Constructs a vine from the start down to next non-sky tile
-	.word LoadLevel_PutLittleBGCloud	;  7 - Adds a single little BG cloud
+	.word FAR014_LoadLevel_MidSizeBush		;  0 - Place a mid-sized large green bush
+	.word FAR014_LoadLevel_SmallSizeBush		;  1 - Place a small sized large green bush
+	.word FAR014_LoadLevel_BigSizeBush		;  2 - Place a big sized large green bush
+	.word FAR014_LoadLevel_RandomPUpClouds		;  3 - Add 60 random "power up clouds"
+	.word FAR014_LoadLevel_Door2			;  4 - Door style 2
+	.word FAR014_LoadLevel_Door1			;  5 - Door style 1
+	.word FAR014_LoadLevel_VineToGround		;  6 - Constructs a vine from the start down to next non-sky tile
+	.word FAR014_LoadLevel_PutLittleBGCloud	;  7 - Adds a single little BG cloud
 	.word $0000				;  8 - NULL?
 	.word $0000				;  9 - NULL?
 	.word $0000				; 10 - NULL?
@@ -294,32 +313,32 @@ LeveLoad_FixedSizeGen_TS1:
 	.word $0000				; 13 - NULL?
 	.word $0000				; 14 - NULL?
 	.word $0000				; 15 - NULL?
-	.word LoadLevel_PowerBlock		; 16 - ? block with flower
-	.word LoadLevel_PowerBlock		; 17 - ? block with leaf 
-	.word LoadLevel_PowerBlock		; 18 - ? block with star
-	.word LoadLevel_PowerBlock		; 19 - ? block with coin OR star
-	.word LoadLevel_PowerBlock		; 20 - ? block with coin (??)
-	.word LoadLevel_PowerBlock		; 21 - Muncher Plant!
-	.word LoadLevel_PowerBlock		; 22 - Brick with flower
-	.word LoadLevel_PowerBlock		; 23 - Brick with leaf
-	.word LoadLevel_PowerBlock		; 24 - Brick with star
-	.word LoadLevel_PowerBlock		; 25 - Brick with coin OR star
-	.word LoadLevel_PowerBlock		; 26 - Brick with 10-coin
-	.word LoadLevel_PowerBlock		; 27 - Brick with 1-up
-	.word LoadLevel_PowerBlock		; 28 - Brick with vine
-	.word LoadLevel_PowerBlock		; 29 - Brick with P-Switch
-	.word LoadLevel_PowerBlock		; 30 - Invisible coin
-	.word LoadLevel_PowerBlock		; 31 - Invisible 1-up
-	.word LoadLevel_PowerBlock		; 32 - Invisible note
-	.word LoadLevel_PowerBlock		; 33 - Note block with flower
-	.word LoadLevel_PowerBlock		; 34 - Note block with leaf
-	.word LoadLevel_PowerBlock		; 35 - Note block with star
-	.word LoadLevel_PowerBlock		; 36 - Wood block with flower
-	.word LoadLevel_PowerBlock		; 37 - Wood block with leaf
-	.word LoadLevel_PowerBlock		; 38 - Wood block with star
-	.word LoadLevel_PowerBlock		; 39 - Invisible note to coin heaven
-	.word LoadLevel_PowerBlock		; 40 - P-Switch
-	.word LoadLevel_EndGoal			; 41 - The end goal
+	.word FAR014_LoadLevel_PowerBlock		; 16 - ? block with flower
+	.word FAR014_LoadLevel_PowerBlock		; 17 - ? block with leaf 
+	.word FAR014_LoadLevel_PowerBlock		; 18 - ? block with star
+	.word FAR014_LoadLevel_PowerBlock		; 19 - ? block with coin OR star
+	.word FAR014_LoadLevel_PowerBlock		; 20 - ? block with coin (??)
+	.word FAR014_LoadLevel_PowerBlock		; 21 - Muncher Plant!
+	.word FAR014_LoadLevel_PowerBlock		; 22 - Brick with flower
+	.word FAR014_LoadLevel_PowerBlock		; 23 - Brick with leaf
+	.word FAR014_LoadLevel_PowerBlock		; 24 - Brick with star
+	.word FAR014_LoadLevel_PowerBlock		; 25 - Brick with coin OR star
+	.word FAR014_LoadLevel_PowerBlock		; 26 - Brick with 10-coin
+	.word FAR014_LoadLevel_PowerBlock		; 27 - Brick with 1-up
+	.word FAR014_LoadLevel_PowerBlock		; 28 - Brick with vine
+	.word FAR014_LoadLevel_PowerBlock		; 29 - Brick with P-Switch
+	.word FAR014_LoadLevel_PowerBlock		; 30 - Invisible coin
+	.word FAR014_LoadLevel_PowerBlock		; 31 - Invisible 1-up
+	.word FAR014_LoadLevel_PowerBlock		; 32 - Invisible note
+	.word FAR014_LoadLevel_PowerBlock		; 33 - Note block with flower
+	.word FAR014_LoadLevel_PowerBlock		; 34 - Note block with leaf
+	.word FAR014_LoadLevel_PowerBlock		; 35 - Note block with star
+	.word FAR014_LoadLevel_PowerBlock		; 36 - Wood block with flower
+	.word FAR014_LoadLevel_PowerBlock		; 37 - Wood block with leaf
+	.word FAR014_LoadLevel_PowerBlock		; 38 - Wood block with star
+	.word FAR014_LoadLevel_PowerBlock		; 39 - Invisible note to coin heaven
+	.word FAR014_LoadLevel_PowerBlock		; 40 - P-Switch
+	.word FAR014_LoadLevel_EndGoal			; 41 - The end goal
 
 	; Broken into another file for ease of integration in NoDice editor
 	.include "levels/Plains.asm"
