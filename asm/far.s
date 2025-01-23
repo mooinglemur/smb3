@@ -34,9 +34,11 @@
 .import LoadLevel_Cannon
 .import LoadLevel_CloudRun
 .import LoadLevel_CloudRun3
+.import LoadLevel_Conveyor
 .import LoadLevel_Corner
 .import LoadLevel_DecoCeiling
 .import LoadLevel_DecoGround
+.import LoadLevel_DonutLifts
 .import LoadLevel_Door1
 .import LoadLevel_Door2
 .import LoadLevel_EndGoal
@@ -46,13 +48,21 @@
 .import LoadLevel_GroundRun
 .import LoadLevel_HLeftWallPipeRun
 .import LoadLevel_HRightWallPipeRun
+.import LoadLevel_HRightWallPipeRun3
 .import LoadLevel_IceBricks
+.import LoadLevel_Jelectro
 .import LoadLevel_LittleBushRun
 .import LoadLevel_LittleCloudRun
 .import LoadLevel_LittleCloudSolidRun
 .import LoadLevel_MidSizeBush
 .import LoadLevel_MiscBG
 .import LoadLevel_Nothing
+.import LoadLevel_Path45B2T
+.import LoadLevel_Path45T2B
+.import LoadLevel_Path625B2T
+.import LoadLevel_Path625T2B
+.import LoadLevel_PathHorizontal
+.import LoadLevel_PathVertical
 .import LoadLevel_Pitfall
 .import LoadLevel_PitfallW
 .import LoadLevel_PowerBlock
@@ -114,9 +124,11 @@
 .export FAR014_LoadLevel_Cannon
 .export FAR014_LoadLevel_CloudRun
 .export FAR014_LoadLevel_CloudRun3
+.export FAR014_LoadLevel_Conveyor
 .export FAR014_LoadLevel_Corner
 .export FAR014_LoadLevel_DecoCeiling
 .export FAR014_LoadLevel_DecoGround
+.export FAR014_LoadLevel_DonutLifts
 .export FAR014_LoadLevel_Door1
 .export FAR014_LoadLevel_Door2
 .export FAR014_LoadLevel_EndGoal
@@ -126,13 +138,21 @@
 .export FAR014_LoadLevel_GroundRun
 .export FAR014_LoadLevel_HLeftWallPipeRun
 .export FAR014_LoadLevel_HRightWallPipeRun
+.export FAR014_LoadLevel_HRightWallPipeRun3
 .export FAR014_LoadLevel_IceBricks
+.export FAR014_LoadLevel_Jelectro
 .export FAR014_LoadLevel_LittleBushRun
 .export FAR014_LoadLevel_LittleCloudRun
 .export FAR014_LoadLevel_LittleCloudSolidRun
 .export FAR014_LoadLevel_MidSizeBush
 .export FAR014_LoadLevel_MiscBG
 .export FAR014_LoadLevel_Nothing
+.export FAR014_LoadLevel_Path45B2T
+.export FAR014_LoadLevel_Path45T2B
+.export FAR014_LoadLevel_Path625B2T
+.export FAR014_LoadLevel_Path625T2B
+.export FAR014_LoadLevel_PathHorizontal
+.export FAR014_LoadLevel_PathVertical
 .export FAR014_LoadLevel_Pitfall
 .export FAR014_LoadLevel_PitfallW
 .export FAR014_LoadLevel_PowerBlock
@@ -188,11 +208,13 @@
 	FAR014_LoadLevel_BlockRun := LoadLevel_BlockRun
 	FAR014_LoadLevel_CCBridge := LoadLevel_CCBridge
 	FAR014_LoadLevel_Cannon := LoadLevel_Cannon
+	FAR014_LoadLevel_Conveyor := LoadLevel_Conveyor
 	FAR014_LoadLevel_CloudRun := LoadLevel_CloudRun
 	FAR014_LoadLevel_CloudRun3 := LoadLevel_CloudRun3
 	FAR014_LoadLevel_Corner := LoadLevel_Corner
 	FAR014_LoadLevel_DecoCeiling := LoadLevel_DecoCeiling
 	FAR014_LoadLevel_DecoGround := LoadLevel_DecoGround
+	FAR014_LoadLevel_DonutLifts := LoadLevel_DonutLifts
 	FAR014_LoadLevel_Door1 := LoadLevel_Door1
 	FAR014_LoadLevel_Door2 := LoadLevel_Door2
 	FAR014_LoadLevel_EndGoal := LoadLevel_EndGoal
@@ -202,13 +224,21 @@
 	FAR014_LoadLevel_GroundRun := LoadLevel_GroundRun
 	FAR014_LoadLevel_HLeftWallPipeRun := LoadLevel_HLeftWallPipeRun
 	FAR014_LoadLevel_HRightWallPipeRun := LoadLevel_HRightWallPipeRun
+	FAR014_LoadLevel_HRightWallPipeRun3 := LoadLevel_HRightWallPipeRun3
 	FAR014_LoadLevel_IceBricks := LoadLevel_IceBricks
+	FAR014_LoadLevel_Jelectro := LoadLevel_Jelectro
 	FAR014_LoadLevel_LittleBushRun := LoadLevel_LittleBushRun
 	FAR014_LoadLevel_LittleCloudRun := LoadLevel_LittleCloudRun
 	FAR014_LoadLevel_LittleCloudSolidRun := LoadLevel_LittleCloudSolidRun
 	FAR014_LoadLevel_MidSizeBush := LoadLevel_MidSizeBush
 	FAR014_LoadLevel_MiscBG := LoadLevel_MiscBG
 	FAR014_LoadLevel_Nothing := LoadLevel_Nothing
+	FAR014_LoadLevel_Path45B2T := LoadLevel_Path45B2T
+	FAR014_LoadLevel_Path45T2B := LoadLevel_Path45T2B
+	FAR014_LoadLevel_Path625B2T := LoadLevel_Path625B2T
+	FAR014_LoadLevel_Path625T2B := LoadLevel_Path625T2B
+	FAR014_LoadLevel_PathHorizontal := LoadLevel_PathHorizontal
+	FAR014_LoadLevel_PathVertical := LoadLevel_PathVertical
 	FAR014_LoadLevel_Pitfall := LoadLevel_Pitfall
 	FAR014_LoadLevel_PitfallW := LoadLevel_PitfallW
 	FAR014_LoadLevel_PowerBlock := LoadLevel_PowerBlock
@@ -324,6 +354,9 @@ FAR014_LoadLevel_CloudRun:
 FAR014_LoadLevel_CloudRun3:
 	PJFAR LoadLevel_CloudRun3, 14
 
+FAR014_LoadLevel_Conveyor:
+	PJFAR LoadLevel_Conveyor, 14
+
 FAR014_LoadLevel_Corner:
 	PJFAR LoadLevel_Corner, 14
 
@@ -332,6 +365,9 @@ FAR014_LoadLevel_DecoCeiling:
 
 FAR014_LoadLevel_DecoGround:
 	PJFAR LoadLevel_DecoGround, 14
+
+FAR014_LoadLevel_DonutLifts:
+	PJFAR LoadLevel_DonutLifts, 14
 
 FAR014_LoadLevel_Door1:
 	PJFAR LoadLevel_Door1, 14
@@ -360,8 +396,14 @@ FAR014_LoadLevel_HLeftWallPipeRun:
 FAR014_LoadLevel_HRightWallPipeRun:
 	PJFAR LoadLevel_HRightWallPipeRun, 14
 
+FAR014_LoadLevel_HRightWallPipeRun3:
+	PJFAR LoadLevel_HRightWallPipeRun3, 14
+
 FAR014_LoadLevel_IceBricks:
 	PJFAR LoadLevel_IceBricks, 14
+
+FAR014_LoadLevel_Jelectro:
+	PJFAR LoadLevel_Jelectro, 14
 
 FAR014_LoadLevel_LittleBushRun:
 	PJFAR LoadLevel_LittleBushRun, 14
@@ -380,6 +422,24 @@ FAR014_LoadLevel_MiscBG:
 
 FAR014_LoadLevel_Nothing:
 	PJFAR LoadLevel_Nothing, 14
+
+FAR014_LoadLevel_Path45B2T:
+	PJFAR LoadLevel_Path45B2T, 14
+
+FAR014_LoadLevel_Path45T2B:
+	PJFAR LoadLevel_Path45T2B, 14
+
+FAR014_LoadLevel_Path625B2T:
+	PJFAR LoadLevel_Path625B2T, 14
+
+FAR014_LoadLevel_Path625T2B:
+	PJFAR LoadLevel_Path625T2B, 14
+
+FAR014_LoadLevel_PathHorizontal:
+	PJFAR LoadLevel_PathHorizontal, 14
+
+FAR014_LoadLevel_PathVertical:
+	PJFAR LoadLevel_PathVertical, 14
 
 FAR014_LoadLevel_Pitfall:
 	PJFAR LoadLevel_Pitfall, 14
