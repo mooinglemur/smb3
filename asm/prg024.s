@@ -24,7 +24,9 @@
 .importzp Temp_Var12, Temp_Var13, Temp_Var14, Temp_Var15, Temp_Var16, VBlank_Tick, PPU_CTL1_Mod
 .importzp Level_ExitToMap, Counter_1, PPU_CTL2_Copy, Pad_Input, VBlank_TickEn, Graphics_Queue
 .importzp Map_Tile_AddrL, BonusText_BaseL, BonusText_BaseH, Video_Upd_AddrL, Video_Upd_AddrH
-.importzp Music_Base_L, Ending2_IntCmd, Controller2, Vert_Scroll, PPU_CTL1_Copy, Title_XPosHi
+.importzp Music_Base_L, Ending2_IntCmd, Sound_Map_Off, Controller2, Vert_Scroll, PPU_CTL1_Copy
+.ifdef NES
+.importzp Title_XPosHi
 .importzp Title_YPosHi, Title_ObjX, Title_ObjY, Title_ObjXVel, Title_ObjYVel, Title_XPosFrac
 .importzp Title_ObjYVelChng, Title_ObjMLFlags, Title_ObjMLMoveDir, Title_ObjMLAnimFrame
 .importzp Title_ObjMLDirTicks, Title_ObjMLSprite, Title_ObjMLPower, Title_ObjMLSprRAMOff
@@ -39,6 +41,24 @@
 .importzp Ending2_PicVRAML, Ending2_QCmdEnd, Ending2_FadeTimer, Ending2_QueueCmd, Ending2_TimerH
 .importzp Ending2_TimerL, Ending2_CurWorld, World_Map_Y, CineKing_DialogState, Objects_X, CineKing_Var
 .importzp Player_HaltGame, CineKing_Frame2, EndText_VL, EndText_VH, Ending_State
+.endif
+.ifdef X16
+.import Title_XPosHi
+.import Title_YPosHi, Title_ObjX, Title_ObjY, Title_ObjXVel, Title_ObjYVel, Title_XPosFrac
+.import Title_ObjYVelChng, Title_ObjMLFlags, Title_ObjMLMoveDir, Title_ObjMLAnimFrame
+.import Title_ObjMLDirTicks, Title_ObjMLSprite, Title_ObjMLPower, Title_ObjMLSprRAMOff
+.import Title_ObjMLSprVis, Title_ObjMLTailTick, Title_ObjMLHold, Title_ObjMLBonkTick
+.import Title_ObjMLKickTick, Title_ObjMPowerDown, Title_ObjMLStop, Title_CurMLIndex, Ending_Timer
+.import Title_ObjFlags, EndText_Timer, EndText_CPos, Title_ObjStates, EndText_State, Title_State
+.import Title_ResetCnt, Title_ResetCnt2, Title_ResetTrig, Title_UnusedFlag, Title_Ticker
+.import Title_MActScriptPos, Title_LActScriptPos, Title_MActScriptDelay, Title_LActScriptDelay
+.import Title_MActScriptDirSet, Title_LActScriptDirSet, Title_ObjMLDir, Title_ObjMLQueue
+.import Title_EventIndex, Title_EventGrafX, Title_ObjInitIdx, Title_ObjInitDly, Title_3GlowFlag
+.import Title_3GlowIndex, Ending2_PicState, Ending2_ClearLen, Ending2_ClearPat, Ending2_PicVRAMH
+.import Ending2_PicVRAML, Ending2_QCmdEnd, Ending2_FadeTimer, Ending2_QueueCmd, Ending2_TimerH
+.import Ending2_TimerL, Ending2_CurWorld, World_Map_Y, CineKing_DialogState, Objects_X, CineKing_Var
+.import Player_HaltGame, CineKing_Frame2, EndText_VL, EndText_VH, Ending_State
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Update_Select, Raster_Effect, Debug_Flag, Sprite_RAM, Graphics_BufCnt, Graphics_Buffer
 .import World_Num_Debug, Level_JctCtl, Bonus_GameHost, Bonus_KTPrize, CineKing_Frame, SndCur_Level1
@@ -831,7 +851,7 @@ King_W5:
 PRG024_A545:
 	RTS		 ; Return
 
-
+.ifdef NES
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;; BEGIN UNUSED COPY/PASTED CODE ;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1453,7 +1473,7 @@ PRG024_A7E1:		; UNUSED COPY FROM PRG022, DELETE DON'T MODIFY
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;  END UNUSED COPY/PASTED CODE  ;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+.endif
 
 Debug_DownUp:	.byte 1, <-1	; Add 1 or subtract 1 from current world on debug menu
 
@@ -2950,7 +2970,13 @@ PRG024_AF7D:
 	; At this point, Y is a standard direction value -- 0 = Not moving, 1 = Leftward, 2 = Rightward
 
 	STA Temp_Var15			; Store velocity into Temp_Var15
+.ifdef NES
 	STY Title_ObjMLMoveDir,X	; Store movement direction into Title_ObjMLMoveDir
+.endif
+.ifdef X16
+	tya ; .A is loaded before it's used again
+	sta Title_ObjMLMoveDir,X
+.endif
 
 	LDY #$18	 		; Y = $18
 	LDA Title_ObjMLDir,X	 	; Get the direction vector value
@@ -3248,7 +3274,7 @@ Title_ApplyYVel:
 	; precision adding function as X or Y velocity... relies on all pertinent values
 	; to be exactly the same bytes apart...
 	CLC
-	ADC #(Title_ObjYVel - Title_ObjXVel)
+	ADC #<(Title_ObjYVel - Title_ObjXVel)
 	TAX		 ; X = (object index) + 8
 
 	JSR Title_AddVel_toPos	 ; Apply Y velocity
@@ -3332,7 +3358,13 @@ PRG024_B0F5:
 	LDY #SPR_HFLIP	 ; Otherwise, Y = SPR_HFLIP
 
 PRG024_B107:
+.ifdef NES
 	STY Title_ObjMLFlags,X	 ; Update flags value
+.endif
+.ifdef X16
+	tya ; .A is loaded before it is used again
+	sta Title_ObjMLFlags,X
+.endif
 
 PRG024_B109:
 	LDA Title_ObjMLFlags,X	
@@ -5634,8 +5666,8 @@ PRG024_BBA1:
 	CPX #Music_Base_L
 	BLT PRG024_BBAA	 ; If X < Music_Base_L, jump to PRG024_BBAA
 
-	CPX #World_Map_Y
-	BLT PRG024_BBA1	 ; If X < World_Map_Y, jump to PRG024_BBA1
+	CPX #(Sound_Map_Off+2)
+	BLT PRG024_BBA1	 ; If X < Sound_Map_Off+2 (end of common ZP), jump to PRG024_BBA1
 
 PRG024_BBAA:
 	CPX #<-1

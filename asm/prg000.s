@@ -34,11 +34,27 @@
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var8
 .importzp Temp_Var9, Temp_Var10, Temp_Var11, Temp_Var12, Temp_Var13, Temp_Var14, Temp_Var15, Temp_Var16
-.importzp Horz_Scroll_Hi, Counter_1, Pad_Holding, Pad_Input, Horz_Scroll, Player_XHi, Objects_XHi
-.importzp Objects_Var4, Player_YHi, Objects_YHi, Player_X, Objects_X, Objects_Var5, Player_Y, Objects_Y
-.importzp Player_SpriteX, Objects_SpriteX, Player_SpriteY, Objects_SpriteY, Player_XVel, Objects_XVel
-.importzp SlotIndexBackup, Player_HaltGame, Player_YVel, Objects_YVel, Player_InAir, Objects_DetStat
+.importzp Horz_Scroll_Hi, Counter_1, Pad_Holding, Pad_Input, Horz_Scroll
+.ifdef NES
+.importzp Player_XHi, Objects_XHi
+.importzp Objects_Var4, Player_YHi, Objects_YHi
+.endif
+.ifdef X16
+.import Player_XHi, Objects_XHi
+.import Objects_Var4, Player_YHi, Objects_YHi
+.endif
+.importzp Player_X, Objects_X, Objects_Var5, Player_Y, Objects_Y
+.importzp Player_SpriteX, Objects_SpriteX, Player_SpriteY, Objects_SpriteY
+.importzp Player_XVel, Objects_XVel
+.importzp SlotIndexBackup, Player_HaltGame, Player_YVel, Objects_YVel
+.ifdef NES
+.importzp Player_InAir, Objects_DetStat
 .importzp Level_Tile, Player_Slopes, Player_Suit, Player_FlipBits, Player_IsDying, Obj01_Flag
+.endif
+.ifdef X16
+.import Player_InAir, Objects_DetStat
+.import Level_Tile, Player_Slopes, Player_Suit, Player_FlipBits, Player_IsDying, Obj01_Flag
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Sprite_RAM, Level_JctCtl, ObjGroupRel_Idx, Level_FreeVertScroll, Level_7Vertical, Objects_Var7
 .import SndCur_Music1, Sound_QPlayer, Sound_QLevel1, Sound_QMusic1, Sound_QMap, Event_Countdown
@@ -6525,7 +6541,7 @@ Object_ApplyYVel:
 Object_ApplyYVel_NoLimit:
 	TXA		 
 	CLC
-	ADC #(Objects_YVel - Objects_XVel)
+	ADC #<(Objects_YVel - Objects_XVel)
 	TAX		 ; Offset to Y velocities
 
 	JSR Object_AddVelFrac	 ; Apply the velocity to the object's position

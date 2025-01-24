@@ -26,11 +26,27 @@
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var8
 .importzp Temp_Var9, Temp_Var11, Temp_Var12, Temp_Var13, Temp_Var14, Temp_Var15, Temp_Var16
 .importzp Level_ExitToMap, Counter_1, Pad_Holding, Pad_Input, Map_EnterViaID, Scroll_LastDir
-.importzp Graphics_Queue, Vert_Scroll, Horz_Scroll, Map_UseItem, Player_XHi, Objects_XHi
-.importzp Objects_Var4, Player_YHi, Objects_YHi, Player_X, Objects_X, Objects_Var5, Player_Y
+.importzp Graphics_Queue, Vert_Scroll, Horz_Scroll
+.importzp Map_UseItem
+.ifdef NES
+.importzp Player_XHi, Objects_XHi
+.importzp Objects_Var4, Player_YHi, Objects_YHi
+.endif
+.ifdef X16
+.import Player_XHi, Objects_XHi
+.import Objects_Var4, Player_YHi, Objects_YHi
+.endif
+.importzp Player_X, Objects_X, Objects_Var5, Player_Y
 .importzp Objects_Y, Player_SpriteX, Objects_SpriteX, Player_SpriteY, Objects_SpriteY, Player_XVel
-.importzp Objects_XVel, SlotIndexBackup, Player_HaltGame, Player_YVel, Objects_YVel, Player_InAir
+.importzp Objects_XVel, SlotIndexBackup, Player_HaltGame, Player_YVel, Objects_YVel
+.ifdef NES
+.importzp Player_InAir
 .importzp Objects_DetStat, Level_Tile, Player_Suit, Player_FlipBits, Player_IsDying
+.endif
+.ifdef X16
+.import Player_InAir
+.import Objects_DetStat, Level_Tile, Player_Suit, Player_FlipBits, Player_IsDying
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, ObjGroupRel_Idx, InvFlip_VAddrHi, InvFlip_Frame
 .import InvFlip_Counter, InvStart_Item, Coins_Earned, Objects_Var7, SndCur_Level1, Sound_QPlayer
@@ -1607,7 +1623,13 @@ ObjNorm_CheepCheepP2P:
 	BPL PRG002_A787	 	; If Y >= 0, jump to PRG002_A787
 	LDY #$03	 	; Otherwise, Y = 3
 PRG002_A787:
+.ifdef NES
 	STY Objects_Var4,X	; Update Var4
+.endif
+.ifdef X16
+	tya ; .A is reloaded before use
+	sta Objects_Var4,X
+.endif
 
 	; Set Cheep Cheep's Y Velocity
 	LDA CheepP2P_YVel,Y
@@ -2515,7 +2537,15 @@ PRG002_AB86:
 PRG002_AB8C:
 	INY		 ; Y = 1 (if small) or 2 (otherwise)
 
+.ifdef NES
 	STY Objects_Var4,X	 ; Var4 = 1 or 2
+.endif
+.ifdef X16
+	pha
+	tya
+	sta Objects_Var4,X
+	pla
+.endif
 
 PRG002_AB8F:
 	RTS		 ; Return
@@ -3290,7 +3320,13 @@ PRG002_AF72:
 PRG002_AF96:
 	LDA Objects_State,X
 	CMP #OBJSTATE_KILLED
+.ifdef NES
 	BEQ PRG002_B01A	 ; If this piranha/Patooie state is Killed, jump to PRG002_B01A
+.endif
+.ifdef X16
+	.macpack longbranch
+	jeq PRG002_B01A
+.endif
 
 	LDA Objects_YHi,X
 	PHA		 ; Save Y Hi
@@ -6481,9 +6517,10 @@ EndLevelCard_Draw:
 PRG002_BFD3:
 	RTS		 ; Return
 
+.ifdef NES
 	; ?? Someone wanna claim this?
 PRG002_BFD4:
 	.byte $FC, $A9, $00, $22, $0B, $01, $A9, $22, $14, $01, $A9, $22, $29, $04, $A9, $FC
 	.byte $FC, $A9, $22, $33, $04, $A9, $FC, $FC, $A9, $22, $4A, $04, $A9, $A9, $FC, $A9
 	.byte $22, $52, $04, $A9, $FC, $A9, $A9, $22, $6C, $48, $A9, $00
-
+.endif

@@ -22,9 +22,16 @@
 .importzp Pad_Input, Scroll_ColumnR, Scroll_ColumnL, Scroll_ColorStrip, Scroll_LastDir, Graphics_Queue
 .importzp Level_LayPtr_AddrL, Level_LayPtr_AddrH, Map_Tile_AddrL, Level_ObjPtr_AddrL
 .importzp Level_ObjPtr_AddrH, Video_Upd_AddrL, Video_Upd_AddrH, Vert_Scroll, Horz_Scroll, PPU_CTL1_Copy
+.ifdef NES
 .importzp World_Map_Y, World_Map_XHi, World_Map_X, Map_UnusedPlayerVal, Map_UnusedPlayerVal2
 .importzp Map_WWOrHT_Y, Map_WWOrHT_X, Map_WWOrHT_Dir, Map_WarpWind_FX, MapPoof_Y, MapPoof_X
 .importzp Map_UseItem, Scroll_Temp, Player_XHi, Player_YHi, Player_X, Player_Y, Level_Tile
+.endif
+.ifdef X16
+.import World_Map_Y, World_Map_XHi, World_Map_X, Map_UnusedPlayerVal, Map_UnusedPlayerVal2
+.import Map_WWOrHT_Y, Map_WWOrHT_X, Map_WWOrHT_Dir, Map_WarpWind_FX, MapPoof_Y, MapPoof_X
+.import Map_UseItem, Scroll_Temp, Player_XHi, Player_YHi, Player_X, Player_Y, Level_Tile
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Update_Select, Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, TileChng_VRAM_H, TileChng_VRAM_L
 .import TileChng_Pats, Level_PipeExitDir, Level_7VertCopy, Scroll_ToVRAMHi, Scroll_LastCol8

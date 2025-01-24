@@ -27,11 +27,27 @@
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var8
 .importzp Temp_Var12, Temp_Var13, Temp_Var14, Temp_Var15, Temp_Var16, Level_ExitToMap, Counter_1
 .importzp Pad_Holding, Pad_Input, Scroll_LastDir, Graphics_Queue, Level_LayPtr_AddrL, Level_LayPtr_AddrH
-.importzp Level_ObjPtr_AddrL, Level_ObjPtr_AddrH, Vert_Scroll, Horz_Scroll, Player_XHi, Objects_XHi
-.importzp Objects_Var4, Player_YHi, Objects_YHi, Player_X, Objects_X, Objects_Var5, Player_Y, Objects_Y
-.importzp Player_SpriteX, Objects_SpriteX, Player_SpriteY, Objects_SpriteY, Player_XVel, Objects_XVel
-.importzp SlotIndexBackup, Player_HaltGame, Player_YVel, Objects_YVel, Player_InAir, Objects_DetStat
+.importzp Level_ObjPtr_AddrL, Level_ObjPtr_AddrH, Vert_Scroll, Horz_Scroll
+.ifdef NES
+.importzp Player_XHi, Objects_XHi
+.importzp Objects_Var4, Player_YHi, Objects_YHi
+.endif
+.ifdef X16
+.import Player_XHi, Objects_XHi
+.import Objects_Var4, Player_YHi, Objects_YHi
+.endif
+.importzp Player_X, Objects_X, Objects_Var5, Player_Y, Objects_Y
+.importzp Player_SpriteX, Objects_SpriteX, Player_SpriteY, Objects_SpriteY
+.importzp Player_XVel, Objects_XVel
+.importzp SlotIndexBackup, Player_HaltGame, Player_YVel, Objects_YVel
+.ifdef NES
+.importzp Player_InAir, Objects_DetStat
 .importzp Level_Tile, Player_Suit, Player_FlipBits, Obj01_Flag
+.endif
+.ifdef X16
+.import Player_InAir, Objects_DetStat
+.import Level_Tile, Player_Suit, Player_FlipBits, Obj01_Flag
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, Level_PipeNotExit, Level_JctCtl, ObjGroupRel_Idx
 .import THouse_Treasure, Level_FreeVertScroll, Objects_Var7, SndCur_Level1, Sound_QPlayer, Sound_QLevel1
@@ -1666,7 +1682,14 @@ ObjInit_StarOrSuit:
 
 PRG001_A7BF:
 	STY Objects_YVel,X	 ; Set object's Y velocity
+.ifdef NES
 	STY Objects_DetStat,X	 ; I think this is a mistake?  They probably meant to clear it?
+.endif
+.ifdef X16
+	tya ; .A is reloaded before use
+	sta Objects_DetStat,X
+.endif
+
 
 	JSR PowerUp_BounceXVel	 ; Bounce off wall
 
@@ -1798,7 +1821,15 @@ PRG001_A859:
 
 Mushroom_SetUpVel:
 	STY Objects_YVel,X	 ; Set object's Y velocity
+.ifdef NES
 	STY Objects_DetStat,X	 ; I think this is a mistake?  They probably meant to clear it?
+.endif
+.ifdef X16
+	pha
+	tya
+	sta Objects_DetStat,X
+	pla
+.endif
 	RTS		 ; Return
 
 
@@ -2140,7 +2171,15 @@ PRG001_A9CF:
 PRG001_A9D5:
 	; Knock flower downward
 	STY Objects_YVel,X	; Y Vel = $10
+.ifdef NES
 	STY Objects_DetStat,X	 ; I think this is a mistake?  They probably meant to clear it?
+.endif
+.ifdef X16
+	pha
+	tya
+	sta Objects_DetStat,X
+	pla
+.endif
 	RTS		 ; Return
 
 ObjNorm_FireFlower:
@@ -5049,7 +5088,7 @@ PRG001_B811:
 PRG001_B819:
 	RTS		 ; Return
 
-
+.ifdef NES
 	; Hmm, unused space?
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
@@ -5058,7 +5097,7 @@ PRG001_B819:
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 	.byte $FF, $FF, $FF, $FF, $FF, $FF
-
+.endif
 
 ObjInit_Bowser:
 

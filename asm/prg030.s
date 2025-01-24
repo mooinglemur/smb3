@@ -26,10 +26,20 @@
 .importzp Scroll_LastDir, Scroll_RightUpd, Scroll_VertUpd, Scroll_LeftUpd, Graphics_Queue
 .importzp Level_LayPtr_AddrL, Level_LayPtr_AddrH, Map_Tile_AddrL, Map_Tile_AddrH, Level_ObjPtr_AddrL
 .importzp Level_ObjPtr_AddrH, Video_Upd_AddrL, Video_Upd_AddrH, Scroll_OddEven, Vert_Scroll, Horz_Scroll
-.importzp PPU_CTL1_Copy, World_Map_Y, World_Map_XHi, World_Map_X, World_Map_Dir, Map_UnusedPlayerVal
+.importzp PPU_CTL1_Copy, Ending2_IntCmd
+.ifdef NES
+.importzp World_Map_Y, World_Map_XHi, World_Map_X, World_Map_Dir, Map_UnusedPlayerVal
 .importzp Map_UnusedPlayerVal2, Map_WarpWind_FX, World_Map_Twirl, Map_UnusedGOFlag, Map_Intro_CurStripe
 .importzp MapPoof_Y, MapPoof_X, Scroll_Temp, BonusDie_Y, BonusDie_X, BonusDie_YVel, Player_XHi, Player_YHi
 .importzp Player_X, Player_Y, Level_TileOff, Level_Tile, Player_Slopes, Player_Suit, Player_IsDying
+.endif
+.ifdef X16
+.import World_Map_Y, World_Map_XHi, World_Map_X, World_Map_Dir, Map_UnusedPlayerVal
+.import Map_UnusedPlayerVal2, Map_WarpWind_FX, World_Map_Twirl, Map_UnusedGOFlag, Map_Intro_CurStripe
+.import MapPoof_Y, MapPoof_X, Scroll_Temp, BonusDie_Y, BonusDie_X, BonusDie_YVel, Player_XHi, Player_YHi
+.import Player_X, Player_Y, Level_TileOff, Level_Tile, Player_Slopes, Player_Suit, Player_IsDying
+.import __BONUSGAMEVARS_LOAD__, __BONUSGAMEVARS_SIZE__
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Update_Select, Raster_Effect, Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, Level_SizeOrig
 .import Level_PipeNotExit, Level_PauseFlag, Level_SkipStatusBarUpd, Raster_State, Scroll_ToVRAMHi
@@ -2227,16 +2237,21 @@ PRG030_8D95:
 
 	; A little cleanup loop...
 
+.ifdef NES
 	; Clears page 0 addresses $00-$FD, excluding $69-$74 (?)
 
 	LDY #$fd	 ; Y = $FD
+.endif
+.ifdef X16
+	LDY #(Video_Upd_AddrL-1)
+.endif
 	LDA #$00	 ; A = 0
 PRG030_BDA6:
 	STA Temp_Var1,Y	 ; Clear this byte
 
 PRG030_BDA9:
 	DEY		 ; Y--
-
+.ifdef NES
 	CPY #World_Map_Y
 	BGE PRG030_8DB2	 ; If Y >= World_Map_Y, jump to PRG030_8DB2
 
@@ -2247,7 +2262,23 @@ PRG030_BDA9:
 PRG030_8DB2: 
 	CPY #$ff
 	BNE PRG030_BDA6	 ; If Y <> $FF (underflow), loop!
+.endif
+.ifdef X16
+	bpl PRG030_BDA9
 
+	ldy #(Horz_Scroll-Ending2_IntCmd)
+X16_PRG030_Clear_COMMONHIZP:
+	sta Horz_Scroll,y
+	dey
+	bpl X16_PRG030_Clear_COMMONHIZP
+
+	ldy #<(__BONUSGAMEVARS_SIZE__ - 1)
+X16_PRG030_Clear_SHAREDVARS:
+	sta __BONUSGAMEVARS_LOAD__,y
+	dey
+	cpy #$ff
+	bne X16_PRG030_Clear_SHAREDVARS
+.endif
 
 	; Clears memory $0400-$04CF (mainly Bonus game cleanup)
 	LDY #$cf	 ; Y = $CF

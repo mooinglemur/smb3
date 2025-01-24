@@ -9,37 +9,81 @@
 .exportzp Music_Base_L, Music_Base_H, Sound_Sqr_FreqL, Sound_Sqr_FreqH, Sound_Map_EntrV, Sound_Map_EntV2, Music_PatchAdrL, Music_PatchAdrH
 .exportzp Sound_Map_Off
 ; COMMONHIZP
-.exportzp Scroll_OddEven, Controller1Press, Controller2Press, Controller1, Controller2, Vert_Scroll, Horz_Scroll, PPU_CTL1_Copy
+.exportzp Ending2_IntCmd, Scroll_OddEven, Controller1Press, Controller2Press, Controller1, Controller2, Vert_Scroll, Horz_Scroll, PPU_CTL1_Copy
 ; TITLEZP
+.ifdef NES
 .exportzp Title_XPosHi, Title_YPosHi, Title_ObjX, Title_ObjY, Title_ObjXVel, Title_ObjYVel, Title_XPosFrac, Title_YPosFrac
 .exportzp Title_ObjYVelChng, Title_ObjMLFlags, Title_ObjMLMoveDir, Title_ObjMLAnimFrame, Title_ObjMLDirTicks, Title_ObjMLSprite, Title_ObjMLPower
 .exportzp Title_ObjMLSprRAMOff, Title_ObjMLSprVis, Title_ObjMLTailTick, Title_ObjMLHold, Title_ObjMLBonkTick, Title_ObjMLKickTick, Title_ObjMPowerDown
 .exportzp Title_ObjMLStop, Title_CurMLIndex, Ending_Timer, Title_ObjFlags, EndText_Timer , EndText_CPos, Title_ObjStates, EndText_State , Title_State
 .exportzp Title_ResetCnt, Title_ResetCnt2, Title_ResetTrig, Title_UnusedFlag, Title_Ticker, Title_MActScriptPos, Title_LActScriptPos, Title_MActScriptDelay
 .exportzp Title_LActScriptDelay, Title_MActScriptDirSet, Title_LActScriptDirSet, Title_ObjMLDir, Title_ObjMLQueue, Title_EventIndex, Title_EventGrafX
-.exportzp Title_ObjInitIdx, Title_ObjInitDly, Title_3GlowFlag, Title_3GlowIndex, Ending2_IntCmd, Ending_State, EndText_VL, EndText_VH
+.exportzp Title_ObjInitIdx, Title_ObjInitDly, Title_3GlowFlag, Title_3GlowIndex, Ending_State, EndText_VL, EndText_VH
+.endif
+.ifdef X16
+.export Title_XPosHi, Title_YPosHi, Title_ObjX, Title_ObjY, Title_ObjXVel, Title_ObjYVel, Title_XPosFrac, Title_YPosFrac
+.export Title_ObjYVelChng, Title_ObjMLFlags, Title_ObjMLMoveDir, Title_ObjMLAnimFrame, Title_ObjMLDirTicks, Title_ObjMLSprite, Title_ObjMLPower
+.export Title_ObjMLSprRAMOff, Title_ObjMLSprVis, Title_ObjMLTailTick, Title_ObjMLHold, Title_ObjMLBonkTick, Title_ObjMLKickTick, Title_ObjMPowerDown
+.export Title_ObjMLStop, Title_CurMLIndex, Ending_Timer, Title_ObjFlags, EndText_Timer , EndText_CPos, Title_ObjStates, EndText_State , Title_State
+.export Title_ResetCnt, Title_ResetCnt2, Title_ResetTrig, Title_UnusedFlag, Title_Ticker, Title_MActScriptPos, Title_LActScriptPos, Title_MActScriptDelay
+.export Title_LActScriptDelay, Title_MActScriptDirSet, Title_LActScriptDirSet, Title_ObjMLDir, Title_ObjMLQueue, Title_EventIndex, Title_EventGrafX
+.export Title_ObjInitIdx, Title_ObjInitDly, Title_3GlowFlag, Title_3GlowIndex, Ending_State, EndText_VL, EndText_VH
+.endif
 ; ENDINGZP
+.ifdef NES
 .exportzp Ending2_PicState, Ending2_ClearLen, Ending2_ClearPat, Ending2_PicVRAMH, Ending2_PicVRAML, Ending2_QCmdEnd, Ending2_FadeTimer, Ending2_QueueCmd
 .exportzp Ending2_TimerH, Ending2_TimerL, Ending2_CurWorld
+.endif
+.ifdef X16
+.export Ending2_PicState, Ending2_ClearLen, Ending2_ClearPat, Ending2_PicVRAMH, Ending2_PicVRAML, Ending2_QCmdEnd, Ending2_FadeTimer, Ending2_QueueCmd
+.export Ending2_TimerH, Ending2_TimerL, Ending2_CurWorld
+.endif
 ; WORLDMAPZP
 .exportzp World_Map_Y, World_Map_XHi, World_Map_X, World_Map_Move, World_Map_Dir, Map_UnusedPlayerVal, Map_UnusedPlayerVal2, Map_WWOrHT_Y, Map_HandTrap_XHi
 .exportzp Map_WWOrHT_X, Map_WWOrHT_Cnt, Map_WWOrHT_Dir, Map_WarpWind_FX, Map_StarFX_State, World_Map_Twirl, Map_Skid_DeltaY, Map_Skid_DeltaFracY
 .exportzp Map_Skid_FracY, Map_Skid_DeltaX, Map_Skid_DeltaFracX, Map_Skid_FracX, Map_Skid_FracCarry, Map_Skid_Count, Map_Skid_Counter, Map_Skid_TravDirs
 .exportzp Map_StarsX, Map_StarsY, Map_StarsOutRad, Map_StarsXSteps, Map_StarsRadCnt, Map_StarsCenterX, Map_StarsCenterY, Map_StarsDeltaR, Map_StarsConst9
 .exportzp Map_StarsAnimCnt, Map_StarsFrame, Map_StarsPattern, Map_StarsLandRad, Map_StarsYSteps, Map_StarsRadius, Map_StarsState, Map_SkidBack
-.exportzp Map_UnusedGOFlag, Map_Intro_CurStripe, Map_Intro_NTOff, Map_Intro_ATOff, Map_Airship_DC, Map_Airship_DY, Map_Airship_YNib, Map_Airship_YAcc
+.exportzp Map_UnusedGOFlag
+.ifdef NES
+.exportzp Map_Intro_CurStripe, Map_Intro_NTOff, Map_Intro_ATOff, Map_Airship_DC, Map_Airship_DY, Map_Airship_YNib, Map_Airship_YAcc
 .exportzp Map_Airship_DXHi, Map_Airship_DX, Map_Airship_XNib, Map_Airship_Dir, Map_HideObj, MapPoof_Y, MapPoof_X, Map_UseItem, World_Map_Tile, Scroll_Temp
 .exportzp Player_WalkFrame
+.endif
+.ifdef X16
+.export Map_Intro_CurStripe, Map_Intro_NTOff, Map_Intro_ATOff, Map_Airship_DC, Map_Airship_DY, Map_Airship_YNib, Map_Airship_YAcc
+.export Map_Airship_DXHi, Map_Airship_DX, Map_Airship_XNib, Map_Airship_Dir, Map_HideObj, MapPoof_Y, MapPoof_X, Map_UseItem, World_Map_Tile, Scroll_Temp
+.export Player_WalkFrame
+.endif
 ; BONUSGAMEZP
 .exportzp BonusCoins_State, BonusDie_Y, BonusDie_X, BonusDie_YVel, BonusDie_YVelFrac
 ; VSZP
+.ifdef NES
 .exportzp Vs_State, Vs_IsPaused
+.endif
+.ifdef X16
+.export Vs_State, Vs_IsPaused
+.endif
 ; GAMEPLAYZP
-.exportzp Player_XHi, Objects_XHi, CineKing_DialogState, Objects_Var4, Pipe_PlayerX, Pipe_PlayerY, Level_GndLUT_Addr, Player_YHi, Objects_YHi, Player_X
-.exportzp Objects_X, CineKing_Var, Objects_Var5, Player_Y, Objects_Y, Player_SpriteX, Objects_SpriteX, Player_SpriteY, Objects_SpriteY, Player_XVel
-.exportzp Objects_XVel, Objects_VarBSS, SlotIndexBackup, Player_HaltGame, Player_YVel, Objects_YVel, Player_InAir, CineKing_Frame2, Objects_DetStat
+.ifdef NES
+.exportzp Player_XHi, Objects_XHi, CineKing_DialogState, Objects_Var4, Pipe_PlayerX, Pipe_PlayerY, Level_GndLUT_Addr, Player_YHi, Objects_YHi
+.endif
+.ifdef X16
+.export Player_XHi, Objects_XHi, CineKing_DialogState, Objects_Var4, Pipe_PlayerX, Pipe_PlayerY, Level_GndLUT_Addr, Player_YHi, Objects_YHi
+.endif
+.exportzp Player_X, Objects_X, CineKing_Var, Objects_Var5, Player_Y, Objects_Y, Player_SpriteX, Objects_SpriteX, Player_SpriteY, Objects_SpriteY
+.exportzp Player_XVel
+.exportzp Objects_XVel, Objects_VarBSS, SlotIndexBackup, Player_HaltGame, Player_YVel, Objects_YVel
+.ifdef NES
+.exportzp Player_InAir, CineKing_Frame2, Objects_DetStat
 .exportzp Player_SprWorkL, Player_SprWorkH, Level_TileOff, Level_Tile, Player_Slopes, Player_XStart, Player_Suit, Player_Frame, Player_FlipBits
 .exportzp Player_WagCount, Player_IsDying, Obj01_Flag
+.endif
+.ifdef X16
+.export Player_InAir, CineKing_Frame2, Objects_DetStat
+.export Player_SprWorkL, Player_SprWorkH, Level_TileOff, Level_Tile, Player_Slopes, Player_XStart, Player_Suit, Player_Frame, Player_FlipBits
+.export Player_WagCount, Player_IsDying, Obj01_Flag
+.endif
 ; ONEPAGE
 .export Update_Select, Raster_Effect, Debug_Flag
 ; OAMSHADOW
@@ -371,16 +415,20 @@ Controller1:          ; Player 1's controller inputs -- R01 L02 D04 U08 S10 E20 
 Controller2:          ; Player 2's controller inputs -- R01 L02 D04 U08 S10 E20 B40 A80
 	.res 1
 
+.ifdef NES
 ; unused ($F9-FB)
 	.res 3
+.endif
 
 Vert_Scroll:          ; Vertical scroll of name table; typically at $EF (239, basically showing the bottom half)
 	.res 1
 Horz_Scroll:          ; Horizontal scroll of name table
 	.res 1
 
-; unsued ($FE)
+.ifdef NES
+; unused ($FE)
 	.res 1
+.endif
 
 PPU_CTL1_Copy:        ; Holds PPU_CTL1 register data 
 	.res 1
@@ -426,6 +474,10 @@ Title_ObjMLMoveDir:   ; 0 = No move, 1 = Left, 2 = Right
 
 ; unused $BA
 	.res 1
+
+.ifdef X16
+.segment "TITLEVARS"
+.endif
 
 Title_ObjMLAnimFrame: ; $BB-$BC Mario / Luigi animation frame
 	.res 2
@@ -512,6 +564,7 @@ Title_3GlowIndex:     ; Index into an array of colors to cause the big '3' on th
 ; Basically don't assume anything here is free space without consulting above as well...
 
 .segment "ENDINGZP": zeropage
+
 Ending2_PicState:     ; Ending part 2 picture loader state
 	.res 1
 Ending2_ClearLen:     ; Length of clear run
@@ -669,6 +722,9 @@ Map_SkidBack:         ; Player is skidding back (Map_Player_SkidBack stores whet
 Map_UnusedGOFlag:     ; Set at map initialization or if Player gets Game Over and selects CONTINUE/END, no apparent purpose
 	.res 1
 
+.ifdef X16
+.segment "WORLDMAPVARS"
+.endif
 ; unused ($C8-$CB)
 	.res 4
 
@@ -736,8 +792,15 @@ Player_WalkFrame:    ; relative, not the same as Player_Frame
 BonusCoins_State:
 	.res 1
 
-; unused ($8C-$C6)
-	.res 59
+; unused ($8C-$BB)
+	.res 48
+
+.ifdef X16
+.segment "BONUSGAMEVARS"
+.endif
+
+; unused ($BC-$C6)
+	.res 11
 
 BonusDie_Y:           ; UNUSED Bonus Game Die (1-6) Y position
 	.res 1
@@ -755,18 +818,32 @@ BonusDie_YVelFrac:    ; UNUSED Bonus Game Die Y Velocity fractional accumulator
 ; ZERO PAGE RAM: 2P VS CONTEXT
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .segment "VSZP": zeropage
+
 Vs_State:             ; 2P Vs Mode state
 	.res 1
 Vs_IsPaused:          ; If set, 2P Vs is paused
 	.res 1
 
-; unused ($77-$F3)
-	.res 125
+; unused ($77-$BB)
+	.res 69
+
+.ifdef X16
+.segment "VSVARS"
+.endif
+
+; unused ($BC-$F3)
+	.res 56
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; ZERO PAGE RAM: GAMEPLAY CONTEXT
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.ifdef NES
 .segment "GAMEPLAYZP": zeropage
+.endif
+
+.ifdef X16
+.segment "GAMEPLAYVARS"
+.endif
 
 ; There's a consistent difference of $12 between X and Y; this consistent distancing is meant to be maintained, so leave it alone!
 
@@ -800,6 +877,9 @@ Player_YHi:           ; Player Y Hi
 	.res 1
 Objects_YHi:          ; $88-$8F Other object's Y Hi positions
 	.res 8
+.ifdef X16
+.segment "GAMEPLAYZP": zeropage
+.endif
 Player_X:             ; Player X
 	.res 1
 Objects_X:            ; $91-$98 Other object's X positions
@@ -844,6 +924,10 @@ Player_YVel:          ; Player's Y Velocity (negative values upward)
 	.res 1
 Objects_YVel:         ; $D0-$D7 Other object's Y velocities
 	.res 8
+
+.ifdef X16
+.segment "GAMEPLAYVARS"
+.endif
 
 Player_InAir:         ; When set, Player is in the air
 	.res 1
