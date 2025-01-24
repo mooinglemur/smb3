@@ -6,6 +6,7 @@
 .import FX_MonoFlash_By_MapTick
 .import Map_GetTile
 .import Map_W8DarknessUpdate
+.import MapTile_Get_By_Offset
 .import WorldMap_UpdateAndDraw
 
 ; PRG011 imports
@@ -96,6 +97,14 @@
 ; PRG022 imports
 .import UpdSel_Roulette
 
+; PRG026 imports
+.import Palette_PrepareFadeOut
+.import StatusBar_UpdateValues
+.import Video_Misc_Updates
+
+; PRG028 imports
+.import Sound_Engine_Begin
+
 ; PRG029 imports
 .import Player_Draw
 .import Player_DrawAndDoActions
@@ -105,6 +114,7 @@
 .export FAR010_FX_MonoFlash_By_MapTick
 .export FAR010_Map_GetTile
 .export FAR010_Map_W8DarknessUpdate
+.export FAR010_MapTile_Get_By_Offset
 .export FAR010_WorldMap_UpdateAndDraw
 .export FAR011_GameOver_AlignToStartY
 .export FAR011_GameOver_ReturnToStartX
@@ -188,6 +198,10 @@
 .export FAR014_LoadLevel_VertGroundR
 .export FAR014_LoadLevel_VineToGround
 .export FAR022_UpdSel_Roulette
+.export FAR026_Palette_PrepareFadeOut
+.export FAR026_StatusBar_UpdateValues
+.export FAR026_Video_Misc_Updates
+.export FAR028_Sound_Engine_Begin
 .export FAR029_Player_Draw
 .export FAR029_Player_DrawAndDoActions
 .export FAR029_ToadHouse_ChestPressB
@@ -196,6 +210,7 @@
 	FAR010_FX_MonoFlash_By_MapTick := FX_MonoFlash_By_MapTick
 	FAR010_Map_GetTile := Map_GetTile
 	FAR010_Map_W8DarknessUpdate := Map_W8DarknessUpdate
+	FAR010_MapTile_Get_By_Offset := MapTile_Get_By_Offset
 	FAR010_WorldMap_UpdateAndDraw := WorldMap_UpdateAndDraw
 	FAR011_GameOver_AlignToStartY := GameOver_AlignToStartY
 	FAR011_GameOver_ReturnToStartX := GameOver_ReturnToStartX
@@ -279,6 +294,10 @@
 	FAR014_LoadLevel_VertGroundR := LoadLevel_VertGroundR
 	FAR014_LoadLevel_VineToGround := LoadLevel_VineToGround
 	FAR022_UpdSel_Roulette := UpdSel_Roulette
+	FAR026_Palette_PrepareFadeOut := Palette_PrepareFadeOut
+	FAR026_StatusBar_UpdateValues := StatusBar_UpdateValues
+	FAR026_Video_Misc_Updates := Video_Misc_Updates
+	FAR028_Sound_Engine_Begin := Sound_Engine_Begin
 	FAR029_Player_Draw := Player_Draw
 	FAR029_Player_DrawAndDoActions := Player_DrawAndDoActions
 	FAR029_ToadHouse_ChestPressB := ToadHouse_ChestPressB
@@ -296,6 +315,9 @@ FAR010_Map_GetTile:
 
 FAR010_Map_W8DarknessUpdate:
 	PJFAR Map_W8DarknessUpdate, 10
+
+FAR010_MapTile_Get_By_Offset:
+	PJFAR MapTile_Get_By_Offset, 10
 
 FAR010_WorldMap_UpdateAndDraw:
 	PJFAR WorldMap_UpdateAndDraw, 10
@@ -545,6 +567,18 @@ FAR014_LoadLevel_VineToGround:
 
 FAR022_UpdSel_Roulette:
 	PJFAR UpdSel_Roulette, 22
+
+FAR026_Palette_PrepareFadeOut:
+	PJFAR Palette_PrepareFadeOut, 26
+
+FAR026_StatusBar_UpdateValues:
+	PJFAR StatusBar_UpdateValues, 26
+
+FAR026_Video_Misc_Updates:
+	PJFAR Video_Misc_Updates, 26
+
+FAR028_Sound_Engine_Begin:
+	PJFAR Sound_Engine_Begin, 28
 
 FAR029_Player_Draw:
 	PJFAR Player_Draw, 29

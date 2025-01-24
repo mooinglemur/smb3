@@ -13,6 +13,9 @@
 ;---------------------------------------------------------------------------
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
+.ifdef X16
+.include "../inc/x16.inc"
+.endif
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var8
@@ -912,12 +915,26 @@ MO_NSpade:
 	; but in final version, Y = 0 (see PRG022 for more)
 
 	; Bonus game layout
-	; XXX PRG022 data
+.ifdef X16
+	jsr X16_PRG012_Load_Bonus_LayoutData
+.pushseg
+.segment "PRG012LOW"
+X16_PRG012_Load_Bonus_LayoutData:
+	lda X16::Reg::RAMBank
+	pha
+	lda #22
+	sta X16::Reg::RAMBank
+.endif
 	LDA Bonus_LayoutData,Y
 	STA Level_LayPtr_AddrL
-	; XXX PRG022 data
 	LDA Bonus_LayoutData+1,Y
-	STA Level_LayPtr_AddrH	
+	STA Level_LayPtr_AddrH
+.ifdef X16
+	pla
+	sta X16::Reg::RAMBank
+	rts
+.popseg
+.endif
 
 	; World_EnterState = 3
 	LDA #$03
@@ -1080,12 +1097,16 @@ PRG012_B384:
 	ASL A
 	TAY		 ; -> 'Y'
 
-	; XXX PRG022 data
+.ifdef X16
+	jsr X16_PRG012_Load_Bonus_LayoutData
+.endif
+.ifdef NES
+
 	LDA Bonus_LayoutData,Y
 	STA Level_LayPtr_AddrL
-	; XXX PRG022 data
 	LDA Bonus_LayoutData+1,Y
 	STA Level_LayPtr_AddrH
+.endif
 
 	; World_EnterState = 3
 	LDA #$03

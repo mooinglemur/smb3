@@ -15,6 +15,9 @@
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
 .include "../inc/nesswitch.inc"
+.ifdef X16
+.include "../inc/x16.inc"
+.endif
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var10, Temp_Var11
@@ -1474,12 +1477,26 @@ GraphicsBuf_Prep_And_WaitVSyn2:
 	TAY		 	; Y = Graphics_Queue << 1
 
 	; Get the address where the video update data is
-	; XXX PRG025 data
+.ifdef X16
+	jsr X16_PRG024_Load_Video_Upd_Table2
+.pushseg
+.segment "PRG024LOW"
+X16_PRG024_Load_Video_Upd_Table2:
+	lda X16::Reg::RAMBank
+	pha
+	lda #25
+	sta X16::Reg::RAMBank
+.endif
 	LDA Video_Upd_Table2,Y
 	STA Video_Upd_AddrL
-	; XXX PRG025 data
 	LDA Video_Upd_Table2+1,Y
-	STA Video_Upd_AddrH	
+	STA Video_Upd_AddrH
+.ifdef X16
+	pla
+	sta X16::Reg::RAMBank
+	rts
+.popseg
+.endif
 
 	LDA #$01	
 	STA VBlank_TickEn	 ; Enable the VBlank tick
@@ -1675,12 +1692,15 @@ PRG024_A8C8:
 	LDA #$01	 ; A = 1
 	ASL A		 ; A = 2
 	TAY		 ; Y = 2 (Palette + Checkerboard floor)
-	; XXX PRG025 data
+.ifdef X16
+	jsr X16_PRG024_Load_Video_Upd_Table2
+.endif
+.ifdef NES
 	LDA Video_Upd_Table2,Y
 	STA Video_Upd_AddrL
-	; XXX PRG025 data
 	LDA Video_Upd_Table2+1,Y
 	STA Video_Upd_AddrH
+.endif
 	JSR Video_Misc_Updates2
 
 	; Some kind of hardware thing perhaps
@@ -2060,12 +2080,15 @@ PRG024_AB04:
 	TAY		 	; Y = Title_EventGrafX << 1 (2 byte index)
 
 	; Get address, store into [Video_Upd_AddrH][Video_Upd_AddrL]
-	; XXX PRG025 data
+.ifdef X16
+	jsr X16_PRG024_Load_Video_Upd_Table2
+.endif
+.ifdef NES
 	LDA Video_Upd_Table2,Y
 	STA Video_Upd_AddrL	
-	; XXX PRG025 data
 	LDA Video_Upd_Table2+1,Y
 	STA Video_Upd_AddrH	
+.endif
 
 	JSR Video_Misc_Updates2	; Load those graphics!
 
@@ -4993,12 +5016,15 @@ PRG024_B876:
 	TAY
 
 	; Load base address of graphics
-	; XXX PRG025 data
+.ifdef X16
+	jsr X16_PRG024_Load_Video_Upd_Table2
+.endif
+.ifdef NES
 	LDA Video_Upd_Table2,Y
 	STA Video_Upd_AddrL	
-	; XXX PRG025 data
 	LDA Video_Upd_Table2+1,Y
 	STA Video_Upd_AddrH	
+.endif
 
 	JSR Video_Misc_Updates2	; Load those graphics!
 
@@ -5630,12 +5656,15 @@ PRG024_BBB0:
 	LDA #$23
 	ASL A
 	TAY
-	; XXX PRG025 data
+.ifdef X16
+	jsr X16_PRG024_Load_Video_Upd_Table2
+.endif
+.ifdef NES
 	LDA Video_Upd_Table2,Y
 	STA Video_Upd_AddrL
-	; XXX PRG025 data
 	LDA Video_Upd_Table2+1,Y
 	STA Video_Upd_AddrH
+.endif
 	JSR Video_Misc_Updates2
 
 	; Set scroll at lowest point (technically, curtain fully raised)
@@ -6088,19 +6117,34 @@ Ending2_PrepEndPic:
 	LDY Ending2_CurWorld	; Y = current world we're depicting
 
 	; Temp_Var2/1 hold the address to the end world picture
-	; XXX PRG025 data
+
+.ifdef X16
+	jsr X16_PRG024_Load_EndPicByWorld
+.pushseg
+.segment "PRG024LOW"
+X16_PRG024_Load_EndPicByWorld:
+	lda X16::Reg::RAMBank
+	pha
+	lda #25
+	sta X16::Reg::RAMBank
+.endif
 	LDA EndPicByWorld_H,Y
 	STA Temp_Var2
-	; XXX PRG025 data
 	LDA EndPicByWorld_L,Y
 	STA Temp_Var1
+.ifdef X16
+	pla
+	sta X16::Reg::RAMBank
+	rts
+.popseg
+.endif
 
 	LDY #$00	 ; Y = 0 (EndPic command index)
 	LDX #$00	 ; X = 0 (Ending_CmdBuffer index)
 PRG024_BDF0:
 	; Next command byte -> Temp_Var16
 	LDA (Temp_Var1),Y
-	STA Temp_Var16	
+	STA Temp_Var16
 
 	AND #$80
 	BEQ PRG024_BE02	 ; If bit 7 is NOT set, jump to PRG024_BE02
@@ -6135,12 +6179,27 @@ PRG024_BE02:
 	LDY Ending2_CurWorld	; Y = current world we're depicting
 
 	; Set starting VRAM address
-	; XXX PRG025 data
+
+.ifdef X16
+	jsr X16_PRG024_Load_EndPic_VRAMStart
+.pushseg
+.segment "PRG024LOW"
+X16_PRG024_Load_EndPic_VRAMStart:
+	lda X16::Reg::RAMBank
+	pha
+	lda #25
+	sta X16::Reg::RAMBank
+.endif
 	LDA EndPic_VRAMStart_H,Y
 	STA Ending2_PicVRAMH
-	; XXX PRG025 data
 	LDA EndPic_VRAMStart_L,Y
 	STA Ending2_PicVRAML
+.ifdef X16
+	pla
+	sta X16::Reg::RAMBank
+	rts
+.popseg
+.endif
 
 	INC Ending2_PicState		 ; Ending2_PicState = 4
 

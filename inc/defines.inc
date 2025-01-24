@@ -2203,8 +2203,3 @@ FALL_OBJECT                    = 4 ; Fall rate for objects
 FALLRATE_TAILWAGMAX            = 8 ; Maximum Y velocity falling rate when wagging raccoon tail
 FALLRATE_MAX                   = $40 ; Maximum Y velocity falling rate
 FALLRATE_OBJECTMAX             = $60 ; Maximum Y velocity falling rate of an object
-
-.ifdef X16
-
-X16_PRG006_BANK                = 6
-.endif

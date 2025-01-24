@@ -18,7 +18,7 @@
 .include "../inc/defines.inc"
 
 ; BSS imports (low RAM and cart SRAM)
-.import Graphics_Buffer, Ending_CmdBuffer
+.import Graphics_Buffer
 ; exports
 .export EndPicByWorld_H, EndPicByWorld_L, EndPic_VRAMStart_H, EndPic_VRAMStart_L, Ending2_EndPicSprites3_End
 .export Ending2_EndPicSprites4, Ending2_EndPicSprites4_End, Ending2_EndPicSprites5, Ending2_EndPicSprites5_End

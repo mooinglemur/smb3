@@ -51,8 +51,6 @@
 ; imports from PRG006
 .import W503_EndO, BigQBlock8O, BigQBlock7O, BigQBlock6O, BigQBlock5O, BigQBlock4O, BigQBlock3O
 .import BigQBlock2O, BigQBlock1O
-; imports from PRG010
-.import MapTile_Get_By_Offset
 ; imports from PRG013 (Under)
 .import BigQBlock8L, BigQBlock7L, BigQBlock6L, BigQBlock5L, BigQBlock4L, BigQBlock3L, BigQBlock2L
 .import BigQBlock1L
@@ -63,6 +61,8 @@
 .import Map_Calc_NT2Addr_By_XY
 ; imports from PRG031
 .import DynJump
+; far imports
+.import FAR010_MapTile_Get_By_Offset
 ; exports
 .export HandleLevelJunction, LevelLoad_CopyObjectList, Level_Opening_Effect, Map_DoInventory_And_PoofFX
 .export Map_EnterLevel_Effect, Palette_FadeIn, Palette_FadeOut, Palette_PrepareFadeOut
@@ -1173,8 +1173,7 @@ Inv_UseItem_Hammer:
 
 PRG026_A6BF:
 	LDY Temp_Var1	 		; Y = LDY <Temp_Var1
-	; XXX PRG010 call
-	JSR MapTile_Get_By_Offset	; Get map tile nearby player (on page 10)
+	JSR FAR010_MapTile_Get_By_Offset	; Get map tile nearby player (on page 10)
 
 	; Rock tiles:
 	SEC
@@ -3850,7 +3849,7 @@ LevelLoad_CopyObjectList:
 	phx
 
 	lda #Level_ObjPtr_AddrL
-	ldx #X16_PRG006_BANK
+	ldx #6
 	jsr X16::Kernal::FETCH
 .endif
 .ifdef NES
@@ -3864,7 +3863,7 @@ PRG026_B506:
 	INY
 .ifdef X16
 	lda #Level_ObjPtr_AddrL
-	ldx #X16_PRG006_BANK
+	ldx #6
 	jsr X16::Kernal::FETCH
 .endif
 .ifdef NES
@@ -3879,7 +3878,7 @@ PRG026_B506:
 	INY		 
 .ifdef X16
 	lda #Level_ObjPtr_AddrL
-	ldx #X16_PRG006_BANK
+	ldx #6
 	jsr X16::Kernal::FETCH
 .endif
 .ifdef NES
@@ -3891,7 +3890,7 @@ PRG026_B506:
 	INY
 .ifdef X16
 	lda #Level_ObjPtr_AddrL
-	ldx #X16_PRG006_BANK
+	ldx #6
 	jsr X16::Kernal::FETCH
 .endif
 .ifdef NES

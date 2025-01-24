@@ -237,14 +237,15 @@
 .import Map_Previous_Y, Map_Previous_XHi, Map_Previous_X, Bonus_DiePos, Map_Previous_Dir
 .import Roulette_Unused7A5F, Roulette_Unused7A5F_Delta, Inventory_Cards, Card_ActiveSet
 .import Roulette_Lives
-; imports from PRG026
-.import Palette_PrepareFadeOut, StatusBar_UpdateValues, Video_Misc_Updates
-; imports from PRG028
-.import Sound_Engine_Begin
 ; imports from PRG030
 .import Randomize, Bonus_Prize1, Tile_Mem_Addr, LevelLoad, Tile_Mem_ClearA,Tile_Mem_ClearB
 ; imports from PRG031
 .import Player_GetItem, PRGROM_Change_A000, Read_Joypads, PT2_Full_CHRROM_Switch, DynJump
+; far imports
+.import FAR026_Palette_PrepareFadeOut
+.import FAR026_StatusBar_UpdateValues
+.import FAR026_Video_Misc_Updates
+.import FAR028_Sound_Engine_Begin
 ; exports
 .export Background_Tiles, BonusGameBox_SpriteXs, BonusGameBox_SpriteYs, BonusGameBox_SpriteYs_End
 .export BonusGame_Do, BonusUNKTALL_Tiles, BonusUNKTALL_Tiles_End, Bonus_InstBoxBot, Bonus_InstBoxLine1
@@ -2623,8 +2624,7 @@ UpdSel_Roulette:
 	LDA Video_Upd_TableRoulette+1,X
 	STA Video_Upd_AddrH
 
-	; XXX PRG026 call
-	JSR Video_Misc_Updates	 ; Various updates other than scrolling (palettes, status bar, etc.)
+	JSR FAR026_Video_Misc_Updates	 ; Various updates other than scrolling (palettes, status bar, etc.)
 
 	; Graphics_Queue = 0
 	LDA #$00
@@ -2718,24 +2718,26 @@ PRG022_CF7C:
 
 	JSR Roulette_DoGame	 ; Actually run the Roulette game
 
+.ifdef NES
 	; Switch to page 26 @ A000
 	LDA #MMC3_8K_TO_PRG_A000
 	sta_MMC3_COMMAND
 	LDA #26		
 	sta_MMC3_PAGE	 
+.endif
 
-	; XXX PRG026 call
-	JSR StatusBar_UpdateValues	 ; Update Status Bar (not really used)
+	JSR FAR026_StatusBar_UpdateValues	 ; Update Status Bar (not really used)
 
+.ifdef NES
 	; Switch to page 28 @ A000
 	LDA #MMC3_8K_TO_PRG_A000
 	sta_MMC3_COMMAND
 	LDA #28	
 	sta_MMC3_PAGE	 
+.endif
 
 	; Jump to the sound engine, newly inserted at page A000!
-	; XXX PRG028 call
-	JSR Sound_Engine_Begin
+	JSR FAR028_Sound_Engine_Begin
 
 	; Change A000 back to whatever it was before the sound engine 
 	JSR PRGROM_Change_A000
@@ -3238,8 +3240,7 @@ Roulette_FadeOut:
 
 	INC Roulette_StopState	 ; Roulette_StopState = 1
 
-	; XXX PRG026 call
-	JMP Palette_PrepareFadeOut	 ; Prepare to fade out
+	JMP FAR026_Palette_PrepareFadeOut	 ; Prepare to fade out
 
 PRG022_D250:
 	JSR Roulette_DoFadeOut	 ; Do palette fade out
