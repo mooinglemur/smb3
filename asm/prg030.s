@@ -27,17 +27,19 @@
 .importzp Level_LayPtr_AddrL, Level_LayPtr_AddrH, Map_Tile_AddrL, Map_Tile_AddrH, Level_ObjPtr_AddrL
 .importzp Level_ObjPtr_AddrH, Video_Upd_AddrL, Video_Upd_AddrH, Scroll_OddEven, Vert_Scroll, Horz_Scroll
 .importzp PPU_CTL1_Copy, Ending2_IntCmd
-.ifdef NES
 .importzp World_Map_Y, World_Map_XHi, World_Map_X, World_Map_Dir, Map_UnusedPlayerVal
-.importzp Map_UnusedPlayerVal2, Map_WarpWind_FX, World_Map_Twirl, Map_UnusedGOFlag, Map_Intro_CurStripe
+.importzp Map_UnusedPlayerVal2, Map_WarpWind_FX, World_Map_Twirl, Map_UnusedGOFlag
+.importzp Player_X, Player_Y
+.ifdef NES
+.importzp Map_Intro_CurStripe
 .importzp MapPoof_Y, MapPoof_X, Scroll_Temp, BonusDie_Y, BonusDie_X, BonusDie_YVel, Player_XHi, Player_YHi
-.importzp Player_X, Player_Y, Level_TileOff, Level_Tile, Player_Slopes, Player_Suit, Player_IsDying
+.importzp Level_TileOff, Level_Tile, Player_Slopes, Player_Suit, Player_IsDying
 .endif
 .ifdef X16
-.import World_Map_Y, World_Map_XHi, World_Map_X, World_Map_Dir, Map_UnusedPlayerVal
-.import Map_UnusedPlayerVal2, Map_WarpWind_FX, World_Map_Twirl, Map_UnusedGOFlag, Map_Intro_CurStripe
+.import Map_Intro_CurStripe
 .import MapPoof_Y, MapPoof_X, Scroll_Temp, BonusDie_Y, BonusDie_X, BonusDie_YVel, Player_XHi, Player_YHi
-.import Player_X, Player_Y, Level_TileOff, Level_Tile, Player_Slopes, Player_Suit, Player_IsDying
+.import Level_TileOff, Level_Tile, Player_Slopes, Player_Suit, Player_IsDying
+.import __BONUSGAMEZP_LOAD__, __BONUSGAMEZP_SIZE__
 .import __BONUSGAMEVARS_LOAD__, __BONUSGAMEVARS_SIZE__
 .endif
 ; BSS imports (low RAM and cart SRAM)
@@ -2272,12 +2274,17 @@ X16_PRG030_Clear_COMMONHIZP:
 	dey
 	bpl X16_PRG030_Clear_COMMONHIZP
 
+	ldy #<(__BONUSGAMEZP_SIZE__ - 1)
+X16_PRG030_Clear_SHAREDZP:
+	sta __BONUSGAMEZP_LOAD__,y
+	dey
+	bpl X16_PRG030_Clear_SHAREDZP
+
 	ldy #<(__BONUSGAMEVARS_SIZE__ - 1)
 X16_PRG030_Clear_SHAREDVARS:
 	sta __BONUSGAMEVARS_LOAD__,y
 	dey
-	cpy #$ff
-	bne X16_PRG030_Clear_SHAREDVARS
+	bpl X16_PRG030_Clear_SHAREDVARS
 .endif
 
 	; Clears memory $0400-$04CF (mainly Bonus game cleanup)

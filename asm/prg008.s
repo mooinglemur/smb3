@@ -18,11 +18,28 @@
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var10
 .importzp Temp_Var11, Temp_Var12, Temp_Var13, Temp_Var14, Temp_Var15, Temp_Var16, Horz_Scroll_Hi
 .importzp Vert_Scroll_Hi, Counter_1, Pad_Holding, Pad_Input, Level_Width, Scroll_LastDir, Vert_Scroll
-.importzp Horz_Scroll, Player_WalkFrame, Player_XHi, Objects_XHi, Pipe_PlayerX, Pipe_PlayerY
-.importzp Level_GndLUT_Addr, Player_YHi, Objects_YHi, Player_X, Objects_X, Player_Y, Objects_Y
-.importzp Player_SpriteX, Player_SpriteY, Player_XVel, Player_HaltGame, Player_YVel, Player_InAir
+.importzp Horz_Scroll
+.importzp Pipe_PlayerX, Pipe_PlayerY, Level_GndLUT_Addr
+.ifdef NES
+.importzp Player_WalkFrame, Player_XHi, Objects_XHi
+.importzp Player_YHi, Objects_YHi
+.endif
+.ifdef X16
+.import Player_WalkFrame, Player_XHi, Objects_XHi
+.import Player_YHi, Objects_YHi
+.endif
+.importzp Player_X, Objects_X, Player_Y, Objects_Y
+.importzp Player_SpriteX, Player_SpriteY, Player_XVel, Player_HaltGame, Player_YVel
+.ifdef NES
+.importzp Player_InAir
 .importzp Level_Tile, Player_Slopes, Player_XStart, Player_Suit, Player_Frame, Player_FlipBits
 .importzp Player_WagCount, Player_IsDying
+.endif
+.ifdef X16
+.import Player_InAir
+.import Level_Tile, Player_Slopes, Player_XStart, Player_Suit, Player_Frame, Player_FlipBits
+.import Player_WagCount, Player_IsDying
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Debug_Flag, Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, Level_PipeExitDir, Level_PipeNotExit
 .import Player_Power, Level_JctCtl, Coins_Earned, Level_FreeVertScroll, Level_7Vertical
@@ -1386,6 +1403,7 @@ PRG008_A6A9:
 Player_ControlJmp:
 	JMP Player_Control	 ; Jump to Player_Control
 
+.ifdef NES
 ; FIXME: Anybody want to claim this?
 ; $A6AD
 	.byte $35, $35, $03
@@ -1396,6 +1414,7 @@ Player_ControlJmp:
 	JSR Player_ApplyXVelocity
 	JSR Player_ApplyYVelocity
 	JMP Player_Draw29
+.endif
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Player_Control
@@ -5705,7 +5724,7 @@ PRG000_B9D8:	; <-- go back up from here
         LDA Player_IsDucking 
         BNE PRG008_B9E5  ; If Player is ducking, jump to PRG008_B9E5
 
-        LDA <Player_Suit
+        LDA Player_Suit
         BEQ PRG008_B9E5  ; If Player is small, jump to PRG008_B9E5
  
 	LDY #$06	 ; Y = $06 (Player not small, not ducking; 6 because of 3 * 2 = 6, based on X = 3 down below)

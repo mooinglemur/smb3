@@ -17,8 +17,22 @@
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var4, Level_ExitToMap, Counter_1, Pad_Input, Pal_Force_Set12
-.importzp Graphics_Queue, Vert_Scroll, Player_YHi, Player_X, CineKing_Var, Player_Y, Level_Tile
+.importzp Graphics_Queue, Vert_Scroll
+.ifdef NES
+.importzp Player_YHi
+.endif
+.ifdef X16
+.import Player_YHi
+.endif
+.importzp Player_X, CineKing_Var, Player_Y
+.ifdef NES
+.importzp Level_Tile
 .importzp Player_Suit, Player_Frame, Player_FlipBits
+.endif
+.ifdef X16
+.import Level_Tile
+.import Player_Suit, Player_Frame, Player_FlipBits
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, Fade_Tick, Fade_Level, FadeOut_Cancel, Sound_QMusic1
 .import Sound_QMusic2, Sound_QMap, CineKing_Timer, Level_VertScrollH, Level_VertScroll, Player_Flip

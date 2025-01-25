@@ -26,11 +26,24 @@
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var8
 .importzp Temp_Var9, Temp_Var10, Temp_Var11, Temp_Var12, Temp_Var13, Temp_Var14, Temp_Var15, Temp_Var16
 .importzp Horz_Scroll_Hi, Vert_Scroll_Hi, Level_ExitToMap, Counter_1, Pad_Holding, Level_Width
-.importzp Scroll_LastDir, Vert_Scroll, Horz_Scroll, Player_XHi, Objects_XHi, Objects_Var4, Player_YHi
-.importzp Objects_YHi, Player_X, Objects_X, Objects_Var5, Player_Y, Objects_Y, Objects_SpriteX
+.importzp Scroll_LastDir, Vert_Scroll, Horz_Scroll
+.ifdef NES
+.importzp Player_XHi, Objects_XHi, Objects_Var4, Player_YHi, Objects_YHi
+.endif
+.ifdef X16
+.import Player_XHi, Objects_XHi, Objects_Var4, Player_YHi, Objects_YHi
+.endif
+.importzp Player_X, Objects_X, Objects_Var5, Player_Y, Objects_Y, Objects_SpriteX
 .importzp Player_SpriteY, Objects_SpriteY, Player_XVel, Objects_XVel, Objects_VarBSS, SlotIndexBackup
-.importzp Player_HaltGame, Player_YVel, Objects_YVel, Player_InAir, Objects_DetStat, Level_Tile
+.importzp Player_HaltGame, Player_YVel, Objects_YVel
+.ifdef NES
+.importzp Player_InAir, Objects_DetStat, Level_Tile
 .importzp Player_Suit, Player_IsDying
+.endif
+.ifdef X16
+.import Player_InAir, Objects_DetStat, Level_Tile
+.import Player_Suit, Player_IsDying
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Sprite_RAM, ObjGroupRel_Idx, Level_7Vertical, Update_Request, Player_AllowAirJump, Objects_Var7
 .import SndCur_Level2, Sound_QPlayer, Sound_QLevel2, Sound_QMap, Objects_Timer, Objects_Timer2
@@ -752,13 +765,14 @@ PRG005_A355:
 ObjInit_BigCannonBall:
 	RTS		 ; Return
 
-
+.ifdef NES
 	; FIXME: Anybody want to claim this??
 ; $A364
 	.byte $A1, $A1, $A1, $A9, $AF, $B5, $A1, $10, $08, $10, $10, $10, $10, $10, $08, $10
 	.byte $10, $10, $10, $10, $10, $03, $83, $03, $03, $03, $03, $03, $C3, $43, $43, $43
 	.byte $43, $43, $43, $00, $03, $08, $0D, $10, $0D, $08, $03, $04, $03, $00, $03, $04
 	.byte $07, $08, $07
+.endif
 
 ObjNorm_BigCannonBall:
 	JSR Object_DeleteOffScreen	; Delete object if it falls off-screen
@@ -5009,10 +5023,11 @@ PRG005_B7E5:
 	LDX SlotIndexBackup		 ; X = object slot index
 	RTS		 ; Return
 
-
+.ifdef NES
 	; FIXME: Anyone want to claim this??
 PRG005_B7E8:
 	.byte $1C, $FF, $1C, $FA, $1C, $10, $1C, $15
+.endif
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Level_SpawnObjsAndBounce

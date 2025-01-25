@@ -23,10 +23,26 @@
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var9, Temp_Var12, Temp_Var13
-.importzp Temp_Var14, Temp_Var16, Horz_Scroll_Hi, Counter_1, Map_EnterViaID, Horz_Scroll, Objects_XHi
-.importzp Objects_Var4, Player_YHi, Objects_YHi, Objects_X, Objects_Var5, Player_Y, Objects_Y
+.importzp Temp_Var14, Temp_Var16, Horz_Scroll_Hi, Counter_1, Map_EnterViaID, Horz_Scroll
+.importzp Objects_X, Objects_Var5
+.ifdef NES
+.importzp Objects_XHi
+.importzp Objects_Var4, Player_YHi, Objects_YHi
+.endif
+.ifdef X16
+.import Objects_XHi
+.import Objects_Var4, Player_YHi, Objects_YHi
+.endif
+
+.importzp Player_Y, Objects_Y
 .importzp Objects_SpriteX, Objects_SpriteY, Objects_XVel, SlotIndexBackup, Player_HaltGame, Player_YVel
-.importzp Objects_YVel, Player_InAir, Objects_DetStat
+.importzp Objects_YVel
+.ifdef NES
+.importzp Player_InAir, Objects_DetStat
+.endif
+.ifdef X16
+.import Player_InAir, Objects_DetStat
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Sprite_RAM, ObjGroupRel_Idx, Objects_Var7, Sound_QPlayer, Sound_QLevel1, Sound_QLevel2, Objects_Timer
 .import Objects_Timer2, Level_VertScroll, Level_SlopeEn, Level_NoStopCnt, Level_Event, Object_SprRAM
@@ -2844,7 +2860,13 @@ PRG004_AD65:
 	TAY
 
 PRG004_AD74:
+.ifdef NES
 	STY Objects_Var5,X	 ; -> Var5
+.endif
+.ifdef X16
+	tya ; .A is loaded before use
+	sta Objects_Var5,X
+.endif
 
 	INC Objects_Var3,X	 ; Var3++
 

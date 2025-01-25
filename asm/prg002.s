@@ -27,12 +27,13 @@
 .importzp Temp_Var9, Temp_Var11, Temp_Var12, Temp_Var13, Temp_Var14, Temp_Var15, Temp_Var16
 .importzp Level_ExitToMap, Counter_1, Pad_Holding, Pad_Input, Map_EnterViaID, Scroll_LastDir
 .importzp Graphics_Queue, Vert_Scroll, Horz_Scroll
-.importzp Map_UseItem
 .ifdef NES
+.importzp Map_UseItem
 .importzp Player_XHi, Objects_XHi
 .importzp Objects_Var4, Player_YHi, Objects_YHi
 .endif
 .ifdef X16
+.import Map_UseItem
 .import Player_XHi, Objects_XHi
 .import Objects_Var4, Player_YHi, Objects_YHi
 .endif

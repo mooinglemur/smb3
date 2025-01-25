@@ -24,12 +24,27 @@
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var7, Temp_Var8
 .importzp Temp_Var9, Temp_Var10, Temp_Var12, Temp_Var13, Temp_Var14, Temp_Var15, Temp_Var16
-.importzp Level_ExitToMap, Counter_1, Graphics_Queue, Horz_Scroll, Objects_XHi, Objects_Var4
-.importzp Player_YHi, Objects_YHi, Player_X, Objects_X, Objects_Var5, Player_Y, Objects_Y
+.importzp Level_ExitToMap, Counter_1, Graphics_Queue, Horz_Scroll
+.ifdef NES
+.importzp Objects_XHi, Objects_Var4
+.importzp Player_YHi, Objects_YHi
+.endif
+.ifdef X16
+.import Objects_XHi, Objects_Var4
+.import Player_YHi, Objects_YHi
+.endif
+.importzp Player_X, Objects_X, Objects_Var5, Player_Y, Objects_Y
 .importzp Player_SpriteX, Objects_SpriteX, Player_SpriteY, Objects_SpriteY, Player_XVel
 .importzp Objects_XVel, Objects_VarBSS, SlotIndexBackup, Player_HaltGame, Player_YVel
-.importzp Objects_YVel, Player_InAir, Objects_DetStat, Level_Tile, Player_Suit, Player_FlipBits
+.importzp Objects_YVel
+.ifdef NES
+.importzp Player_InAir, Objects_DetStat, Level_Tile, Player_Suit, Player_FlipBits
 .importzp Player_IsDying
+.endif
+.ifdef X16
+.import Player_InAir, Objects_DetStat, Level_Tile, Player_Suit, Player_FlipBits
+.import Player_IsDying
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Sprite_RAM, ObjGroupRel_Idx, Level_FreeVertScroll, Level_7Vertical, Player_XVelAdj, Objects_Var7
 .import Sound_QPlayer, Sound_QLevel1, Sound_QLevel2, Sound_QMusic1, Sound_QMusic2, Sound_QMap

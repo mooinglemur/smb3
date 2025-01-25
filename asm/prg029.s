@@ -18,10 +18,26 @@
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var8
 .importzp Temp_Var9, Temp_Var10, Temp_Var11, Horz_Scroll_Hi, Vert_Scroll_Hi, Level_ExitToMap
 .importzp Counter_1, Scroll_LastDir, Map_Tile_AddrL, Map_Tile_AddrH, Vert_Scroll, Horz_Scroll
-.importzp Player_WalkFrame, Player_XHi, Pipe_PlayerX, Pipe_PlayerY, Player_YHi, Objects_YHi, Player_X
-.importzp Player_Y, Objects_Y, Player_SpriteX, Player_SpriteY, Player_XVel, Player_YVel, Player_InAir
-.importzp Player_SprWorkL, Player_SprWorkH, Level_Tile, Player_Suit, Player_Frame, Player_FlipBits
+.importzp Pipe_PlayerX, Pipe_PlayerY
+.ifdef NES
+.importzp Player_WalkFrame, Player_XHi, Player_YHi, Objects_YHi
+.endif
+.ifdef X16
+.import Player_WalkFrame, Player_XHi, Player_YHi, Objects_YHi
+.endif
+.importzp Player_X
+.importzp Player_Y, Objects_Y, Player_SpriteX, Player_SpriteY, Player_XVel, Player_YVel
+.importzp Player_SprWorkL, Player_SprWorkH
+.ifdef NES
+.importzp Player_InAir
+.importzp Level_Tile, Player_Suit, Player_Frame, Player_FlipBits
 .importzp Player_IsDying
+.endif
+.ifdef X16
+.import Player_InAir
+.import Level_Tile, Player_Suit, Player_Frame, Player_FlipBits
+.import Player_IsDying
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, TileChng_VRAM_H, TileChng_VRAM_L, TileChng_Pats
 .import Level_PipeExitDir, Level_SkipStatusBarUpd, Level_JctCtl, THouse_Treasure, Level_7Vertical

@@ -17,9 +17,23 @@
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var8
 .importzp Temp_Var9, Temp_Var10, Temp_Var13, Temp_Var14, Temp_Var15, Temp_Var16, Level_ExitToMap
-.importzp Counter_1, Controller1Press, Controller1, Vert_Scroll, Vs_State, Vs_IsPaused, Player_XHi
-.importzp Player_YHi, Player_X, Player_Y, Player_SpriteX, Player_SpriteY, Player_XVel, Player_HaltGame
+.importzp Counter_1, Controller1Press, Controller1, Vert_Scroll
+.importzp Vs_State, Vs_IsPaused
+.ifdef NES
+.importzp Player_XHi
+.importzp Player_YHi
+.endif
+.ifdef X16
+.import Player_XHi
+.import Player_YHi
+.endif
+.importzp Player_X, Player_Y, Player_SpriteX, Player_SpriteY, Player_XVel, Player_HaltGame
+.ifdef NES
 .importzp Player_InAir, Level_Tile, Player_Suit
+.endif
+.ifdef X16
+.import Player_InAir, Level_Tile, Player_Suit
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Update_Select, Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, Update_Request, SndCur_Pause
 .import Sound_QPlayer, Sound_QLevel1, Sound_QLevel2, Sound_QMusic1, Sound_QMap, Sound_QPause

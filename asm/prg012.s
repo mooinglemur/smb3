@@ -22,7 +22,12 @@
 .importzp Temp_Var9, Temp_Var10, Temp_Var15, Temp_Var16, Map_EnterViaID, Level_LayPtr_AddrL
 .importzp Level_LayPtr_AddrH, Map_Tile_AddrL, Map_Tile_AddrH, Level_ObjPtr_AddrL, Level_ObjPtr_AddrH
 .importzp World_Map_Y, World_Map_XHi, World_Map_X, Map_UnusedPlayerVal, Map_UnusedPlayerVal2
+.ifdef NES
 .importzp World_Map_Tile, Level_Tile
+.endif
+.ifdef X16
+.import World_Map_Tile, Level_Tile
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Map_Warp_PrevWorld, Bonus_GameHost, Bonus_GameType, Bonus_KTPrize, Level_MusicQueue, Level_Tileset
 .import Player_Current, World_Num, World_EnterState, PalSel_Tile_Colors, PalSel_Obj_Colors

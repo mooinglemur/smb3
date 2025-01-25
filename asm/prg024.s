@@ -25,39 +25,45 @@
 .importzp Level_ExitToMap, Counter_1, PPU_CTL2_Copy, Pad_Input, VBlank_TickEn, Graphics_Queue
 .importzp Map_Tile_AddrL, BonusText_BaseL, BonusText_BaseH, Video_Upd_AddrL, Video_Upd_AddrH
 .importzp Music_Base_L, Ending2_IntCmd, Sound_Map_Off, Controller2, Vert_Scroll, PPU_CTL1_Copy
-.ifdef NES
-.importzp Title_XPosHi
+.importzp World_Map_Y, Title_XPosHi
 .importzp Title_YPosHi, Title_ObjX, Title_ObjY, Title_ObjXVel, Title_ObjYVel, Title_XPosFrac
 .importzp Title_ObjYVelChng, Title_ObjMLFlags, Title_ObjMLMoveDir, Title_ObjMLAnimFrame
 .importzp Title_ObjMLDirTicks, Title_ObjMLSprite, Title_ObjMLPower, Title_ObjMLSprRAMOff
-.importzp Title_ObjMLSprVis, Title_ObjMLTailTick, Title_ObjMLHold, Title_ObjMLBonkTick
-.importzp Title_ObjMLKickTick, Title_ObjMPowerDown, Title_ObjMLStop, Title_CurMLIndex, Ending_Timer
+.importzp Title_ObjMLSprVis, Title_ObjMLTailTick, Title_ObjMLHold
+.importzp Player_HaltGame
+.importzp Ending2_PicState, Ending2_ClearLen, Ending2_ClearPat, Ending2_PicVRAMH
+.importzp Ending2_PicVRAML, Ending2_QCmdEnd, Ending2_FadeTimer, Ending2_QueueCmd, Ending2_TimerH
+.importzp Ending2_TimerL, Ending2_CurWorld
+.importzp Objects_X, CineKing_Var
+.ifdef NES
+.importzp Title_ObjMLBonkTick
+.importzp Title_ObjMLKickTick, Title_ObjMPowerDown, Title_ObjMLStop
+.importzp Title_CurMLIndex, Ending_Timer
 .importzp Title_ObjFlags, EndText_Timer, EndText_CPos, Title_ObjStates, EndText_State, Title_State
-.importzp Title_ResetCnt, Title_ResetCnt2, Title_ResetTrig, Title_UnusedFlag, Title_Ticker
+.importzp Title_ResetCnt, Title_ResetCnt2, Title_ResetTrig
+.importzp Title_UnusedFlag, Title_Ticker
 .importzp Title_MActScriptPos, Title_LActScriptPos, Title_MActScriptDelay, Title_LActScriptDelay
 .importzp Title_MActScriptDirSet, Title_LActScriptDirSet, Title_ObjMLDir, Title_ObjMLQueue
 .importzp Title_EventIndex, Title_EventGrafX, Title_ObjInitIdx, Title_ObjInitDly, Title_3GlowFlag
-.importzp Title_3GlowIndex, Ending2_PicState, Ending2_ClearLen, Ending2_ClearPat, Ending2_PicVRAMH
-.importzp Ending2_PicVRAML, Ending2_QCmdEnd, Ending2_FadeTimer, Ending2_QueueCmd, Ending2_TimerH
-.importzp Ending2_TimerL, Ending2_CurWorld, World_Map_Y, CineKing_DialogState, Objects_X, CineKing_Var
-.importzp Player_HaltGame, CineKing_Frame2, EndText_VL, EndText_VH, Ending_State
+.importzp Title_3GlowIndex
+.importzp CineKing_DialogState
+.importzp CineKing_Frame2, EndText_VL, EndText_VH, Ending_State
 .endif
 .ifdef X16
-.import Title_XPosHi
-.import Title_YPosHi, Title_ObjX, Title_ObjY, Title_ObjXVel, Title_ObjYVel, Title_XPosFrac
-.import Title_ObjYVelChng, Title_ObjMLFlags, Title_ObjMLMoveDir, Title_ObjMLAnimFrame
-.import Title_ObjMLDirTicks, Title_ObjMLSprite, Title_ObjMLPower, Title_ObjMLSprRAMOff
-.import Title_ObjMLSprVis, Title_ObjMLTailTick, Title_ObjMLHold, Title_ObjMLBonkTick
-.import Title_ObjMLKickTick, Title_ObjMPowerDown, Title_ObjMLStop, Title_CurMLIndex, Ending_Timer
+.import Title_ObjMLBonkTick
+.import Title_ObjMLKickTick, Title_ObjMPowerDown, Title_ObjMLStop
+.import Title_CurMLIndex, Ending_Timer
 .import Title_ObjFlags, EndText_Timer, EndText_CPos, Title_ObjStates, EndText_State, Title_State
-.import Title_ResetCnt, Title_ResetCnt2, Title_ResetTrig, Title_UnusedFlag, Title_Ticker
+.import Title_ResetCnt, Title_ResetCnt2, Title_ResetTrig
+.import Title_UnusedFlag, Title_Ticker
 .import Title_MActScriptPos, Title_LActScriptPos, Title_MActScriptDelay, Title_LActScriptDelay
 .import Title_MActScriptDirSet, Title_LActScriptDirSet, Title_ObjMLDir, Title_ObjMLQueue
 .import Title_EventIndex, Title_EventGrafX, Title_ObjInitIdx, Title_ObjInitDly, Title_3GlowFlag
-.import Title_3GlowIndex, Ending2_PicState, Ending2_ClearLen, Ending2_ClearPat, Ending2_PicVRAMH
-.import Ending2_PicVRAML, Ending2_QCmdEnd, Ending2_FadeTimer, Ending2_QueueCmd, Ending2_TimerH
-.import Ending2_TimerL, Ending2_CurWorld, World_Map_Y, CineKing_DialogState, Objects_X, CineKing_Var
-.import Player_HaltGame, CineKing_Frame2, EndText_VL, EndText_VH, Ending_State
+.import Title_3GlowIndex
+.import CineKing_DialogState
+.import CineKing_Frame2, EndText_VL, EndText_VH, Ending_State
+.import __WORLDMAPZP_LOAD__, __WORLDMAPZP_SIZE__
+.import __WORLDMAPVARS_LOAD__, __WORLDMAPVARS_SIZE__
 .endif
 ; BSS imports (low RAM and cart SRAM)
 .import Update_Select, Raster_Effect, Debug_Flag, Sprite_RAM, Graphics_BufCnt, Graphics_Buffer
@@ -1819,6 +1825,7 @@ PRG024_A980:
 
 	; When Title_State = 5, we're about to finish and go off to the map!
 
+.ifdef NES
 	; Performs a clearing loop starting from World_Map_Y + $80 ($F5) down and through
 	LDX #$80	 ; Clearing $80 bytes
 	LDA #$00	 ; Clear value
@@ -1826,6 +1833,21 @@ PRG024_A98A:
 	STA World_Map_Y,X	; Clear this byte
 	DEX		 	; X--
 	BPL PRG024_A98A	 	; X >= 0, loop!
+.endif
+.ifdef X16
+	ldx #<__WORLDMAPZP_SIZE__
+	lda #$00
+X16_PRG024_Clear_WORLDMAPZP:
+	sta __WORLDMAPZP_LOAD__,x
+	dex
+	bpl X16_PRG024_Clear_WORLDMAPZP
+
+	ldx #<__WORLDMAPVARS_SIZE__
+X16_PRG024_Clear_WORLDMAPVARS:
+	sta __WORLDMAPVARS_LOAD__,x
+	dex
+	bpl X16_PRG024_Clear_WORLDMAPVARS
+.endif
 
 	RTS		 ; Return
 

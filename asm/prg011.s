@@ -17,7 +17,8 @@
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var8
 .importzp Temp_Var9, Temp_Var10, Temp_Var11, Temp_Var12, Temp_Var13, Temp_Var14, Temp_Var15, Temp_Var16
-.importzp Counter_1, PPU_CTL2_Copy, Map_EnterViaID, Map_ClearLevelFXCnt, Scroll_ColumnR, Scroll_ColumnL
+.importzp Counter_1, PPU_CTL2_Copy
+.importzp Map_EnterViaID, Map_ClearLevelFXCnt, Scroll_ColumnR, Scroll_ColumnL
 .importzp Map_Tile_AddrL, Map_Tile_AddrH, Horz_Scroll, World_Map_Y, World_Map_XHi, World_Map_X
 .importzp World_Map_Move, World_Map_Dir, Map_UnusedPlayerVal, Map_UnusedPlayerVal2, Map_WWOrHT_Y
 .importzp Map_HandTrap_XHi, Map_WWOrHT_X, Map_WWOrHT_Cnt, Map_WWOrHT_Dir, Map_WarpWind_FX
@@ -26,9 +27,21 @@
 .importzp Map_Skid_Counter, Map_Skid_TravDirs, Map_StarsX, Map_StarsY, Map_StarsOutRad, Map_StarsXSteps
 .importzp Map_StarsRadCnt, Map_StarsCenterX, Map_StarsCenterY, Map_StarsDeltaR, Map_StarsConst9
 .importzp Map_StarsAnimCnt, Map_StarsFrame, Map_StarsPattern, Map_StarsLandRad, Map_StarsYSteps
-.importzp Map_StarsRadius, Map_StarsState, Map_SkidBack, Map_Airship_DC, Map_Airship_DY
+.importzp Map_StarsRadius, Map_StarsState, Map_SkidBack
+.ifdef NES
+.importzp Map_Airship_DC, Map_Airship_DY
 .importzp Map_Airship_YNib, Map_Airship_YAcc, Map_Airship_DXHi, Map_Airship_DX, Map_Airship_XNib
-.importzp Map_Airship_Dir, Map_HideObj, World_Map_Tile, Objects_XHi, Objects_X, Objects_Y
+.importzp Map_Airship_Dir
+.importzp Map_HideObj
+.importzp World_Map_Tile
+.endif
+.ifdef X16
+.import Map_Airship_DC, Map_Airship_DY
+.import Map_Airship_YNib, Map_Airship_YAcc, Map_Airship_DXHi, Map_Airship_DX, Map_Airship_XNib
+.import Map_Airship_Dir
+.import Map_HideObj
+.import World_Map_Tile
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, Map_StarsDeltaX, Map_StarsDeltaY, Map_Stars_PRelX
 .import Map_Stars_PRelY, Map_DrawPanState, Map_Warp_PrevWorld, Map_W8D_Idx, SndCur_Level2, Sound_QLevel1
@@ -3301,7 +3314,13 @@ PRG011_B2DF:
 	; You should see it fly with no delay :)
 	LDA Counter_1			
 	AND #$03
+.ifdef NES
 	BNE Map_Object_March_UpdateXs	; Basically only do something once every 4 ticks
+.endif
+.ifdef X16
+	.macpack longbranch
+	jne Map_Object_March_UpdateXs
+.endif
 
 	; For the 1:4 tick...
 	LDA Map_Airship_Dir

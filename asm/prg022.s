@@ -215,8 +215,13 @@
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var10, Temp_Var11
 .importzp Temp_Var12, Temp_Var13, Temp_Var15, Temp_Var16, Level_ExitToMap, Counter_1, PPU_CTL2_Copy
 .importzp Pad_Holding, Pad_Input, Roulette_RowIdx, Graphics_Queue, Map_Tile_AddrL, BonusText_BaseL
-.importzp BonusText_BaseH, Video_Upd_AddrL, Video_Upd_AddrH, BonusCoins_State, BonusDie_Y, BonusDie_X
-.importzp BonusDie_YVel, BonusDie_YVelFrac, Level_Tile
+.importzp BonusText_BaseH, Video_Upd_AddrL, Video_Upd_AddrH, BonusCoins_State, Level_Tile
+.ifdef NES
+.importzp BonusDie_Y, BonusDie_X, BonusDie_YVel, BonusDie_YVelFrac
+.endif
+.ifdef X16
+.import BonusDie_Y, BonusDie_X, BonusDie_YVel, BonusDie_YVelFrac
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Update_Select, Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, Coins_Earned, Update_Request
 .import Roulette_Pos, Roulette_PosHi, Roulette_ShapeLock, Roulette_ConfigRun, Roulette_ConfigState

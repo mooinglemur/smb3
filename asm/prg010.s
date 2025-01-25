@@ -21,11 +21,19 @@
 .importzp PPU_CTL2_Copy, Pad_Holding, Pad_Input, Map_Enter2PFlag, Map_IntBoxErase, Map_ClearLevelFXCnt
 .importzp Map_ScrollOddEven, Scroll_ColumnR, Scroll_ColumnL, Scroll_ColorStrip, Scroll_LastDir
 .importzp Graphics_Queue, Map_Tile_AddrL, Map_Tile_AddrH, Controller1Press, Controller2Press
-.importzp Controller1, Controller2, Horz_Scroll, PPU_CTL1_Copy, World_Map_Y, World_Map_XHi
+.importzp Controller1, Controller2, Horz_Scroll, PPU_CTL1_Copy
+.importzp World_Map_Y, World_Map_XHi
 .importzp World_Map_X, World_Map_Move, World_Map_Dir, Map_UnusedPlayerVal, Map_UnusedPlayerVal2
 .importzp Map_WarpWind_FX, Map_StarFX_State, World_Map_Twirl, Map_Skid_Count, Map_StarsState
-.importzp Map_UnusedGOFlag, Map_Intro_CurStripe, Map_Intro_NTOff, Map_Intro_ATOff, World_Map_Tile
+.importzp Map_UnusedGOFlag
+.ifdef NES
+.importzp Map_Intro_CurStripe, Map_Intro_NTOff, Map_Intro_ATOff, World_Map_Tile
 .importzp Scroll_Temp, Objects_XHi, Objects_X, Objects_Y, Level_Tile
+.endif
+.ifdef X16
+.import Map_Intro_CurStripe, Map_Intro_NTOff, Map_Intro_ATOff, World_Map_Tile
+.import Scroll_Temp, Objects_XHi, Objects_X, Objects_Y, Level_Tile
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, Scroll_ToVRAMHi, Scroll_LastCol8, Scroll_PatStrip
 .import Map_DrawPanState, Map_Starman, Map_Power_Disp, Map_W8D_VAddrH, Map_W8D_VAddrL, Map_W8D_VAddrH2

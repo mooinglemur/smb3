@@ -11,33 +11,28 @@
 ; COMMONHIZP
 .exportzp Ending2_IntCmd, Scroll_OddEven, Controller1Press, Controller2Press, Controller1, Controller2, Vert_Scroll, Horz_Scroll, PPU_CTL1_Copy
 ; TITLEZP
-.ifdef NES
 .exportzp Title_XPosHi, Title_YPosHi, Title_ObjX, Title_ObjY, Title_ObjXVel, Title_ObjYVel, Title_XPosFrac, Title_YPosFrac
 .exportzp Title_ObjYVelChng, Title_ObjMLFlags, Title_ObjMLMoveDir, Title_ObjMLAnimFrame, Title_ObjMLDirTicks, Title_ObjMLSprite, Title_ObjMLPower
-.exportzp Title_ObjMLSprRAMOff, Title_ObjMLSprVis, Title_ObjMLTailTick, Title_ObjMLHold, Title_ObjMLBonkTick, Title_ObjMLKickTick, Title_ObjMPowerDown
-.exportzp Title_ObjMLStop, Title_CurMLIndex, Ending_Timer, Title_ObjFlags, EndText_Timer , EndText_CPos, Title_ObjStates, EndText_State , Title_State
+.exportzp Title_ObjMLSprRAMOff, Title_ObjMLSprVis, Title_ObjMLTailTick, Title_ObjMLHold
+.ifdef NES
+.exportzp Title_ObjMLBonkTick, Title_ObjMLKickTick, Title_ObjMPowerDown
+.exportzp Title_ObjMLStop
+.exportzp Title_CurMLIndex, Ending_Timer, Title_ObjFlags, EndText_Timer, EndText_CPos, Title_ObjStates, EndText_State , Title_State
 .exportzp Title_ResetCnt, Title_ResetCnt2, Title_ResetTrig, Title_UnusedFlag, Title_Ticker, Title_MActScriptPos, Title_LActScriptPos, Title_MActScriptDelay
 .exportzp Title_LActScriptDelay, Title_MActScriptDirSet, Title_LActScriptDirSet, Title_ObjMLDir, Title_ObjMLQueue, Title_EventIndex, Title_EventGrafX
 .exportzp Title_ObjInitIdx, Title_ObjInitDly, Title_3GlowFlag, Title_3GlowIndex, Ending_State, EndText_VL, EndText_VH
 .endif
 .ifdef X16
-.export Title_XPosHi, Title_YPosHi, Title_ObjX, Title_ObjY, Title_ObjXVel, Title_ObjYVel, Title_XPosFrac, Title_YPosFrac
-.export Title_ObjYVelChng, Title_ObjMLFlags, Title_ObjMLMoveDir, Title_ObjMLAnimFrame, Title_ObjMLDirTicks, Title_ObjMLSprite, Title_ObjMLPower
-.export Title_ObjMLSprRAMOff, Title_ObjMLSprVis, Title_ObjMLTailTick, Title_ObjMLHold, Title_ObjMLBonkTick, Title_ObjMLKickTick, Title_ObjMPowerDown
-.export Title_ObjMLStop, Title_CurMLIndex, Ending_Timer, Title_ObjFlags, EndText_Timer , EndText_CPos, Title_ObjStates, EndText_State , Title_State
+.export Title_ObjMLBonkTick, Title_ObjMLKickTick, Title_ObjMPowerDown
+.export Title_ObjMLStop
+.export Title_CurMLIndex, Ending_Timer, Title_ObjFlags, EndText_Timer , EndText_CPos, Title_ObjStates, EndText_State , Title_State
 .export Title_ResetCnt, Title_ResetCnt2, Title_ResetTrig, Title_UnusedFlag, Title_Ticker, Title_MActScriptPos, Title_LActScriptPos, Title_MActScriptDelay
 .export Title_LActScriptDelay, Title_MActScriptDirSet, Title_LActScriptDirSet, Title_ObjMLDir, Title_ObjMLQueue, Title_EventIndex, Title_EventGrafX
 .export Title_ObjInitIdx, Title_ObjInitDly, Title_3GlowFlag, Title_3GlowIndex, Ending_State, EndText_VL, EndText_VH
 .endif
 ; ENDINGZP
-.ifdef NES
 .exportzp Ending2_PicState, Ending2_ClearLen, Ending2_ClearPat, Ending2_PicVRAMH, Ending2_PicVRAML, Ending2_QCmdEnd, Ending2_FadeTimer, Ending2_QueueCmd
 .exportzp Ending2_TimerH, Ending2_TimerL, Ending2_CurWorld
-.endif
-.ifdef X16
-.export Ending2_PicState, Ending2_ClearLen, Ending2_ClearPat, Ending2_PicVRAMH, Ending2_PicVRAML, Ending2_QCmdEnd, Ending2_FadeTimer, Ending2_QueueCmd
-.export Ending2_TimerH, Ending2_TimerL, Ending2_CurWorld
-.endif
 ; WORLDMAPZP
 .exportzp World_Map_Y, World_Map_XHi, World_Map_X, World_Map_Move, World_Map_Dir, Map_UnusedPlayerVal, Map_UnusedPlayerVal2, Map_WWOrHT_Y, Map_HandTrap_XHi
 .exportzp Map_WWOrHT_X, Map_WWOrHT_Cnt, Map_WWOrHT_Dir, Map_WarpWind_FX, Map_StarFX_State, World_Map_Twirl, Map_Skid_DeltaY, Map_Skid_DeltaFracY
@@ -56,32 +51,35 @@
 .export Player_WalkFrame
 .endif
 ; BONUSGAMEZP
-.exportzp BonusCoins_State, BonusDie_Y, BonusDie_X, BonusDie_YVel, BonusDie_YVelFrac
+.exportzp BonusCoins_State
+.ifdef NES
+.exportzp BonusDie_Y, BonusDie_X, BonusDie_YVel, BonusDie_YVelFrac
+.endif
+.ifdef X16
+.export BonusDie_Y, BonusDie_X, BonusDie_YVel, BonusDie_YVelFrac
+.endif
 ; VSZP
-.ifdef NES
 .exportzp Vs_State, Vs_IsPaused
-.endif
-.ifdef X16
-.export Vs_State, Vs_IsPaused
-.endif
 ; GAMEPLAYZP
+.exportzp Level_GndLUT_Addr, Pipe_PlayerX, Pipe_PlayerY
 .ifdef NES
-.exportzp Player_XHi, Objects_XHi, CineKing_DialogState, Objects_Var4, Pipe_PlayerX, Pipe_PlayerY, Level_GndLUT_Addr, Player_YHi, Objects_YHi
+.exportzp Player_XHi, Objects_XHi, CineKing_DialogState, Objects_Var4, Player_YHi, Objects_YHi
 .endif
 .ifdef X16
-.export Player_XHi, Objects_XHi, CineKing_DialogState, Objects_Var4, Pipe_PlayerX, Pipe_PlayerY, Level_GndLUT_Addr, Player_YHi, Objects_YHi
+.export Player_XHi, Objects_XHi, CineKing_DialogState, Objects_Var4, Player_YHi, Objects_YHi
 .endif
 .exportzp Player_X, Objects_X, CineKing_Var, Objects_Var5, Player_Y, Objects_Y, Player_SpriteX, Objects_SpriteX, Player_SpriteY, Objects_SpriteY
 .exportzp Player_XVel
 .exportzp Objects_XVel, Objects_VarBSS, SlotIndexBackup, Player_HaltGame, Player_YVel, Objects_YVel
+.exportzp Player_SprWorkL, Player_SprWorkH
 .ifdef NES
 .exportzp Player_InAir, CineKing_Frame2, Objects_DetStat
-.exportzp Player_SprWorkL, Player_SprWorkH, Level_TileOff, Level_Tile, Player_Slopes, Player_XStart, Player_Suit, Player_Frame, Player_FlipBits
+.exportzp Level_TileOff, Level_Tile, Player_Slopes, Player_XStart, Player_Suit, Player_Frame, Player_FlipBits
 .exportzp Player_WagCount, Player_IsDying, Obj01_Flag
 .endif
 .ifdef X16
 .export Player_InAir, CineKing_Frame2, Objects_DetStat
-.export Player_SprWorkL, Player_SprWorkH, Level_TileOff, Level_Tile, Player_Slopes, Player_XStart, Player_Suit, Player_Frame, Player_FlipBits
+.export Level_TileOff, Level_Tile, Player_Slopes, Player_XStart, Player_Suit, Player_Frame, Player_FlipBits
 .export Player_WagCount, Player_IsDying, Obj01_Flag
 .endif
 ; ONEPAGE
@@ -475,10 +473,6 @@ Title_ObjMLMoveDir:   ; 0 = No move, 1 = Left, 2 = Right
 ; unused $BA
 	.res 1
 
-.ifdef X16
-.segment "TITLEVARS"
-.endif
-
 Title_ObjMLAnimFrame: ; $BB-$BC Mario / Luigi animation frame
 	.res 2
 Title_ObjMLDirTicks:  ; $BD-$BE Mario / Luigi animation ticks
@@ -495,6 +489,11 @@ Title_ObjMLTailTick:  ; $C7-$C8 Mario / Luigi tail wagging tick
 	.res 2
 Title_ObjMLHold:      ; $C9-$CA Mario / Luigi holding something flag (when non-zero)
 	.res 2
+
+.ifdef X16
+.segment "TITLEVARS"
+.endif
+
 Title_ObjMLBonkTick:  ; $CB-$CC Mario / Luigi use "bonked" frame while > 0
 	.res 2
 Title_ObjMLKickTick:  ; $CD-$CE Mario / Luigi use kicking frame while > 0
@@ -861,6 +860,10 @@ CineKing_DialogState: ; Toad & King Cinematic: When 1, we're doing the text vers
 Objects_Var4:         ; $7F-$83 Generic variable 4 for objects SLOT 0 - 4 ONLY
 	.res 5
 
+.ifdef X16
+.segment "GAMEPLAYZP": zeropage
+.endif
+
 ; Pipe_PlayerX/Y variables in use when traveling through pipes
 Pipe_PlayerX:         ; Stores Player's X when they went into pipe (non-transit)
 	.res 1
@@ -869,6 +872,10 @@ Pipe_PlayerY:         ; Stores Player's Y when they went into pipe (non-transit,
 
 ; Otherwise, they are replaced with a lookup address
 Level_GndLUT_Addr := Pipe_PlayerX
+
+.ifdef X16
+.segment "GAMEPLAYVARS"
+.endif
 
 ; unused ($86)
 	.res 1
@@ -944,10 +951,17 @@ CineKing_Frame2:      ; Used only by the World 6 King (Seal juggling a crown, th
 Objects_DetStat:      ; $D9-$E0  on screen
 	.res 8
 
+.ifdef X16
+.segment "GAMEPLAYZP": zeropage
+.endif
+
 Player_SprWorkL:      ; Sprite work address low
 	.res 1
 Player_SprWorkH:      ; Sprite work address high
 	.res 1
+.ifdef X16
+.segment "GAMEPLAYVARS"
+.endif
 
 ; unused ($E3)
 	.res 1
