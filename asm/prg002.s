@@ -2574,6 +2574,11 @@ PRG002_ABA8:
 PRG002_ABAA:
 	RTS		 ; Return
 
+.ifdef X16
+.pushseg
+.segment "PRG002LOW"
+.endif
+
 ObjInit_WoodenFallingPlat:
 	INC Objects_Var4,X	 ; Var4 = 1
 
@@ -2792,6 +2797,9 @@ PRG002_ACAB:
 
 PRG002_ACBC:
 	RTS		 ; Return
+.ifdef X16
+.popseg
+.endif
 
 EnemyEnterFlip:	.byte  $00, SPR_HFLIP
 EnemyEnterXVel:	.byte <-$08, $08

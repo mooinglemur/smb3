@@ -86,6 +86,10 @@
 ; TILEA_BLOCKBUMP_CLEAR tile...)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+.ifdef X16
+.pushseg
+.segment "PRG007LOW"
+.endif
 	; Specifies which kind of arrow lift should be created relative to which tile
 	; the Player stepped on.  Note the zero near the end; if you look at tileset #8
 	; the donut lift appears right between what would be the multidirectional lift.
@@ -98,6 +102,10 @@ ArrowPlat_DirByTile:
 
 ArrowPlat_XOff:
 	.byte 0, <-16, 0, <-16, 0, <-16, 0, 0, <-16
+.ifdef X16
+.popseg
+.endif
+
 
 Player_DoLavaDonutArrowBounce:
 	LDA Player_IsDying		  
@@ -3210,6 +3218,7 @@ PRG007_AF02:
 	ORA #SND_PLAYERBUMP
 	STA Sound_QPlayer
 
+.ifdef NES
 	; Something removed here...
 	NOP
 	NOP
@@ -3218,7 +3227,7 @@ PRG007_AF02:
 	NOP
 	NOP
 	NOP
-
+.endif
 	JMP PRG007_B84C	 ; Jump to PRG007_B84C ("Poof" away the fireball)
 
 

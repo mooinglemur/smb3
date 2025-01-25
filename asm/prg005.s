@@ -5981,8 +5981,17 @@ PRG005_BC11:
 PRG005_BC41:
 	RTS		 ; Return
 
+.ifdef X16
+.pushseg
+.segment "PRG005LOW"
+.endif
+
 FloatingCloud_Var5:	.byte $00, $01, $02, $01
 FloatingCloud_XVel:	.byte $10, $12, $14, $12
+
+.ifdef X16
+.popseg
+.endif
 
 LevelEvent_CloudsinBG:
 	LDA Level_NoStopCnt
@@ -6194,8 +6203,15 @@ PRG005_BD53:
 
 	; The Spike Cheeps appear on the left or right side of the screen (respective)
 	; And thus travel to the right or the left (respective again)
+.ifdef X16
+.pushseg
+.segment "PRG005LOW"
+.endif
 SpikeCheepX:	.byte 0, 255
 SpikeCheepXVel:	.byte 8, <-16
+.ifdef X16
+.popseg
+.endif
 
 LevelEvent_SpikeCheep:
 

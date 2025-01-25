@@ -1163,6 +1163,10 @@ PRG008_A523:
 ; the graphics buffer.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	; Palette colors per power up level -- first byte is never used!
+.ifdef X16
+.pushseg
+.segment "PRG008LOW"
+.endif
 PowerUp_Palettes:
 	.byte $00, $16, $36, $0F	; 0 - Mario default palette
 	.byte $00, $2A, $36, $0F	; 1 - Luigi default palette
@@ -1172,6 +1176,10 @@ PowerUp_Palettes:
 	.byte $00, $17, $36, $0F	; 5 - Tanooki Suit
 	.byte $00, $30, $27, $0F	; 6 - Hammer Suit
 	.byte $00, $00, $10, $0F	; 7 - Tanooki Statue
+
+.ifdef X16
+.popseg
+.endif
 
 Level_SetPlayerPUpPal:
 	LDY #$07	 ; Y = 7 (select statue palette)
@@ -1232,7 +1240,10 @@ PRG008_A55E:
 
 	RTS		 ; Return
 
-
+.ifdef X16
+.pushseg
+.segment "PRG008LOW"
+.endif
 	; This is the main value of X acceleration applied
 Player_XAccelMain:
 
@@ -1312,6 +1323,10 @@ Player_SomersaultFlipBits:
 	; system and assume that we're underwater no matter what tile detected
 FloatLevel_StatCheck:
 	.byte $40, $80
+
+.ifdef X16
+.popseg
+.endif
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
