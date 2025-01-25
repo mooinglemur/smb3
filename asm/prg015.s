@@ -125,7 +125,7 @@ Tile_Layout_TS1:
 	.byte $AB, $AB, $18, $58, $18, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Tiles $E0 - $EF
 	.byte $64, $06, $E1, $06, $60, $62, $5A, $66, $60, $62, $FF, $FF, $FF, $FF, $FF, $FF ; Tiles $F0 - $FF
 
-	; Upper right 8x8 pattern per tile	
+	; Upper right 8x8 pattern per tile
 	.byte $FC, $FC, $FF, $07, $07, $EA, $07, $37, $04, $37, $37, $3D, $3D, $37, $04, $37 ; Tiles $00 - $0F
 	.byte $46, $4A, $4E, $41, $43, $FC, $5F, $FC, $FC, $FC, $22, $FC, $20, $38, $FC, $07 ; Tiles $10 - $1F
 	.byte $29, $07, $2C, $2E, $07, $12, $12, $02, $FF, $FF, $FF, $FF, $11, $11, $BA, $BA ; Tiles $20 - $2F
@@ -173,9 +173,9 @@ Tile_Attributes_TS1:
 LevelLoad_TS1:
 
 	; Clear Tile memory
-	LDY #$00	 
+	LDY #$00
 PRG015_A40A:
-	LDA #TILE1_SKY		; Plains style just clears everything to sky	 
+	LDA #TILE1_SKY		; Plains style just clears everything to sky
 	JSR Tile_Mem_ClearB
 	JSR Tile_Mem_ClearA
 	CPY #$f0
@@ -201,17 +201,17 @@ LoadLevel_Generator_TS1:
 
 	LDA Temp_Var15
 	AND #%11100000
-	LSR A		
-	LSR A		
-	LSR A		
-	LSR A		
-	LSR A		
+	LSR A
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	TAX		 	; X = upper 3 bits of Temp_Var15 (0-7) (selects a multiple of 15 as the base)
 
 	LDA LL_ShapeDef
-	LSR A	
-	LSR A	
-	LSR A	
+	LSR A
+	LSR A
+	LSR A
 	LSR A			; A = upper 4 bits of LL_ShapeDef shifted down
 	CLC
 	ADC PRG015_A419,X	; Add multiple of 15
@@ -267,7 +267,7 @@ LoadLevel_Generator_TS1:
 	.word FAR014_LoadLevel_TopDecoBlocks		; 38 - Top-Deco Rectangle Right waving water pool
 	.word FAR014_LoadLevel_TopDecoBlocks		; 39 - Top-Deco Rectangle Water wrong-way BG
 	.word FAR014_LoadLevel_TopDecoBlocks		; 40 - Top-Deco Rectangle Diamond blocks (not really any deco on top)
-	.word FAR014_LoadLevel_TopDecoBlocks		; 41 - Top-Deco Rectangle Sand ground 
+	.word FAR014_LoadLevel_TopDecoBlocks		; 41 - Top-Deco Rectangle Sand ground
 	.word FAR014_LoadLevel_TopDecoBlocks		; 42 - Top-Deco Rectangle orange block??
 	.word FAR014_LoadLevel_IceBricks		; 43 - Run of ice bricks
 	.word FAR014_LoadLevel_VTransitPipeRun		; 44 - Vertical in-level transit pipe
@@ -277,8 +277,8 @@ LoadLevel_Generator_TS1:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LeveLoad_FixedSizeGen_TS1
 ;
-; Much simpler generators that are fixed-size, commonly used for 
-; just single tile placement styles (although a couple relatively 
+; Much simpler generators that are fixed-size, commonly used for
+; just single tile placement styles (although a couple relatively
 ; complex ones exist in here as well)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LeveLoad_FixedSizeGen_TS1:
@@ -290,11 +290,11 @@ LeveLoad_FixedSizeGen_TS1:
 
 	LDA Temp_Var15
 	AND #%11100000
-	LSR A		
+	LSR A
 	CLC
-	ADC LL_ShapeDef	
+	ADC LL_ShapeDef
 	TAX		 	; Resultant index is put into 'X'
-	JSR DynJump	 
+	JSR DynJump
 
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word FAR014_LoadLevel_MidSizeBush		;  0 - Place a mid-sized large green bush
@@ -314,7 +314,7 @@ LeveLoad_FixedSizeGen_TS1:
 	.word $0000				; 14 - NULL?
 	.word $0000				; 15 - NULL?
 	.word FAR014_LoadLevel_PowerBlock		; 16 - ? block with flower
-	.word FAR014_LoadLevel_PowerBlock		; 17 - ? block with leaf 
+	.word FAR014_LoadLevel_PowerBlock		; 17 - ? block with leaf
 	.word FAR014_LoadLevel_PowerBlock		; 18 - ? block with star
 	.word FAR014_LoadLevel_PowerBlock		; 19 - ? block with coin OR star
 	.word FAR014_LoadLevel_PowerBlock		; 20 - ? block with coin (??)

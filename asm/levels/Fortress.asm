@@ -12,7 +12,7 @@ W10FL:		.include "Fortress/1-F.asm"		; World 1 Mini Fortress
 W10F_AltL:	.include "Fortress/1-FA.asm"		; World 1 Mini Fortress Alternate (Spike Room, Warp Whistle, boss room)
 W3F2L:		.include "Fortress/3-F2.asm"		; World 3 2nd Fortress
 W3F2_AltL:	.include "Fortress/3-F2A.asm"	; World 3 2nd Fortress Alternate
-W3F1L:		.include "Fortress/3-F1.asm"		; World 3 1st Fortress 
+W3F1L:		.include "Fortress/3-F1.asm"		; World 3 1st Fortress
 W3F1_AltL:	.include "Fortress/3-F1A.asm"	; World 3 1st Fortress Alternate
 W5F1L:		.include "Fortress/5-F1.asm"		; World 5 ground Fortress main
 W5F1_AltL:	.include "Fortress/5-F1A.asm"	; World 5 ground Fortress bonus / boss rooms

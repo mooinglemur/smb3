@@ -31,7 +31,7 @@ W102_BonusL:	.include "Plains/1-2Bonus.asm"	; 1-2 Bonus Room
 W404_BonusL:	.include "Plains/4-4Bonus.asm"	; 4-4 Bonus Area
 W101L:		.include "Plains/1-1.asm"		; 1-1
 W101_BonusL:	.include "Plains/1-1Bonus.asm"	; 1-1 Bonus room
-W705L:		.include "Plains/7-5.asm"		; 7-5	
+W705L:		.include "Plains/7-5.asm"		; 7-5
 W308_EndL:	.include "Plains/3-8End.asm"		; 3-8 Exit
 W503_EndL:	.include "Plains/5-3End.asm"		; 5-3 Exit
 Unused2_ExitL:	.include "Plains/Unused2E.asm"	; "Unused level 2" exit

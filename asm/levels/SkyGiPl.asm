@@ -6,7 +6,7 @@ Unused9L:	.include "Sky/Unused9.asm"		; "Unused level 9"
 Unused14L:	.include "Sky/Unused14.asm"		; "Unused level 14"
 Unused15L:	.include "Sky/Unused15.asm"		; "Unused level 15"
 W507L:		.include "Sky/5-7.asm"		; 5-7
-W403L:		.include "Giant/4-3.asm"		; 4-3 entrance 
+W403L:		.include "Giant/4-3.asm"		; 4-3 entrance
 W402L:		.include "Giant/4-2.asm"		; 4-2
 W506L:		.include "Sky/5-6.asm"		; 5-6
 W509L:		.include "Sky/5-9.asm"		; 5-9

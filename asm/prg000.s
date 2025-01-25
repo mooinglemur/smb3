@@ -19,8 +19,8 @@
 	;	3) The relevant value from Tile_AttrTable (a series of values-per-quad
 	;	   loaded by tileset) is grabbed; the tile retrieved in #1 is used as
 	;	   a base value.  Hills/Underground style attr table: $25, $5F, $99, $E2
-	;	4) If the tile is beneath the base this data is not used 
-	;	   (e.g. using the above Hills example, if we got tile $16 -- this is 
+	;	4) If the tile is beneath the base this data is not used
+	;	   (e.g. using the above Hills example, if we got tile $16 -- this is
 	;	   quad $00, and the quad $00 base tile is $25, so this is not valid)
 	;	5) If tile is in range, it is subtracted, so using the Hills example:
 	;	   Tile $25 -- first table, index 0.  Tile $26 -- first table, index 1.
@@ -210,7 +210,7 @@ Slope_PlayerVel_Effect:
 	.byte $00,  $00,  $00,  $00,  $00			; $10-$14
 
 	; Effect on Object's velocity per slope "shape" index (Slope_LUT above)
-	; NOTE: Incomplete -- probably avoids concering with certain ceiling slopes 
+	; NOTE: Incomplete -- probably avoids concering with certain ceiling slopes
 Slope_ObjectVel_Effect:
 	; $80 disables response to this slope
 	.byte $00, <-$02,  $02,  $00,  $00,  $80,  $80,  $00	; $00-$07
@@ -232,7 +232,7 @@ Slope_LUT_Addr:	.word Slope_LUT
 
 	; This defines 4 values per Level_Tileset, with each of those values
 	; belonging to a tile "quadrant" (i.e. tiles beginning at $00, $40,
-	; $80, and $C0), and defines the beginning tile which should be 
+	; $80, and $C0), and defines the beginning tile which should be
 	; classified as "underwater" (Minimum Tile Under Water By Quad)
 	; A value of $FF is used to indicate that no tile in that quadrant
 	; is underwater (and for the first three quads is unreachable!)
@@ -254,7 +254,7 @@ Level_MinTileUWByQuad:
 	.byte $FF, $FF, $FF, $DA	; 13 Sky level
 	.byte $FF, $FF, $FF, $C1	; 14 Underground
 
-	
+
 ToadItem_PalPerItem:
 	.byte $30	; 0: INVALID
 	.byte $16	; 1: Mushroom
@@ -280,7 +280,7 @@ Object_TileDetectOffsets:
 	; For groups:
 	; Row 1: Object Y Velocity >= 0 (on ground or moving downward)
 	; Row 2: Object Y Velocity < 0 (moving upward)
-	; Row 3: Object X velocity < 0 (moving leftward) 
+	; Row 3: Object X velocity < 0 (moving leftward)
 	; Row 4: Object X velocity >= 0 (moving rightward)
 
 	; Group 0
@@ -388,7 +388,7 @@ OTDO_G1Alt:	.byte $02, $01	; Wall to left
 OTDO_Water:	.byte $04, $08
 
 
-	; Defines the "bounding box" 
+	; Defines the "bounding box"
 	; Selected by Object_AttrFlags lower 4 bits
 Object_BoundBox:
 	;    Left Right Bot Top - offsets applied to sprite X/Y
@@ -647,7 +647,7 @@ ConveyorEnable:
 
 	; Index by Level_TilesetIdx
 	; Sets the tile which is a pain in the ass (typically muncher, sometimes jelectro)
-	; Although TILEA_MUNCHER is always considered anyway for Kuribo's shoe... 
+	; Although TILEA_MUNCHER is always considered anyway for Kuribo's shoe...
 	; (see after PRG008_BD96) which is probably a bug/mistake!  (Although to their
 	; credit, you can never normally have Kuribo's shoe in a Jelectro level)
 MuncherJelectroSet:
@@ -681,7 +681,7 @@ PRG000_C3E7:
 
 ; FIXME: Anybody want to claim this?
 ; Looks like maybe a leftover debug routine for some kind of "float around" mode maybe!!
-; $C3EA 
+; $C3EA
 	LDA Pad_Holding
 	AND #(PAD_LEFT | PAD_RIGHT)
 	TAY		 ; Y = 1 or 2
@@ -709,8 +709,8 @@ SprRamOffsets:
 	; distribute the drawing of objects over available sprites and
 	; help cope with the sprites-per-scanline drawing limits.
 	;
-	; Basically, on different frames, different objects will have 
-	; different sprite priority, so while there may be flicker, at 
+	; Basically, on different frames, different objects will have
+	; different sprite priority, so while there may be flicker, at
 	; least everything is somewhat visible
 	.byte $40, $E8, $58, $D0, $70, $B8, $88, $A0, $40, $E8, $58, $D0, $70, $B8, $88
 
@@ -725,9 +725,9 @@ SprRamOffsets:
 TimeBonus_Score:
 	.byte 50, 5	; 500 and 50
 
-; $C412 
+; $C412
 DoTimeBonus:
-	LDA SndCur_Music1	 
+	LDA SndCur_Music1
 	BNE PRG000_C446	 ; If any music playing, jump to PRG000_C446 (RTS)
 
 	LDY #$01	 ; Y = 1 (most significant or middle digit of time is non-zero)
@@ -747,12 +747,12 @@ PRG000_C422:
 
 	LDA TimeBonus_Score - 1,X	 ; Get appropriate score bonus
 	STA Score_Earned	 	; Push into score buffer
- 
+
 PRG000_C42F:
 	DEC Level_TimerMSD,X	; Decrement off middle or least significant digit
 	BPL PRG000_C43C	 	; If digit is >= 0, jump to PRG000_C43C
 
-	LDA #$09	 
+	LDA #$09
 	STA Level_TimerMSD,X	; Otherwise, reload it with 9
 
 	DEX		 ; X--
@@ -763,7 +763,7 @@ PRG000_C43C:
 
 	; Play tick sound
 	LDA Sound_QLevel1
-	ORA #SND_LEVELBLIP	
+	ORA #SND_LEVELBLIP
 	STA Sound_QLevel1
 
 PRG000_C446:
@@ -774,7 +774,7 @@ PRG000_C446:
 ; SpecialObj_FindEmptyAbort
 ; SpecialObj_FindEmptyAbortY
 ;
-; Finds an empty special object slot (returned in 'Y') or "aborts" 
+; Finds an empty special object slot (returned in 'Y') or "aborts"
 ; if no slot is open OR if the object has any horizontal sprite visibility
 ; "abort" = will not return to caller...
 ;
@@ -785,7 +785,7 @@ SpecialObj_FindEmptyAbort:
 	LDY #$05
 SpecialObj_FindEmptyAbortY:
 	LDA SpecialObj_ID,Y
-	BEQ PRG000_C454	 ; If object slot is dead/empty, jump to PRG000_C454 
+	BEQ PRG000_C454	 ; If object slot is dead/empty, jump to PRG000_C454
 	DEY		 ; Y--
 	BPL SpecialObj_FindEmptyAbortY	 ; While Y >= 0, loop!
 
@@ -849,8 +849,8 @@ PRG000_C47D:
 	STA Scores_Y,Y	 ; Set score Y
 
 	; Set score X to spawning object
-	LDA a:Objects_SpriteX,X	
-	STA Scores_X,Y	 
+	LDA a:Objects_SpriteX,X
+	STA Scores_X,Y
 
 	; Set score counter to $30
 	LDA #$30
@@ -965,7 +965,7 @@ Object_HandleConveyorBounceVel:
 	SBC #TILE2_CONVEYORL
 	CMP #$02
 	BGE PRG000_C4F5	 ; If object is not standing on a conveyor belt, jump to PRG000_C4F5 (RTS)
- 
+
 	TAY		 ; Conveyor tile relative index -> 'Y'
 
 	LDA Conveyor_CarryX,Y
@@ -987,7 +987,7 @@ PRG000_C511:
 ; Object_HitGround
 ;
 ; When object hits the ground, this aligns it properly to a tile
-; 
+;
 ; X = index of on-screen object
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; $C515
@@ -1007,8 +1007,8 @@ Object_HitGround:
 	ADC Level_VertScroll
 	STA Objects_Y,X	 ; Aligns to grid and adds 1
 
-	LDA #$00	 
-	ADC #$00	 
+	LDA #$00
+	ADC #$00
 	STA Objects_YHi,X	 ; Apply carry
 
 	JMP PRG000_C53D	 ; Jump to PRG000_C53D
@@ -1040,7 +1040,7 @@ Object_WorldDetectN1:
 	LDA #$ff	; Use A = $FF
 	BNE PRG000_C54C	; Jump (technically always) to PRG000_C54C
 
-; $C546 
+; $C546
 Object_WorldDetect8:
 	LDA #$08	; Use A = 8
 	BNE PRG000_C54C	; Jump (technically always) to PRG000_C54C
@@ -1105,7 +1105,7 @@ PRG000_C584:
 	BEQ PRG000_C59A	 	; If slopes are not enabled here, jump to PRG000_C59A
 
 	; Slope detection (not specific)
-	
+
 	LDA Object_TileFeet
 	CMP Tile_AttrTable,Y
 	BLT PRG000_C5A8	 ; If tile is not within range of tiles solid at ceiling, jump to PRG000_C5A8 (RTS)
@@ -1148,7 +1148,7 @@ PRG000_C5BC:
 
 	; Any of the following tiles, jump to PRG000_C67F
 	CMP #TILE3_VERTGROUNDL
-	BEQ PRG000_C5D0	
+	BEQ PRG000_C5D0
 
 	CMP #TILE3_VERTGROUNDR
 	BEQ PRG000_C5D0
@@ -1160,7 +1160,7 @@ PRG000_C5BC:
 	BEQ PRG000_C5D0
 
 	CMP #TILE3_WMIDGROUND
-	BNE PRG000_C5D3	
+	BNE PRG000_C5D3
 
 PRG000_C5D0:
 	JMP PRG000_C67F	 ; Jump to PRG000_C67F
@@ -1191,7 +1191,7 @@ PRG000_C5EC:
 	; The most significant bit will be lost due to the 8-bit register!
 	; But those are ceiling slopes which enemies generally don't care about
 	; (Not even the upside-down Buzzy / Spiny enemies have proper ceiling slope coding!!)
-	TYA		 
+	TYA
 	ASL A
 	ASL A
 	ASL A
@@ -1201,10 +1201,10 @@ PRG000_C5EC:
 	TAY		 ; -> 'Y'
 
 	LDA Slope_LUT,Y
-	AND #$0f	
+	AND #$0f
 	STA Temp_Var2	 ; Lower 4 bits of slope (the "floor" slope height) -> Temp_Var2
 
-	LDA Temp_Var1	
+	LDA Temp_Var1
 	CMP #12
 	BGE PRG000_C606	 ; If object's tile-relative Y position >= 12, jump to PRG000_C606
 
@@ -1213,7 +1213,7 @@ PRG000_C5EC:
 	BLT PRG000_C65D	 ; If object's tile-relative Y position < calculated slope height, jump to PRG000_C65D
 
 PRG000_C606:
-	LDA Temp_Var2		
+	LDA Temp_Var2
 	STA Object_SlopeHeight	 ; Store Object_SlopeHeight
 
 	; Set "hit ground" flag
@@ -1233,14 +1233,14 @@ PRG000_C606:
 	LDA #$01	 ; Otherwise, use A = 1
 
 PRG000_C61E:
-	CMP #$08	 
+	CMP #$08
 	BLT PRG000_C624	 ; If object's X velocity < 8, jump to PRG000_C624
 
 	ORA #$f0	 ; Sign extend
 
 PRG000_C624:
 	LDX Slope_ObjectVel_Effect,Y ; X = value from Slope_ObjectVel_Effect
-	CPX #$00	
+	CPX #$00
 	BNE PRG000_C62E	 ; If value <> 0, jump to PRG000_C62E
 
 	; Otherwise...
@@ -1248,7 +1248,7 @@ PRG000_C624:
 	TXA		 ; A = 0
 
 PRG000_C62E:
-	CPX #$00	 
+	CPX #$00
 	BPL PRG000_C635	 ; If X is not negative, jump to PRG000_C635
 
 	JSR Negate	 ; Otherwise, negate (absolute value)
@@ -1277,15 +1277,15 @@ PRG000_C649:
 	LDA Player_PartDetEn
 	BNE PRG000_C656	 ; If Player_PartDetEn is set (the object hit the visual ground), jump to PRG000_C656
 
-	; The original input value finally winds up here.  This limits when an object will actually 
+	; The original input value finally winds up here.  This limits when an object will actually
 	; acknowledge "hitting ground."  Basically, if the object is more than [input value] pixels
 	; down in to the tile, it will not count as having hit the floor.
 
 	LDA Objects_Y,X
 	AND #$0f	 ; Object's tile-relative vertical position
-	CMP Temp_Var1	
+	CMP Temp_Var1
 	BGE PRG000_C65C	 ; If object is too far down in to the tile, jump to PRG000_C65C (RTS)
- 
+
 PRG000_C656:
 
 	; Flag object as "hit ground"
@@ -1325,7 +1325,7 @@ PRG000_C66C:
 	ADC Objects_YHi,X
 	STA Objects_YHi,X ; Apply to Y Hi
 
-	LDA #$00	 
+	LDA #$00
 	STA Objects_Slope,X ; Clear slope value
 
 	JMP Object_WorldDetectN1	 ; Jump to Object_WorldDetectN1
@@ -1393,13 +1393,13 @@ Object_GetAttrAndMoveTiles:
 	BEQ PRG000_C6D0
 
 	LDA Level_TilesetIdx
-	ASL A	
+	ASL A
 	ASL A		 ; Offset to beginning of underwater-by-quad table
 	CLC
 	ADC Temp_Var1	 ; Add quadrant offset
-	TAY		 ; -> 'Y' 
+	TAY		 ; -> 'Y'
 	LDA Level_MinTileUWByQuad,Y	; Get the starting underwater tile
-	CMP Level_Tile	
+	CMP Level_Tile
 	BGE PRG000_C6D0	 ; If starting underwater tile is >= the detected tile, jump to PRG000_C6D0
 
 	INX		 ; X = 1 (object is underwater)
@@ -1409,7 +1409,7 @@ PRG000_C6D0:
 
 	LDX SlotIndexBackup	; Restore 'X' as object slot index
 
-	CMP Objects_InWater,X	
+	CMP Objects_InWater,X
 	BEQ PRG000_C6FA	 	; If object is either still in water / out of water (hasn't changed), jump to PRG000_C6FA
 
 	PHA		 	; Save underwater flag
@@ -1427,8 +1427,8 @@ PRG000_C6D0:
 	LDA Objects_LastTile,X
 	PHA		 	; Save Objects_LastTile
 
-	ASL A		 
-	ROL A		 
+	ASL A
+	ROL A
 	ROL A		 ; Upper 2 bits shift right 6, effectively
 	AND #%00000011	 ; Keep these bits, i.e. "tile quadrant"
 	TAY		 ; Y = quadrant of last detected tile
@@ -1457,7 +1457,7 @@ PRG000_C6FD:
 	LDY ObjGroupRel_Idx	 ; Y = object's group-relative index
 
 	LDA ObjectGroup_Attributes2,Y	; Get attributes set 2 for this object
-	AND #OA2_TDOGRPMASK	 
+	AND #OA2_TDOGRPMASK
 	LSR A		; Upper 4 bits of attributes set 2 shifted right 1 (value * 8)
 	PHA		; Save it
 	TAY		; -> 'Y' (use respective Object_TileDetectOffsets group Row 1)
@@ -1470,7 +1470,7 @@ PRG000_C6FD:
 
 PRG000_C713:
 	JSR Object_DetectTile	 ; Get tile
- 
+
 	; Store into tile index holders
 	STA Object_TileFeet2
 	STA Object_TileFeet
@@ -1608,7 +1608,7 @@ PRG000_C797:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; $C7A9
 Object_DetectTile:
-	LDA Level_7Vertical	 
+	LDA Level_7Vertical
 	BEQ PRG000_C7B1	 ; If level is NOT vertical, jump to PRG000_C7B1
 
 	JMP PRG000_C85C	 ; Jump to PRG000_C85C
@@ -1788,12 +1788,12 @@ PRG000_C85C:
 	STA ObjTile_DetXLo 	; -> ObjTile_DetXLo (low)
 
 	; Calculate tile offset within screen
-	LSR A	
-	LSR A	
-	LSR A	
-	LSR A	
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	ORA Temp_Var3
-	STA Temp_Var1	 ; -> Temp_Var1 
+	STA Temp_Var1	 ; -> Temp_Var1
 
 	LDY #$00	 ; Y = 0 (additional offset not used)
 
@@ -1850,10 +1850,10 @@ PRG000_C8BE:
 
 	INY		 ; Y = 1 or 2
 
-	LDA #$01	
+	LDA #$01
 	STA Splash_Counter,Y	 ; Splash counter = 1 (begin splash)
 
-	LSR A		 
+	LSR A
 	STA Splash_NoScrollY,Y	 ; Splash_NoScrollY = 0 (splash is relative to vertical scroll)
 
 	; Set appropriate splash Y
@@ -1906,7 +1906,7 @@ PRG000_C914:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Objects_HandleScrollAndUpdate
 ;
-; THE function which spawns objects as they appear on screen and 
+; THE function which spawns objects as they appear on screen and
 ; calls updates on all objects based on their state etc.  Also
 ; updates the timers.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1962,7 +1962,7 @@ PRG000_C948:
 	STA ArrowPlat_IsActive 	; Clear ArrowPlat_IsActive
 
 	LDA #$ff
-	STA LRBounce_Y	 ; LRBounce_Y = $FF 
+	STA LRBounce_Y	 ; LRBounce_Y = $FF
 
 	; Set page @ A000 to 5
 	LDA #$05
@@ -1979,7 +1979,7 @@ PRG000_C948:
 	STA Counter_7to0 ; Otherwise, reset Counter_7to0 to 7
 
 PRG000_C973:
-	LDX #$07	 
+	LDX #$07
 
 PRG000_C975:
 	STX SlotIndexBackup	 ; Backup current object index -> SlotIndexBackup
@@ -2015,7 +2015,7 @@ PRG000_C997:
 	LDA Objects_Timer3,X
 	BEQ PRG000_C9B6	 ; If timer is zero, jump to PRG000_C9B6
 
-	CMP #$60	 
+	CMP #$60
 	BLT PRG000_C9B3	 ; If timer value is < $60, jump to PRG000_C9B3
 
 	LDA #$01	 ; A = 1
@@ -2024,7 +2024,7 @@ PRG000_C997:
 	CPY #OBJSTATE_NORMAL
 	BEQ PRG000_C9B3	 ; If object's state is Normal, jump to PRG000_C9B3
 
-	CPY #$04	 
+	CPY #$04
 	BNE PRG000_C9AF	 ; If object's state is NOT 4 (being held), jump to PRG000_C9AF
 
 	; Object being held...
@@ -2082,7 +2082,7 @@ PRG000_C9E5:
 	BNE PRG000_C9FB	 ; If Player is mid-air, jump to PRG000_C9FB
 
 PRG000_C9F6:
-	; A would-be somersaulting Player is either in water or sand, 
+	; A would-be somersaulting Player is either in water or sand,
 	; or is not mid-air; disable it!
 	LDA #$00
 	STA Player_Flip
@@ -2096,13 +2096,13 @@ PRG000_C9FB:
 	LDA Level_BlkBump,Y
 	BNE PRG000_CA13
 
-	INY	
+	INY
 	LDA Level_BlkBump,Y
 	BNE PRG000_CA13
 
-	INY	
+	INY
 	LDA Level_BlkBump,Y
-	BEQ PRG000_CA33	
+	BEQ PRG000_CA33
 
 PRG000_CA13:
 	STA Level_ChgTileEvent	 ; Set the block bump change event
@@ -2179,11 +2179,11 @@ PRG000_CA5C:
 
 	STA ObjGroupRel_Idx ; Set ObjGroupRel_Idx to this group-relative index value
 
-	; Y is now a value of 1 to 5, and that value dictates the page 
+	; Y is now a value of 1 to 5, and that value dictates the page
 	; where this object's code can be found...
 	STY PAGE_A000	 ; Set new page
 	TAY		; Object group-relative index -> 'Y'
-		 
+
 	JSR PRGROM_Change_A000	 ; Set page @ A000 to appropriate object page...
 
 	LDA Objects_DisPatChng,X
@@ -2191,7 +2191,7 @@ PRG000_CA5C:
 
 	; Object's can request a particular pattern set to be available to them.
 	; They may set either the fifth or sixth bank of CHRROM, which is specified
-	; by bit 7.  
+	; by bit 7.
 
 	LDX #$00	 ; X = 0 (fifth CHRROM bank)
 	LDA ObjectGroup_PatTableSel,Y	 ; Load CHRROM bank request for this object, if any
@@ -2244,12 +2244,12 @@ PRG000_CAAE:
 	JSR Object_CalcSpriteXY_NoHi
 	LDY Object_SprRAM,X
 	LDA Objects_SpriteY,X
-	STA Sprite_RAM+$00,Y	
-	STA Sprite_RAM+$04,Y	
-	LDA Objects_SpriteX,X	
-	STA Sprite_RAM+$03,Y	
+	STA Sprite_RAM+$00,Y
+	STA Sprite_RAM+$04,Y
+	LDA Objects_SpriteX,X
+	STA Sprite_RAM+$03,Y
 	CLC
-	ADC #$08	 
+	ADC #$08
 	STA Sprite_RAM+$07,Y
 
 	LDA Objects_Timer,X
@@ -2284,7 +2284,7 @@ PRG000_CAF0:
 PRG000_CAF1:
 	.byte %00000010, %00000010, %00000100, %00001000, %00010000, %00010000
 
-	; Some objects have "feet" when they are waking up, 
+	; Some objects have "feet" when they are waking up,
 	; this offsets their Y depending on whether v-flipped
 ObjWakeUp_FeetYOff:	.byte 10, <-10
 
@@ -2292,100 +2292,100 @@ ObjWakeUp_FeetYOff:	.byte 10, <-10
 ObjState_Shelled:
 	LDY ObjGroupRel_Idx	; Y = object's group-relative index
 
-	LDA ObjectGroup_Attributes3,Y 
+	LDA ObjectGroup_Attributes3,Y
 	AND #OA3_SQUASH
-	BEQ PRG000_CB10	 ; If OA3_SQUASH is NOT set (stomp does not "shell" this object), jump to PRG000_CB10  
+	BEQ PRG000_CB10	 ; If OA3_SQUASH is NOT set (stomp does not "shell" this object), jump to PRG000_CB10
 
 	; Attribute set 3 bit 4 is set...
 
 	; Go to "stomped" state
 
 	; Timer 3 = $10
-	LDA #$10 
-	STA Objects_Timer3,X 
+	LDA #$10
+	STA Objects_Timer3,X
 
 	; Set object state to Squashed
 	LDA #OBJSTATE_SQUASHED
 	STA Objects_State,X
- 
-	JMP Object_ShakeAndDraw	 ; Draw object and don't come back... 
+
+	JMP Object_ShakeAndDraw	 ; Draw object and don't come back...
 
 PRG000_CB10:
 
 	; Attribute set 3 bit 4 is NOT set... (object is "shelled" when stomped)
 
-	LDA Player_HaltGame	 
+	LDA Player_HaltGame
 	BNE PRG000_CB5B	 ; If gameplay is halted, jump to PRG000_CB5B
- 
-	JSR Object_ShellDoWakeUp	 ; Handle waking up (MAY not return here, if object "wakes up"!) 
-	JSR Object_Move	 		; Perform standard object movements
- 
-	LDA Objects_DetStat,X 
-	AND #$04 
-	BEQ PRG000_CB45	 ; If object hit floor, jump to PRG000_CB45 
 
-	LDA Objects_YVel,X 
-	BMI PRG000_CB45	 ; If object is moving upward, jump to PRG000_CB45 
+	JSR Object_ShellDoWakeUp	 ; Handle waking up (MAY not return here, if object "wakes up"!)
+	JSR Object_Move	 		; Perform standard object movements
+
+	LDA Objects_DetStat,X
+	AND #$04
+	BEQ PRG000_CB45	 ; If object hit floor, jump to PRG000_CB45
+
+	LDA Objects_YVel,X
+	BMI PRG000_CB45	 ; If object is moving upward, jump to PRG000_CB45
 
 	; Object has NOT hit floor and is NOT moving upward...
 
 	PHA		 ; Save Y velocity
 
 	JSR Object_HitGround	 ; Align with ground
- 
+
 	LDA Objects_XVel,X	 ; Get X velocity
- 
+
 	PHP		 ; Save CPU state
 
 	; Get absolute value of X velocity
-	BPL PRG000_CB30 
+	BPL PRG000_CB30
 	JSR Negate
 PRG000_CB30:
 
-	LSR A		 ; Divide by 2 
+	LSR A		 ; Divide by 2
 	PLP		 ; Restore CPU state
 
 	; If needed to negate before, negate again
-	BPL PRG000_CB37 
+	BPL PRG000_CB37
 	JSR Negate
-PRG000_CB37: 
-	STA Objects_XVel,X	 ; Set as X velocity 
+PRG000_CB37:
+	STA Objects_XVel,X	 ; Set as X velocity
 
 	PLA		 ; Restore Y velocity
- 
+
 	; Divide by 4
-	LSR A 
-	LSR A 
-	JSR Negate	 ; Negate it 
-	CMP #<-$02 
+	LSR A
+	LSR A
+	JSR Negate	 ; Negate it
+	CMP #<-$02
 	BGE PRG000_CB45	 ; If object only lightly moving upward, jump to PRG000_CB45
- 
+
 	STA Objects_YVel,X	 ; Set object Y velocity
 
-PRG000_CB45: 
-	LDA Objects_DetStat,X 
-	AND #$08 
+PRG000_CB45:
+	LDA Objects_DetStat,X
+	AND #$08
 	BEQ PRG000_CB4F	 ; If object has NOT hit ceiling, jump to PRG000_CB4F
- 
+
 	; Set object Y velocity to $10 (rebound off ceiling)
-	LDA #$10 
-	STA Objects_YVel,X 
+	LDA #$10
+	STA Objects_YVel,X
 
 PRG000_CB4F:
-	LDA Objects_DetStat,X 
-	AND #$03 
-	BEQ PRG000_CB58	 ; If object has NOT hit wall, jump to PRG000_CB58 
- 
-	JSR Object_AboutFace	 ; Turn around... 
+	LDA Objects_DetStat,X
+	AND #$03
+	BEQ PRG000_CB58	 ; If object has NOT hit wall, jump to PRG000_CB58
+
+	JSR Object_AboutFace	 ; Turn around...
 
 PRG000_CB58:
-	JSR Object_HandleBumpUnderneath	 ; Handle object getting hit from underside 
+	JSR Object_HandleBumpUnderneath	 ; Handle object getting hit from underside
 
 PRG000_CB5B:
-	JSR Object_BumpOffOthers	 ; Bump off and turn away from other objects 
+	JSR Object_BumpOffOthers	 ; Bump off and turn away from other objects
 
 PRG000_CB5E:
-	JSR Object_DeleteOffScreen	 ; Delete object if it goes off-screen 
+	JSR Object_DeleteOffScreen	 ; Delete object if it goes off-screen
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2396,7 +2396,7 @@ PRG000_CB5E:
 ; $CB61
 Object_DrawShelled:
 	; Set object frame to 2
-	LDA #$02	 
+	LDA #$02
 	STA Objects_Frame,X
 
 	LDA Objects_IsGiant,X
@@ -2410,7 +2410,7 @@ Object_SetShakeAwakeTimer:
 	; Set timer for object to wake up from
 
 	LDA Objects_Timer3,X
-	CMP #$60	 
+	CMP #$60
 	BGE PRG000_CB7A	 ; If timer 3 >= $60, jump to PRG000_CB7A
 
 	AND #$07
@@ -2493,7 +2493,7 @@ PRG000_CBB4:
 
 	LDA #$01	 ; A = 1 (object not vertically flipped)
 
-	LDY Objects_FlipBits,X	 
+	LDY Objects_FlipBits,X
 	BMI PRG000_CBD4	 ; If object is vertically flipped, jump to PRG000_CBD4
 
 	LSR A		 ; A = 0 (object vertically flipped)
@@ -2567,56 +2567,56 @@ PRG000_CC23:
 ; objects have collided, at which point they "bump off eachother"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Object_BumpOffOthers:
-	TXA	; A = object slot index		  
+	TXA	; A = object slot index
 	CLC
-	ADC Counter_1 
-	LSR A 
+	ADC Counter_1
+	LSR A
 	BCS PRG000_CC6B	 ; Semi-randomly jump to PRG000_CC6B (RTS)
-  
-	JSR Object_AnySprOffscreen
-	BNE PRG000_CC6B	 ; If any sprite is off-screen, jump to PRG000_CC6B (RTS) 
 
-	JSR Object_CalcBoundBox2 
-	TXA	
+	JSR Object_AnySprOffscreen
+	BNE PRG000_CC6B	 ; If any sprite is off-screen, jump to PRG000_CC6B (RTS)
+
+	JSR Object_CalcBoundBox2
+	TXA
 	BEQ PRG000_CC6B	 ; If object slot is zero, jump to PRG000_CC6B (RTS)
- 
+
 	DEX		 ; X-- (consider the previous object)
 
 PRG000_CC37:
-	LDY Level_ObjectID,X	 ; Y = Object ID 
+	LDY Level_ObjectID,X	 ; Y = Object ID
 
-	LDA Object_AttrFlags,Y 
+	LDA Object_AttrFlags,Y
 	AND #OAT_BOUNCEOFFOTHERS
 	BEQ PRG000_CC66	 ; If OAT_BOUNCEOFFOTHERS is NOT set, jump to PRG000_CC66
 
-	LDA Objects_State,X 
+	LDA Objects_State,X
 	CMP #OBJSTATE_NORMAL
 	BNE PRG000_CC66	 ; If Object state is NOT Normal, jump to PRG000_CC66
- 
+
 	JSR Object_AnySprOffscreen
 	BNE PRG000_CC66	 ; If any sprite of object is off-screen, jump to PRG000_CC66
- 
-	JSR Object_CalcBoundBox 
-	JSR ObjectObject_Intersect 
+
+	JSR Object_CalcBoundBox
+	JSR ObjectObject_Intersect
 	BCC PRG000_CC66	 ; If object did not intersect with prior object, jump to PRG000_CC66
- 
+
 	LDY SlotIndexBackup	 ; Y = object slot index
- 
-	LDA Objects_SpriteX,X 
-	CMP Objects_SpriteX,Y 
-	LDY #$00	 ; Y = 0 
-	BLT PRG000_CC62	 ; If this object's sprite X < the OTHER object's sprite X, jump to PRG000_CC62 
+
+	LDA Objects_SpriteX,X
+	CMP Objects_SpriteX,Y
+	LDY #$00	 ; Y = 0
+	BLT PRG000_CC62	 ; If this object's sprite X < the OTHER object's sprite X, jump to PRG000_CC62
 	LDY #$40	 ; Otherwise, Y = $40
 
 PRG000_CC62:
-	TYA 
-	STA Objects_FlipBits,X	 ; Object turns around if it hit another object 
+	TYA
+	STA Objects_FlipBits,X	 ; Object turns around if it hit another object
 
 PRG000_CC66:
-	DEX		 ; X-- 
-	BPL PRG000_CC37	 ; While X >= 0, loop! 
+	DEX		 ; X--
+	BPL PRG000_CC37	 ; While X >= 0, loop!
 
-	LDX SlotIndexBackup		 ; X = object slot index 
+	LDX SlotIndexBackup		 ; X = object slot index
 
 PRG000_CC6B:
 	RTS		 ; Return
@@ -2625,137 +2625,137 @@ PRG000_CC6B:
 ObjKickXvel:	.byte $18, <-$18
 
 ObjState_Kicked:
-	LDA Player_HaltGame 
+	LDA Player_HaltGame
 	BEQ PRG000_CC75	 ; If gameplay is NOT halted, jump to PRG000_CC75
- 
-	JMP PRG000_CD46	 ; Jump to PRG000_CD46 
+
+	JMP PRG000_CD46	 ; Jump to PRG000_CD46
 
 PRG000_CC75:
 	JSR Object_Move	 ; Perform standard object movements
 	JSR Object_DetermineHorzVis	 ; Determine horizontally visible sprites
- 
-	LDA Objects_DetStat,X 
-	AND #$04 
+
+	LDA Objects_DetStat,X
+	AND #$04
 	BEQ PRG000_CC94	 ; If object has hit ground, jump to PRG000_CC94
- 
-	LDA Objects_XVel,X 
+
+	LDA Objects_XVel,X
 	BNE PRG000_CC8D	 ; If object is moving horizontally, jump to PRG000_CC8D
- 
+
 	; Object not moving horizontally...
-	JSR Level_ObjCalcXDiffs 
-	LDA ObjKickXvel,Y 
-	STA Objects_XVel,X	 ; Set X velocity based on which side of Player the object is on 
+	JSR Level_ObjCalcXDiffs
+	LDA ObjKickXvel,Y
+	STA Objects_XVel,X	 ; Set X velocity based on which side of Player the object is on
 
 PRG000_CC8D:
 	JSR Object_HitGround	; Align to floor
- 
+
 	; Y Velocity = $0C (begin drop)
-	LDA #$0c 
-	STA Objects_YVel,X 
+	LDA #$0c
+	STA Objects_YVel,X
 
 PRG000_CC94:
-	LDA Objects_DetStat,X 
-	AND #$03 
+	LDA Objects_DetStat,X
+	AND #$03
 	BNE PRG000_CC9D	 ; If object has hit a wall, jump to PRG000_CC9D
- 
+
 	JMP PRG000_CCF7	 ; Otherwise, jump to PRG000_CCF7
 
 PRG000_CC9D:
-	LDA a:Objects_SpriteX,X 
+	LDA a:Objects_SpriteX,X
 
-	LDY Objects_XVel,X 
+	LDY Objects_XVel,X
 	BPL PRG000_CCAA	 ; If object is not moving to the left, jump to PRG000_CCAA
- 
-	CMP #$06 
-	BLT PRG000_CCE2	 ; If object's sprite X < 6, jump to PRG000_CCAA 
-	BGE PRG000_CCAE	 ; Otherwise, jump to PRG000_CCAE 
+
+	CMP #$06
+	BLT PRG000_CCE2	 ; If object's sprite X < 6, jump to PRG000_CCAA
+	BGE PRG000_CCAE	 ; Otherwise, jump to PRG000_CCAE
 
 PRG000_CCAA:
-	CMP #228 
+	CMP #228
 	BGE PRG000_CCE2	 ; If object's sprite X < 228, jump to PRG000_CCE2
 
 PRG000_CCAE:
 	JSR Object_AnySprOffscreen
 	BNE PRG000_CCE2	 ; If any sprite is off-screen, jump to PRG000_CCE2
- 
-	LDA PAGE_A000 
-	PHA		 ; Save current PAGE_A000 page 
+
+	LDA PAGE_A000
+	PHA		 ; Save current PAGE_A000 page
 
 	; Set page @ A000 to 8
-	LDA #$08 
-	STA PAGE_A000 
+	LDA #$08
+	STA PAGE_A000
 	JSR PRGROM_Change_A000
- 
-	; Temp_Var13 = Object tile detect Y Hi
-	LDA ObjTile_DetYHi 
-	STA Temp_Var13	 
 
 	; Temp_Var13 = Object tile detect Y Hi
-	LDA ObjTile_DetYLo 
-	STA Temp_Var14	 
+	LDA ObjTile_DetYHi
+	STA Temp_Var13
+
+	; Temp_Var13 = Object tile detect Y Hi
+	LDA ObjTile_DetYLo
+	STA Temp_Var14
 
 	; Temp_Var15 = Object tile detect X Hi
-	LDA ObjTile_DetXHi 
-	STA Temp_Var15	 
+	LDA ObjTile_DetXHi
+	STA Temp_Var15
 
 	; Temp_Var16 = Object tile detect X Lo
-	LDA ObjTile_DetXLo 
-	STA Temp_Var16	 
+	LDA ObjTile_DetXLo
+	STA Temp_Var16
 
 	; Handle object bouncing off blocks
 	LDA Object_TileWall2
-	JSR Object_BumpOffBlocks 
+	JSR Object_BumpOffBlocks
 
 	LDX SlotIndexBackup	 ; X = object slot index
- 
+
 	; Restore page @ A000 to previous value
-	PLA 
-	STA PAGE_A000 
-	JSR PRGROM_Change_A000 
+	PLA
+	STA PAGE_A000
+	JSR PRGROM_Change_A000
 
 PRG000_CCE2:
 
 	; Play bump sound
-	LDA Sound_QPlayer 
-	ORA #SND_PLAYERBUMP 
+	LDA Sound_QPlayer
+	ORA #SND_PLAYERBUMP
 	STA Sound_QPlayer
- 
-	LDA Level_ObjectID,X 
-	CMP #OBJ_ICEBLOCK 
+
+	LDA Level_ObjectID,X
+	CMP #OBJ_ICEBLOCK
 	BNE PRG000_CCF4	 ; If this object is NOT an Ice Block, jump to PRG000_CCF4
- 
-	JMP PRG000_D295	 ; Jump to PRG000_D295 (set Ice Block to "killed" state) 
+
+	JMP PRG000_D295	 ; Jump to PRG000_D295 (set Ice Block to "killed" state)
 
 PRG000_CCF4:
 	JSR Object_AboutFace	 ; Bounced off block, turn around
 
-PRG000_CCF7: 
+PRG000_CCF7:
 	JSR Object_HandleBumpUnderneath	 ; Handle the kicked shelled object getting hit from underneath
- 
-	TXA 
+
+	TXA
 	CLC
-	ADC Counter_1 
-	LSR A 
+	ADC Counter_1
+	LSR A
 	BCC PRG000_CD46	 ; Semi-randomly jump to PRG000_CD46
- 
-	JSR ObjectToObject_HitTest 
+
+	JSR ObjectToObject_HitTest
 	BCC PRG000_CD46	 ; If object has not hit another object, jump to PRG000_CD46
 
-	; Play object-to-object collision sound 
-	LDA Sound_QPlayer 
-	ORA #SND_PLAYERKICK 
+	; Play object-to-object collision sound
+	LDA Sound_QPlayer
+	ORA #SND_PLAYERKICK
 	STA Sound_QPlayer
- 
+
 	; Knock object in same general direction as the kicked shell object
-	LDA Objects_XVel,X 
-	ASL A 
+	LDA Objects_XVel,X
+	ASL A
 	LDA #$10	 ; A = $10
-	BCC PRG000_CD17 
+	BCC PRG000_CD17
 	LDA #<-$10	 ; A = -$10
-PRG000_CD17: 
+PRG000_CD17:
 	STA Objects_XVel,Y
- 
-	LDA Objects_State,Y 
+
+	LDA Objects_State,Y
 	CMP #OBJSTATE_KICKED
 	BNE PRG000_CD36	 ; If the impacted object's state is not Kicked, jump to PRG000_CD36
 
@@ -2767,10 +2767,10 @@ PRG000_CD17:
 
 	; Set X Velocity of our kicked object in the direction of the impacted object
 	LDA Objects_XVel,Y
-	ASL A	
+	ASL A
 	LDA #$10
 	BCS PRG000_CD34
-	LDA #<-$10	
+	LDA #<-$10
 PRG000_CD34:
 	STA Objects_XVel,X
 
@@ -2780,7 +2780,7 @@ PRG000_CD36:
 	JSR ObjectKill_SetShellKillVars	 ; Kill the impacted object and set ShellKill variables
 
 	LDX SlotIndexBackup		 ; X = object slot index (our kicked object)
-	LDA Objects_KillTally,X	
+	LDA Objects_KillTally,X
 	INC Objects_KillTally,X		; Increase our kicked object's kill tally...
 	JSR Score_Get100PlusPtsY	; Get points by the kill tally!  (Incidentally, Score_Get100PlusPts would work too)
 
@@ -2799,13 +2799,13 @@ PRG000_CD46:
 	BGE PRG000_CD80	 ; If the object ID >= OBJ_BIGGREENTROOPA (why not use Objects_IsGiant?!), jump to PRG000_CD80
 
 	LDA Level_NoStopCnt
-	LSR A	
+	LSR A
 	AND #$03
 	TAY		 ; Y = 0 to 3, by counter
 
 	LDA Objects_FlipBits,X
 	AND #<~SPR_HFLIP		; Keep all FlipBits except horizontal flips
-	ORA ObjShell_AnimFlipBits,Y	 
+	ORA ObjShell_AnimFlipBits,Y
 	STA Objects_FlipBits,X	 ; Apply flip as appropriate
 
 	; Set animation frame as appropriate
@@ -2826,7 +2826,7 @@ PRG000_CD77:
 	; Ice block only...
 
 	LDA Counter_1
-	LSR A	
+	LSR A
 	STA Objects_ColorCycle,X	 ; Cycle colors
 	JMP Object_ShakeAndDrawMirrored	 ; Draw sprite and don't come back!
 
@@ -2848,11 +2848,11 @@ ObjectKill_SetShellKillVars:
 	STA ShellKillFlash_Y
 	LDA Objects_X,X
 	STA ShellKillFlash_X
-	LDA #$0a	 
+	LDA #$0a
 	STA ShellKillFlash_Cnt
 
 	RTS		 ; Return
-	
+
 	; Kicked shell object animation frames and flips
 ObjShell_AnimFlipBits:	.byte $00, $00, $00, $40
 ObjShell_AnimFrame:	.byte $04, $06, $05, $06
@@ -2886,14 +2886,14 @@ BrickBust_MoveOver:
 
 ; FIXME: Anybody want to claim this?
 ; Appears to override what goes in to Object_BumpBlocks
-; $CDCF 
+; $CDCF
 	LDA Object_TileWall2
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Object_BumpBlocks
 ;
 ; Provides an arbitrary object with the ability to hit objects
-; with its "head"; used by Boom Boom, though Boom Boom never 
+; with its "head"; used by Boom Boom, though Boom Boom never
 ; gets a chance to employ that in the game...
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; $CDD2
@@ -2902,26 +2902,26 @@ Object_BumpBlocks:
 
 	; Backup current PAGE_A000 bank
 	LDA PAGE_A000
-	PHA	
+	PHA
 
 	; Change page @ A000 to 8
 	LDA #$08
 	STA PAGE_A000
 	JSR PRGROM_Change_A000
 
-	; Transfer tile detection 
+	; Transfer tile detection
 
 	LDA ObjTile_DetYHi
-	STA Temp_Var13	
+	STA Temp_Var13
 
 	LDA ObjTile_DetYLo
-	STA Temp_Var14	
+	STA Temp_Var14
 
 	LDA ObjTile_DetXHi
-	STA Temp_Var15	
+	STA Temp_Var15
 
 	LDA ObjTile_DetXLo
-	STA Temp_Var16	
+	STA Temp_Var16
 
 	; Send detected tile over to check if object has hit any blocks
 	; that respond to being hit with head
@@ -2956,22 +2956,22 @@ ObjectHoldXHiOff:	.byte $00,  $FF, $00,  $FF, $00, $00,  $FF, $00,  $FF, $00, $0
 ObjectToObject_HitXVel:	.byte <-$08, $08
 
 ObjState_Held:
-	LDA Player_IsDying 
+	LDA Player_IsDying
 	BEQ PRG000_CE28	 ; If Player is NOT dying, jump to PRG000_CE28
- 
-	JMP PRG000_CF98	 ; Jump to PRG000_CF98 (just draw held object) 
+
+	JMP PRG000_CF98	 ; Jump to PRG000_CF98 (just draw held object)
 
 PRG000_CE28:
-	JSR Object_ShellDoWakeUp ; Wake up while Player is holding object... 
-	BIT Pad_Holding 
-	BVC Player_KickObject	 ; If Player is NOT holding B button, jump to Player_KickObject  
+	JSR Object_ShellDoWakeUp ; Wake up while Player is holding object...
+	BIT Pad_Holding
+	BVC Player_KickObject	 ; If Player is NOT holding B button, jump to Player_KickObject
 
 PRG000_CE2F:
 	JMP PRG000_CEEF	 ; Jump to PRG000_CEEF
 
 
 Player_KickObject:
-	LDA Level_PipeMove	 
+	LDA Level_PipeMove
 	BNE PRG000_CE2F	 ; If Player is moving through pipes, jump to PRG000_CE2F (PRG000_CEEF)
 
 	; Play kick sound
@@ -2992,7 +2992,7 @@ Player_KickObject:
 	CMP #OBJ_BOBOMBEXPLODE
 	BEQ PRG000_CE54	 ; If this is a Bob-omb ready to explode, jump to PRG000_CE54
 
-	CMP #OBJ_BOBOMB	 
+	CMP #OBJ_BOBOMB
 	BNE PRG000_CE79	 ; If this is NOT a Bob-omb, jump to PRG000_CE79
 
 PRG000_CE54:
@@ -3030,8 +3030,8 @@ PRG000_CE79:
 
 	; Anything besides a Bob-omb...
 
-	; Clear Objects_KillTally 
-	LDA #$00	
+	; Clear Objects_KillTally
+	LDA #$00
 	STA Objects_KillTally,X
 
 	LDA Objects_State,X
@@ -3057,7 +3057,7 @@ PRG000_CE94:
 	JSR Object_WorldDetectN1 ; Detect against world
 
 	LDA Objects_DetStat,X
-	AND #$03	
+	AND #$03
 	BEQ PRG000_CEB4	 ; If object has not hit a wall, jump to PRG000_CEB4
 
 	; KICK OBJECT INTO WALL LOGIC
@@ -3138,7 +3138,7 @@ PRG000_CEE8:
 
 PRG000_CEEF:
 
-	; Player moving through pipes... 
+	; Player moving through pipes...
 
 	; Player keeps on holding through the pipes!!
 	LDA #$01
@@ -3177,7 +3177,7 @@ PRG000_CF0E:
 	INY
 	INY
 
-	CMP #$05	
+	CMP #$05
 	BLT PRG000_CF1A	 ; If less than 5 ticks remaining on the "pipe face", jump to PRG000_CF1A
 
 	INY		 ; Otherwise, Y++
@@ -3194,11 +3194,11 @@ PRG000_CF1F:
 	LDA Player_X
 	CLC
 	ADC ObjectHoldXOff,Y
-	STA Objects_X,X	
+	STA Objects_X,X
 
-	LDA Player_XHi	
+	LDA Player_XHi
 	ADC ObjectHoldXHiOff,Y
-	STA Objects_XHi,X	
+	STA Objects_XHi,X
 
 	LDA #<-$02	; A = -$02
 
@@ -3326,12 +3326,12 @@ ObjState_Killed:
 	AND #%00001111
 	BEQ Object_DoKillAction	 ; If kill action is zero, jump to Object_DoKillAction (i.e. do NOT set frame 2)
 
-	CPX #$05	 
+	CPX #$05
 	BGE Object_DoKillAction	 ; If object slot >= 5 (i.e. not a "general" objects), jump to Object_DoKillAction (i.e. do NOT set frame 2)
 
 	PHA		 ; Save kill action
 
-	LDA #$02	 
+	LDA #$02
 	STA Objects_Frame,X	 ; Set frame to 2
 
 	PLA		 ; Restore kill action
@@ -3372,14 +3372,14 @@ Object_PoofDie:
 	LDA #OBJSTATE_POOFDEATH
 	STA Objects_State,X
 
-	; Set timer to $1F 
+	; Set timer to $1F
 	LDA #$1f
 	STA Objects_Timer,X
- 
+
 	RTS		 ; Return
 
 Object_DrawAndMoveNotHalt:
-	JSR Object_ShakeAndDraw	
+	JSR Object_ShakeAndDraw
 	JMP Object_MoveNotHalted
 
 Object_DrawTallHFlipped:
@@ -3405,7 +3405,7 @@ Object_DoKilledAction:
 	LDA Objects_QSandCtr,X
 	BEQ PRG000_D045	 	; If object is not sinking in quicksand, jump to PRG000_D045
 
-	INC Objects_QSandCtr,X	; Objects_QSandCtr++ 
+	INC Objects_QSandCtr,X	; Objects_QSandCtr++
 
 	CMP #$90
 	BNE PRG000_D02E	 	; If Objects_QSandCtr <> $90, jump to PRG000_D02E
@@ -3421,7 +3421,7 @@ PRG000_D02E:
 
 	JSR Object_ApplyYVel_NoLimit	 ; Apply Y velocity
 
-	; Set sprite priority 
+	; Set sprite priority
 	LDA Objects_FlipBits,X
 	ORA #SPR_BEHINDBG
 	STA Objects_FlipBits,X
@@ -3477,7 +3477,7 @@ PRG000_D068:
 	JMP Object_SetDeadEmpty	 ; Jump to Object_SetDeadEmpty
 
 ObjState_Squashed:
-	LDA Objects_Timer3,X 
+	LDA Objects_Timer3,X
 	BEQ PRG000_D090	 ; If timer 3 is expired, jump to PRG000_D090
 
 	JSR Object_Move	 ; Perform standard object movements
@@ -3510,7 +3510,7 @@ PRG000_D090:
 Object_MaxFalls:
 	.byte OBJECT_MAXFALL, OBJECT_MAXFALLINWATER
 
-	; Gravity of object 
+	; Gravity of object
 Object_Gravity:
 	.byte OBJECT_FALLRATE, OBJECT_FALLRATEINWATER
 
@@ -3528,7 +3528,7 @@ Object_Move:
 	LDY Objects_InWater,X
 	BEQ PRG000_D0A9	 	; If object is not in water, jump to PRG000_D0A9
 
-	LDY Objects_State,X	
+	LDY Objects_State,X
 	CPY #OBJSTATE_NORMAL
 	BEQ PRG000_D0A9	 	; If object's state is Normal, jump to PRG000_D0A9
 
@@ -3560,7 +3560,7 @@ PRG000_D0A9:
 	CMP #OBJECT_MAXWATERUPWARD
 	BGE PRG000_D0CA	 ; If object's Y velocity is between OBJECT_MAXWATERUPWARD and 0, jump to PRG000_D0CA
 
-	LDA #OBJECT_MAXWATERUPWARD	 
+	LDA #OBJECT_MAXWATERUPWARD
 	STA Objects_YVel,X ; Otherwise, cut off velocity at OBJECT_MAXWATERUPWARD
 
 	BNE PRG000_D0CA	 ; Jump (technically always) to PRG000_D0CA (uhh... pointless, heh)
@@ -3582,34 +3582,34 @@ PRG000_D0CA:
 PRG000_D0DE:
 	RTS		 ; Return
 
-ObjectHeld_WakeUpDir:	.byte $40, $00 
+ObjectHeld_WakeUpDir:	.byte $40, $00
 
 	; Handle shelled object "waking up" from a shelled state, if timer 3 expired...
 Object_ShellDoWakeUp:
 
 	; If object is a Bob-omb, jump to PRG000_D0EC, otherwise jump to PRG000_D101
-	LDA Level_ObjectID,X	  
-	CMP #OBJ_BOBOMBEXPLODE 
-	BEQ PRG000_D0EC 
-	CMP #OBJ_BOBOMB 
+	LDA Level_ObjectID,X
+	CMP #OBJ_BOBOMBEXPLODE
+	BEQ PRG000_D0EC
+	CMP #OBJ_BOBOMB
 	BNE PRG000_D101
 
-PRG000_D0EC: 
+PRG000_D0EC:
 
 	; A Bob-omb only...
 
-	LDA Objects_Timer,X 
-	BNE PRG000_D0F9	 ; If timer is not expired, jump to PRG000_D0F9 
+	LDA Objects_Timer,X
+	BNE PRG000_D0F9	 ; If timer is not expired, jump to PRG000_D0F9
 
 	; Timer expired, change to state 2 (Normal)
 	LDA #OBJSTATE_NORMAL
-	STA Objects_State,X 
+	STA Objects_State,X
 	JMP BobOmb_Explode	 ; Jump to BobOmb_Explode and don't come back!
 
 PRG000_D0F9:
 	CMP #$40
 	BGE PRG000_D100	 ; If timer ticks >= $40, jump to PRG000_D100 (RTS)
- 
+
 	STA Objects_ColorCycle,X	 ; In the last timer ticks, flash colors!
 
 PRG000_D100:
@@ -3622,28 +3622,28 @@ PRG000_D101:
 	CMP #OBJ_ICEBLOCK
 	BNE PRG000_D120	 ; If object is NOT an Ice Block, jump to PRG000_D120
 
-	; Object is an ice block...  
+	; Object is an ice block...
 
-	LDA Objects_Timer3,X 
-	BNE PRG000_D10D	 ; If timer 3 is not expired, jump to PRG000_D10D 
+	LDA Objects_Timer3,X
+	BNE PRG000_D10D	 ; If timer 3 is not expired, jump to PRG000_D10D
 
-	; Timer 3 expired... 
+	; Timer 3 expired...
 
-	JMP Object_PoofDie	 ; Jump to Object_PoofDie (Set state to 8 ["Poof" Dying] and set timer) 
+	JMP Object_PoofDie	 ; Jump to Object_PoofDie (Set state to 8 ["Poof" Dying] and set timer)
 
 
 	; Basically from here to the RTS, color cycle the ice block as it begins to "melt"
 	; at different rates depending on where the timer is exactly...
 PRG000_D10D:
-	CMP #$60 
-	BGE PRG000_D11C	 ; If timer 3 ticks >= $60, jump to PRG000_D11C  
+	CMP #$60
+	BGE PRG000_D11C	 ; If timer 3 ticks >= $60, jump to PRG000_D11C
 
-	CMP #$30 
+	CMP #$30
 	BGE PRG000_D11B	 ; If timer 3 ticks >= $30, jump to PRG000_D11B
 
-	CMP #$10 
+	CMP #$10
 	BGE PRG000_D11A	 ; If timer 3 ticks >= $10, jump to PRG000_D11A
- 
+
 	LSR A
 
 PRG000_D11A:
@@ -3654,67 +3654,67 @@ PRG000_D11B:
 
 PRG000_D11C:
 	STA Objects_ColorCycle,X	 ; Set color cycle value
- 
+
 	RTS		 ; Return
 
 
 PRG000_D120:
 
-	; Object is not a Bob-omb and not an Ice Block... 
+	; Object is not a Bob-omb and not an Ice Block...
 
-	LDA Objects_Timer3,X 
-	BNE PRG000_D15A	 ; If timer 3 is not expired, jump to PRG000_D15A (RTS) 
+	LDA Objects_Timer3,X
+	BNE PRG000_D15A	 ; If timer 3 is not expired, jump to PRG000_D15A (RTS)
 
-	LDA Objects_State,X 
+	LDA Objects_State,X
 	CMP #OBJSTATE_HELD
 	BNE PRG000_D147	 ; If object is not currently being held, jump to PRG000_D147
 
-	; Object is being held... 
+	; Object is being held...
 
-	JSR Object_WorldDetectN1 
-	LDA Objects_DetStat,X 
-	BEQ PRG000_D147	 ; If held object did not impact anything, jump to PRG000_D147 
+	JSR Object_WorldDetectN1
+	LDA Objects_DetStat,X
+	BEQ PRG000_D147	 ; If held object did not impact anything, jump to PRG000_D147
 
 	; Held object impacted...
- 
+
 	; Get 100 points
-	LDA #$05 
+	LDA #$05
 	JSR Score_PopUp
 
 	; Set object state to Killed
 	LDA #OBJSTATE_KILLED
 	STA Objects_State,X
- 
+
 	; Set object Y velocity to -$40 (fly up after death)
-	LDA #<-$40 
+	LDA #<-$40
 	STA Objects_YVel,X
- 
+
 	; Halt horizontal movement
-	LDA #$00 
+	LDA #$00
 	STA Objects_XVel,X
- 
+
 	BEQ PRG000_D155	 ; Jump (technically always) to PRG000_D155
 
-PRG000_D147: 
+PRG000_D147:
 
 	; Held object did NOT impact... (time to wake up!)
 
 	; Set object state to Normal
 	LDA #OBJSTATE_NORMAL
 	STA Objects_State,X
- 
+
 	; Have object "wake up" towards Player!
-	JSR Level_ObjCalcXDiffs	 
-	LDA ObjectHeld_WakeUpDir,Y 
+	JSR Level_ObjCalcXDiffs
+	LDA ObjectHeld_WakeUpDir,Y
 	STA Objects_FlipBits,X
 
 PRG000_D155:
 
-	; Do NOT return to caller! 
-	PLA 
-	PLA 
+	; Do NOT return to caller!
+	PLA
+	PLA
 
-	JMP PRG000_CB5E	 ; Jump to PRG000_CB5E (essentially JSR Object_DeleteOffScreen) 
+	JMP PRG000_CB5E	 ; Jump to PRG000_CB5E (essentially JSR Object_DeleteOffScreen)
 
 PRG000_D15A:
 	RTS		 ; Return
@@ -3725,9 +3725,9 @@ PRG000_D15A:
 ;
 ; Object reverses travel and facing direction
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; $D15B 
+; $D15B
 Object_AboutFace:
-	LDA Objects_XVel,X	 
+	LDA Objects_XVel,X
 	JSR Negate
 	STA Objects_XVel,X	 ; Negate object's X velocity
 
@@ -3756,45 +3756,45 @@ PRG000_D16B:	.byte <-$08, $08
 Object_HandleBumpUnderneath:
 	JSR Object_AnySprOffscreen
 	BNE PRG000_D1C4	 ; If any sprite is off-screen, jump to PRG000_D1C4 (RTS)
- 
-	LDA Object_TileFeet2 
-	CMP #TILEA_BLOCKBUMP_CLEAR 
-	BNE Player_HitEnemy	 ; If object did not detect a block bump clear tile, jump to Player_HitEnemy 
+
+	LDA Object_TileFeet2
+	CMP #TILEA_BLOCKBUMP_CLEAR
+	BNE Player_HitEnemy	 ; If object did not detect a block bump clear tile, jump to Player_HitEnemy
 
 	; Object detected a block bump tile (object got bumped)
 
-	; Set Y Vel to -$30 (bounce dead) 
-	LDA #<-$30 
+	; Set Y Vel to -$30 (bounce dead)
+	LDA #<-$30
 	STA Objects_YVel,X
- 
-	JSR Level_ObjCalcXDiffs	; Detect which side object is on versus Player 
+
+	JSR Level_ObjCalcXDiffs	; Detect which side object is on versus Player
 
 	; Store proper X velocity
-	LDA PRG000_D16B,Y 
+	LDA PRG000_D16B,Y
 	STA Objects_XVel,X
 
-	; Vertically flip object 
+	; Vertically flip object
 	LDA #SPR_VFLIP
 	STA Objects_FlipBits,X
- 
-	LDY ObjGroupRel_Idx 
-	LDA ObjectGroup_Attributes3,Y 
+
+	LDY ObjGroupRel_Idx
+	LDA ObjectGroup_Attributes3,Y
 	AND #OA3_DIESHELLED
-	BNE PRG000_D19E	 ; If OA3_DIESHELLED is SET (object may use special routine), jump to PRG000_D19E 
+	BNE PRG000_D19E	 ; If OA3_DIESHELLED is SET (object may use special routine), jump to PRG000_D19E
 
 	; Object killed, get 100 pts
 
 	LDA #OBJSTATE_KILLED
-	STA Objects_State,X 
+	STA Objects_State,X
 
-	LDA #$00 
-	JMP Score_Get100PlusPts ; Jump to Score_Get100PlusPts and don't come back! 
+	LDA #$00
+	JMP Score_Get100PlusPts ; Jump to Score_Get100PlusPts and don't come back!
 
 PRG000_D19E:
-	LDA ObjGroupRel_Idx 
-	ASL A 
+	LDA ObjGroupRel_Idx
+	ASL A
 	TAY		 ; Y = 2-byte index into CollideJumpTable
- 
+
 
 	LDA ObjectGroup_CollideJumpTable+1,Y	 ; Get the CollideJumpTable upper byte
 	AND #%11111000
@@ -3808,16 +3808,16 @@ PRG000_D19E:
 	STA Level_ObjectID,X
 
 	; Get 100 pts
-	LDA #$00 
-	JSR Score_Get100PlusPts 
+	LDA #$00
+	JSR Score_Get100PlusPts
 
 PRG000_D1B7:
-	JMP Object_SetShellState	 ; Jump to Object_SetShellState ("dies" into shelled state) 
+	JMP Object_SetShellState	 ; Jump to Object_SetShellState ("dies" into shelled state)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Player_HitEnemy
 ;
-; General routine for how the object responds to a Player 
+; General routine for how the object responds to a Player
 ; colliding with it (good and bad)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; $D1BA
@@ -3866,7 +3866,7 @@ PRG000_D1DB:
 
 	LDA RandomN,X
 	AND #$1f	 ; Cap 0-31
-	ADC #<-$4C	 
+	ADC #<-$4C
 	STA Objects_YVel,X	 ; Object Y Vel = -$2D to -$4C
 
 	; Set object state to Killed
@@ -3897,7 +3897,7 @@ PRG000_D205:
 	; The only real apparent function here is that a fast-falling or grounded object
 	; will force into the "Hold, Kick, or Hurt Player" routine without doing the
 	; the other checks, but with the Player being on the ground, it's hard for him
-	; not to get hit anyway.  As such, I can't really for sure tell what the 
+	; not to get hit anyway.  As such, I can't really for sure tell what the
 	; intention of this code was really supposed to be??
 
 	; Otherwise it is PRG000_D218
@@ -3908,7 +3908,7 @@ PRG000_D205:
 	; Player is on solid ground...
 
 	LDA Objects_YVel,X
-	CMP #$0a	 
+	CMP #$0a
 	BLS PRG000_D212	 ; If Object's Y velocity < $0A, jump to PRG000_D212
 PRG000_D20F:
 	JMP Object_HoldKickOrHurtPlayer	 ; Otherwise, jump to Object_HoldKickOrHurtPlayer
@@ -3918,7 +3918,7 @@ PRG000_D212:
 	; Object's Y velocity < $0A ...
 
 	LDA Objects_DetStat,X
-	AND #$04	 
+	AND #$04
 	BNE PRG000_D20F	 ; If object has hit ground, jump to PRG000_D20F (to Object_HoldKickOrHurtPlayer)
 
 PRG000_D218:
@@ -3934,15 +3934,15 @@ PRG000_D218:
 	; 'Y' represents the "height" of the object for collision detection
 	; The way to think about this is we're going to reference Objects_Y
 	; which in SMB3 is generally the "top" of the enemy, or in any case
-	; point at which "stomp" should occur.  (Of note, Koopa Troopa's 
-	; "top" is their shell; the head is drawn as a negative coordinate 
+	; point at which "stomp" should occur.  (Of note, Koopa Troopa's
+	; "top" is their shell; the head is drawn as a negative coordinate
 	; from that point.)  The judgement is based on Player_Y, which is the
 	; "top" of the Player (note for "Super" Mario, that's near the hat,
 	; but for "small" Mario, that's roughly 16 pixels above.)
 	;
 	; G = Goomba (for example)
 	;
-	; . <-- This would be 19 (for this example) pixels above 
+	; . <-- This would be 19 (for this example) pixels above
 	; |
 	; G <-- top of 'Goomba' is Objects_Y
 	;
@@ -3980,7 +3980,7 @@ PRG000_D22E:
 	PHP		 ; Save CPU state (the comparison)
 
 	LSR Temp_Var1		; Restore the carry bit
-	LDA Objects_YHi,X	
+	LDA Objects_YHi,X
 	SBC #$00	 	; Apply the carry bit to the Objects_YHi as needed for the height subtraction
 
 	PLP		 ; Restore CPU state (the comparison)
@@ -3988,7 +3988,7 @@ PRG000_D22E:
 	SBC Player_YHi		; Get the difference against the Player_YHi
 	BMI PRG000_D20F	 	; If negative (Player_YHi > Objects_YHi, Player is lower), jump to PRG000_D20F (Object_HoldKickOrHurtPlayer)
 
-	LDA Player_YVel	
+	LDA Player_YVel
 	BPL PRG000_D253	 	; If Player's Y Velocity >= 0 (stationary or moving downward), jump to PRG000_D253
 
 	; Player is moving upward...
@@ -3998,7 +3998,7 @@ PRG000_D22E:
 
 	; Player moving upward, not flying...
 
-	LDA Kill_Tally	 
+	LDA Kill_Tally
 	BEQ PRG000_D20F	 	; If Player hasn't killed anything yet, jump to PRG000_D20F (Object_HoldKickOrHurtPlayer)
 
 PRG000_D253:
@@ -4012,7 +4012,7 @@ PRG000_D253:
 
 	LDY ObjGroupRel_Idx	 ; Y = group relative index
 	LDA ObjectGroup_Attributes3,Y	 ; Get object's attribute 3 setting
-	AND #OA3_NOTSTOMPABLE	 
+	AND #OA3_NOTSTOMPABLE
 	BEQ PRG000_D272	 ; If OA3_NOTSTOMPABLE NOT set (Object is stompable), jump to PRG000_D272
 
 PRG000_D267:
@@ -4031,7 +4031,7 @@ PRG000_D272:
 
 	LDY ObjGroupRel_Idx	 ; Y = group relative index
 	LDA ObjectGroup_Attributes2,Y	 ; Get object attribute set 2
-	AND #OA2_STOMPDONTCARE	 
+	AND #OA2_STOMPDONTCARE
 	BNE PRG000_D2B3	 	; If OA2_STOMPDONTCARE is set (object is indifferent about stomping), jump to PRG000_D2B3 (RTS)
 
 	; Attribute set 2 bit 2 NOT set... (object cares about being stomped)
@@ -4080,7 +4080,7 @@ PRG000_D2A2:
 
 	; Enemy is in a shell...
 
-	LDA Kill_Tally	 
+	LDA Kill_Tally
 	INC Kill_Tally	 ; Use Kill_Tally +1
 	JSR Score_Get100PlusPts	 ; Get points for the kick
 	JSR Player_KickObject	 ; Player kicks the enemy!
@@ -4096,7 +4096,7 @@ PRG000_D2B3:
 PRG000_D2B4:
 
 	; Set timer 2 to 8
-	LDA #$08	 
+	LDA #$08
 	STA Objects_Timer2,X
 
 	; Set Player's Y velocity to -$40 (bounce!)
@@ -4127,8 +4127,8 @@ PRG000_D2B4:
 	; In this case, Kill_Tally will be boosted by 4 (+1) instead of just +1
 	LDA Kill_Tally
 	CLC
-	ADC #$04	
-	BNE PRG000_D2E4	
+	ADC #$04
+	BNE PRG000_D2E4
 
 PRG000_D2E1:
 	LDA Kill_Tally	 ; Otherwise, just get Kill_Tally
@@ -4157,7 +4157,7 @@ PRG000_D2E4:
 PRG000_D301:
 	LDY ObjGroupRel_Idx	 ; Y = object group relative index
 	LDA ObjectGroup_Attributes2,Y	 ; Get object attributes set 2
-	AND #OA2_NOSHELLORSQUASH	 
+	AND #OA2_NOSHELLORSQUASH
 	BEQ PRG000_D323	 	; If OA2_NOSHELLORSQUASH is NOT set (shelled enemy), jump to PRG000_D323
 
 	; Cancel the "Squish" sound, use the "kick" sound instead!
@@ -4254,7 +4254,7 @@ PRG000_D373:
 
 	; Object and Player are moving in the same horizontal direction...
 
-	JSR Level_ObjCalcXDiffs	
+	JSR Level_ObjCalcXDiffs
 	CPY Temp_Var1
 	BNE PRG000_D39F	 ; If Player is moving away from object, jump to PRG000_D39F
 	BEQ PRG000_D39C	 ; Otherwise, jump to PRG000_D39C
@@ -4270,7 +4270,7 @@ PRG000_D382:
 
 	LDA Objects_FlipBits,X
 	AND #<(~SPR_HFLIP)	 ; Clear horizontal flip
-	DEY		 
+	DEY
 	BEQ PRG000_D399
 	ORA #SPR_HFLIP	 ; Set horizontal flip
 PRG000_D399:
@@ -4307,7 +4307,7 @@ ObjState_Initializing:
 	STA Temp_Var1
 	LDA ObjectGroup_InitJumpTable+1,Y
 	STA Temp_Var2
-	JMP (Temp_Var1)	 ; Dynamically jump to object's init routine 
+	JMP (Temp_Var1)	 ; Dynamically jump to object's init routine
 
 	; Set object's palette value
 ; $D3BC
@@ -4346,7 +4346,7 @@ Object_DeleteOffScreen_N2:
 
 	; $D3E0
 Object_DeleteOffScreen:
-	LDA Objects_UseShortHTest,X	 
+	LDA Objects_UseShortHTest,X
 	BEQ PRG000_D3ED	 ; If object wants to use "short" horizontal test, jump to PRG000_D3ED
 
 	LDA Objects_SprHVis,X
@@ -4358,7 +4358,7 @@ PRG000_D3ED:
 	LDA #$00	 ; A = 0
 
 PRG000_D3EF:
-	STA Temp_Var1	 ; Temp_Var1 = 0, 2, or 4 
+	STA Temp_Var1	 ; Temp_Var1 = 0, 2, or 4
 
 	JSR Object_AnySprOffscreen
 	BEQ PRG000_D463	 ; If any sprites are off-screen, jump to PRG000_D463
@@ -4370,15 +4370,15 @@ PRG000_D3EF:
 	; LEVEL NOT VERTICAL
 
 	LDA Objects_YHi,X
-	CMP #$02	 
+	CMP #$02
 	BPL Object_Delete	 ; If object Y Hi >= 2 (way off screen), jump to Object_Delete
 
 	; Semi-randomly jump to PRG000_D463 (RTS)
 	; That is, only occasionally actually do the off-screen check
 	; Keeps down on CPU cycles spent wondering about the object
-	TXA		 
+	TXA
 	CLC
-	ADC Counter_1	
+	ADC Counter_1
 	LSR A		 ; A = (object index + Counter_1) >> 1
 	BCS PRG000_D463	 ; If carry set, jump to PRG000_D463 (RTS)
 
@@ -4397,37 +4397,37 @@ PRG000_D3EF:
 	CMP Objects_X,X	 ; Compare to object X
 	PHP		 	; Save CPU state
 
-	LDA Horz_Scroll_Hi	 
-	LSR Temp_Var1		 
+	LDA Horz_Scroll_Hi
+	LSR Temp_Var1
 	ADC PRG000_D3D2,Y	 ; Add high part of offset
 
 	PLP		 	; Restore CPU state
 
-	SBC Objects_XHi,X	 
+	SBC Objects_XHi,X
 	STA Temp_Var1		 ; Temp_Var1 is X Hi difference
 
 	LDY Temp_Var2		 ; Y = Temp_Var2
 	BEQ PRG000_D42E	 	; If zero, jump to PRG000_D42E
 
-	EOR #$80	 	
+	EOR #$80
 	STA Temp_Var1		; Temp_Var1 ^= $80
 
 PRG000_D42E:
-	LDA Temp_Var1	
+	LDA Temp_Var1
 	BPL PRG000_D463	 ; If positive, jump to PRG000_D463 (RTS)
 
 	; Deletes object, marks it so it will reappear next time it comes on-screen
 Object_Delete:
 	LDA Level_ObjectID,X
 
-	; If object ID is OBJ_FIRECHOMP, OBJ_CHAINCHOMPFREE, OBJ_BLOOPERCHILDSHOOT, 
-	; OBJ_BLOOPERWITHKIDS, or OBJ_FIRESNAKE, jump to PRG000_D449	
+	; If object ID is OBJ_FIRECHOMP, OBJ_CHAINCHOMPFREE, OBJ_BLOOPERCHILDSHOOT,
+	; OBJ_BLOOPERWITHKIDS, or OBJ_FIRESNAKE, jump to PRG000_D449
 	; These objects are hardcoded to release their X/Y Buffer allocations!
 	CMP #OBJ_FIRECHOMP
 	BEQ PRG000_D449
 
-	CMP #OBJ_CHAINCHOMPFREE	
-	BEQ PRG000_D449	
+	CMP #OBJ_CHAINCHOMPFREE
+	BEQ PRG000_D449
 
 	CMP #OBJ_BLOOPERCHILDSHOOT
 	BEQ PRG000_D449
@@ -4436,7 +4436,7 @@ Object_Delete:
 	BEQ PRG000_D449
 
 	CMP #OBJ_FIRESNAKE
-	BNE Object_SetDeadAndNotSpawned	 
+	BNE Object_SetDeadAndNotSpawned
 
 PRG000_D449:
 
@@ -4457,7 +4457,7 @@ Object_SetDeadAndNotSpawned:
 	AND #$7f
 	STA Level_ObjectsSpawned,Y
 
-Object_SetDeadEmpty: 
+Object_SetDeadEmpty:
 	; Mark object as dead/empty
 	LDA #OBJSTATE_DEADEMPTY
 	STA Objects_State,X
@@ -4470,7 +4470,7 @@ PRG000_D464:
 	; LEVEL IS VERTICAL
 
 	LDA Counter_1
-	LSR A		 
+	LSR A
 	BCS PRG000_D463	 ; Every other tick, jump to PRG000_D463 (RTS)
 
 	AND #$01
@@ -4488,27 +4488,27 @@ PRG000_D479:
 	PHP		 ; Save CPU state
 
 	LDA Level_VertScrollH
-	LSR Temp_Var1	
+	LSR Temp_Var1
 	ADC PRG000_D3CA,Y
 
 	PLP		 ; Restore CPU state
 
 	SBC Objects_YHi,X
-	STA Temp_Var1	
-	LDY Temp_Var2	
-	BEQ PRG000_D48F	 
+	STA Temp_Var1
+	LDY Temp_Var2
+	BEQ PRG000_D48F
 
-	EOR #$80	
-	STA Temp_Var1	
+	EOR #$80
+	STA Temp_Var1
 
 PRG000_D48F:
 	LDA Temp_Var1
-	BPL PRG000_D463	
-	BMI Object_Delete	
-	BPL PRG000_D497	 
+	BPL PRG000_D463
+	BMI Object_Delete
+	BPL PRG000_D497
 
 PRG000_D497:
-	BEQ PRG000_D479	
+	BEQ PRG000_D479
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -4532,9 +4532,9 @@ Level_PrepareNewObject:
 	STA Objects_XVel,X
 	STA Objects_YVel,X
 	STA Objects_FlipBits,X
-	STA Objects_Frame,X	
+	STA Objects_Frame,X
 	STA Objects_ColorCycle,X
-	STA Objects_DetStat,X	
+	STA Objects_DetStat,X
 
 	CPX #$06
 	BGE PRG000_D4C8	 ; If using slot index >= 6, jump to PRG000_D4C8 (skip variables available only to slots 0 to 5)
@@ -4557,8 +4557,8 @@ PRG000_D4C8:
 	STA Objects_Var7,X
 	STA Objects_Var5,X
 	STA Objects_Var4,X
-	STA Objects_Var3,X	
-	STA Objects_Var6,X	 
+	STA Objects_Var3,X
+	STA Objects_Var6,X
 	STA Objects_TargetingXVal,X
 	STA Objects_TargetingYVal,X
 	STA Objects_IsGiant,X
@@ -4584,7 +4584,7 @@ ObjState_Normal:
 
 Object_DoNormal:
 	LDA ObjGroupRel_Idx
-	ASL A		 
+	ASL A
 	TAY		 ; Y = object's group relative index * 2 (2 byte index for jump table)
 
 	; Get jump address specific to this object
@@ -4592,18 +4592,18 @@ Object_DoNormal:
 	STA Temp_Var1
 	LDA ObjectGroup_NormalJumpTable+1,Y
 	STA Temp_Var2
-	JMP (Temp_Var1)	 ; Dynamically jump to object's "normal" routine 
+	JMP (Temp_Var1)	 ; Dynamically jump to object's "normal" routine
 
 
 Object_DoHaltedAction:
 
 	; Gameplay is halted, determine what needs to happen with this object...
 
-	LDY ObjGroupRel_Idx	 ; Y = group relative index 
+	LDY ObjGroupRel_Idx	 ; Y = group relative index
 
 	LDA ObjectGroup_Attributes3,Y	; Get attribute set 3 bits
 	AND #OA3_HALT_MASK 		; Keep only the lowest 4
-	JSR DynJump	 
+	JSR DynJump
 
 	; WARNING: Read comment; some of these are specific to object banks!
 
@@ -4719,7 +4719,7 @@ Object_ShakeAndCalcSprite:
 	STA Temp_Var1		; Also -> Temp_Var1
 
 	; This is the object "shakin' awake" routine!  (Enemies in shell etc.)
- 
+
 	SEC		 ; Set carry (remember, this is the default for not applying carry to subtraction)
 
 	LDA Objects_Timer4,X
@@ -4749,7 +4749,7 @@ PRG000_D5A0:
 	BEQ PRG000_D5BC	 	; If Objects_ColorCycle = 0, jump to PRG000_D5BC
 
 	DEC Objects_ColorCycle,X	; Objects_ColorCycle--
-	AND #$03	 
+	AND #$03
 	BPL PRG000_D5BF	 	; Jump (technically always) to PRG000_D5BF
 
 PRG000_D5BC:
@@ -4766,22 +4766,22 @@ PRG000_D5BF:
 
 	; Each "frame" value moves up two bytes to the next pair
 	LDA Objects_Frame,X
-	ASL A	
+	ASL A
 	STA Temp_Var6		; Temp_Var6 = Objects_Frame << 1
 
 	LDA ObjectGroup_PatternStarts,Y
 	CLC
-	ADC Temp_Var6	
+	ADC Temp_Var6
 	STA Temp_Var6		; Temp_Var6 += ObjectGroup_PatternStarts[Y] (set base tile index)
 
-	TAX		 	; -> 'X' 
+	TAX		 	; -> 'X'
 
 	LDY SlotIndexBackup	; Y = object slot index
 
 	LDA Object_SprRAM,Y
-	STA Temp_Var7		; Temp_Var7 = Object_SprRAM[Y] 
+	STA Temp_Var7		; Temp_Var7 = Object_SprRAM[Y]
 
-	TAY		 	; -> 'Y' 
+	TAY		 	; -> 'Y'
 
 	RTS		 ; Return
 
@@ -4808,7 +4808,7 @@ Object_ShakeAndDrawMirrored:
 
 	; Keep all attributes except horizontal flip
 	LDA Sprite_RAM+$02,Y
-	AND #%10111111	 
+	AND #%10111111
 	STA Sprite_RAM+$02,Y
 
 	; Flip opposite sprite
@@ -4847,9 +4847,9 @@ Object_Draw16x32Sprite:
 	LDX SlotIndexBackup	; X = object slot index
 
 	LDA Objects_Frame,X
-	ASL A		 
+	ASL A
 	CLC
-	ADC Temp_Var6	
+	ADC Temp_Var6
 	STA Temp_Var6	 ; Temp_Var6 += object's frame
 	TAX		 ; -> 'X'
 
@@ -4869,7 +4869,7 @@ PRG000_D62D:
 	TYA
 	CLC
 	ADC #$08
-	TAY	
+	TAY
 
 	LDX Temp_Var6	 ; X = Temp_Var6 (starting tile)
 
@@ -4906,7 +4906,7 @@ Object_DrawWide:
 	; Calculate offset into the ObjectGroup_PatternSets table
 	LDA Objects_Frame,X
 	CLC
-	ADC Temp_Var6	
+	ADC Temp_Var6
 	STA Temp_Var6		; Temp_Var6 += object's frame
 	TAX		 	; -> 'X'
 	JSR Object_Draw24x16Sprite	; Draw wide sprite
@@ -4917,12 +4917,12 @@ Object_DrawWide:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Object_ToggleFrameBySpd
 ;
-; Sets object's frame alternating 0 or 1 at a rate which 
+; Sets object's frame alternating 0 or 1 at a rate which
 ; increases in speed (X velocity)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; $D660
 Object_ToggleFrameBySpd:
-	LDA Objects_XVel,X	 
+	LDA Objects_XVel,X
 	BNE PRG000_D665	 ; If object is moving horizontally, jump to PRG000_D665
 
 	; Otherwise, do nothing
@@ -4931,28 +4931,28 @@ Object_ToggleFrameBySpd:
 PRG000_D665:
 
 	; Absolute value of X Velocity
-	BPL PRG000_D66A	 
+	BPL PRG000_D66A
 	JSR Negate
 PRG000_D66A:
 
 	AND #$f0
-	LSR A	
-	LSR A	
-	LSR A	
-	LSR A	
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	TAY		 ; Y = "whole" part of X Velocity only
 
 	LDA PRG000_D5E3,Y	 ; Get masking value
 
 	LDY #$00	 ; Y = 0
 
-	AND Counter_1	
+	AND Counter_1
 	BEQ PRG000_D67B	 ; If Counter_1 masked by value is zero, jump to PRG000_D67B
 
 	INY		 ; Otherwise, Y = 1
 
 PRG000_D67B:
-	TYA		 
+	TYA
 	STA Objects_Frame,X	 ; Set as frame 0 or 1
 	RTS		 ; Return
 
@@ -5003,17 +5003,17 @@ PRG000_D693:
 	LDA ObjectGroup_PatternSets+1,X	; Get second sprite pattern index
 	STA Sprite_RAM+$05,Y	; -> Sprite RAM
 
-	LDA Temp_Var3		 
+	LDA Temp_Var3
 	ORA Temp_Var4		 ; Joins base attributes to H-flip flag
 	STA Sprite_RAM+$02,Y	 ; Store into both sprite's attributes
 	STA Sprite_RAM+$06,Y	 ; Store into both sprite's attributes
 
-	BIT Temp_Var3		
+	BIT Temp_Var3
 	BVC PRG000_D6C6	 ; If sprite is not horizontally flipped, jump to PRG000_D6C6 (RTS)
 
 	; If flipped, swap sprite attributes
 	LDA Sprite_RAM+$01,Y
-	PHA		
+	PHA
 	LDA Sprite_RAM+$05,Y
 	STA Sprite_RAM+$01,Y
 	PLA
@@ -5031,7 +5031,7 @@ PRG000_D6C6:
 ; $D6C7
 Object_Draw24x16Sprite:
 	LDA Temp_Var5	; Check sprite vertical visibility
-	LSR A		
+	LSR A
 	BCS PRG000_D726	; If this sprite is off-screen, jump to PRG000_D726 (RTS)
 
 	LDA Temp_Var8	; Checking horizontal sprite visibility
@@ -5044,7 +5044,7 @@ Object_Draw24x16Sprite:
 	STA Sprite_RAM+$00,Y	 ; Set sprite Y in RAM
 
 PRG000_D6D8:
-	BIT Temp_Var10	 
+	BIT Temp_Var10
 	BMI PRG000_D6DF	 ; If this sprite is off-screen, jump to PRG000_D6DF
 
 	STA Sprite_RAM+$04,Y	 ; Set sprite Y in RAM
@@ -5084,15 +5084,15 @@ PRG000_D6E4:
 
 	; Swap end sprites patterns
 	LDA Sprite_RAM+$01,Y
-	PHA	
+	PHA
 	LDA Sprite_RAM+$09,Y
 	STA Sprite_RAM+$01,Y
-	PLA	
+	PLA
 	STA Sprite_RAM+$09,Y
 
 PRG000_D726:
 	RTS		 ; Return
-	
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Object_GetRandNearUnusedSpr
@@ -5126,13 +5126,13 @@ PRG000_D73A:
 	LDX SlotIndexBackup	 ; X = object slot index
 
 	LDA RandomN,X
-	AND #$07	
+	AND #$07
 	CLC
-	ADC Temp_Var7	
+	ADC Temp_Var7
 	TAY		 ; Y = (Random 0-7) + Temp_Var7
 
 	LDA PRG000_D727,Y
-	TAY		
+	TAY
 	STY Temp_Var9	 ; Temp_Var9 = PRG000_D727[Y]
 
 	LDA Objects_State,Y
@@ -5167,7 +5167,7 @@ PRG000_D763:
 	LDY #$05	 ; Y = 5
 
 	LDA Temp_Var9
-	CMP #$05	
+	CMP #$05
 	BLT PRG000_D776	 ; If Temp_Var9 < 5, jump to PRG000_D776
 
 	LDY #$01	 ; Y = 1
@@ -5236,9 +5236,9 @@ Object_DetermineHorzVis:
 	LDY ObjGroupRel_Idx	 	; Y = object group relative index
 	LDA ObjectGroup_Attributes,Y	; Get object's attributes
 	AND #OA1_WIDTHMASK	 ; Keep only bits 4-6
-	LSR A		 
-	LSR A		 
-	LSR A		 
+	LSR A
+	LSR A
+	LSR A
 	LSR A		 ; shift right 4
 	TAY		 ; Y = Width of object (0-5 or 0, 8, 16, 24, 32, or 40, -8)
 
@@ -5264,12 +5264,12 @@ PRG000_D7BD:
 	STA Temp_Var15		; Temp_Var15 = object's X + ??
 
 	LDA Objects_XHi,X
-	ADC #$00	 
+	ADC #$00
 	STA Temp_Var16		; Temp_Var16 = Object's X Hi with carry applied
 
 	LDA Temp_Var15
 	CMP Horz_Scroll
-	LDA Temp_Var16	
+	LDA Temp_Var16
 	SBC Horz_Scroll_Hi
 	BEQ PRG000_D7DE	 ; If sprite is not horizontally off-screen, jump to PRG000_D7DE
 
@@ -5300,7 +5300,7 @@ Object_DetermineVertVis:
 	LDY ObjGroupRel_Idx	 	; Y = object group relative index
 	LDA ObjectGroup_Attributes,Y	; Get object's attributes
 	AND #OA1_HEIGHTMASK	 ; keep only bits 2 and 3
-	LSR A		 
+	LSR A
 	LSR A		 ; shift right 2
 	TAY		 ; Y = size of object (0-3 or 16, 32, 48, 64)
 
@@ -5313,9 +5313,9 @@ Object_DetermineVertVisY:
 
 	; Copy object's Y Hi/Lo -> Temp_Var1/2
 	LDA Objects_YHi,X
-	STA Temp_Var1	
+	STA Temp_Var1
 	LDA Objects_Y,X
-	STA Temp_Var2	
+	STA Temp_Var2
 
 PRG000_D7FE:
 
@@ -5330,13 +5330,13 @@ PRG000_D7FE:
 	INC Temp_Var1		 ; Otherwise, apply carry
 
 PRG000_D809:
-	LDA Temp_Var2		
+	LDA Temp_Var2
 	SEC
 	SBC Level_VertScroll
 	STA Temp_Var4		 ; Temp_Var4 = screen-relative Y
 
-	LDA Temp_Var1		
-	SBC Level_VertScrollH	
+	LDA Temp_Var1
+	SBC Level_VertScrollH
 	BNE PRG000_D81E	 ; If relative position is off-screen, jump to PRG000_D81E
 
 	; Otherwise...
@@ -5348,7 +5348,7 @@ PRG000_D81E:
 
 	; This sprite is off top/bottom of screen...
 	LDA Temp_Var3		 ; Get current set bit
-	ORA Objects_SprVVis,X	 
+	ORA Objects_SprVVis,X
 	STA Objects_SprVVis,X	 ; Mark this part as invisible
 
 PRG000_D826:
@@ -5372,7 +5372,7 @@ Player_BoundBox:
 
 PRG000_D834:
 	.byte <-8, 8
-	
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -5421,7 +5421,7 @@ PRG000_D83D:
 
 	LDA #$00	 ; A = 0 when small or ducking
 
-	LDY Player_IsDucking	 
+	LDY Player_IsDucking
 	BNE PRG000_D862	 ; If Player is ducking, jump to PRG000_D862
 
 	LDA #$01	 ; A = 1 otherwise
@@ -5435,18 +5435,18 @@ PRG000_D862:
 	LDA Player_SpriteX
 	CLC
 	ADC Player_BoundBox,Y
-	STA Temp_Var3	
+	STA Temp_Var3
 
 	LDA Player_SpriteY
 	CLC
 	ADC Player_BoundBox+2,Y
-	STA Temp_Var7	
+	STA Temp_Var7
 
 	LDA Player_BoundBox+1,Y
-	STA Temp_Var4	
+	STA Temp_Var4
 
 	LDA Player_BoundBox+3,Y
-	STA Temp_Var8	
+	STA Temp_Var8
 
 	JSR ObjectObject_Intersect	; Returns carry SET if object and Player intersected
 	BCC PRG000_D82B	 	; If carry clear, object and Player did not intersect, jump to PRG000_D82B (RTS)
@@ -5464,24 +5464,24 @@ PRG000_D862:
 	LDA Player_X
 	SEC
 	SBC Objects_X,X
-	STA Temp_Var15	
+	STA Temp_Var15
 
 	LDA Player_XHi
 	SBC Objects_XHi,X
 
-	STA Temp_Var14	
+	STA Temp_Var14
 
 	BPL PRG000_D8A9	 ; If overall result is positive, jump to PRG000_D8A9
 
 	; Otherwise, 16-bit negate Temp_Var14/15
 	LDA Temp_Var15
-	JSR Negate	
-	STA Temp_Var15	
+	JSR Negate
+	STA Temp_Var15
 
 	LDA Temp_Var14
-	EOR #$ff	
-	ADC #$00	
-	STA Temp_Var14	
+	EOR #$ff
+	ADC #$00
+	STA Temp_Var14
 
 PRG000_D8A9:
 	LDA Temp_Var14
@@ -5499,11 +5499,11 @@ PRG000_D8B1:
 	LDA Player_Y
 	SEC
 	SBC Objects_Y,X
-	STA Temp_Var15	
+	STA Temp_Var15
 
-	LDA Player_YHi	
+	LDA Player_YHi
 	SBC Objects_YHi,X
-	STA Temp_Var14	
+	STA Temp_Var14
 
 	BPL PRG000_D8CF	 ; If overall result is positive, jump to PRG000_D8CF
 
@@ -5513,9 +5513,9 @@ PRG000_D8B1:
 	STA Temp_Var15
 
 	LDA Temp_Var14
-	EOR #$ff	
-	ADC #$00	
-	STA Temp_Var14	
+	EOR #$ff
+	ADC #$00
+	STA Temp_Var14
 
 PRG000_D8CF:
 	LDA Temp_Var14
@@ -5529,24 +5529,24 @@ PRG000_D8CF:
 	;	Bit 1 - Set if Player's bbox left edge is to the LEFT of object's bbox left edge
 
 	LDA Temp_Var12
-	LSR A		
+	LSR A
 	BCC PRG000_D8EB	 ; If Player's bbox bottom is NOT higher than object's, jump to PRG000_D8EB
 
 	LDA Temp_Var1	 ; Get Player's bounding box top offset
 	SEC
 	SBC Temp_Var11	 ; Get vertical difference between Player and Object's bounding box bottoms
-	CMP #$08	 
+	CMP #$08
 	BLS PRG000_D8EB	 ; If the result < 8, jump to PRG000_D8EB
 
 	; Otherwise, flip the remaining bit of Temp_Var12
-	LDA Temp_Var12	
-	EOR #$01	
-	STA Temp_Var12	
+	LDA Temp_Var12
+	EOR #$01
+	STA Temp_Var12
 
 PRG000_D8EB:
 
 	; Set into status bits for this objcet
-	LDA Temp_Var12	
+	LDA Temp_Var12
 	ORA Objects_PlayerHitStat,X
 	STA Objects_PlayerHitStat,X
 
@@ -5557,7 +5557,7 @@ PRG000_D8EB:
 
 	LDY Level_ObjectID,X	 ; Get object's ID -> Y
 	LDA Object_AttrFlags,Y	 ; Get this object's attribute flags
-	AND #OAT_HITNOTKILL	 
+	AND #OAT_HITNOTKILL
 	BNE PRG000_D922	 	 ; If OAT_HITNOTKILL is set, jump to PRG000_D922
 
 	; For all objects where bit 7 is not set in their attributes...
@@ -5565,7 +5565,7 @@ PRG000_D8EB:
 	LDA #OBJSTATE_KILLED
 	STA Objects_State,X	 ; Set object state to Killed
 
-	LDA #<-$38	
+	LDA #<-$38
 	STA Objects_YVel,X	 ; Set Y Velocity to -$38
 
 	; "Kick" sound
@@ -5621,25 +5621,25 @@ Object_CalcBoundBox:
 	LDY Level_ObjectID,X	 ; Get this object's ID -> Y
 	LDA Object_AttrFlags,Y	 ; Get this object's attribute flags
 	AND #OAT_BOUNDBOXMASK	; Mask off the bounding box
-	ASL A		 
+	ASL A
 	ASL A		 ; Shift left 2
 	TAY		 ; -> Y (selected bounding box for this object)
 
 	; Calculate upper left of bounding box and lower right offsets
 	LDA Objects_SpriteX,X
 	CLC
-	ADC Object_BoundBox,Y	
+	ADC Object_BoundBox,Y
 	STA Temp_Var1		 ; Temp_Var1 object's sprite X with offset
 
 	LDA Objects_SpriteY,X
 	CLC
-	ADC Object_BoundBox+2,Y	
+	ADC Object_BoundBox+2,Y
 	STA Temp_Var5		 ; Temp_Var5 object's sprite Y with offset
 
 	LDA Object_BoundBox+1,Y
 	STA Temp_Var2		 ; Temp_Var2 has the right offset
 
-	LDA Object_BoundBox+3,Y	
+	LDA Object_BoundBox+3,Y
 	STA Temp_Var6		 ; Temp_Var6 has the bottom offset
 
 	RTS		 ; Return
@@ -5659,25 +5659,25 @@ Object_CalcBoundBox2:	; Same as Object_CalcBoundBox in spirit, just different ou
 	LDY Level_ObjectID,X	 ; Get this object's ID -> Y
 	LDA Object_AttrFlags,Y	 ; Get this object's attribute flags
 	AND #OAT_BOUNDBOXMASK	 ; Mask off the bounding box
-	ASL A		 
+	ASL A
 	ASL A		 ; Shift left 2
 	TAY		 ; -> Y (selected bounding box for this object)
 
 	; Calculate upper left of bounding box and lower right offsets
 	LDA Objects_SpriteX,X
 	CLC
-	ADC Object_BoundBox,Y	
+	ADC Object_BoundBox,Y
 	STA Temp_Var3		 ; Temp_Var3 object's sprite X with offset
 
 	LDA Objects_SpriteY,X
 	CLC
-	ADC Object_BoundBox+2,Y	
+	ADC Object_BoundBox+2,Y
 	STA Temp_Var7		 ; Temp_Var7 object's sprite Y with offset
 
 	LDA Object_BoundBox+1,Y
 	STA Temp_Var4		 ; Temp_Var4 has the right offset
 
-	LDA Object_BoundBox+3,Y	
+	LDA Object_BoundBox+3,Y
 	STA Temp_Var8		 ; Temp_Var8 has the bottom offset
 
 	RTS		 ; Return
@@ -5693,16 +5693,16 @@ Object_CalcBoundBox2:	; Same as Object_CalcBoundBox in spirit, just different ou
 ;
 ; Returns carry SET if Player/Object and Object intersected
 ; Temp_Var12 holds specific info:
-;	Bit 0 - Set if Player/Object's bbox bottom is HIGHER than 
+;	Bit 0 - Set if Player/Object's bbox bottom is HIGHER than
 ;	        object's bbox bottom
 ;	Bit 1 - Set if Player/Object's bbox left edge is to the LEFT of
 ;	        object's bbox left edge
 ;
 ; Note that this is performed by the "sprite" (or screen-relative)
-; positions of the Player/Object and the OTHER Object, and may not 
-; be accurate (because it's not a full 16-bit coordinate check) and 
-; more logic is needed after this to determine completely if there 
-; should be an actual collision.  See use of ObjectObject_Intersect 
+; positions of the Player/Object and the OTHER Object, and may not
+; be accurate (because it's not a full 16-bit coordinate check) and
+; more logic is needed after this to determine completely if there
+; should be an actual collision.  See use of ObjectObject_Intersect
 ; to get an idea what else needs to be done...
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; $D97B
@@ -5720,7 +5720,7 @@ ObjectObject_Intersect:
 	STA Temp_Var11		 ; Difference between the two -> Temp_Var11
 
 	ASL A			 ; Sets carry if it was a negative result
- 
+
 	LDA Temp_Var2		 ; Get the object's right edge bounding box offset
 
 	BCC PRG000_D997	 	 ; If the calculated difference was NOT negative (Player's bbox left edge is to the RIGHT of object's bbox left edge), jump to PRG000_D997
@@ -5730,8 +5730,8 @@ ObjectObject_Intersect:
 	; Negate Temp_Var11 (the difference), making it positive
 	LDA Temp_Var11
 	EOR #$ff
-	STA Temp_Var11		 
-	INC Temp_Var11	
+	STA Temp_Var11
+	INC Temp_Var11
 
 	INC Temp_Var12		 ; Temp_Var12 = 1 (Player's bbox is to the LEFT of object's left edge)
 
@@ -5759,9 +5759,9 @@ PRG000_D997:
 
 	; Negate Temp_Var11 (the difference), making it positive
 	LDA Temp_Var11
-	EOR #$ff	
-	STA Temp_Var11	
-	INC Temp_Var11	
+	EOR #$ff
+	STA Temp_Var11
+	INC Temp_Var11
 
 	INC Temp_Var12		 ; Set bit 0 of Temp_Var12
 
@@ -5794,9 +5794,9 @@ Object_DoCollision:
 
 	; Get address from ObjectGroup_CollideJumpTable...
 	LDA ObjectGroup_CollideJumpTable,Y
-	STA Temp_Var1	
+	STA Temp_Var1
 	LDA ObjectGroup_CollideJumpTable+1,Y
-	STA Temp_Var2	
+	STA Temp_Var2
 	JMP (Temp_Var1)	 ; Jump to the acquired address!
 
 	; SB: Dead data: Specified frame of "suit lost" object
@@ -5888,7 +5888,7 @@ PRG000_DA32:
 	; SB: This lost its meaning, but it marks you to lose the Kuribo's
 	; shoe specifically; see above for lost/dead SMB3-J code where
 	; alternate Temp_Var1 values would be used...
-	; (The other index values display as garbage now instead of the suit, 
+	; (The other index values display as garbage now instead of the suit,
 	; see details at PRG007 LostShoe_Pattern)
 	LDA #$00
 	STA Temp_Var1	 ; Temp_Var1 = 0
@@ -5900,7 +5900,7 @@ PRG000_DA44:
 	STA Player_QueueSuit	 ; Queue power-up change
 
 PRG000_DA47:
-	LDA #$00	 
+	LDA #$00
 	STA Player_Kuribo	 ; Player no longer has Kuribo's shoe (if he even did a moment ago)
 	BEQ PRG000_DA6D	 ; Jump (technically always) to PRG000_DA6D
 
@@ -5925,11 +5925,11 @@ PRG000_DA4E:
 	ORA #SND_PLAYERPIPE
 	STA Sound_QPlayer
 
-	LDA #$2f	
+	LDA #$2f
 	STA Player_Grow	 	; Player_Grow = $2f (shrinking!)
 	DEC Player_QueueSuit	; Get small!
 
-PRG000_DA6D: 
+PRG000_DA6D:
 	LDA #$71
 	STA Player_FlashInv	 ; Player_FlashInv = $71
 
@@ -5960,8 +5960,8 @@ Player_Die:
 	; Clear a bunch of stuff at time of death
 	LDA #$00
 	STA Player_XVel
-	STA Obj01_Flag	
-	STA Player_Flip	
+	STA Obj01_Flag
+	STA Player_Flip
 	STA Player_FlashInv
 	STA Player_Kuribo
 	STA Player_StarInv
@@ -5974,7 +5974,7 @@ Player_Die:
 	LDA #<-64
 	STA Player_YVel ; Player_YVel = -64
 
-	LDA #$30	 
+	LDA #$30
 	STA Event_Countdown ; Event_Countdown = $30 (ticks until dropped back to map)
 
 	LDA #$01
@@ -6007,24 +6007,24 @@ PRG000_DAB7:
 	RTS		 ; Return
 
 PRG000_DAC0:
-	LDA #SOBJ_KURIBOSHOE	 
+	LDA #SOBJ_KURIBOSHOE
 	STA SpecialObj_ID,Y	 ; Lost Kuribo's shoe!
 
 	; Set object at Player
 	LDA Player_Y
 	STA SpecialObj_YLo,Y
 
-	LDA Player_YHi	
+	LDA Player_YHi
 	STA SpecialObj_YHi,Y
 
-	LDA Player_X	
+	LDA Player_X
 	STA SpecialObj_XLo,Y
 
 	LDA #<-$30
 	STA SpecialObj_YVel,Y	 ; Y velocity = -$30
 
 	; Decide proper X velocity based on Player's facing direction
-	LDA #$00	 
+	LDA #$00
 	CMP Player_FlipBits
 
 	LDA #16
@@ -6035,14 +6035,14 @@ PRG000_DAC0:
 PRG000_DAE3:
 	STA SpecialObj_XVel,Y	 ; Set appropriate X velocity
 
-	; SB: This is always zero in SMB3-US, but would have 
+	; SB: This is always zero in SMB3-US, but would have
 	; been set to other values in the Japanese original
 	LDA Temp_Var1
-	STA SpecialObj_Data,Y	
+	STA SpecialObj_Data,Y
 
 	RTS		 ; Return
 
-	; X velocities as appropriate based on which direction 
+	; X velocities as appropriate based on which direction
 	; Player was when he killed the enemy
 EnemyKill_XVels:	.byte <-$08, $08
 
@@ -6166,7 +6166,7 @@ PRG000_DB7A:
 	; Set ShellKillFlash vars
 	LDA PRG000_DB17,Y
 	CLC
-	ADC Player_X	
+	ADC Player_X
 	STA ShellKillFlash_X
 
 	LDA Player_Y
@@ -6220,9 +6220,9 @@ PRG000_DBB6:
 	; Attribute set 3 bit 6 is set...
 
 	; Y *= 2 (2 byte index)
-	TYA	
-	ASL A	
-	TAY	
+	TYA
+	ASL A
+	TAY
 
 	LDA ObjectGroup_CollideJumpTable+1,Y	; Get upper byte of collision jump entry
 	AND #%11111000
@@ -6248,7 +6248,7 @@ PRG000_DBCF:
 
 	LDY Temp_Var4
 
-	CPY #$0f	
+	CPY #$0f
 	BEQ PRG000_DBDC	 ; If Temp_Var4 = $0F, jump to PRG000_DBDC
 
 	LDA #<-$50	 ; A = -$50
@@ -6256,7 +6256,7 @@ PRG000_DBCF:
 PRG000_DBDC:
 	STA Objects_YVel,X	 ; Set Y velocity appropriately
 
-	; Set appropriate X Velocity based on facing direction of 
+	; Set appropriate X Velocity based on facing direction of
 	; Player when he killed the enemy
 	JSR Level_ObjCalcXDiffs
 	LDA EnemyKill_XVels,Y
@@ -6279,7 +6279,7 @@ PRG000_DBDC:
 ;
 ; If the object has collided with another object:
 ;  Carry flag is SET
-;  'Y' = index of the collided-with object 
+;  'Y' = index of the collided-with object
 ;  'A' = ObjectID of the collided-with object
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	; Enable object-to-object by state (0 = Enabled, 1 = Disabled)
@@ -6322,8 +6322,8 @@ PRG000_DC0B:
 	BNE PRG000_DC51	 ; If sprites are vertically off-screen, jump to PRG000_DC51 (do nothing)
 
 	LDA Objects_SprHVis,X
-	AND #%11000000	
-	CMP #%11000000	
+	AND #%11000000
+	CMP #%11000000
 	BEQ PRG000_DC51	 ; If two sprites are horizontally off-screen, jump to PRG000_DC51 (do nothing)
 
 	JSR Object_CalcBoundBox	 ; Calculate OTHER object's bounding box
@@ -6345,12 +6345,12 @@ PRG000_DC0B:
 
 	PLA		 ; Restore the lower X difference
 
-	; Don't quite understand the logic, but this determines if the 
+	; Don't quite understand the logic, but this determines if the
 	; objects are actually on the same screen instead of just
 	; seeming to due to the low accuracy of sprite coordinates
-	ADC #$80	
-	LDA Temp_Var1	
-	ADC #$00	
+	ADC #$80
+	LDA Temp_Var1
+	ADC #$00
 	BNE PRG000_DC51	 ; If the objects did not actually collide, jump to PRG000_DC51 (do nothing)
 
 	SEC		 ; Object's collided!  Set carry!
@@ -6370,7 +6370,7 @@ PRG000_DC54:
 	BCC PRG000_DC5C	 ; Jump (technically always) to PRG000_DC5C
 
 PRG000_DC57:
-	TXA		 
+	TXA
 	TAY		 ; Index of the OTHER object that this object collided with -> 'Y'
 	LDA Level_ObjectID,Y	 ; A = the ID of the OTHER object
 
@@ -6396,9 +6396,9 @@ Level_ChangeTile_ByTempVars:
 
 	; Set tile grid modify address
 	LDA Tile_Mem_AddrVL,Y
-	STA Temp_Var1	
+	STA Temp_Var1
 	LDA Tile_Mem_AddrVH,Y
-	STA Temp_Var2	
+	STA Temp_Var2
 
 	PLA		 ; Restore 'A' (Y Lo)
 
@@ -6406,16 +6406,16 @@ Level_ChangeTile_ByTempVars:
 
 PRG000_DC7B:
 	LDA Temp_Var15
-	ASL A		
+	ASL A
 	TAY		 ; Y = Temp_Var15 (X Hi) shifted left 1 (2 bytes index per screen for Tile_Mem_Addr)
 
 	; Set tile grid modify address
 	LDA Tile_Mem_Addr,Y
-	STA Temp_Var1	
+	STA Temp_Var1
 	LDA Tile_Mem_Addr+1,Y
 	STA Temp_Var2
 
-	LDA Temp_Var13	
+	LDA Temp_Var13
 	BEQ PRG000_DC8F	 ; If Y Hi = 0, jump to PRG000_DC8F
 
 	INC Temp_Var2	 ; Otherwise, offset to lower screen area
@@ -6428,10 +6428,10 @@ PRG000_DC91:
 	STA Temp_Var3	; Tile aligned "low" (makes row)
 
 	LDA Temp_Var16
-	LSR A	
-	LSR A	
-	LSR A	
-	LSR A	
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	ORA Temp_Var3	; Makes column
 
 	TAY		 ; Y = offset to specific tile
@@ -6452,11 +6452,11 @@ PRG000_DC91:
 ; in Temp_Var15.  Temp_Var16 is set to $40 and the
 ; carry flag is set if the difference was negative.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; $DCA2 
+; $DCA2
 Object_CalcCoarseXDiff:
-	LDA Objects_X,X	 
+	LDA Objects_X,X
 	SEC
-	SBC Player_X	
+	SBC Player_X
 	STA Temp_Var15		; Temp_Var15 = difference between Object and Player X
 
 	LDA Objects_XHi,X
@@ -6488,9 +6488,9 @@ Object_CalcCoarseXDiff:
 ; returning a one byte value that determines the
 ; difference in Y/YHi coordinates in units of 8 pixels.
 ; Returns Temp_Var15 in the format of a crude signed
-; value for Y Hi in bit 6 and 7 
+; value for Y Hi in bit 6 and 7
 ; [00 -> Y Hi = 0, 01 -> Y Hi = 1, 11 -> Y Hi = negative]
-; and the base Y difference in the bits 0 - 5 (so units 
+; and the base Y difference in the bits 0 - 5 (so units
 ; of 8 pixels.)
 ; Temp_Var16 holds the raw difference in "Y Hi"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -6498,11 +6498,11 @@ Object_CalcCoarseXDiff:
 Object_CalcCoarseYDiff:
 	LDA Objects_Y,X
 	SEC
-	SBC Player_Y	
+	SBC Player_Y
 	STA Temp_Var15		 ; Temp_Var15 = difference between object's Y and Player's Y
 
 	LDA Objects_YHi,X
-	SBC Player_YHi	
+	SBC Player_YHi
 	STA Temp_Var16		 ; Temp_Var16 = difference between object's Y Hi and Player's Y Hi
 
 	LSR A		 	; least significant bit of Y Hi -> carry
@@ -6528,18 +6528,18 @@ Object_CalcCoarseYDiff:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; $DCCD
 Object_ApplyYVel:
-	LDA Objects_YVel,X	 
+	LDA Objects_YVel,X
 	BMI Object_ApplyYVel_NoLimit	 ; If Object's Y Vel < 0 (moving upward), jump to Object_ApplyYVel_NoLimit
 
-	CMP #OBJECT_MAXFALL	 
+	CMP #OBJECT_MAXFALL
 	BLS Object_ApplyYVel_NoLimit	 ; If Object's Y Vel < OBJECT_MAXFALL, jump to Object_ApplyYVel_NoLimit
 
-	LDA #OBJECT_MAXFALL	 
+	LDA #OBJECT_MAXFALL
 	STA Objects_YVel,X	 ; Cap Y Velocity to OBJECT_MAXFALL
 
 ; $DCD9
 Object_ApplyYVel_NoLimit:
-	TXA		 
+	TXA
 	CLC
 	ADC #<(Objects_YVel - Objects_XVel)
 	TAX		 ; Offset to Y velocities
@@ -6570,7 +6570,7 @@ Object_ApplyXVel:
 
 	LDY ObjGroupRel_Idx	; Get object's relative index
 	LDA ObjectGroup_Attributes2,Y	 ; Get object's 2nd attribute
-	AND #OA2_USE16BITX	 	 
+	AND #OA2_USE16BITX
 	BNE PRG000_DCF9	 	; If OA2_USE16BITX is set, jump to PRG000_DCF9
 
 	STA Objects_XHi,X	; Otherwise, Object's X Hi is zeroed
@@ -6588,12 +6588,12 @@ PRG000_DCFA:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Object_AddVelFrac:
 	LDA Objects_XVel,X	; Get Velocity
-	ASL A		 
-	ASL A		 
-	ASL A		 
+	ASL A
+	ASL A
+	ASL A
 	ASL A		 	; Fractional part shifted up
 	CLC
-	ADC Objects_XVelFrac,X	 
+	ADC Objects_XVelFrac,X
 	STA Objects_XVelFrac,X	; Add to object's vel fractional accumulator
 
 	PHP		 ; Save CPU state
@@ -6615,7 +6615,7 @@ PRG000_DD19:
 
 	PHA		 ; Save integer of velocity
 
-	ADC Objects_X,X 
+	ADC Objects_X,X
 	STA Objects_X,X ; Add with carry
 
 	TYA		 ; A = $00 or $FF as appropriate
@@ -6648,7 +6648,7 @@ Level_ObjCalcXDiffs:
 	STA Temp_Var16	 ; Temp_Var16 = difference between Player's X and object's X
 
 	LDY #$00	 ; Y = 0
-	LDA Player_XHi	 
+	LDA Player_XHi
 	SBC Objects_XHi,X
 	BPL PRG000_DD3C	 ; If Player's X Hi >= Object's X Hi, jump to PRG000_DD3C (RTS)
 
@@ -6673,7 +6673,7 @@ Level_ObjCalcYDiffs:
 	STA Temp_Var16		 ; Temp_Var16 = difference between Player's Y and object's Y
 
 	LDY #$00	 ; Y = 0
-	LDA Player_YHi	
+	LDA Player_YHi
 	SBC Objects_YHi,X
 	BPL PRG000_DD4D	 ; If Player's Y Hi >= Object's Y Hi, jump to PRG000_DD4D (RTS)
 
@@ -6710,7 +6710,7 @@ Object_AnySprOffscreen:
 
 ; FIXME: Anybody want to claim this?
 ; Appears it would return a free object slot
-; $DD5B 
+; $DD5B
 	LDY #$04	; Y = 4
 PRG000_DD5D:
 	LDA Objects_State,Y
@@ -6725,7 +6725,7 @@ PRG000_DD65:
 
 ; FIXME: Anybody want to claim this?
 ; Appears to apply offsets to Player X/Y (Temp_Var11/Temp_Var10) and get a tile there
-; $DD66 
+; $DD66
 
 	; Temp_Var13 = Player_YHi
 	LDA Player_YHi
@@ -6797,17 +6797,17 @@ BlockBump_Init:
 	BEQ PRG000_DDB2	 ; If block bump slot 1 is empty, jump to PRG000_DDB2
 
 	INY		 ; Y = 1
-	LDA Level_BlkBump,Y	 
+	LDA Level_BlkBump,Y
 	BNE PRG000_DDCB	 ; If block bump slot 2 is not empty, jump to PRG000_DDCB (RTS)
 
 PRG000_DDB2:
-	LDA Temp_Var12	
+	LDA Temp_Var12
 	STA Level_BlkBump,Y	 ; Store tile-behind effect
 
 	; Temp_Var13 / Temp_Var14 -- Y Hi and Lo
 	; Temp_Var15 / Temp_Var16 -- X Hi and Lo
 
-	LDA Temp_Var15	
+	LDA Temp_Var15
 	STA Level_BlkBump_XHi,Y
 
 
@@ -6906,7 +6906,7 @@ PRG000_DE03:
 	STA Objects_XVelFrac	; Objects_XVelFrac = 0
 	STA THouse_UnusedFlag	; THouse_UnusedFlag = 0 (set here, never used otherwise)
 
-	LDA #$ff	 
+	LDA #$ff
 	STA Objects_Timer	 ; Objects_Timer = $FF
 	STA Objects_Var4	 ; Objects_Var4 = $FF
 
@@ -6924,9 +6924,9 @@ AScrlURDiag_HandleWrap:
 	JSR AScrlURDiag_NoWrapAbort	; Will not return here if AScrlURDiag_WrapState_Copy not set or gameplay halted!
 
 	LDY #$00	 ; Y = 0
- 
+
 	LDA Level_AScrlVVelCarry
-	LSR A		
+	LSR A
 	BCC PRG000_DE53	 ; If Level_AScrlVVelCarry = 0, jump to PRG000_DE53
 
 	INY		 ; Y = 1
@@ -6949,7 +6949,7 @@ PRG000_DE65:
 	LDY #$00	 ; Y = 0
 
 	LDA Level_AScrlVVelCarry
-	LSR A		
+	LSR A
 	BCC PRG000_DE71	 ; If no autoscroll vertical velocity carry, jump to PRG000_DE71
 
 	DEY		 ; Y = -1
@@ -6970,15 +6970,15 @@ PRG000_DE71:
 	ADC Level_ScrollDiffV	 ; Level_ScrollDiffV is 0 or -1 right now
 	CMP #$ff
 	BNE PRG000_DE89
-	DEY		 ; Y = -1 
+	DEY		 ; Y = -1
 
 PRG000_DE89:
 	CLC
 	ADC Player_Y
 	STA Player_Y
-	TYA		
-	ADC Player_YHi	
-	STA Player_YHi	
+	TYA
+	ADC Player_YHi
+	STA Player_YHi
 
 	RTS		 ; Return
 
@@ -6987,7 +6987,7 @@ AScrlURDiag_CheckWrapping:
 
 	LDA Objects_X,X
 	CLC
-	ADC AScrlURDiag_OffsetX	
+	ADC AScrlURDiag_OffsetX
 	STA Objects_X,X
 	BCC PRG000_DEA3	 ; If no carry, jump to PRG000_DEA3
 	INC Objects_XHi,X	 ; Otherwise, apply carry
@@ -6995,10 +6995,10 @@ PRG000_DEA3:
 
 	LDA Objects_Y,X
 	CLC
-	ADC AScrlURDiag_OffsetY	
+	ADC AScrlURDiag_OffsetY
 	STA Objects_Y,X
 	BCC PRG000_DEAF	 ; If no carry, jump to PRG000_DEAF
-	INC Objects_YHi,X	 ; Otherwise, apply carry 
+	INC Objects_YHi,X	 ; Otherwise, apply carry
 
 PRG000_DEAF:
 	RTS		 ; Return
@@ -7032,7 +7032,7 @@ AScroll_HorizontalInitMove:
 	.lobytes ASM_W6Airship-AScroll_Movement-1	;  6 World 6 Airship
 	.lobytes ASM_World_56-AScroll_Movement-1	;  7 World 5-6
 	.lobytes ASM_UNK8-AScroll_Movement-1		;  8
-	.lobytes ASM_UNK9-AScroll_Movement-1		;  9 
+	.lobytes ASM_UNK9-AScroll_Movement-1		;  9
 	.lobytes ASM_World_67-AScroll_Movement-1	;  A World 6-7
 	.lobytes ASM_W1Airship-AScroll_Movement-1	;  B World 1 Airship
 	.lobytes ASM_W7Airship-AScroll_Movement-1	;  C World 7 Airship
@@ -7041,7 +7041,7 @@ AScroll_HorizontalInitMove:
 	.lobytes ASM_World_74-AScroll_Movement-1	;  F World 7-4
 	.lobytes ASM_W1CoinHeaven-AScroll_Movement-1		; 10
 	.lobytes ASM_CoinShip-AScroll_Movement-1	; 11 Coin Ship
-	.lobytes ASM_UNK12-AScroll_Movement-1		; 12 
+	.lobytes ASM_UNK12-AScroll_Movement-1		; 12
 	.lobytes ASM_World8Tank1-AScroll_Movement-1	; 13 World 8 Tank 1
 	.lobytes ASM_World8Tank2-AScroll_Movement-1	; 14 World 8 Tank 2
 	.lobytes ASM_Terminator-AScroll_Movement-1	; 15 ** Terminator Only (because it seeks ahead to see the terminating movement index-AScroll_Movement-1

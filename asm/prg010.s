@@ -110,7 +110,7 @@ Video_DoWXMario00:
 
 	vaddr $29A9
 	.byte VU_REPEAT | 14, $FE
-	
+
 	vaddr $29C9
 	.byte VU_REPEAT | 14, $FE
 
@@ -194,7 +194,7 @@ Video_DoWXMario80:
 
 	vaddr $29D9
 	.byte VU_REPEAT | 7, $FE
-	
+
 	vaddr $29C0
 	.byte VU_REPEAT | 7, $FE
 
@@ -211,7 +211,7 @@ Video_DoWXMario80:
 	.byte $01, $E5
 
 	; ----
-	
+
 	vaddr $295C
 	.byte $04, $D8, $F0, $E9, $EC	; WORL
 
@@ -228,7 +228,7 @@ Video_DoWXMario80:
 	.byte VU_REPEAT | 2, $00
 
 	; ----
-	
+
 	vaddr $2BD6
 	.byte VU_REPEAT | 4, $00
 
@@ -268,7 +268,7 @@ Video_DoGameOver00:
 
 	vaddr $29A9
 	.byte VU_REPEAT | 14, $FE
-	
+
 	vaddr $29C9
 	.byte VU_REPEAT | 14, $FE
 
@@ -354,7 +354,7 @@ Video_DoGameOver80:
 
 	vaddr $29D9
 	.byte VU_REPEAT | 7, $FE
-	
+
 	vaddr $29C0
 	.byte VU_REPEAT | 7, $FE
 
@@ -393,7 +393,7 @@ Video_DoGameOver80:
 	; ----
 
 	vaddr $2BD0
-	.byte VU_REPEAT | 2, $00 
+	.byte VU_REPEAT | 2, $00
 
 	vaddr $2BD6
 	.byte VU_REPEAT | 4, $00
@@ -457,7 +457,7 @@ Video_DoWXLuigi00:
 
 	vaddr $29A9
 	.byte VU_REPEAT | 14, $FE
-	
+
 	vaddr $29C9
 	.byte VU_REPEAT | 14, $FE
 
@@ -538,7 +538,7 @@ Video_DoWXLuigi80:
 
 	vaddr $29D9
 	.byte VU_REPEAT | 7, $FE
-	
+
 	vaddr $29C0
 	.byte VU_REPEAT | 7, $FE
 
@@ -553,7 +553,7 @@ Video_DoWXLuigi80:
 
 	vaddr $29E7
 	.byte $01, $E5
-	
+
 	vaddr $295C
 	.byte $04, $D8, $F0, $E9, $EC	; WORL
 
@@ -568,7 +568,7 @@ Video_DoWXLuigi80:
 
 	vaddr $2BD0
 	.byte VU_REPEAT | 2, $00
-	
+
 	vaddr $2BD6
 	.byte VU_REPEAT | 4, $00
 
@@ -586,10 +586,10 @@ Video_DoWXLuigi80:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Map_IntroAttrSave:
 	LDA Horz_Scroll
-	LSR A		
-	LSR A		
-	LSR A		
-	LSR A		
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	LSR A		 ; A >> 5 (div by 32, for figuring out what set of 2x2 tiles we need to fix)
 	CLC
 	ADC #$d2
@@ -607,7 +607,7 @@ PRG010_C2DA:
 	; Set the address to $2Bxx (attribute table 2, all that the map effects)
 	LDA #$2B
 	sta_PPU_VRAM_ADDR
-	LDA Temp_Var1	
+	LDA Temp_Var1
 	sta_PPU_VRAM_ADDR
 
 	lda_PPU_VRAM_DATA
@@ -629,11 +629,11 @@ PRG010_C2F9:
 	STY Temp_Var1
 	CPX #$03
 	BNE PRG010_C303
-	LDA Temp_Var2	
-	STA Temp_Var1	
+	LDA Temp_Var2
+	STA Temp_Var1
 
 PRG010_C303:
-	INX	
+	INX
 
 	CPX #$08
 	BNE PRG010_C2DA	 ; While X <> 8, loop
@@ -713,15 +713,15 @@ PRG010_C322:
 Map_ConfigWorldIntro:
 
 	; High byte
-	LDA #$29	 	
+	LDA #$29
 	STA Graphics_Buffer
 
 	; Low byte: Calculate the proper offset address based on the horizontal scroll
 	LDA Horz_Scroll
-	LSR A		 
-	LSR A		 
+	LSR A
+	LSR A
 	LSR A		 ; A = Horz_Scroll >> 3
-	CLC		 
+	CLC
 	EOR #$52
 	STA Graphics_Buffer+1
 
@@ -736,13 +736,13 @@ Map_ConfigWorldIntro:
 	STA Graphics_Buffer+3	; Store the tile into the buffer
 
 	; High byte
-	LDA #$29	 	
-	STA Graphics_Buffer+4	
+	LDA #$29
+	STA Graphics_Buffer+4
 
 	; Low byte: Calculate the proper offset address based on the horizontal scroll
-	LDA Horz_Scroll	
-	LSR A		
-	LSR A		
+	LDA Horz_Scroll
+	LSR A
+	LSR A
 	LSR A		 ; A = Horz_Scroll >> 3
 	EOR #$b4
 	STA Graphics_Buffer+5
@@ -757,7 +757,7 @@ Map_ConfigWorldIntro:
 	LDA StatusBar_LivesL
 	STA Graphics_Buffer+8
 
-	LDA #$00	
+	LDA #$00
 	STA Graphics_Buffer+9	 ; Terminator
 
 	RTS		 ; Return
@@ -786,7 +786,7 @@ PRG010_C3AC:
 
 	DEX		 ; X--
 	BNE PRG010_C3AC	 ; While X <> 0, loop
- 
+
 	DEY		 ; Y--
 	BPL PRG010_C3AC	 ; While Y > 0, loop
 
@@ -808,7 +808,7 @@ World_BGM_Arrival:
 ; Map_DoMap
 ;
 ; A very large, encompassing function which
-; runs most Map_Operations and performs 
+; runs most Map_Operations and performs
 ; other required tasks that keep the world
 ; lively and interesting...
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -816,25 +816,25 @@ Map_DoMap:
 	JSR World5_Sky_AddCloudDeco	; Add world 5's cloud decoration
 
 	LDA Map_Operation
-	CMP #$0d	 
+	CMP #$0d
 	BNE PRG010_C413	 	; If Map_Operation <> $0D (normal), jump to PRG010_C413
 
 	; Map is operating normally
 	LDX World_Num	 	; X = World_Num
 	LDY World_BGM_Arrival,X	; Y = World_BGM_Arrival[X]
 
-	CPX #$04	 
+	CPX #$04
 	BNE PRG010_C3E3	 	; If X <> 4 (not on World 5), jump to PRG010_C3E3
 
 	LDX Player_Current	; X = Player_Current
-	LDA World_Map_XHi,X	
+	LDA World_Map_XHi,X
 	BEQ PRG010_C3E3	 	; If not on the high part of World 5, jump to PRG010_C3E3
 
 	LDY #MUS2A_SKY	 	; High part of World 5 uses alternate song
 	JMP PRG010_C3EA	 	; Jump to PRG010_C3EA
 
 PRG010_C3E3:
-	LDA Map_MusicBox_Cnt	
+	LDA Map_MusicBox_Cnt
 	BEQ PRG010_C3EA	 	; If Map_MusicBox_Cnt = 0 (music box not active), jump to PRG010_C3EA
 
 	LDY #MUS2A_MUSICBOX	 ; Otherwise, Y = $C (music box song)
@@ -844,7 +844,7 @@ PRG010_C3EA:
 	BNE PRG010_C3F2	 	; If SndCur_Music2 <> 0 (a song from set 2 is playing), jump to PRG010_C3F2
 
 	; Otherwise, queue the requested song!
-	STY Sound_QMusic2	
+	STY Sound_QMusic2
 
 PRG010_C3F2:
 	LDX Player_Current	; X = Player_Current
@@ -853,7 +853,7 @@ PRG010_C3F2:
 	BNE PRG010_C40C	 	; If Player is moving on the map, jump to PRG010_C40C
 
 	LDA Map_MoveRepeat,X
-	CMP #$18	 
+	CMP #$18
 	BEQ PRG010_C403	 	; If at the movement repeat limit, jump to PRG010_C403
 
 	; Otherwise...
@@ -864,7 +864,7 @@ PRG010_C403:
 	BNE PRG010_C40C	 	; If Pad_Holding <> 0, jump to PRG010_C40C
 
 	; Player has stopped holding a direction; stop the repeat
-	LDA #$ff	 
+	LDA #$ff
 	STA Map_MoveRepeat,X	; Otherwise, Map_MoveRepeat = $FF
 
 PRG010_C40C:
@@ -881,19 +881,19 @@ PRG010_C413:
 	BNE PRG010_C46B	 	; If Player is moving on map, jump to PRG010_C46B
 
 	LDA Map_Operation
-	CMP #$0d	 
+	CMP #$0d
 	BNE PRG010_C46B	 	; If Map_Operation <> $D (Normal), jump to PRG010_C46B
 
 	LDA Pad_Input
-	AND #PAD_B	
+	AND #PAD_B
 	BEQ PRG010_C46B		; If Player is NOT pressing B, jump to PRG010_C46B
 
 	; Player is pressing B button...
-	LDA #SND_MAPINVENTORYFLIP	 
+	LDA #SND_MAPINVENTORYFLIP
 	STA Sound_QMap	 	; Play inventory opening sound
 
 	LDA Inventory_Open
-	EOR #$01	 	
+	EOR #$01
 	STA Inventory_Open	; Toggle the Inventory_Open flag
 
 	JMP WorldMap_UpdateAndDraw	; Jump into WorldMap_UpdateAndDraw...
@@ -914,7 +914,7 @@ PRG010_C447:
 	STA Scroll_Temp	 ; Scroll_Temp = Horz_Scroll
 
 	LDA Horz_Scroll_Hi
-	ADC Map_ScrollDeltaXHi,Y	
+	ADC Map_ScrollDeltaXHi,Y
 	STA Horz_Scroll_Hi	; Add carry if needed!
 
 	JSR Scroll_Update_Ranges	; Update Scroll column values
@@ -926,7 +926,7 @@ PRG010_C447:
 	BEQ PRG010_C470	 	; If Map_Pan_Count = 0, jump to PRG010_C470
 
 PRG010_C46B:
-	LDA Map_DrawPanState	
+	LDA Map_DrawPanState
 	BEQ PRG010_C481	 	; If Map_DrawPanState = 0, jump to PRG010_C481
 
 PRG010_C470:
@@ -964,7 +964,7 @@ PRG010_C488:
 
 	; All other objects get a random number of 0-3 assigned to their "data" field
 	LDA RandomN,Y
-	AND #$03	
+	AND #$03
 	STA Map_Object_Data,Y
 
 PRG010_C4A9:
@@ -973,7 +973,7 @@ PRG010_C4A9:
 
 Map_DoOperation:
 	LDA Map_Operation
-	JSR DynJump	 
+	JSR DynJump
 
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word MO_WorldXIntro	; 0 - "World X" Intro (the box, erasing it, and the stars)
@@ -1030,7 +1030,7 @@ PRG010_C4F9:
 MO_WorldXIntro:
 	; Process by current World_EnterState value...
 	LDA World_EnterState
-	JSR DynJump	 
+	JSR DynJump
 
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word WorldIntro_BoxTimer	; 0 - Draws Player sprite in "World X" box, and delays until Map_Intro_Tick = 0
@@ -1083,17 +1083,17 @@ Map_WorldIntro_DrawPlayer:
 	LDY #$07	 ; Y = 7
 PRG010_C52D:
 	LDA Map_WorldIntro_PSpr,Y
-	STA Sprite_RAM+$84,Y	
+	STA Sprite_RAM+$84,Y
 	DEY		 	; Y--
 	BPL PRG010_C52D	 	; While Y >= 0, loop!
 
-	LDX Player_Current	 
-	LDY World_Map_Power,X	 
+	LDX Player_Current
+	LDY World_Map_Power,X
 	LDA Map_WorldIntro_PSPat,Y	; Get pattern to use based on Player's current powerup
 	STA Sprite_RAM+$85	 	; Store as pattern
 
 	CLC
-	ADC #$02	 
+	ADC #$02
 	STA Sprite_RAM+$89	 	; Opposite side is prior value + 2
 
 	RTS		 	; Return...
@@ -1110,7 +1110,7 @@ WorldIntro_EraseAndStars:
 Map_W8Dark_IntroCover:
 	vaddr $2900
 	.byte VU_VERT | 8
-	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF 
+	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 
 	vaddr $2900
 	.byte VU_VERT | 8
@@ -1131,19 +1131,19 @@ Map_Intro_Erase1Strip:
 	LDA Map_IntBoxErase
 	BNE PRG010_C5A9	 	; If Map_IntBoxErase <> 0, jump to PRG010_C5A9
 
-	; Map_IntBoxErase is set to offset of upper-left corner of "World X" 
+	; Map_IntBoxErase is set to offset of upper-left corner of "World X"
 	; intro box to tell where to start copying the map tiles from!
 	LDA Scroll_ColumnR
-	AND #$08	 
+	AND #$08
 	CLC
 	ADC #$34
 	STA Map_IntBoxErase	; Map_IntBoxErase = (Scroll_ColumnR & 8) + $34
 
 	LDA Scroll_ColumnL
-	AND #$f0	
-	LSR A		
-	LSR A		
-	LSR A		
+	AND #$f0
+	LSR A
+	LSR A
+	LSR A
 	TAY		 	; Y = (Scroll_ColumnL & $F0) >> 3 (basically current "screen" of map * 2, for indexing Tile_Mem_Addr)
 
 	; Store starting offset for this map screen into Map_Tile_AddrL/H
@@ -1165,16 +1165,16 @@ Map_Intro_Erase1Strip:
 
 	; Calculates the corresponding offset to the attribute table
 	LDA Horz_Scroll
-	LSR A		
-	LSR A		
-	LSR A		
-	LSR A		
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	LSR A			; Divide by 32 because EACH attribute BYTE defines FOUR 8x8 tiles (4 * 8 = 32)
 	CLC
-	ADC #$d2	
+	ADC #$d2
 	STA Map_Intro_ATOff		; Map_Intro_ATOff = (Horz_Scroll / 32) + $D2
 
-	LDA #$02	
+	LDA #$02
 	STA Map_StarsState		; Map_StarsState = 2
 
 PRG010_C5A9:
@@ -1184,39 +1184,39 @@ PRG010_C5A9:
 	; The World 8 Darkness effect version of clearing the World X intro box...
 
 	; Copy Map_W8Dark_IntroCover into the Graphics_Buffer
-	LDY #$15	 	
+	LDY #$15
 PRG010_C5B0:
-	LDA Map_W8Dark_IntroCover,Y	
-	STA Graphics_Buffer,Y	 	
+	LDA Map_W8Dark_IntroCover,Y
+	STA Graphics_Buffer,Y
 	DEY		 		; Y--
 	BPL PRG010_C5B0	 		; While Y >= 0, loop!
 
 	; Patch in the correct low byte for the video address
-	LDX Map_Intro_NTOff		
-	STX Graphics_Buffer+1	
-	INX		 
+	LDX Map_Intro_NTOff
+	STX Graphics_Buffer+1
+	INX
 	STX Graphics_Buffer+$C
 	JMP PRG010_C622	 		; Jump to PRG010_C622
 
 PRG010_C5C5:
-	LDA a:Map_IntBoxErase	 
+	LDA a:Map_IntBoxErase
 	STA Temp_Var1		 	; Temp_Var1 = Map_IntBoxErase
 
 	LDX #$00	 		; X = 0
 
-PRG010_C5CC:	
+PRG010_C5CC:
 	; CHECKME: Isn't Level_Tileset always equal to zero on world maps??
 	; Probably wouldn't matter since PAGE_A000 is hard-coded to 12,
 	; instead of using Page_Per_Tileset like it ought to :)
 	LDA Level_Tileset
-	ASL A		 
+	ASL A
 	TAY		 		; Y = Level_Tileset << 1 (for indexing TileLayout_ByTileset)
 
 	; Set Temp_Var15 to point to the 16x16 tile 8x8 layout data
 	LDA TileLayout_ByTileset,Y
-	STA Temp_Var15		 
+	STA Temp_Var15
 	LDA TileLayout_ByTileset+1,Y
-	STA Temp_Var16	
+	STA Temp_Var16
 
 	LDY Temp_Var1		 	; Get offset to current 16x16 tile we want to grab
 	LDA (Map_Tile_AddrL),Y	 	; Grab it!
@@ -1244,15 +1244,15 @@ PRG010_C5CC:
 	LDA (Temp_Var15),Y	 	; Get next 8x8
 	STA Scroll_PatStrip+$C,X	; Store into vertical strip
 
-	LDA Temp_Var1	
+	LDA Temp_Var1
 	CLC
-	ADC #16	
+	ADC #16
 	STA Temp_Var1		 	; Temp_Var1 += 16 (get next tile one row down)
 
 	INX
 	INX		; X += 2 (next block down in Scroll_PatStrip)
 
-	CPX #$08	
+	CPX #$08
 	BNE PRG010_C5CC	; If X <> 8 (4 tiles downward in Scroll_PatStrip), loop!
 
 	; Pushes the Scroll_PatStrip memory into the Graphics_Buffer
@@ -1264,18 +1264,18 @@ PRG010_C609:
 	BPL PRG010_C609	 		; If X >= 0, loop!
 
 	; Used VRAM addr $29xx for both strips
-	LDA #$29	 
-	STA Graphics_Buffer	
+	LDA #$29
+	STA Graphics_Buffer
 	STA Graphics_Buffer+$B
-	
+
 	LDA #(VU_VERT | 8)		; 8 8x8s vertically applied
 	STA Graphics_Buffer+2
 	STA Graphics_Buffer+$D
 
 PRG010_C622:
-	LDX Map_Intro_NTOff		
+	LDX Map_Intro_NTOff
 	STX Graphics_Buffer+1	 	; Store lower part of VRAM address
-	INX		 
+	INX
 	STX Graphics_Buffer+$C	 	; Store lower part of VRAM address
 
 
@@ -1287,10 +1287,10 @@ PRG010_C622:
 	STA Graphics_Buffer+$1A
 
 	; Store lower part of VRAM address
-	LDA Map_Intro_ATOff	
+	LDA Map_Intro_ATOff
 	STA Graphics_Buffer+$17
 	CLC
-	ADC #$08	 
+	ADC #$08
 	STA Graphics_Buffer+$1B
 
 	; Just one byte to copy
@@ -1299,40 +1299,40 @@ PRG010_C622:
 	STA Graphics_Buffer+$1C
 
 	LDA Map_Intro_CurStripe
-	AND #$06	
-	LSR A		
+	AND #$06
+	LSR A
 	TAX		 ; X = (Map_Intro_CurStripe & 6) >> 1
 
 	LDA Scroll_ColorStrip,X
-	STA Graphics_Buffer+$19	
+	STA Graphics_Buffer+$19
 
-	LDA Scroll_ColorStrip+4,X	
-	STA Graphics_Buffer+$1D	
+	LDA Scroll_ColorStrip+4,X
+	STA Graphics_Buffer+$1D
 
-	LDA Map_Intro_CurStripe		
-	AND #$01	 
+	LDA Map_Intro_CurStripe
+	AND #$01
 	BNE PRG010_C66A	 	; If Map_Intro_CurStripe bit 0 set, jump to PRG010_C66A
 
 	; Otherwise...
 	LDA Scroll_ColorStrip,X
-	AND #$33	 
+	AND #$33
 	STA Graphics_Buffer+$19
 
-	LDA Scroll_ColorStrip+4,X	
-	AND #$33	 	
-	STA Graphics_Buffer+$1D	
+	LDA Scroll_ColorStrip+4,X
+	AND #$33
+	STA Graphics_Buffer+$1D
 
 PRG010_C66A:
-	LDA #$00	 
+	LDA #$00
 	STA Graphics_Buffer+$1E
 
 	; If, on the next increment to Map_IntBoxErase, the lower 4 bits are "zero",
 	; it has wrapped to a new row.  This should only happen when the "World X"
 	; intro is being performed in "halfway off-centered" mode...
 	LDX Map_IntBoxErase
-	INX		
-	TXA		
-	AND #$0f	 	
+	INX
+	TXA
+	AND #$0f
 	BNE PRG010_C689	 	; If (Map_IntBoxErase + 1) & $0F is non-zero, jump to PRG010_C689
 
 	; Otherwise, we need to update the address
@@ -1342,18 +1342,18 @@ PRG010_C66A:
 	STA Map_Tile_AddrL	; Map_Tile_AddrL += $B0 (11 tiles over)
 
 	LDA Map_Tile_AddrH
-	ADC #$01	 
+	ADC #$01
 	STA Map_Tile_AddrH	; Next screen plus add carry if needed
 
 	LDA Map_IntBoxErase
-	AND #$f0	 	
+	AND #$f0
 	TAX		 	; X = (Map_IntBoxErase & $F0); current row within map "screen" of tiles
 
 PRG010_C689:
 	STX Map_IntBoxErase	; Update Map_IntBoxErase
 
-	TXA		
-	AND #$01	
+	TXA
+	AND #$01
 	BNE PRG010_C69F	 	; If (Map_IntBoxErase & 1) <> 0 (if we're on an "odd" tile), jump to PRG010_C69F
 
 	; Otherwise need to update the attribute stuff!
@@ -1368,7 +1368,7 @@ PRG010_C689:
 	BNE PRG010_C69D	 	; If (Map_Intro_ATOff + 1) & 7 <> 0, jump to PRG010_C69D
 
 	LDA Map_Intro_ATOff
-	AND #$f0	 
+	AND #$f0
 	TAX		 	; X contains just the upper 4 bits of Map_Intro_ATOff
 
 PRG010_C69D:
@@ -1395,7 +1395,7 @@ PRG010_C6AA:
 	INC Map_Intro_CurStripe ; Map_Intro_CurStripe++
 
 	LDA Map_Intro_CurStripe
-	CMP #$08	 
+	CMP #$08
 	BNE PRG010_C6BB	 	; If Map_Intro_CurStripe <> 8, jump to PRG010_C6BB
 
 	; Otherwise, we're done!  The stupid box is erased!
@@ -1413,7 +1413,7 @@ PRG010_C6BB:
 
 WorldIntro_CompleteStars:
 	JSR FAR011_MapStarsIntro_DoStarFX	; Continue updating starry intro until complete
-	LDA a:Map_StarFX_State	 
+	LDA a:Map_StarFX_State
 	BNE PRG010_C6D7		; If Map_StarFX_State <> 0, jump to PRG010_C6D7 (RTS)
 
 	; Star intro is over!
@@ -1468,7 +1468,7 @@ GameOver_Loop:
 	; NOTE: GameOver_State = 9 is handled specially outside of this routine
 
 GameOver_WaitOnBGM:
-	LDA SndCur_Music1	 
+	LDA SndCur_Music1
 	BNE PRG010_C712	 ; If Game Over music is still playing, jump to PRG010_C712
 
 	INC GameOver_State	 ; GameOver_State++
@@ -1515,7 +1515,7 @@ PRG010_C72B:
 PRG010_C741:
 	STX GameOver_State	 ; Set GameOver_State appropriately
 
-	; Map_UnusedGOFlag = $F8 
+	; Map_UnusedGOFlag = $F8
 	LDA #$f8
 	STA Map_UnusedGOFlag
 
@@ -1533,7 +1533,7 @@ PRG010_C74C:
 GameOver_DeadPlayerSprite:
 	.byte $64, $61, $00, $50	; Left half
 	.byte $64, $61, $40, $58	; Right half
-	
+
 PRG010_C75D:
 
 	; Set game over action cursor Y
@@ -1683,8 +1683,8 @@ FortressFX_MapLocation:
 FortressFX_MapTileReplace:
 	.byte $46, $46, $45, $46, $45, $B3, $B3, $DA, $DA, $B3, $45, $46, $45, $46, $45, $46, $45
 
-	; Defines slots for post-Mini-Fortress events; since this is looked up 
-	; by an index table (FortressFXBase_ByWorld), there's no need for this 
+	; Defines slots for post-Mini-Fortress events; since this is looked up
+	; by an index table (FortressFXBase_ByWorld), there's no need for this
 	; to be precisely four in every world, but that's what they allocated...
 FortressFX_W1:	.byte $00, $00, $00, $00
 FortressFX_W2:	.byte $01, $00, $00, $00
@@ -1766,14 +1766,14 @@ PRG010_C8CD:
 
 	; Get appropriate high byte of VRAM address -> Temp_Var11
 	LDA FortressFX_VAddrH,X
-	STA Temp_Var11	
+	STA Temp_Var11
 	STA Graphics_Buffer,Y	; ... and into Graphics Buffer
 
 	INY		 ; Y++ (next byte in graphics buffer)
 
 	; Get appropriate low byte of VRAM address -> Temp_Var12
 	LDA FortressFX_VAddrL,X
-	STA Temp_Var12	
+	STA Temp_Var12
 	STA Graphics_Buffer,Y	; ... and into Graphics Buffer
 
 	INY		 ; Y++ (next byte in graphics buffer)
@@ -1852,17 +1852,17 @@ PRG010_C8CD:
 
 	LDY Temp_Var11
 	LDA Map_Completions,Y
-	AND Temp_Var12	
+	AND Temp_Var12
 	BNE PRG010_C9C9	 ; If this lock is already busted / bridge already built, jump to PRG010_C9C9
 
 	; Mark lock busted / bridge built (Mario)
 	LDA Map_Completions,Y
-	ORA Temp_Var12	
+	ORA Temp_Var12
 	STA Map_Completions,Y
 
 	; Mark lock busted / bridge built (Luigi)
 	LDA Map_Completions+$40,Y
-	ORA Temp_Var12	
+	ORA Temp_Var12
 	STA Map_Completions+$40,Y
 
 	LDX Map_DoFortressFX
@@ -1933,7 +1933,7 @@ FX_MonoFlash_By_MapTick:
 	; to produce a quick and dirty "bright flash" effect
 	LDA Map_Intro_Tick
 	AND #$04	 	; A = Map_Intro_Tick & 4
-	LSR A		 
+	LSR A
 	LSR A		 	; Shift down twice (so 0/1 toggle only, every 4 map ticks)
 	ORA #$18	 	; Normal BG/sprite bits
 	STA PPU_CTL2_Copy	; Update PPU_CTL2
@@ -2009,14 +2009,14 @@ PRG010_CA35:
 
 	; Map_Intro_Tick just expired...
 
-	LDX Player_Current	 ; X = Player_Current 
+	LDX Player_Current	 ; X = Player_Current
 
 	; Clear all controller input data
-	LDA #$00	 
-	STA Controller1	
-	STA Controller1Press	
-	STA Controller2	
-	STA Controller2Press	
+	LDA #$00
+	STA Controller1
+	STA Controller1Press
+	STA Controller2
+	STA Controller2Press
 
 	; Stop any movement repeating
 	LDA #$ff	 ; A = $FF
@@ -2082,12 +2082,12 @@ Map_DrawAndPan:
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word Map_Do_Borders	; 0 - NOT USED (Map_DrawAndPan is not called if Map_DrawPanState == 0)
 	.word Map_Do_Borders	; 1 - Draw left/right borders
-	.word Map_DoVBorders	; 2 - Vertical border 
-	.word Map_DoVBorders	; 3 - Vertical border 
+	.word Map_DoVBorders	; 2 - Vertical border
+	.word Map_DoVBorders	; 3 - Vertical border
 	.word Map_PanInit	; 4 - Initialize map panning
 	.word Map_PanRight	; 5 - Pan map to the right
 	.word Map_PanLeft	; 6 - Pan map to the left
-	
+
 PRG010_CAA0:
 	.byte $00, $0E
 
@@ -2098,8 +2098,8 @@ Map_Do_Borders:
 	ADC PRG010_CAA0,X	; Add a value based on the value of Map_ScrollOddEven (0 for not entering, 1 for entering; 2 was used in Japanese version only showing the level)
 	PHA			; Save A
 	AND #$f0	 	; Screen only
-	LSR A		 
-	LSR A		 
+	LSR A
+	LSR A
 	LSR A		 	; A >> 2 screen index
 	TAY		 	; Y = A
 	LDA Tile_Mem_Addr,Y	; Beginning of tiles we're going to modify
@@ -2110,10 +2110,10 @@ Map_Do_Borders:
 	STA Map_Tile_AddrL
 	LDA Tile_Mem_Addr+1,Y
 	ADC #$00	 	; if any overflow from the addition
-	STA Map_Tile_AddrH	
+	STA Map_Tile_AddrH
 
 	PLA		 	; Restore A (Screen_ColumnL + value)
-	AND #$0f	 	; Screen-relative column index 
+	AND #$0f	 	; Screen-relative column index
 	STA Temp_Var5	 	; Store that to Temp_Var5
 	LDX #$00	 	; X = 0
 	LDA Map_ScrollOddEven	; A = Map_ScrollOddEven
@@ -2130,7 +2130,7 @@ PRG010_CACF:
 	AND #$c0	 	; Only keep its upper 2 bits ($00, $40, $80, $C0)
 	STA Temp_Var2		; Store this into Temp_Var2
 
-	TYA		 	
+	TYA
 	CLC
 	ADC #15
 	TAY		 	; Y += 15 (next row)
@@ -2145,15 +2145,15 @@ PRG010_CACF:
 
 	; Take the four tiles and form an attribute byte
 	LDA Temp_Var1
-	LSR A		
-	LSR A		
-	ORA Temp_Var2	
-	LSR A		
-	LSR A		
-	ORA Temp_Var3	
-	LSR A		
-	LSR A		
-	ORA Temp_Var4	
+	LSR A
+	LSR A
+	ORA Temp_Var2
+	LSR A
+	LSR A
+	ORA Temp_Var3
+	LSR A
+	LSR A
+	ORA Temp_Var4
 
 	STA Map_BorderAttrFromTiles,X
 	INX		 ; X++
@@ -2164,7 +2164,7 @@ PRG010_CACF:
 	STA Temp_Var5	 ; Temp_Var5 += 32
 
 	AND #$f0	 ; Only keep upper four bits of Temp_Var5
-	CMP #$c0	 
+	CMP #$c0
 	BNE PRG010_CACF	 ; If not equal to $C0, loop!
 
 	INC Map_DrawPanState	 ; Map_DrawPanState++
@@ -2356,7 +2356,7 @@ PRG010_CBEA:
 
 	LDY #$06	 ; Y = 6
 
-PRG010_CC0B: 
+PRG010_CC0B:
 
 	; Set VRAM low address in graphics buffer
 	LDA Graphics_Buffer+1,X
@@ -2428,7 +2428,7 @@ Map_PanRight:
 	LSR A
 	TAY		 ; -> 'Y'
 
-	; Set Map_Tile_AddrL/H 
+	; Set Map_Tile_AddrL/H
 	LDA Tile_Mem_Addr,Y
 	STA Map_Tile_AddrL
 	LDA Tile_Mem_Addr+1,Y
@@ -2444,7 +2444,7 @@ Map_PanRight:
 
 PRG010_CC7A:
 	LDA Level_Tileset
-	ASL A 
+	ASL A
 	TAY		 ; Y = Level_Tileset * 2
 
 	; Get pointer to tile layout -> Temp_Var15/16
@@ -2617,7 +2617,7 @@ Map_StateNothing:
 ; $CD53
 
 	; Map_ReturnStatus = 3 (??)
-	LDA #$03	 
+	LDA #$03
 	STA Map_ReturnStatus
 
 	; Map_Intro_Tick = $80
@@ -2682,24 +2682,24 @@ MO_NormalMoveEnter:
 	JMP PRG010_CEE4	 	; Otherwise, jump to PRG010_CEE4...
 
 PRG010_CDDC:
-	LDA Map_Pan_Count	
+	LDA Map_Pan_Count
 	BNE PRG010_CD6E	 	; If map is panning, jump to PRG010_CD6E (indirect to WorldMap_UpdateAndDraw)
 
-	LDA Pad_Input	
-	AND #(PAD_LEFT | PAD_RIGHT | PAD_UP | PAD_DOWN)	 
+	LDA Pad_Input
+	AND #(PAD_LEFT | PAD_RIGHT | PAD_UP | PAD_DOWN)
 	BEQ PRG010_CDEC	 	; If Player is not pushing up/down/left/right, jump to PRG010_CDEC
 
-	LDA #SND_PLAYERBUMP	 
+	LDA #SND_PLAYERBUMP
 	STA Sound_QPlayer	; "Bump" noise
 
 PRG010_CDEC:
 	JSR Map_GetTile	 	; Get current tile Player is standing on
 
 	AND #$c0	 	; Only keeping the upper 2 bits of it
-	CLC		 
-	ROL A		 
-	ROL A		 
-	ROL A		 
+	CLC
+	ROL A
+	ROL A
+	ROL A
 	TAY		 	; Y = upper 2 bits of map tile shifted down; the "tile quadrant"
 
 	; In short, what this checks is, for a given "quadrant" of the tile you're standing on
@@ -2737,19 +2737,19 @@ PRG010_CE0D:
 	PLA		 	; Retore 'A' (Map_PrevMoveDir, restores it if changed by Map_CheckDoMove)
 	STA Map_PrevMoveDir	; Undoes the change; we're just CHECKING right now!
 
-	LDA Sound_QMap	 
+	LDA Sound_QMap
 	BEQ PRG010_CE61	 	; If no sound played, there's no traversable path; jump to PRG010_CE61
 
-	; A traversable path was found... since we're currently standing on an enterable, 
+	; A traversable path was found... since we're currently standing on an enterable,
 	; non-bypassable level panel, you must be wearing a Judgem's cloud to proceed...
 
 	LDA Map_Power_Disp
-	CMP #$07	 
+	CMP #$07
 	BEQ PRG010_CE39	 	; If Player is wearing Judgem's cloud, jump to PRG010_CE39
 
 	; Otherwise, undo the move; you're not allowed to take the path until you complete that level!
 	LDX Player_Current
-	LDA #$00	 
+	LDA #$00
 	STA World_Map_Move,X	; Don't actually move on path
 	STA Sound_QMap	 	; Don't actually play the sound
 	JMP PRG010_CE78	 	; Jump to PRG010_CE78
@@ -2764,23 +2764,23 @@ PRG010_CE39:
 	; Restore the displayed power up to the Player's actual power up
 	LDX Player_Current
 	LDA World_Map_Power,X
-	STA Map_Power_Disp	
+	STA Map_Power_Disp
 
 	TAY		 	; A = Player's actual power up
 
 	; Get the color we need to patch in...
 	LDA Map_PostJC_PUpPP1,Y
-	CMP #$16	 
+	CMP #$16
 	BNE PRG010_CE54	 	; If color <> $16 (Mario's red), jump to PRG010_CE54
 
 	; Otherwise possibly change to Luigi green, if that's appropriate...
-	LDA Map_PostJC_PUpPML,X	 
+	LDA Map_PostJC_PUpPML,X
 
 PRG010_CE54:
 	; Copy appropriate power up patch values into the palette buffer
 	STA Palette_Buffer+$11
 	LDA Map_PostJC_PUpPP2,Y
-	STA Palette_Buffer+$13	
+	STA Palette_Buffer+$13
 
 	; Queue the palette buffer to update!
 	LDA #$06
@@ -2798,11 +2798,11 @@ PRG010_CE64:
 	LDA Sound_QMap
 	BEQ PRG010_CE71	 	; If no sound played, Player didn't move (Dirty check!); jump to PRG010_CE71
 
-	LDA #$00	 
+	LDA #$00
 	STA Sound_QPlayer	; Otherwise, stop any Player sound (perhaps "bump")
 
-PRG010_CE71: 
-	LDX Player_Current	
+PRG010_CE71:
+	LDX Player_Current
 	LDA World_Map_Move,X
 	BNE PRG010_CEE4	 	; If the Player's map movement is non-zero, jump to PRG010_CEE4
 
@@ -2811,28 +2811,28 @@ PRG010_CE78:
 
 	LDA Controller1Press
 	ORA Controller2Press
-	AND #$80	 
+	AND #$80
 	BEQ PRG010_CEE1		; If neither of the two players are pressing the 'A' button jump to PRG010_CEE1
 
 	LDX Player_Current	; X = Player_Current
-	TXA		 
-	EOR #$01	 	
+	TXA
+	EOR #$01
 	TAY		 	; Y = Player_Current ^ 1 (i.e. the OTHER Player)
 
 	LDA Player_Lives,Y
-	CMP #$ff	 
+	CMP #$ff
 	BEQ PRG010_CEBF	 	; If the other Player is dead, jump to PRG010_CEBF
 
 	; Basically if Player 1 and 2 are not standing on top of eachother when one of them pushed A, jump to PRG010_CEBF
 	LDA World_Map_XHi,X
 	CMP World_Map_XHi,Y
-	BNE PRG010_CEBF	
+	BNE PRG010_CEBF
 	LDA World_Map_Y,X
 	CMP World_Map_Y,Y
-	BNE PRG010_CEBF	
+	BNE PRG010_CEBF
 	LDA World_Map_X,X
 	CMP World_Map_X,Y
-	BNE PRG010_CEBF	
+	BNE PRG010_CEBF
 
 	LDA #$12
 	STA Map_Enter2PFlag	; Map_Enter2PFlag = $12 (enterint 2P Vs)
@@ -2844,10 +2844,10 @@ PRG010_CEA7:
 PRG010_CEAC:
 	LDX Player_Current	; X = Player_Current
 
-	LDA #$00	 
+	LDA #$00
 	STA Map_Player_SkidBack,X	; Clear Map_Player_SkidBack
 
-	LDA #$00	 
+	LDA #$00
 	STA World_EnterState	; World_EnterState = 0
 	STA Map_NoLoseTurn	 ; Clear Map_NoLoseTurn
 
@@ -2857,7 +2857,7 @@ PRG010_CEBF:
 	; A Player pressed 'A' but they were not on top of each other, so no 2P vs...
 
 	LDA Pad_Input
-	AND #PAD_A	
+	AND #PAD_A
 	BEQ PRG010_CEE1	 	; If Player is not pressing 'A', jump to PRG010_CEE1
 
 	LDA World_Map_Tile
@@ -2871,10 +2871,10 @@ PRG010_CEC9:
 	; Not a special tile...
 	LDA World_Map_Tile
 	AND #$c0	 	; Only keeping the upper 2 bits of it
-	CLC		 
-	ROL A		 
-	ROL A		 
-	ROL A		 
+	CLC
+	ROL A
+	ROL A
+	ROL A
 	TAY		 	; Y = map tile >> 6 (basically)
 
 	; What makes other tiles (e.g. standard panels) work...
@@ -2882,7 +2882,7 @@ PRG010_CEC9:
 	CMP Tile_AttrTable+4,Y
 	BGE PRG010_CEA7	 	; If the tile the Player is standing on >= Tile_AttrTable+4[Y], jump to PRG010_CEA7 (enter level!)
 
-PRG010_CEE1:		
+PRG010_CEE1:
 	JMP WorldMap_UpdateAndDraw	; Jump to WorldMap_UpdateAndDraw
 
 
@@ -2892,8 +2892,8 @@ PRG010_CEE4:
 	DEC World_Map_Move,X
 	DEC World_Map_Move,X	 	; World_Map_Move -= 2
 
-	LDA World_Map_Dir,X	 
-	LDY Map_InCanoe_Flag	 
+	LDA World_Map_Dir,X
+	LDY Map_InCanoe_Flag
 	BEQ PRG010_CEF4	 		; If not in canoe, jump to PRG010_CEF4
 
 	; Otherwise, in canoe...
@@ -2905,7 +2905,7 @@ PRG010_CEF4:
 	TAY		 		; Y = 'A'
 
 	; Move Player as according to specified delta
-	LDA World_Map_Y,X	 
+	LDA World_Map_Y,X
 	CLC
 	ADC MapMove_DeltaY,Y
 	STA World_Map_Y,X
@@ -2914,7 +2914,7 @@ PRG010_CEF4:
 	ADC MapMove_DeltaX,Y
 	STA World_Map_X,X
 	LDA World_Map_XHi,X
-	ADC MapMove_DeltaXHi,Y	
+	ADC MapMove_DeltaXHi,Y
 	STA World_Map_XHi,X
 
 	LDA World_Map_Move,X
@@ -2922,13 +2922,13 @@ PRG010_CEF4:
 	BNE WorldMap_UpdateAndDraw	; If so, jump to WorldMap_UpdateAndDraw...
 
 	; The move has completed...
-	JSR Map_GetTile	 
+	JSR Map_GetTile
 	CMP #TILE_HANDTRAP
 	BNE WorldMap_UpdateAndDraw	; If the Player has not landed on a hand trap, jump to WorldMap_UpdateAndDraw
 
 	; Player's on a hand trap...
 	LDX Player_Current
-	LDA RandomN,X	 
+	LDA RandomN,X
 	AND #$01			; 50/50 chance
 	BNE WorldMap_UpdateAndDraw	; Player has 50/50 chance we just jump to WorldMap_UpdateAndDraw
 
@@ -3058,26 +3058,26 @@ PRG010_D012:
 	STA Sprite_RAM+$87
 	STA Sprite_RAM+$8F
 	CLC
-	ADC #8		 	 ; Add 8 for right half 
+	ADC #8		 	 ; Add 8 for right half
 	STA Sprite_RAM+$8B
 	STA Sprite_RAM+$93
 
 	LDA Map_Power_Disp
-	ASL A		 
-	ASL A		 
+	ASL A
+	ASL A
 	TAX		 ; X = Map_Power_Disp << 2 (4 bytes index per power-up)
 
 	LDA Counter_1
 	AND #$08	; On 8 ticks, off 8 ticks
-	BEQ PRG010_D037	; 
-	TXA		
+	BEQ PRG010_D037	;
+	TXA
 	CLC
-	ADC #(Map_Power_Pats_F2-Map_Power_Pats_F1)	
+	ADC #(Map_Power_Pats_F2-Map_Power_Pats_F1)
 	TAX		; X Offset to second frame
 
 PRG010_D037:
 	LDY #$00	 ; Y = 0
-	LDA Map_Starman	
+	LDA Map_Starman
 	BEQ PRG010_D045	 ; If not using a starman, jump to PRG010_D045
 
 	LDA Counter_1
@@ -3089,34 +3089,34 @@ PRG010_D037:
 PRG010_D045:
 
 	; This builds the 4 hardware sprites for the Player sprite
-	TYA		 
-	ORA Map_Power_Attrib_F1,X	 
-	STA Sprite_RAM+$86	 
-	LDA Map_Power_Pats_F1,X	 
-	STA Sprite_RAM+$85	 
-	TYA		 
-	ORA Map_Power_Attrib_F1+1,X	 
-	STA Sprite_RAM+$8A	 
-	LDA Map_Power_Pats_F1+1,X	 
-	STA Sprite_RAM+$89	 
-	TYA		 
-	ORA Map_Power_Attrib_F1+2,X	 
-	STA Sprite_RAM+$8E	 
-	LDA Map_Power_Pats_F1+2,X	 
-	STA Sprite_RAM+$8D	 
-	TYA		 
-	ORA Map_Power_Attrib_F1+3,X	 
-	STA Sprite_RAM+$92	 
-	LDA Map_Power_Pats_F1+3,X	 
-	STA Sprite_RAM+$91	 
+	TYA
+	ORA Map_Power_Attrib_F1,X
+	STA Sprite_RAM+$86
+	LDA Map_Power_Pats_F1,X
+	STA Sprite_RAM+$85
+	TYA
+	ORA Map_Power_Attrib_F1+1,X
+	STA Sprite_RAM+$8A
+	LDA Map_Power_Pats_F1+1,X
+	STA Sprite_RAM+$89
+	TYA
+	ORA Map_Power_Attrib_F1+2,X
+	STA Sprite_RAM+$8E
+	LDA Map_Power_Pats_F1+2,X
+	STA Sprite_RAM+$8D
+	TYA
+	ORA Map_Power_Attrib_F1+3,X
+	STA Sprite_RAM+$92
+	LDA Map_Power_Pats_F1+3,X
+	STA Sprite_RAM+$91
 
 	; Hardcode: Tile $27 removes the upper sprites
-	LDA Sprite_RAM+$85	 
-	CMP #$27	 
-	BNE PRG010_D088	 	; If not using tile $27, jump to PRG010_D088	
+	LDA Sprite_RAM+$85
+	CMP #$27
+	BNE PRG010_D088	 	; If not using tile $27, jump to PRG010_D088
 
 	; Set the unused upper sprites to Y coord = $f8 (off-screen, invisible)
-	LDA #$f8	 
+	LDA #$f8
 	STA Sprite_RAM+$84
 	STA Sprite_RAM+$88
 
@@ -3143,35 +3143,35 @@ Map_DoPlayer_As_Marker:
 	LDX Player_Current	; X = Player_Current
 
 	; Player is displayed as (M) or (L) marker as appropriate
-	LDA Map_Marker_MorL,X	
-	STA Sprite_RAM+$91	
-	LDA #$03	 	
-	STA Sprite_RAM+$92	
+	LDA Map_Marker_MorL,X
+	STA Sprite_RAM+$91
+	LDA #$03
+	STA Sprite_RAM+$92
 
 	; Other sprites are disabled
-	LDA #$f8	 	
-	STA Sprite_RAM+$84	
-	STA Sprite_RAM+$88	
-	STA Sprite_RAM+$8C	
+	LDA #$f8
+	STA Sprite_RAM+$84
+	STA Sprite_RAM+$88
+	STA Sprite_RAM+$8C
 
 	JMP Map_DoPlayer_Edge_Scroll	 	; Jump to Map_DoPlayer_Edge_Scroll...
 
 Map_DoPlayer_As_Twirl:
 	; Player is "twirling"!
 	DEC Map_Skid_Count	; Map_Skid_Count-- (wraps around forever)
-	LDA Map_Skid_Count	 
+	LDA Map_Skid_Count
 	AND #$06	 	; Take Map_Skid_Count as a 2 byte offset, 1:4
 	TAY
 
-	; Setup appropriate "twirl" frame!		 
-	LDA Player_Twirl_Tiles,Y	 
-	STA Sprite_RAM+$8D	 
-	LDA Player_Twirl_Tiles+1,Y	 
-	STA Sprite_RAM+$91	 
-	LDA Player_Twirl_Attribs,Y	 
-	STA Sprite_RAM+$8E	 
-	LDA Player_Twirl_Attribs+1,Y	 
-	STA Sprite_RAM+$92	 
+	; Setup appropriate "twirl" frame!
+	LDA Player_Twirl_Tiles,Y
+	STA Sprite_RAM+$8D
+	LDA Player_Twirl_Tiles+1,Y
+	STA Sprite_RAM+$91
+	LDA Player_Twirl_Attribs,Y
+	STA Sprite_RAM+$8E
+	LDA Player_Twirl_Attribs+1,Y
+	STA Sprite_RAM+$92
 
 Map_DoPlayer_Edge_Scroll:
 	LDA Map_Operation
@@ -3180,7 +3180,7 @@ Map_DoPlayer_Edge_Scroll:
 
 	LDX Player_Current	; X = Player_Current
 
-	LDA Map_Player_SkidBack,X 
+	LDA Map_Player_SkidBack,X
 	BNE Map_No_Pan	 	; If Player did not skid back, jump to Map_No_Pan
 
 	LDA Map_WarpWind_FX
@@ -3193,9 +3193,9 @@ Map_Check_PanR:
 	; NOTE: This block disables panning on World 5 and 8.  Change this
 	; to make them pan like normal maps!! *****
 	LDA World_Num
-	CMP #7			
+	CMP #7
 	BEQ Map_No_Pan	 	; If World_Num = 7 (World 8), jump to Map_No_Pan
-	CMP #4	 		
+	CMP #4
 	BEQ Map_No_Pan	 	; If World_Num = 4 (World 5), jump to Map_No_Pan
 
 	LDA Sprite_RAM+$87
@@ -3211,7 +3211,7 @@ Map_Check_PanR:
 	JMP Map_Set_Pan	 	; Jump to Map_Set_Pan ...
 
 Map_Check_PanL:
-	LDA Scroll_ColumnL	; A = Current left-hand column 
+	LDA Scroll_ColumnL	; A = Current left-hand column
 	BEQ Map_No_Pan	 	; If map scrolling has already reached the left-side limit, jump to Map_No_Pan
 
 	LDA Sprite_RAM+$87
@@ -3223,9 +3223,9 @@ Map_Check_PanL:
 Map_Set_Pan:
 	; We need to pan the map!
 	STX Scroll_LastDir	; Set proper pan direction
-	LDA #$80	 
+	LDA #$80
 	STA Map_Pan_Count	; Map_Pan_Count = $80 (moves half a screen's worth)
-	LDA #$04	 
+	LDA #$04
 	STA Map_DrawPanState	; Map_DrawPanState = 4 (Do panning)
 
 Map_No_Pan:
@@ -3248,35 +3248,35 @@ Map_No_Pan:
 	SBC Horz_Scroll	; Made relative to the screen
 	BEQ PRG010_D16F	 	; If relatively 0, jump to PRG010_D16F
 
-	LDA World_Map_XHi,X	; A = Other player's X Hi byte 
-	SBC #$00	 	
-	CMP Horz_Scroll_Hi	
+	LDA World_Map_XHi,X	; A = Other player's X Hi byte
+	SBC #$00
+	CMP Horz_Scroll_Hi
 	BNE PRG010_D16F	 	; If other Player's marker is not visible, jump to PRG010_D16F
 
 	; Other Player sprite marker
-	LDA World_Map_Y,X	 
-	STA Sprite_RAM+$94	 
-	LDA Map_Marker_MorL,X	 
-	STA Sprite_RAM+$95	 
-	LDA #$03	 
-	STA Sprite_RAM+$96	 
-	LDA World_Map_X,X	 
+	LDA World_Map_Y,X
+	STA Sprite_RAM+$94
+	LDA Map_Marker_MorL,X
+	STA Sprite_RAM+$95
+	LDA #$03
+	STA Sprite_RAM+$96
+	LDA World_Map_X,X
 	SEC
-	SBC Horz_Scroll		 
+	SBC Horz_Scroll
 	CLC
-	ADC #$04	 
-	STA Sprite_RAM+$97	 
+	ADC #$04
+	STA Sprite_RAM+$97
 
 PRG010_D16F:
 	LDA Map_Operation
-	CMP #$01	
+	CMP #$01
 	BLT PRG010_D179	 ; If Map_Operation < 1, jump to PRG010_D179
 
 	JSR FAR011_MapObjects_UpdateDrawEnter	; Update all objects, draw them, enter them
 
 PRG010_D179:
 	LDA World_Num
-	CMP #$08	
+	CMP #$08
 	BNE PRG010_D183	 ; If World_Num <> 8 (World 9, Warp Zone), jump to PRG010_D183 (RTS)
 	JSR Map_WarpZone_DrawNumbers	 ; Draw the numbers of the warp zone
 
@@ -3299,7 +3299,7 @@ Map_WarpZone_DrawNumbers:
 PRG010_D1A2:
 	LDA Map_WarpZone_Numbers,Y
 	STA Sprite_RAM+$98,Y
-	DEY		 
+	DEY
 	BPL PRG010_D1A2	 ; While Y >= 0, loop!
 	RTS		 ; Return
 
@@ -3313,7 +3313,7 @@ PRG010_D1A2:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Scroll_Map_SpriteBorder:
 
-	LDA #$20	 
+	LDA #$20
 	STA Temp_Var1	 ; Temp_Var1 = $20
 	LDY #$60	 ; Y = $60
 
@@ -3326,24 +3326,24 @@ PRG010_D1B2:
 	STA Sprite_RAM+8,Y
 
 	; Set first and second pattern to 1 (border tile)
-	LDA #$01	 
+	LDA #$01
 	STA Sprite_RAM+1,Y
 	STA Sprite_RAM+5,Y
 
 	; And third to $B
-	LDA #$0b	 	
-	STA Sprite_RAM+9,Y	
+	LDA #$0b
+	STA Sprite_RAM+9,Y
 
 	; Set all of their attributes to 1 (palette)
-	LDA #$01	 
+	LDA #$01
 	STA Sprite_RAM+2,Y
 	STA Sprite_RAM+6,Y
 	STA Sprite_RAM+10,Y
 
 	; First X = 8
-	LDA #$08	
+	LDA #$08
 	STA Sprite_RAM+3,Y
- 
+
 	; Second X = 240
 	LDA #240
 	STA Sprite_RAM+7,Y
@@ -3352,14 +3352,14 @@ PRG010_D1B2:
 	LDA #248
 	STA Sprite_RAM+11,Y
 
-	LDA Temp_Var1	
+	LDA Temp_Var1
 	CLC
 	ADC #16
 	STA Temp_Var1	 ; Temp_Var1 += 16
 
-	TYA		
+	TYA
 	SEC
-	SBC #12	
+	SBC #12
 	TAY		 ; Y -= 12 (3 sprites backward)
 	BPL PRG010_D1B2	 ; While Y >= 0, loop!
 
@@ -3376,8 +3376,8 @@ PRG010_D1F4:
 Map_GetTile:
 	LDX Player_Current
 	LDA World_Map_XHi,X
-	ASL A		 
-	TAY		 
+	ASL A
+	TAY
 
 	; Store starting offset for this map screen into Map_Tile_AddrL/H
 	LDA Tile_Mem_Addr,Y
@@ -3388,10 +3388,10 @@ Map_GetTile:
 	INC Map_Tile_AddrH	; Effectively adds $100 to the address (maps get loaded at screen base + $110)
 
 	LDA World_Map_X,X
-	LSR A		 
-	LSR A		 
-	LSR A		 
-	LSR A		 
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	STA Temp_Var1		; Temp_Var1 = World_Map_X / 16 (the current column of the current screen)
 
 	LDA World_Map_Y,X
@@ -3403,12 +3403,12 @@ Map_GetTile:
 	TAY		 	; Store this offset value into 'Y'
 
 	LDA (Map_Tile_AddrL),Y
-	STA World_Map_Tile	
+	STA World_Map_Tile
 	RTS		 ; Return
 
 
 	; FIXME: Anyone want to claim this?  (Exact same routine appears in PRG011 @ $B6F6)
-; $D228 
+; $D228
 	LDX Player_Current	 ; X = Player_Current
 
 	LDA World_Map_Dir,X	; Get Player's map direction
@@ -3446,13 +3446,13 @@ Map_RevDir:	.byte $02, $01, $08, $04	; R01 L02 D04 U08
 Map_Object_Valid_Tiles:	.word Map_Object_Valid_Left, Map_Object_Valid_Right, Map_Object_Valid_Down, Map_Object_Valid_Up
 
 	; Safe to expand this, but make sure you update all four!!
-Map_Object_Valid_Left:	
+Map_Object_Valid_Left:
 	.byte TILE_HORZPATH,    TILE_DRAWBRIDGEH, TILE_BRIDGE,      TILE_HORZPATHW, TILE_HORZPATHWLL
 	.byte TILE_HORZPATHWLR, TILE_HORZPATHSKY, TILE_HORZPATHWLB, TILE_HANDTRAP
 Map_Object_Valid_Right:
 	.byte TILE_HORZPATH,    TILE_DRAWBRIDGEH, TILE_BRIDGE,      TILE_HORZPATHW, TILE_HORZPATHWLL
 	.byte TILE_HORZPATHWLR, TILE_HORZPATHSKY, TILE_HORZPATHWLB, TILE_HANDTRAP
-Map_Object_Valid_Down:	
+Map_Object_Valid_Down:
 	.byte TILE_VERTPATH,    TILE_VERTPATH,    TILE_VERTPATH,    TILE_DRAWBRIDGEV, TILE_VERTPATHWLU
 	.byte TILE_VERTPATHWLL, TILE_VERTPATHW,   TILE_VERTPATHSKY, TILE_VERTPATHWLB
 Map_Object_Valid_Up:
@@ -3531,22 +3531,22 @@ PRG010_D2A7:
 PRG010_D2AD:
 	TYA		 	; A = 0-3
 	STA Temp_Var3		; Temp_Var3 = 0-3 (right, left, down, up respectively)
-	ASL A		 	
+	ASL A
 
 	TAX		 	; X = A << 1 (indexing Map_Object_Valid_Tiles)
 
 	; [Temp_Var2][Temp_Var1] become an address into Map_Object_Valid_Tiles
 	LDA Map_Object_Valid_Tiles,X
-	STA Temp_Var1		 
+	STA Temp_Var1
 	LDA Map_Object_Valid_Tiles+1,X
-	STA Temp_Var2		 
+	STA Temp_Var2
 
 	JSR MapTile_Get_By_Offset	; Get tile Player is going to move over (adjacent tile in travel direction)
 
 	; Search to see if this is a valid to move over given the Player's direction et al.
 	LDY #(Map_Object_Valid_Tiles2Check-1)
 PRG010_D2C1:
-	CMP (Temp_Var1),Y	
+	CMP (Temp_Var1),Y
 	BEQ PRG010_D336	 	; If Player is going to travel over this particular valid tile, jump to PRG010_D336
 	DEY		 	; Y--
 	BPL PRG010_D2C1	 	; While Y >= 0, loop!
@@ -3556,7 +3556,7 @@ PRG010_D2C1:
 	LDY Map_InCanoe_Flag
 	BEQ PRG010_D2E1	 	; If Player is NOT in a canoe, jump to PRG010_D2E1
 
-	CMP #TILE_DOCK	 
+	CMP #TILE_DOCK
 	BNE PRG010_D2D8	 	; If Player is not docking, jump to PRG010_D2D8
 
 	LDA #$00
@@ -3580,7 +3580,7 @@ PRG010_D2E1:
 	; On a dock, not in a canoe!  But let's see if there's one to hop into...
 
 	LDY a:World_Map_Tile
-	CPY #TILE_DOCK	
+	CPY #TILE_DOCK
 	BNE PRG010_D310	 	; If Player is not standing on a dock tile, jump to PRG010_D310
 
 	LDY Temp_Var3		; Y = Temp_Var3; 0-3 (right, left, down, up respectively)
@@ -3596,13 +3596,13 @@ PRG010_D2E1:
 	ADC Map_CanoeCheckXOff,Y
 	STA Temp_Var2		; Temp_Var2 is like Temp_Var1, for X
 
-	LDA World_Map_XHi,X	
+	LDA World_Map_XHi,X
 	ADC Map_CanoeCheckXHiOff,Y
 	STA Temp_Var3		; Temp_Var3 is like Temp_Var2, for X Hi
 
 	LDX #(MAPOBJ_TOTAL-1) 	; X = (MAPOBJ_TOTAL-1) (search all map objects)
 PRG010_D306:
-	LDY Map_Objects_IDs,X	
+	LDY Map_Objects_IDs,X
 	CPY #MAPOBJ_CANOE
 	BEQ PRG010_D31D	 	; If this is a canoe, jump to PRG010_D31D
 	DEX		 	; X--
@@ -3613,7 +3613,7 @@ PRG010_D310:
 	AND #(PAD_LEFT | PAD_RIGHT | PAD_UP | PAD_DOWN)
 	BEQ PRG010_D31C	 	; If Player is not pressing left/right/down/up, jump to PRG010_D31C (RTS)
 
-	LDA #SND_PLAYERBUMP	 
+	LDA #SND_PLAYERBUMP
 	STA Sound_QPlayer	; Play "bump" sound (there's no canoe here or tile can't possibly be moved over [< TILE_WATER_INVT/$82])
 
 PRG010_D31C:
@@ -3626,7 +3626,7 @@ PRG010_D31D:
 	; from the Player in whatever direction is appropriate; the canoe
 	; must match this coordinate precisely.
 
-	; NOTE: Currently the detection loop, as it stands, works for ONE CANOE 
+	; NOTE: Currently the detection loop, as it stands, works for ONE CANOE
 	; PER MAP ONLY!!  (Because as soon as it finds one, it jumps down here,
 	; and there's no mechanism to return to the loop!)
 
@@ -3634,16 +3634,16 @@ PRG010_D31D:
 	; we fail this test (and make the "bump" sound if needed)
 
 	LDY Map_Object_ActY,X
-	CPY Temp_Var1	
-	BNE PRG010_D310	
+	CPY Temp_Var1
+	BNE PRG010_D310
 
-	LDY Map_Object_ActX,X	
-	CPY Temp_Var2	
-	BNE PRG010_D310	 
+	LDY Map_Object_ActX,X
+	CPY Temp_Var2
+	BNE PRG010_D310
 
 	LDY Map_Object_ActXH,X
-	CPY Temp_Var3	
-	BNE PRG010_D310	 
+	CPY Temp_Var3
+	BNE PRG010_D310
 
 PRG010_D332:
 	LDA #16		 ; A = 16 (canoe movement amount)
@@ -3656,7 +3656,7 @@ PRG010_D336:
 
 	; Drawbridge check!
 	LDY Temp_Var3			; Y = Temp_Var3; 0-3 (right, left, down, up respectively)
-	CMP Map_DrawBridgeCheck,Y	
+	CMP Map_DrawBridgeCheck,Y
 	BNE PRG010_D347	 		; If Player is not crossing a draw bridge tile, jump to PRG010_D347
 
 	LDA World3_Bridge
@@ -3680,7 +3680,7 @@ PRG010_D349:
 	LDX #SND_MAPPATHMOVE 		; Play the "path move" sound!
 
 PRG010_D359:
-	; The only possible value that ever gets here in 'X' is SND_MAPPATHMOVE; 
+	; The only possible value that ever gets here in 'X' is SND_MAPPATHMOVE;
 	; they may have intended other possible sounds to play e.g. in the canoe.
 	; Of note, the check used after Map_CheckDoMove is called is to see if
 	; Sound_QMap = 0, which would indicate failure to traverse a path.
@@ -3744,7 +3744,7 @@ MapTile_Get_By_Offset:	; $D369
 	TAY		 	; Y = (Temp_Var15 & 0xF0) | Temp_Var15 (offset to specific tile Player is at)
 	LDA (Map_Tile_AddrL),Y	; Get this tile
 	RTS		 	; Return!
- 
+
 	; Offsets around Player for darkness effect
 Map_W8D_XOffTable:	.byte <-16, 32, 32, <-16
 Map_W8D_YOffTable:	.byte <-16, 32, 32, <-16
@@ -3759,13 +3759,13 @@ Map_W8DarknessUpdate:
 	; Set variables by input parameters
 	STA Map_W8D_XOff
 	STY Map_W8D_YOff
-	STX Map_W8D_Dir	
+	STX Map_W8D_Dir
 
 	LDY #$00	 ; Y = 0
 	LDX #$00	 ; X = 0
 
 	LDA Map_W8D_Dir	 ; A = Map_W8D_Dir
-	AND #$03	 
+	AND #$03
 	BEQ PRG010_D3E3	 ; If (Map_W8D_Dir & 3) = 0 (every 4 counts), jump to PRG010_D3E3
 
 	LDY #$86	 ; Y = $86
@@ -3787,7 +3787,7 @@ PRG010_D3CD:
 
 	LDA Map_W8D_YOff
 	SEC
-	SBC #16		
+	SBC #16
 	STA Map_W8D_Y		; Map_W8D_Y = Map_W8D_YOff - 16
 	JMP PRG010_D40B	 	; Jump to PRG010_D40B
 
@@ -3796,7 +3796,7 @@ PRG010_D3E3:
 	STY Temp_Var3		; Temp_Var3 = 6
 	LDX #$00	 	; X = 0
 	LDA Map_W8D_Dir	; A = Map_W8D_Dir
-	AND #$08	 	
+	AND #$08
 	BNE PRG010_D3F1
 	INX		 	; If (Map_W8D_Dir & 8) = 0 (every 8 counts), X++
 PRG010_D3F1:
@@ -3807,7 +3807,7 @@ PRG010_D3F1:
 PRG010_D3F8:
 	LDA Map_W8D_YOff
 	CLC
-	ADC Map_W8D_YOffTable,X	
+	ADC Map_W8D_YOffTable,X
 	STA Map_W8D_Y		; Map_W8D_Y = Map_W8D_Y + Y offset
 
 	LDA Map_W8D_XOff
@@ -3849,7 +3849,7 @@ W8D_FillGraphicsBuffer:
 	AND #$03
 	BNE PRG010_D445	 	; If traveling left or right, jump to PRG010_D445
 
-	; Traveling up or down 
+	; Traveling up or down
 
 	LDA #$01		; A = 1 (1 byte, i.e. horizontal offset between 8x8 patterns)
 	TAX		 	; X = 1 (1 byte, i.e. horizontal offset between map tiles)
@@ -3875,7 +3875,7 @@ PRG010_D449:
 
 	INY
 
-	LDA Temp_Var3	
+	LDA Temp_Var3
 	STA Graphics_Buffer,Y
 
 	INY
@@ -3923,13 +3923,13 @@ PRG010_D495:
 
 W8D_Calc_RC:
 	LDA Map_W8D_Y
-	AND #$f0	 ; Grid align 
+	AND #$f0	 ; Grid align
 	STA Map_W8D_RC ; -> Map_W8D_RC
 
 	LDA Map_W8D_X
-	LSR A		
-	LSR A		
-	LSR A		
+	LSR A
+	LSR A
+	LSR A
 	LSR A		 ; Shift right 4 bits (column)
 	ORA Map_W8D_RC
 	STA Map_W8D_RC ; Form row/column offset -> Map_W8D_RC
@@ -3939,7 +3939,7 @@ W8D_Calc_RC:
 
 W8D_GetNext8x8:
 	; Backup X and Y into Temp_Var2 and Temp_Var5
-	STY Temp_Var2		 
+	STY Temp_Var2
 	STX Temp_Var5
 
 	JSR W8D_Calc_TileOff	 ; Calculate offset within tile
@@ -3985,7 +3985,7 @@ W8D_Calc_VRAM_Addr:
 	; shifted out carry right back into the bit 0 position...
 	ASL A
 	ADC #$00
-	ASL A	
+	ASL A
 	ADC #$00
 	STA Temp_Var13	 ; Result -> <Temp_Var13
 
@@ -3996,14 +3996,14 @@ W8D_Calc_VRAM_Addr:
 	STA Temp_Var14 ; <Temp_Var14 = Map_W8D_X >> 3
 
 	; Forming a video address into Temp_Var15
-	LDA Temp_Var13	 ; 
+	LDA Temp_Var13	 ;
 	AND #$03	 ; Cap within Name table 2
 	ORA #$28	 ; Name Table 2 hi addr
 	STA Temp_Var15  ; Video address -> Temp_Var15
 
-	LDA Temp_Var13	  
-	AND #$e0	  
-	ORA Temp_Var14  
+	LDA Temp_Var13
+	AND #$e0
+	ORA Temp_Var14
 	STA Temp_Var16
 	RTS		 ; Return
 
@@ -4051,7 +4051,7 @@ PRG010_D535:
 	; BEGIN UNUSED SPACE
 
 	; Some additional DMC samples; large unused space is due to the simplistic address
-	; register which requires a particular alignment inside the bank... 
+	; register which requires a particular alignment inside the bank...
 
 	; There's quite a bit of unused space here; I removed it because it is safe for data
 	; to expand from the ending address above ($D542) up to the DMC data.  But the DMC

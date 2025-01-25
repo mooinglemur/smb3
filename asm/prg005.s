@@ -11,7 +11,7 @@
 ; This source file last updated: 2011-11-18 21:50:36.000000000 -0600
 ; Distribution package date: Fri Apr  6 23:46:16 UTC 2012
 ;---------------------------------------------------------------------------
-	; CAUTION!! ObjectGroup04 labels MUST appear at the 
+	; CAUTION!! ObjectGroup04 labels MUST appear at the
 	; address specified by the predefined constants!  I can't
 	; verify this at the assembler level, so be careful!!
 	; sorry, original coders assumed a constant
@@ -124,7 +124,7 @@ ObjectGroup04_InitJumpTable:
 	.word ObjInit_BigCannonBall	; Object $B0 - OBJ_BIGCANNONBALL
 	.word ObjInit_FireJetRight	; Object $B1 - OBJ_FIREJET_RIGHT
 	.word ObjInit_FireJetUpsideDown	; Object $B2 - OBJ_FIREJET_UPSIDEDOWN
-	.word ObjInit_ObjB3		; Object $B3 
+	.word ObjInit_ObjB3		; Object $B3
 
 
 	; Object group $04 (i.e. objects starting at ID $90) State 2 jump table
@@ -209,7 +209,7 @@ ObjectGroup04_CollideJumpTable:
 	.word $0000	; Object $B0 - OBJ_BIGCANNONBALL
 	.word $0000	; Object $B1 - OBJ_FIREJET_RIGHT
 	.word $0000	; Object $B2 - OBJ_FIREJET_UPSIDEDOWN
-	.word $0000	; Object $B3 
+	.word $0000	; Object $B3
 
 
 	; Object group $04 (i.e. objects starting at ID $90) attribute bits set 1 (OA1_* flags valid here)
@@ -553,7 +553,7 @@ PRG005_A250:
 	LDA #$13
 	JSR Podoboo_Splash
 
-PRG005_A258: 
+PRG005_A258:
 	RTS		 ; Return
 
 PRG005_A259:
@@ -606,7 +606,7 @@ PRG005_A283:
 	STA Temp_Var1
 	LDA Objects_YHi,X
 	SBC Objects_Var4,X
-	LSR A	
+	LSR A
 	ROR Temp_Var1
 	LDA Temp_Var1
 	LSR A
@@ -632,7 +632,7 @@ PRG005_A2AF:
 	JSR PRG005_A250		; Splash and determine horizontal visibility
 
 	; Restore Y
-	PLA	
+	PLA
 	STA Objects_Y,X
 
 	LDA RandomN,X
@@ -681,7 +681,7 @@ ObjInit_ObjB3:
 	RTS		 ; Return
 
 ObjB3_AttrByFrame:	.byte $03, $01, $02, $01
-	
+
 ObjNorm_ObjB3:
 
 	; Strange object... hurts Player, can be killed, appears able to be "bounced" off a sideways bounce block
@@ -800,7 +800,7 @@ BigCannonBall_Draw:
 	LDA Objects_X,X
 	PHA		 ; Save big cannon ball's X
 	CLC
-	ADC #$08	 
+	ADC #$08
 	STA Objects_X,X ; +8 to big cannon ball's X
 
 	LDA Objects_XHi,X
@@ -894,7 +894,7 @@ ObjInit_FireJetUpward:
 ObjInit_FireJetUpsideDown:
 
 	; Start at Y - 1
-	DEC Objects_Y,X 
+	DEC Objects_Y,X
 	LDA Objects_Y,X
 	CMP #$ff
 	BNE PRG005_A442
@@ -980,7 +980,7 @@ PRG005_A48D:
 	LSR A
 
 PRG005_A49F:
-	LSR A	
+	LSR A
 
 	LDA #$00	; A = $00 (No flip, Var4 < 3)
 
@@ -1189,8 +1189,8 @@ PRG005_A581:
 	STA Temp_Var1
 
 	; Temp_Var2 = Sprite X
-	LDA Objects_SpriteX,X	
-	STA Temp_Var2	
+	LDA Objects_SpriteX,X
+	STA Temp_Var2
 
 PRG005_A59D:
 	LDA Temp_Var2
@@ -1198,8 +1198,8 @@ PRG005_A59D:
 	BCS PRG005_A605	 ; If sprite is not visible, jump to PRG005_A605
 
 	LDA Temp_Var16
-	ASL A	
-	ASL A	
+	ASL A
+	ASL A
 	ADC Object_SprRAM,X
 	TAY		 ; Y = Sprite RAM offset
 
@@ -1208,7 +1208,7 @@ PRG005_A59D:
 	STA Sprite_RAM+$00,Y
 
 	; Set Sprite X
-	LDA Temp_Var2	
+	LDA Temp_Var2
 	STA Sprite_RAM+$03,Y
 
 	; Counter value -> Temp_Var3
@@ -1329,7 +1329,7 @@ PRG005_A628:
 	BNE PRG005_A63A	 ; Jump (technically always) to PRG005_A63A
 
 ObjInit_RedPiranha:
-	LDY #33	; Y = 33	
+	LDY #33	; Y = 33
 	BNE PRG005_A63A	; Jump (technically always) to PRG005_A63A
 
 ObjInit_GreenPiranha:
@@ -1518,7 +1518,7 @@ PRG005_A71E:
 	STA Sprite_RAM+$0E,Y
 
 PRG005_A72E:
-	LDA #(SPR_VFLIP | SPR_PAL2)	; Vertical flip and Palette select 2 
+	LDA #(SPR_VFLIP | SPR_PAL2)	; Vertical flip and Palette select 2
 	STA Sprite_RAM+$02,Y
 
 	LDA #(SPR_HFLIP | SPR_VFLIP | SPR_PAL2)	; Horizontal and vertical flip and palette select 2
@@ -1553,13 +1553,13 @@ PRG005_A74F:
 	; Set Sprite Y at Origin Y - Temp_Var1, made relative to scroll
 	LDA Objects_Var5,X
 	SEC
-	SBC Temp_Var1	
+	SBC Temp_Var1
 	SEC
 	SBC Level_VertScroll
 	STA Sprite_RAM-$08,Y
 
 PRG005_A760:
-	LDA Objects_SprHVis,X	
+	LDA Objects_SprHVis,X
 	AND #$40
 	BNE PRG005_A773	 ; If the second from left sprite is horizontally off-screen, jump to PRG005_A773
 
@@ -1572,7 +1572,7 @@ PRG005_A760:
 	STA Sprite_RAM-$04,Y
 
 PRG005_A773:
-	
+
 	; Mask sprite pattern
 	LDA #$77
 	STA Sprite_RAM-$07,Y
@@ -1614,7 +1614,7 @@ PRG005_A794:
 
 Piranha_Emerge:
 
-	; Var5 = original Y 
+	; Var5 = original Y
 	; Var7 = original Y Hi
 
 	LDA Objects_Var5,X		; Original Y
@@ -1649,7 +1649,7 @@ Piranha_Retract:
 	PLA		 ; Restore Y + 1
 
 	CMP Objects_Var5,X
-	LDA Temp_Var1	
+	LDA Temp_Var1
 	SBC Objects_Var7,X
 	BCS PRG005_A824	 ; Basically if Piranha is at his Y and Y Hi origin, jump to PRG005_A824
 
@@ -1665,7 +1665,7 @@ PRG005_A7DC:
 Piranha_Attack:
 
 	; TIP: For Var2, see Piranha_Style
-	LDA Objects_Var2,X	 
+	LDA Objects_Var2,X
 	BPL PRG005_A808	 ; If this is not a fire spitting type of Piranha, jump to PRG005_A808
 
 	; Fire spitting piranha...
@@ -1687,7 +1687,7 @@ Piranha_Attack:
 	CMP #$28
 	BEQ PRG005_A805	 ; If timer = $28, jump to PRG005_A805
 
-	TYA		 ; A = 0 (deliberately fails the following checks) 
+	TYA		 ; A = 0 (deliberately fails the following checks)
 
 PRG005_A7FD:
 	CMP #$10
@@ -1739,7 +1739,7 @@ PRG005_A833:
 
 
 Piranha_HideInPipe:
-	LDA Objects_Var2,X	 
+	LDA Objects_Var2,X
 	BPL PRG005_A85B	 ; If this is not a fire spitting piranha, jump to PRG005_A85B
 
 	LDA Objects_FlipBits,X
@@ -1760,7 +1760,7 @@ Piranha_HideInPipe:
 	BEQ PRG005_A858	 ; If timer = $28, jump to PRG005_A858
 
 
-	TYA		 ; A = 0 (deliberately fails the following checks) 
+	TYA		 ; A = 0 (deliberately fails the following checks)
 
 PRG005_A850:
 	CMP #$10
@@ -1836,11 +1836,11 @@ PRG005_A885:
 
 	; Y difference -> Temp_Var6
 	JSR Level_ObjCalcYDiffs
-	STY Temp_Var6	
+	STY Temp_Var6
 
 	; X difference -> Temp_Var7
 	JSR Level_ObjCalcXDiffs
-	STY Temp_Var7	
+	STY Temp_Var7
 
 	LDX #$00	 ; X = 0 (Player is close)
 
@@ -1905,7 +1905,7 @@ ObjNorm_AirshipPropellar:
 
 	; Temp_Var1 = Sprite Y
 	LDA Objects_SpriteY,X
-	STA Temp_Var1	
+	STA Temp_Var1
 
 	LDY Object_SprRAM,X	 ; Y = Sprite RAM offset
 
@@ -2003,7 +2003,7 @@ PRG005_A971:
 	CPY Temp_Var2
 	EOR Objects_SprHVis,X
 	BMI PRG005_A97C
-	BCC PRG005_A97E	
+	BCC PRG005_A97E
 	BCS PRG005_A981
 
 PRG005_A97C:
@@ -2044,7 +2044,7 @@ Rocky_FacePlayer:
 
 	; Set flip towards Player
 	LDA RockyWrench_FlipBits,Y
-	STA Objects_FlipBits,X	
+	STA Objects_FlipBits,X
 
 	RTS		 ; Return
 
@@ -2123,7 +2123,7 @@ PRG005_A9F7:
 	LDA Objects_Var5,X	 ; Var5 is internal state
 
 	JSR DynJump
-	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!! 
+	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 
 	.word Rocky_FaceAndPopup	; 0: After timer, Rocky pops up and faces Player
 	.word Rocky_WaitTimer		; 1: Just waiting for timer to expire
@@ -2134,11 +2134,11 @@ PRG005_A9F7:
 	.word Rocky_Killed		; 6: Rocky's killed state
 
 Rocky_FaceAndPopup:
-	LDA Objects_Timer,X	 
+	LDA Objects_Timer,X
 	BNE PRG005_AA38	 ; If timer not expired, jump to PRG005_AA38 (RTS)
 
 	JSR Rocky_FacePlayer	 ; Rocky faces Player
- 
+
 	; Rocky "pops up" to look for Player
 	LDA Objects_Y,X
 	CLC
@@ -2151,14 +2151,14 @@ Rocky_FaceAndPopup:
 	DEC Objects_YHi,X	 ; Apply carry
 
 	; Wait for timer to expire, go to next state, reload timer
-Rocky_WaitTimer: 
+Rocky_WaitTimer:
 
 	LDA Objects_Timer,X
 	BNE PRG005_AA38	 ; If timer not expired, jump to PRG005_AA38 (RTS)
 
 	INC Objects_Var5,X	 ; Var5++ (next internal state)
 
-	LDY Objects_Var5,X	 
+	LDY Objects_Var5,X
 	LDA Rocky_TimerReload,Y	 ; Load timer value by internal state
 	STA Objects_Timer,X	 ; Set timer
 
@@ -2167,7 +2167,7 @@ PRG005_AA38:
 
 Rocky_RiseUp:
 	; Set frame 0 and advance state after timer expires
-	LDA #$00	 
+	LDA #$00
 	JSR Rocky_UpdFrameAdvIntState
 
 	LDA Objects_Timer,X
@@ -2177,7 +2177,7 @@ Rocky_RiseUp:
 	; Move up one pixel
 	DEC Objects_Y,X
 	LDY Objects_Y,X
-	INY	
+	INY
 	BNE PRG005_AA4D
 	DEC Objects_YHi,X
 PRG005_AA4D:
@@ -2202,13 +2202,13 @@ Rocky_WrenchToss:
 	CMP #$1f
 	BNE PRG005_AA65	 ; 1:32 ticks proceed, otherwise jump to PRG005_AA65
 
-	JSR Rocky_ThrowWrench	 ; Throw Wrench 
+	JSR Rocky_ThrowWrench	 ; Throw Wrench
 
 PRG005_AA65:
 	RTS		 ; Return
 
 Rocky_DieOrWaitRevive:
-	LDA Objects_Timer,X	  
+	LDA Objects_Timer,X
 	BNE PRG005_AA7F	 ; If timer not expired, jump to PRG005_AA7F
 
 	LDA Objects_Var4,X
@@ -2235,7 +2235,7 @@ PRG005_AA7F:
 
 	; +1 to Rocky's Y
 	INC Objects_Y,X
-	BNE PRG005_AA85	
+	BNE PRG005_AA85
 	INC Objects_YHi,X
 PRG005_AA85:
 
@@ -2246,7 +2246,7 @@ PRG005_AA85:
 	RTS		 ; Return
 
 Rocky_Killed:
-	LDA Objects_Timer,X	  
+	LDA Objects_Timer,X
 	BNE PRG005_AA96	 ; If timer not expired, jump to PRG005_AA96
 
 	; Set Rocky state to Killed
@@ -2381,7 +2381,7 @@ PRG005_AB22:
 
 	; Set Rocky's Wrench Y Velocity
 	LDA Rocky_WrenchYVel,Y
-	LDY Temp_Var1	
+	LDY Temp_Var1
 	STA SpecialObj_YVel,Y
 
 	; Rocky's Wrench ID
@@ -2492,7 +2492,7 @@ PRG005_ABA9:
 
 	LDA #$01	 ; A = 1
 	BCC PRG005_ABC0	 ; If X velocity is not negative, jump to PRG005_ABC0
-	LDA #<-$01	 ; A = -1 
+	LDA #<-$01	 ; A = -1
 
 PRG005_ABC0:
 	CLC
@@ -2605,7 +2605,7 @@ PRG005_AC3E:
 
 	LDA Player_YVel
 	BPL PRG005_AC51	 ; If Player is moving downard, jump to PRG005_AC51 (RTS)
-	
+
 	; Move bolt backward
 	LDA #<-$05
 	STA Objects_XVel,X
@@ -2681,7 +2681,7 @@ PRG005_AC93:
 	RTS		 ; Return
 
 Bolt_ToBoltCollide:
-	LDA Objects_SprVVis,X 
+	LDA Objects_SprVVis,X
 	BNE PRG005_AD06	 ; If any sprite of the bolt is vertically off-screen, jump to PRG005_AD06 (RTS)
 
 	LDA Objects_SprHVis,X
@@ -2740,7 +2740,7 @@ PRG005_ACA9:
 	LSR Temp_Var2
 
 	LDA #<-$01	 ; A = -$01
-	BCS PRG005_ACF3	 
+	BCS PRG005_ACF3
 
 	LDA #$01	 ; A = $01
 
@@ -2753,11 +2753,11 @@ PRG005_ACF3:
 
 	PHA		 ; ?? doesn't do anything useful (see immediately below)
 
-	LDX Temp_Var16	 ; Restore this other bolt's index 
+	LDX Temp_Var16	 ; Restore this other bolt's index
 
 	PLA		 ; ?? doesn't do anything useful (see immediately above)
 
-	EOR #$ff	 ; The opposite value 
+	EOR #$ff	 ; The opposite value
 
 	STA Objects_XVel,X	 ; Store opposing value into the other bolt
 
@@ -2773,7 +2773,7 @@ ObjInit_Sun:
 
 Sun_VelAccel:	.byte $08, $F8, $08, $F8
 Sun_VelLimits:	.byte $40, $C0, $40, $C0
-	
+
 ObjNorm_Sun:
 	LDA Objects_State,X
 	CMP #OBJSTATE_NORMAL
@@ -2830,14 +2830,14 @@ PRG005_AD48:
 	INY		 ; Y = 1
 
 PRG005_AD51:
-	TYA		 
+	TYA
 	STA Objects_Frame,X	 ; Periodically use frame 0 or 1
 
 	LDA Objects_Var7,X	 ; Var7 is internal state
 	JSR DynJump
 
-	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!! 
-	.word Sun_WaitFarEnough		; 0: Waits until screen has 
+	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
+	.word Sun_WaitFarEnough		; 0: Waits until screen has
 	.word Sun_WaitThenAttackRight	; 1: Does circling movements and then starts attack to the right
 	.word Sun_WaitAndResetTimer20	; 2: Resets timer to $20 after it expires
 	.word Sun_WaitForUpperReturn	; 3: Waits for the Sun to make his way back up to the top
@@ -2846,7 +2846,7 @@ PRG005_AD51:
 	.word Sun_WaitForUpperReturn2	; 6: Waits for the Sun to make his way back up to the top
 
 Sun_WaitFarEnough:
-	LDA #$00	 
+	LDA #$00
 	STA Objects_Frame,X	 ; Hold Sun in frame 0
 
 	LDA Objects_XHi,X
@@ -2913,7 +2913,7 @@ PRG005_ADAD:
 	RTS		 ; Return
 
 Sun_TimerReload:	.byte $40, $60, $80, $A0
-	
+
 Sun_WaitForUpperReturn:
 	JSR Object_ApplyXVel	  	; Apply X velocity
 	JSR Object_ApplyYVel_NoLimit	; Apply Y Velocity
@@ -2998,7 +2998,7 @@ PRG005_AE10:
 	RTS		 ; Return
 
 Sun_WaitAndResetTimer20:
-	LDA Objects_Timer,X	  
+	LDA Objects_Timer,X
 	BNE PRG005_AE21	 ; If timer not expired, jump to PRG005_AE21
 
 	INC Objects_Var7,X	 ; Var7++ (next internal state)
@@ -3067,7 +3067,7 @@ Sun_Draw:
 
 PRG005_AE67:
 	STA Objects_FlipBits,X	 ; Update attributes
- 
+
 	LDA Objects_SprHVis,X
 	STA Temp_VarNP0	 ; Sprite horizontal visibility -> Temp_VarNP0
 
@@ -3105,7 +3105,7 @@ PRG005_AE67:
 
 	; Sun's Sprite Y -> Temp_Var1
 	LDA Objects_SpriteY,X
-	STA Temp_Var1	
+	STA Temp_Var1
 
 	LDA Objects_Frame,X
 	TAX		 ; Frame -> 'X'
@@ -3114,13 +3114,13 @@ PRG005_AE67:
 	BMI PRG005_AEAC	 ; If sprite is horizontally off-screen, jump to PRG005_AEAC
 
 	; Set Sprite Y
-	LDA Temp_Var1	
+	LDA Temp_Var1
 	CLC
 	ADC Sun_SpriteYOffs,X
 	STA Sprite_RAM+$10,Y
 
 PRG005_AEAC:
-	LDA Temp_VarNP0	
+	LDA Temp_VarNP0
 	AND #%00010000
 	BNE PRG005_AEBC	 ; If this sprite is horizontally off-screen, jump to PRG005_AEBC
 
@@ -3427,7 +3427,7 @@ ArrowPlat_Attrs:
 ArrowPlat_FlickerMask:	.byte $02, $02, $04, $04
 
 ArrowPlat_Draw:
-	JSR Object_CalcSpriteXY_NoHi	 
+	JSR Object_CalcSpriteXY_NoHi
 
 	LDA #$00
 	STA Objects_SprHVis,X
@@ -3532,7 +3532,7 @@ ArrowPlat_CheckWorldCollide:
 	; NOTE: This only works for "vertical" levels
 
 	LDA #$06	 ; Y = $06 (Player not ducking and not small)
- 
+
 	LDY Player_IsDucking
 	BNE PRG005_B0AC	 ; If Player is ducking, jump to PRG005_B0AC
 
@@ -3626,7 +3626,7 @@ PRG005_B0FD:
 
 	BLT PRG005_B105	 ; If absolute value of X velocity < $10, jump to PRG005_B105
 
-	ADC #$00	 ; A = 2 (palette select 2 for "fast" Parabeetles) (ADC's is an unclear way to get A = 2 :P) 
+	ADC #$00	 ; A = 2 (palette select 2 for "fast" Parabeetles) (ADC's is an unclear way to get A = 2 :P)
 
 PRG005_B105:
 	STA Objects_SprAttr,X	 ; Set sprite attribute
@@ -3655,7 +3655,7 @@ PRG005_B105:
 
 	; Temp_VarNP0 = Player hit status bits (previous frame's detection status)
 	LDA Objects_PlayerHitStat,X
-	STA Temp_VarNP0	
+	STA Temp_VarNP0
 
 	; I'm not sure the reason for the modification of "Kill_Tally" here...
 	; Maybe at one time this was just another stompable enemy?
@@ -3671,7 +3671,7 @@ PRG005_B105:
 	LDA Objects_PlayerHitStat,X
 	BEQ PRG005_B1A8	 ; If no collision, jump to PRG005_B1A8
 
-	CMP Temp_VarNP0	
+	CMP Temp_VarNP0
 	BEQ PRG005_B14C	 ; If detection status hasn't changed from last frame, jump to PRG005_B14C
 
 	LDA #$0C
@@ -3708,7 +3708,7 @@ PRG005_B15A:
 PRG005_B162:
 	INC Objects_YVel,X	; Parabeetle starts to droop
 
-	; Let's Player jump off Parabeetle 
+	; Let's Player jump off Parabeetle
 	LDA #$05
 	STA Player_AllowAirJump
 
@@ -3821,7 +3821,7 @@ ObjNorm_TwirlingPlatCWNS:
 
 PRG005_B1D5:
 	JSR Platform_SplitVar5
-	JSR PRG005_B40A	
+	JSR PRG005_B40A
 	JSR PRG005_SUB_B4BB
 
 	JMP PRG005_B270	 ; Jump to PRG005_B270
@@ -3860,7 +3860,7 @@ PRG005_B209:
 
 	LDA Objects_Var5,X
 	CMP PRG005_B1E9,Y
-	BEQ PRG005_B21A	 
+	BEQ PRG005_B21A
 
 	CLC
 	ADC PRG005_B1E5,Y
@@ -3931,7 +3931,7 @@ PRG005_B270:
 	LDY #$06
 
 PRG005_B282:
-	STY Temp_Var1		  
+	STY Temp_Var1
 	CPY #$06
 	BNE PRG005_B28D
 
@@ -3940,14 +3940,14 @@ PRG005_B282:
 
 
 PRG005_B28D:
-	TYA		  
+	TYA
 	ASL A
 	ASL A
 	CLC
 	ADC Object_SprRAM,X
 
 PRG005_B294:
-	STA Temp_Var16		  
+	STA Temp_Var16
 	LDA Player_Y
 	SEC
 	SBC Level_VertScroll
@@ -3960,7 +3960,7 @@ PRG005_B294:
 	SBC #$10
 
 PRG005_B2A6:
-	LDY Temp_Var16		  
+	LDY Temp_Var16
 	SEC
 	SBC Sprite_RAM+$00,Y
 	CMP #$09
@@ -3978,7 +3978,7 @@ PRG005_B2A6:
 
 
 PRG005_B2C0:
-	LDY Temp_Var1		  
+	LDY Temp_Var1
 	DEY
 	BPL PRG005_B282
 
@@ -3986,7 +3986,7 @@ PRG005_B2C5:
 	RTS
 
 PRG005_B2C6:
-	LDA Player_IsDying		  
+	LDA Player_IsDying
 	BNE PRG005_B2C5
 
 	LDA Sprite_RAM+$00,Y
@@ -4007,7 +4007,7 @@ PRG005_B2C6:
 	RTS
 
 PRG005_B2E2:
-	LDA Pad_Holding		  
+	LDA Pad_Holding
 	AND #(PAD_LEFT | PAD_RIGHT)
 	BNE PRG005_B2F4
 
@@ -4020,10 +4020,10 @@ PRG005_B2E2:
 	INC Player_XVel
 
 PRG005_B2F2:
-	DEC Player_XVel		  
+	DEC Player_XVel
 
 PRG005_B2F4:
-	LDA #$00	  
+	LDA #$00
 	STA Player_YVel
 	STA Player_InAir
 	JSR PRG005_B3B1
@@ -4033,7 +4033,7 @@ PRG005_B2F4:
 	RTS
 
 PRG005_B303:
-	LDA Objects_Var5,X	  
+	LDA Objects_Var5,X
 	LDY Temp_Var1
 	CPY #$04
 	BCC PRG005_B30D
@@ -4041,7 +4041,7 @@ PRG005_B303:
 	EOR #$80
 
 PRG005_B30D:
-	ASL A		  
+	ASL A
 	BCS PRG005_B331
 
 	LDA Temp_Var6
@@ -4053,7 +4053,7 @@ PRG005_B30D:
 	EOR #$ff
 
 PRG005_B31B:
-	ASL A		  
+	ASL A
 	ASL A
 	ASL A
 	BPL PRG005_B328
@@ -4066,17 +4066,17 @@ PRG005_B31B:
 
 
 PRG005_B328:
-	CMP #$40	  
+	CMP #$40
 	BCC PRG005_B32E
 
 	LDA #$40
 
 PRG005_B32E:
-	STA Player_XVel		  
+	STA Player_XVel
 	RTS
 
 PRG005_B331:
-	LDA Temp_Var5		  
+	LDA Temp_Var5
 	JSR PRG005_B31B
 
 	LDA Temp_Var6
@@ -4087,7 +4087,7 @@ PRG005_B331:
 	RTS
 
 PRG005_B33E:
-	LDY Temp_Var1		  
+	LDY Temp_Var1
 	LDA Objects_VarBSS,X
 	CMP #$10
 	BCC PRG005_B34F
@@ -4101,7 +4101,7 @@ PRG005_B33E:
 	TAY
 
 PRG005_B34F:
-	LDA Player_YVel		  
+	LDA Player_YVel
 	BMI PRG005_B359
 
 	LDA Counter_1
@@ -4110,7 +4110,7 @@ PRG005_B34F:
 
 
 PRG005_B359:
-	LDA PRG005_B22C,Y	  
+	LDA PRG005_B22C,Y
 	LDY Player_YVel
 	BPL PRG005_B364
 
@@ -4123,7 +4123,7 @@ PRG005_B364:
 	STA Objects_Var5,X
 
 PRG005_B369:
-	LDA Temp_Var5		  
+	LDA Temp_Var5
 	EOR Temp_Var6
 	BPL PRG005_B375
 
@@ -4134,15 +4134,15 @@ PRG005_B369:
 
 
 PRG005_B375:
-	LDA Temp_Var5		  
+	LDA Temp_Var5
 	BPL PRG005_B37C
 
 
 PRG005_B379:
-	JSR Negate	  
+	JSR Negate
 
 PRG005_B37C:
-	LDY Player_YVel		  
+	LDY Player_YVel
 	BPL PRG005_B38B
 
 	JSR Negate
@@ -4153,7 +4153,7 @@ PRG005_B37C:
 	RTS
 
 PRG005_B38B:
-	LDY #$20	  
+	LDY #$20
 	STA Temp_Var1
 	ASL Temp_Var1
 	ROR A
@@ -4174,17 +4174,17 @@ PRG005_B38B:
 	LDY #$e0
 
 PRG005_B3A7:
-	CMP #$20	  
+	CMP #$20
 	BCC PRG005_B3AD
 
 	STY Player_XVel
 
 PRG005_B3AD:
-	LDA #$10	  
+	LDA #$10
 	STA Player_YVel
 
 PRG005_B3B1:
-	LDY Temp_Var16		  
+	LDY Temp_Var16
 	LDA Player_Y
 	PHA
 	LDA Sprite_RAM+$00,Y
@@ -4200,13 +4200,13 @@ PRG005_B3B1:
 	DEC Player_YHi
 
 PRG005_B3C9:
-	LDA #$08	  
+	LDA #$08
 	STA Player_AllowAirJump
 	RTS
 
 
 PRG005_SUB_B3CF:
-	JSR Platform_SplitVar5	 
+	JSR Platform_SplitVar5
 
 	LDA Objects_VarBSS,X	 ; A value 0-63
 
@@ -4231,7 +4231,7 @@ PRG005_SUB_B3CF:
 
 PRG005_B3EC:
 	AND #$20
-	BEQ PRG005_B3F8	
+	BEQ PRG005_B3F8
 
 	; VarBSS = $38
 	LDA #$38
@@ -4289,7 +4289,7 @@ PRG005_B40A:
 	STA Temp_Var10
 
 PRG005_B432:
-	LDA Temp_Var10		  
+	LDA Temp_Var10
 	CMP #$03
 	BCS PRG005_B444
 
@@ -4324,7 +4324,7 @@ PRG005_B447:
 	INC Temp_Var6
 
 PRG005_B460:
-	LDA Temp_Var9		  
+	LDA Temp_Var9
 	CMP #$03
 	BCS PRG005_B472
 
@@ -4336,11 +4336,11 @@ PRG005_B460:
 	JMP PRG005_B48C
 
 PRG005_B472:
-	LDY #$ff	  
+	LDY #$ff
 
 	SEC
 PRG005_B475:
-	SBC #$03	  
+	SBC #$03
 	INY
 	BCS PRG005_B475
 
@@ -4358,7 +4358,7 @@ PRG005_B475:
 	INC Temp_Var5
 
 PRG005_B48C:
-	LDA Objects_VarBSS,X	  
+	LDA Objects_VarBSS,X
 	AND #$30
 	BEQ PRG005_B4B4
 
@@ -4371,7 +4371,7 @@ PRG005_B48C:
 	JSR PRG005_B4B7
 
 PRG005_B49D:
-	LDX #$01	  
+	LDX #$01
 
 PRG005_B49F:
 	LDA Temp_Var1,X
@@ -4385,7 +4385,7 @@ PRG005_B49F:
 	STA Temp_Var5,X
 
 PRG005_B4B4:
-	LDX SlotIndexBackup		  
+	LDX SlotIndexBackup
 	RTS
 
 
@@ -4450,13 +4450,13 @@ PRG005_SUB_B4BB:
 	LDX #$06
 
 PRG005_B526:
-	CPX #$00	  
+	CPX #$00
 	BNE PRG005_B52C
 
 	LDY Temp_Var7
 
 PRG005_B52C:
-	LDA Sprite_RAM+$00,Y	  
+	LDA Sprite_RAM+$00,Y
 	CMP #$c2
 	BCS PRG005_B53A
 
@@ -4466,25 +4466,25 @@ PRG005_B52C:
 
 
 PRG005_B53A:
-	LDA #$f8	  
+	LDA #$f8
 	STA Sprite_RAM+$00,Y
 	BNE PRG005_B551
 
 
 PRG005_B541:
-	LDA #$01	  
+	LDA #$01
 	CPX #$06
 	BNE PRG005_B549
 
 	LDA #$02
 
 PRG005_B549:
-	STA Sprite_RAM+$02,Y	  
+	STA Sprite_RAM+$02,Y
 	LDA #$ed
 	STA Sprite_RAM+$01,Y
 
 PRG005_B551:
-	INY		  
+	INY
 	INY
 	INY
 	INY
@@ -4525,7 +4525,7 @@ Platform_SplitVar5:
 	CMP #$08
 	BLT PRG005_B57A	 ; If result < 8, jump to PRG005_B57A
 
-	ORA #$f0	 ; Otherwise, make negative 
+	ORA #$f0	 ; Otherwise, make negative
 PRG005_B57A:
 	PLP		 ; Restore process status
 
@@ -4564,13 +4564,13 @@ PRG005_SUB_B596:
 	DEC Temp_Var11
 
 PRG005_B5B3:
-	LDA Objects_XHi,X	  
+	LDA Objects_XHi,X
 	SBC Temp_Var11
 	STA Temp_Var11
 	LDY #$00
 
 PRG005_B5BB:
-	LDA Temp_Var12		  
+	LDA Temp_Var12
 	CMP Horz_Scroll
 	LDA Temp_Var11
 	SBC Horz_Scroll_Hi
@@ -4581,7 +4581,7 @@ PRG005_B5BB:
 	STA Temp_Var13
 
 PRG005_B5CC:
-	STX Temp_Var15		  
+	STX Temp_Var15
 	LDX PRG005_B582,Y
 	LDA Temp_Var1,X
 	PHA
@@ -4597,7 +4597,7 @@ PRG005_B5CC:
 	DEY
 
 PRG005_B5E3:
-	TYA		  
+	TYA
 	ADC Temp_Var11
 	STA Temp_Var11
 	LDY Temp_Var16
@@ -4624,7 +4624,7 @@ PRG005_B5E3:
 
 
 PRG005_B60C:
-	LDA #$ff	  
+	LDA #$ff
 	STA Temp_Var13
 
 PRG005_B610:
@@ -4661,7 +4661,7 @@ PRG005_B62E:
 BigQBlock_YVelByTimer:
 	.byte $00, $40, $30, $20, $10, $00, <-$10, <-$20, <-$30, <-$40
 
-ObjNorm_BigQBlock: 
+ObjNorm_BigQBlock:
 	JSR Object_DeleteOffScreen	; Delete block if it falls off-screen
 
 	JSR BigQBlock_Draw	; Draw the Big ? Block
@@ -4816,7 +4816,7 @@ BigQBlock_StarManFlash:
 	.byte $03	; OBJ_BIGQBLOCK_HAMMER
 
 BigQBlock_Open:
-	LDA Objects_Frame,X	 
+	LDA Objects_Frame,X
 	BNE PRG005_B70D	 ; If this Big ? Block is already opened, jump to PRG005_B70D
 
 	LDY #$05	 ; Y = 5
@@ -4825,7 +4825,7 @@ BigQBlock_Open:
 	LDA Level_ObjectID,X
 	CMP #OBJ_BIGQBLOCK_3UP
 	BNE PRG005_B6F5	 ; If this is NOT a 3-Up Big ? Block, jump to PRG005_B6F5
- 
+
 	; Var5 = 2 (2 more 1-ups to emerge after this one)
 	LDA #$02
 	STA Objects_Var5,X
@@ -4902,7 +4902,7 @@ BigQBlock_UpperPats:	.byte $87, $9B, $85, $99, $83, $99, $81, $97
 BigQBlock_LowerPats:	.byte $8F, $8F, $8D, $9D, $8B, $9D, $89, $89
 
 BigQBlock_Draw:
-	JSR Object_ShakeAndCalcSprite	 
+	JSR Object_ShakeAndCalcSprite
 	STY Temp_Var14		 ; Sprite RAM offset -> Temp_Var14
 
 	LDA Temp_Var8
@@ -4914,7 +4914,7 @@ BigQBlock_Draw:
 	LDX #$06	 ; X = 6
 	CMP #$00
 	BEQ PRG005_B76E	 ; If Frame = 0 (Not opened), jump to PRG005_B76E
- 
+
 	INX		 ; X = 7
 
 PRG005_B76E:
@@ -4953,12 +4953,12 @@ PRG005_B788:
 	STA Sprite_RAM+$06,Y
 
 	; Sprite X
-	LDA Temp_Var2	
+	LDA Temp_Var2
 	STA Sprite_RAM+$03,Y
 	STA Sprite_RAM+$07,Y
 
 	CLC
-	ADC #$08	
+	ADC #$08
 	STA Temp_Var2	; +8 to next sprite to the right
 
 	; Sprite Offset += 8 (next two sprites)
@@ -5040,7 +5040,7 @@ PRG005_B7E8:
 Level_SpawnObjsAndBounce:
 	; Do scene-change-reset, if needed
 	; NOTE!! Does NOT return here if it did!
-	JSR Level_DoChangeReset	
+	JSR Level_DoChangeReset
 
 	LDA Player_Bounce
 	BEQ PRG005_B826	 ; If Player is not bouncing, jump to PRG005_B826
@@ -5104,7 +5104,7 @@ PRG005_B831:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Level_ObjectsSpawnByScroll
 ;
-; Spawns object while screen scrolls (how it goes from static 
+; Spawns object while screen scrolls (how it goes from static
 ; level data to dynamic stuff on the screen)
 ; Non-vertical variant of Level_ObjectsSpawnByScrollV
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -5116,7 +5116,7 @@ LOSBS_LookAhead:	.byte 16, <-32
 LOSBS_LookAheadHi:	.byte $01, $FF	; sign extensions
 
 Level_ObjectsSpawnByScroll:
-	LDY Scroll_LastDir	 
+	LDY Scroll_LastDir
 
 	LDA Horz_Scroll
 	CLC
@@ -5129,7 +5129,7 @@ Level_ObjectsSpawnByScroll:
 	STA Temp_Var7	 ; Temp_Var7 = "look ahead" high part
 
 	CMP Level_Width
-	BEQ PRG005_B852	
+	BEQ PRG005_B852
 	BLT PRG005_B852	 ; If the "high part" is <= the level width, jump to PRG005_B852
 
 	JMP PRG005_B956	 ; Otherwise, at the end, jump to PRG005_B956 (RTS)
@@ -5139,17 +5139,17 @@ PRG005_B852:
 
 	LDA Level_ObjIdxStartByScreen,X	 ; Get starting Level_Objects index for this screen
 	BMI PRG005_B872	 ; If no objects on this screen, jump to PRG005_B872 (RTS)
- 
+
 	STA Temp_Var2	 ; Starting index -> Temp_Var2
 	TAX		 ; -> 'X'
 
-	ASL A		 
+	ASL A
 	CLC
 	ADC Temp_Var2	 ; Multiply by 3 (get to appropriate object)
 	TAY		 ; -> 'Y'
 
 	DEY		 ; Y-- (offset to object column, decrement to counteract Y += 3 on first pass)
-	DEX		 ; X-- (basically to counteract following INX on first pass) 
+	DEX		 ; X-- (basically to counteract following INX on first pass)
 
 PRG005_B863:
 	INX		 ; X++ (next object index)
@@ -5163,7 +5163,7 @@ PRG005_B863:
 	LSR A
 	LSR A
 	LSR A		 ; Divide by 16 to get "screen" (16 columns per screen)
-	CMP Temp_Var7	 
+	CMP Temp_Var7
 	BEQ PRG005_B873	 ; If object is on this "look ahead" screen, jump to PRG005_B873
 
 PRG005_B872:
@@ -5171,19 +5171,19 @@ PRG005_B872:
 
 PRG005_B873:
 	LDA Level_Objects-1,Y	 ; Get object ID (we're aligned by column, hence -1)
-	CMP #$ff	 
+	CMP #$ff
 	BEQ PRG005_B872	 ; If this is the terminator, jump to PRG005_B872 (RTS)
 
 	LDA Level_ObjectsSpawned,X
-	CMP #$00	 
+	CMP #$00
 	BMI PRG005_B863	 ; If this object is already currently spawned, jump to PRG005_B863 (skip to next object)
 
 	LDA Level_Objects,Y	 ; Get object column
-	ASL A		 
-	ASL A		 
-	ASL A		 
+	ASL A
+	ASL A
+	ASL A
 	ASL A		 ; Multiply by 16 (make pixel position)
-	CMP Temp_Var6	 
+	CMP Temp_Var6
 	BNE PRG005_B863	 ; If object not equal to "look ahead" low component, jump to PRG005_B863 (skip to next object)
 
 	; Object should be spawned...
@@ -5234,7 +5234,7 @@ PRG005_B8BE:
 	LDX Temp_Var2	 ; Restore object index
 
 	LDA Level_ObjectsSpawned,X
-	ORA #$80	 
+	ORA #$80
 	STA Level_ObjectsSpawned,X	; Mark object as already spawned (even though technically it isn't, but prevents re-triggering)
 
 	JMP PRG005_B863	 ; Jump to PRG005_B863 (next object)
@@ -5310,7 +5310,7 @@ PRG005_B909:
 PRG005_B911:
 	LDX #$04	 ; X = 4
 PRG005_B913:
-	LDA Objects_State,X	
+	LDA Objects_State,X
 	BEQ PRG005_B91E	 ; If this object slot is "dead/empty", jump to PRG005_B91E
 	DEX		 ; X--
 	BPL PRG005_B913	 ; While X >= 0, loop!
@@ -5328,23 +5328,23 @@ PRG005_B91E:
 
 	; Upper 4 bits shifted right (high Y)
 	LDA Level_Objects,Y	 ; Get object row
-	AND #$f0	 
-	LSR A		 
-	LSR A		 
-	LSR A		 
-	LSR A		 
+	AND #$f0
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	STA Objects_YHi,X
 
 	; Lower 4 bits shifted left (low Y)
 	LDA Level_Objects,Y	 ; Get object row
-	AND #$0f	 
-	ASL A		 
-	ASL A		 
-	ASL A		 
-	ASL A		 
+	AND #$0f
+	ASL A
+	ASL A
+	ASL A
+	ASL A
 	STA Objects_Y,X
 
-	DEY		 
+	DEY
 	DEY		 ; Y -= 2 (at object ID now)
 
 	; Set object ID
@@ -5376,7 +5376,7 @@ PRG005_B956:
 	; looks right when there's no vertical scrolling.
 ObjAutoScroller_Init:
 	LDA Level_Objects+1,Y	; Get object row
-	CMP #$60	 	
+	CMP #$60
 	BNE PRG005_B964	 	; If object is NOT on row $60, jump to PRG005_B964
 
 	LDA #UPDATERASTER_WATERLINE
@@ -5385,7 +5385,7 @@ ObjAutoScroller_Init:
 	RTS		 ; Return
 
 PRG005_B964:
-	PHA		 ; Save object row 
+	PHA		 ; Save object row
 
 	; Clear auto scroll variables
 	LDY #$14	 ; Y = $14
@@ -5410,10 +5410,10 @@ PRG005_B969:
 	LSR A		 ; Divide by 16
 
 	STA Level_AScrlSelect
-	CMP #$03	 
+	CMP #$03
 	BGE PRG005_B98E	 ; If Level_AScrlSelect >= 3 (Likely but not necessarily one of the Airships), jump to PRG005_B98E
 
-	CMP #$01	 
+	CMP #$01
 	BNE PRG005_B988	 ; If Level_AScrlSelect <> 1 (World 3 Airship), jump to PRG005_B988
 
 	TYA
@@ -5446,9 +5446,9 @@ Spawn3Var4:	.byte  1,  1,   0	; Initial value for Var 4
 Spawn3TroopsOrCheeps:
 	STA Temp_VarNP0  ; Backup object ID
 
-	TXA		 
+	TXA
 	PHA		 ; Save object index
-	TYA		 
+	TYA
 	PHA		 ; Save Level_Objects offset
 
 	; Changing object row value into a 16-bit Y value
@@ -5459,22 +5459,22 @@ Spawn3TroopsOrCheeps:
  	LSR A
 	LSR A
 	LSR A
-	LSR A	
-	STA Temp_Var9		 ; -> Temp_Var9 
+	LSR A
+	STA Temp_Var9		 ; -> Temp_Var9
 
 	; Lower 4 bits shifted left -> Temp_Var10 (low Y)
 	LDA Level_Objects+1,Y	 ; Get object row
 	AND #$0f
-	ASL A	
-	ASL A	
+	ASL A
+	ASL A
 	ASL A
 	ASL A
 	STA Temp_Var10		 ; -> Temp_Var10
 
-	LDA Temp_Var7		
+	LDA Temp_Var7
 	STA Temp_Var11		 ; Temp_Var11 = Temp_Var7 (pixel high X of object)
 
-	LDA Temp_Var1		 
+	LDA Temp_Var1
 	STA Temp_Var12		 ; Temp_Var12 = Temp_Var1 (pixel X position of object)
 
 	LDX Temp_Var2		 ; Restore object index -> 'X'
@@ -5491,7 +5491,7 @@ Spawn3TroopsOrCheeps:
 PRG005_B9D9:
 	LDX #$04	; X = 4
 PRG005_B9DB:
-	LDA Objects_State,X	
+	LDA Objects_State,X
 	BEQ PRG005_B9E6	 ; If this object slot is "dead/empty", jump to PRG005_B9E6
 	DEX		 ; X--
 	BPL PRG005_B9DB	 ; While X >= 0, loop!
@@ -5503,13 +5503,13 @@ PRG005_B9E6:
 	; Set object Y/Hi by calculated values
 	LDA Temp_Var9
 	STA Objects_YHi,X
-	LDA Temp_Var10	
+	LDA Temp_Var10
 	STA Objects_Y,X
 
 	; Set object X/Hi
-	LDA Temp_Var12	
+	LDA Temp_Var12
 	STA Objects_X,X
-	LDA Temp_Var11	
+	LDA Temp_Var11
 	STA Objects_XHi,X
 
 	; Difference of Player vs object X Lo -> Temp_Var16
@@ -5524,18 +5524,18 @@ PRG005_B9E6:
 	ADC Spawn3XOff,Y
 	STA Temp_Var12		; Temp_Var12 += Spawn3XOff[Y]
 	LDA Temp_Var11
-	ADC Spawn3XHiOff,Y	
+	ADC Spawn3XHiOff,Y
 	STA Temp_Var11		; related sign extension
 
 	LDA Temp_VarNP0		; Get object ID back
-	CMP #OBJ_SPAWN3GREENTROOPAS	
+	CMP #OBJ_SPAWN3GREENTROOPAS
 	BEQ PRG005_BA2B	 	; If object ID = OBJ_SPAWN3GREENTROOPAS, jump to PRG005_BA2B
 
 	; OBJ_SPAWN3ORANGECHEEPS specific...
 
 	LDY Temp_Var13		 ; 0 - 2, loop counter
 
-	LDA Spawn3YVels,Y	 
+	LDA Spawn3YVels,Y
 	STA Objects_YVel,X	 ; Set appropriate Y velocity
 
 	LDA Spawn3Var4,Y
@@ -5593,20 +5593,20 @@ PRG005_BA54:
 	STA CannonFire_ID+1,X
 	LDA CannonFire_YHi,X
 	STA CannonFire_YHi+1,X
-	LDA CannonFire_Y,X	
-	STA CannonFire_Y+1,X	
-	LDA CannonFire_XHi,X	
-	STA CannonFire_XHi+1,X	
-	LDA CannonFire_X,X	
-	STA CannonFire_X+1,X	
-	LDA CannonFire_Parent,X	
-	STA CannonFire_Parent+1,X	
-	LDA CannonFire_Timer,X	
-	STA CannonFire_Timer+1,X	
-	LDA CannonFire_Var,X	
-	STA CannonFire_Var+1,X	
-	LDA CannonFire_Timer2,X	
-	STA CannonFire_Timer2+1,X	
+	LDA CannonFire_Y,X
+	STA CannonFire_Y+1,X
+	LDA CannonFire_XHi,X
+	STA CannonFire_XHi+1,X
+	LDA CannonFire_X,X
+	STA CannonFire_X+1,X
+	LDA CannonFire_Parent,X
+	STA CannonFire_Parent+1,X
+	LDA CannonFire_Timer,X
+	STA CannonFire_Timer+1,X
+	LDA CannonFire_Var,X
+	STA CannonFire_Var+1,X
+	LDA CannonFire_Timer2,X
+	STA CannonFire_Timer2+1,X
 
 	DEX		 ; X--
 	BPL PRG005_BA54	 ; While X >= 0, loop
@@ -5625,26 +5625,26 @@ PRG005_BA54:
 PRG005_BA9A:
 	; Upper 4 bits shifted right -> CannonFire_YHi (high Y)
 	LDA Level_Objects+1,Y	 ; Get object row
-	AND #$f0	 
-	LSR A		 
-	LSR A		 
-	LSR A		 
-	LSR A		 
+	AND #$f0
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	STA CannonFire_YHi
 
 	; Upper 4 bits shifted left -> CannonFire_Y (low Y)
 	LDA Level_Objects+1,Y	 ; Get object row
-	AND #$0f	
-	ASL A		
-	ASL A		
-	ASL A		
-	ASL A		
+	AND #$0f
+	ASL A
+	ASL A
+	ASL A
+	ASL A
 	STA CannonFire_Y
 
-	LDA Temp_Var7	
+	LDA Temp_Var7
 	STA CannonFire_XHi	 ; CannonFire_XHi = (pixel high X of object)
 
-	LDA Temp_Var1	
+	LDA Temp_Var1
 	STA CannonFire_X	 ; CannonFire_X = (pixel X position of object)
 
 	LDA #$00
@@ -5668,10 +5668,10 @@ PRG005_BACE:
 
 	; Mark this object as spawned
 	LDA Level_ObjectsSpawned,X
-	ORA #$80	
+	ORA #$80
 	STA Level_ObjectsSpawned,X
 
-	LDA Temp_Var16	
+	LDA Temp_Var16
 	STA CannonFire_ID
 
 	PLA		 ; Restore input index value
@@ -5683,7 +5683,7 @@ PRG005_BACE:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Level_ObjectsSpawnByScrollV
 ;
-; Spawns object while screen scrolls (how it goes from static 
+; Spawns object while screen scrolls (how it goes from static
 ; level data to dynamic stuff on the screen)
 ; Vertical variant of Level_ObjectsSpawnByScroll
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -5701,7 +5701,7 @@ Level_ObjectsSpawnByScrollV:
 	LDA Level_VertScroll
 	CLC
 	ADC LOSBSV_LookAhead,Y
-	AND #$f0	 
+	AND #$f0
 	STA Temp_Var6	 ; Temp_Var6 = Vert_Scroll + LOSBSV_LookAhead[Y] (appropriate "look ahead" values)
 
 	LDA Level_VertScrollH
@@ -5730,7 +5730,7 @@ PRG005_BB12:
 	STA Temp_Var2	 ; Starting index -> Temp_Var2
 	TAX		 ; -> 'X'
 
-	ASL A		 
+	ASL A
 	CLC
 	ADC Temp_Var2	 ; Multiply by 3 (get to appropriate object)
 	TAY		 ; -> 'Y'
@@ -5745,7 +5745,7 @@ PRG005_BB21:
 	LSR A
 	LSR A
 	LSR A		 ; Divide by 16 to get "screen" (16 rows per screen)
-	CMP Temp_Var7	 
+	CMP Temp_Var7
 	BEQ PRG005_BB30	 ; If object is on this "look ahead" screen, jump to PRG005_BB30
 
 PRG005_BB2F:
@@ -5753,7 +5753,7 @@ PRG005_BB2F:
 
 PRG005_BB30:
 	LDA Level_Objects-2,Y
-	CMP #$ff	 
+	CMP #$ff
 	BEQ PRG005_BB2F	 ; If this is the terminator, jump to PRG005_B82F (RTS)
 
 	LDA Level_ObjectsSpawned,X
@@ -5780,14 +5780,14 @@ PRG005_BB30:
 	; Level_Objects-2 (i.e. the Object ID); incidentally, this
 	; still works because you would never find an object at
 	; column $B4 (OBJ_CHEEPCHEEPBEGIN), but you can't access
-	; and Level_Events this way (not that they were ever used	
+	; and Level_Events this way (not that they were ever used
 	; in a vertical area!)  Sort of a half-schroedinbug.
 	; And who knows why there's a double load; probably a very
 	; old copy and paste error, eh? :)
 	LDA Level_Objects-1,Y
 	LDA Level_Objects-1,Y
 	CMP #OBJ_CHEEPCHEEPBEGIN
-	BLT PRG005_BB5F	
+	BLT PRG005_BB5F
 
 	; This is never used, but actually cheep cheep swarms in a
 	; vertical pipe maze is really kinda cool!
@@ -5798,7 +5798,7 @@ PRG005_BB30:
 PRG005_BB5F:
 	LDX #$04	 ; X = 4
 PRG005_BB61:
-	LDA Objects_State,X	
+	LDA Objects_State,X
 	BEQ PRG005_BB6C	 ; If this object is "dead/empty", jump to PRG005_BB6C
 	DEX		 ; X--
 	BPL PRG005_BB61	 ; While X >= 0, loop!
@@ -5809,7 +5809,7 @@ PRG005_BB6C:
 	; Set object Y
 	LDA Temp_Var1
 	STA Objects_Y,X
-	LDA Temp_Var7	
+	LDA Temp_Var7
 	STA Objects_YHi,X
 
 	; Object X Hi is never used in a vertical level
@@ -5820,10 +5820,10 @@ PRG005_BB6C:
 
 	; Turn column into X pixel coordinate
 	LDA Level_Objects,Y	 ; Get object column
-	ASL A	
-	ASL A	
-	ASL A	
-	ASL A	
+	ASL A
+	ASL A
+	ASL A
+	ASL A
 	STA Objects_X,X
 
 	DEY		 ; Y-- (now we're at the ID field)
@@ -5855,11 +5855,11 @@ PRG005_BB9A:
 ; Performs a "level event" based on the value of Level_Event
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LevelEvent_Do:
-	LDA Level_Event	
+	LDA Level_Event
 	BEQ PRG005_BBBF	 ; If no level event, jump to PRG005_BBBF (RTS)
-	JSR DynJump	 ; Dynamic jump based on Level_Event... 
-	
-	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!! 
+	JSR DynJump	 ; Dynamic jump based on Level_Event...
+
+	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 
 	.word LevelEvent_DoNothing	; 0 - Do nothing (not used!)
 	.word LevelEvent_CheepCheep	; 1 - Cheep Cheep attack
@@ -5867,7 +5867,7 @@ LevelEvent_Do:
 	.word LevelEvent_LakituFlee	; 3 - Clears Lakitu_Active which causes an active Lakitu to flee / be removed
 	.word LevelEvent_Parabeetles	; 4 - Green and red parabeetles flyby!
 	.word LevelEvent_CloudsinBG	; 5 - Floating clouds in background float by
-	.word LevelEvent_WoodPlatforms	; 6 - Random wooden platforms 
+	.word LevelEvent_WoodPlatforms	; 6 - Random wooden platforms
 	.word LevelEvent_TreasureBox	; 7 - Get a treasure box
 	.word LevelEvent_Cancel		; 8 - Does nothing but clear Level_Event
 
@@ -5917,7 +5917,7 @@ PRG005_BBDF:
 	STA Temp_Var1	 ; Temp_Var1 = 64 + (Random 0 to 127), locked to 32 pixel grid with 15 offset
 	PHP		 ; Save process status
 
-	; Now comes a lengthy check to make sure that no wooden 
+	; Now comes a lengthy check to make sure that no wooden
 	; platform appears where another already is (vertically)
 	LDY #$04
 PRG005_BBF1:
@@ -5930,7 +5930,7 @@ PRG005_BBF1:
 
 	; This check specifically prevents two platforms from appearing in the same place
 	LDA Objects_Y,Y
-	CMP Temp_Var1	
+	CMP Temp_Var1
 	BNE PRG005_BC11	 ; If this object slot's Y position does not match what we generated, jump to PRG005_BC11
 
 	; Random + $30
@@ -6084,10 +6084,10 @@ PRG005_BCB8:
 	BGE PRG005_BCCD	 ; If Y >= 5, jump to PRG005_BCCD
 
 	LDA Level_ObjectID,Y
-	CMP #OBJ_GIANTBLOCKCTL	 
+	CMP #OBJ_GIANTBLOCKCTL
 	BEQ PRG005_BCCD	 ; If object ID = OBJ_GIANTBLOCKCTL (the Giant World block controller), jump to PRG005_BCCD
 
-	LDA Objects_State,Y	
+	LDA Objects_State,Y
 	BNE PRG005_BCF4	 ; If this object slot is not "dead/empty", jump to PRG005_BCF4
 
 PRG005_BCCD:
@@ -6124,17 +6124,17 @@ PRG005_BCF4:
 	RTS		 ; Return
 
 
-	; Random X Offsets employed by the jumping 
+	; Random X Offsets employed by the jumping
 	; Cheep Cheeps; may negate sign!
 CheepCheep_RandomXs:
 	.byte $10, $18, $20, $28
 
-	; Random X Velocities employed by the jumping 
+	; Random X Velocities employed by the jumping
 	; Cheep Cheeps; may negate sign!
 CheepCheep_RandomXVels:
 	.byte $18, $1A, $1C, $1E
 
-LevelEvent_CheepCheep:	
+LevelEvent_CheepCheep:
 	LDA Level_NoStopCnt
 	AND #$1f	 ; Cap 0 - 31
 	BNE PRG005_BD53	 ; If not zero, jump to PRG005_BD53 (RTS)
@@ -6261,7 +6261,7 @@ PRG005_BD91:
 	ADC #$20	 ; + 32
 	AND #$7f	 ; Cap 0 - $7F
 	ADC Level_VertScroll
-	STA Objects_Y,X	
+	STA Objects_Y,X
 	LDA Level_VertScrollH
 	ADC #$00
 	STA Objects_YHi,X
@@ -6278,7 +6278,7 @@ ParaBeetle_XVel:	.byte 8, <-8
 
 LevelEvent_Parabeetles:
 	LDA Level_NoStopCnt
-	AND #$3f	 
+	AND #$3f
 	BNE PRG005_BDFF	 ; Only do anything once every 64 ticks
 
 	LDA #OBJ_PARABEETLE
@@ -6315,12 +6315,12 @@ PRG005_BDEA:
 
 	; Set Y position (screen height + 16 + (Random 0 - 127))
 	LDA RandomN,X
-	AND #$7f	
+	AND #$7f
 	CLC
-	ADC #$10	
+	ADC #$10
 	ADC Level_VertScroll
-	STA Objects_Y,X	
-	LDA Vert_Scroll_Hi	
+	STA Objects_Y,X
+	LDA Vert_Scroll_Hi
 	ADC #$00
 	STA Objects_YHi,X
 
@@ -6332,7 +6332,7 @@ PRG005_BDFF:
 ; Level_SpawnObj	-- slots 0 - 4
 ; Level_SpawnObjSetMax	-- slots 0 - input X register
 ;
-; This function "spawns" a new object (finds an empty object slot 
+; This function "spawns" a new object (finds an empty object slot
 ; from slots 0 - 4 (or custom) and preps it for normal operation.)
 ; Does not set up X, Y, ID, etc -- this is the responsibility of
 ; the caller to do so.
@@ -6351,7 +6351,7 @@ Level_SpawnObjSetMax:
 	BPL Level_SpawnObjSetMax	 ; While X >= 0, loop!
 
 	; When no slots are open, does not return to caller!
-	PLA		 
+	PLA
 	PLA		 ; Do not return to caller!!
 
 	RTS		 ; Return
@@ -6375,7 +6375,7 @@ PRG005_BE13:
 	BEQ PRG005_BE20	 ; If this object slot is "dead", jump to PRG005_BE20
 
 	LDA Level_ObjectID,X
-	CMP Temp_Var1	
+	CMP Temp_Var1
 	BNE PRG005_BE20	 ; If this object slot does not have the same ID as what was input, jump to PRG005_BE20
 
 	INY		 ; Otherwise, increment count
@@ -6404,7 +6404,7 @@ PRG005_BE26:
 ; screen needs to be set up (clears old objects out, spawns new
 ; ones in!)  This activates only when Level_ChangeReset = 0!
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-Level_DoChangeReset: 
+Level_DoChangeReset:
 	LDA Level_ChangeReset
 	BEQ PRG005_BE35	 ; If Level_ChangeReset not set, jump to PRG005_BE35
 
@@ -6416,7 +6416,7 @@ PRG005_BE35:
 PRG005_BE37:
 	STA SpecialObj_ID,Y	; Set special object ID to 0
 
-	CPY #$08	 
+	CPY #$08
 	BGE PRG005_BE41	 	; If Y >= 8, jump to PRG005_BE41
 
 	STA CannonFire_ID,Y
@@ -6452,14 +6452,14 @@ PRG005_BE67:
 	BPL PRG005_BE37	 ; While Y >= 0, loop
 
 	; Clear a bunch of stuff!
-	STA Player_DebugNoHitFlag	
+	STA Player_DebugNoHitFlag
 	STA EndCard_Flag
 	STA RotatingColor_Cnt
 	STA Player_TwisterSpin
 	STA Level_Vibration
 	STA Vert_Scroll_Off
 	STA Player_VibeDisable
-	STA Level_Event	
+	STA Level_Event
 	STA LevelEvent_Cnt
 	STA Splash_DisTimer
 	STA Level_ScrollDiffH
@@ -6489,11 +6489,11 @@ PRG005_BE90:
 	INY		 ; Y = 1
 
 PRG005_BEB6:
-	CPX #$10	 
+	CPX #$10
 	BEQ PRG005_BEFC	 ; If X = $10, jump to PRG005_BEFC
- 
+
 	LDA Level_Objects,Y
-	CMP #$ff	 
+	CMP #$ff
 	BEQ PRG005_BEE5	 ; If terminator, jump to PRG005_BEE5
 
 	LDA Level_7Vertical
@@ -6512,32 +6512,32 @@ PRG005_BECE:
 	LSR A		 ; Get appropriate screen offset
 	STA Temp_Var2	 ; -> Temp_Var2
 
-	CPX Temp_Var2	
+	CPX Temp_Var2
 	BNE PRG005_BEE5	 ; If X <> screen offset, jump to PRG005_BEE5
 
 	INC Temp_Var1	 ; Temp_Var1++
 
-	LDA Temp_Var1	
+	LDA Temp_Var1
 	STA Level_ObjIdxStartByScreen+1,X ; Calculated first object index for next screen
 
 	INY
-	INY 
+	INY
 	INY		 ; Y += 3 (next object)
 	JMP PRG005_BEB6	 ; Jump to PRG005_BEB6
 
 PRG005_BEE5:
-	LDA Temp_Var1	 
+	LDA Temp_Var1
 
-	CPX #$0f	 
+	CPX #$0f
 	BEQ PRG005_BEEE	 ; If X = $F, jump to PRG005_BEEE
 
 	STA Level_ObjIdxStartByScreen+1,X ; Calculated first object index for next screen
 
 PRG005_BEEE:
-	CMP Level_ObjIdxStartByScreen,X	 
+	CMP Level_ObjIdxStartByScreen,X
 	BNE PRG005_BEF8	 ; If Level_ObjIdxStartByScreen[X] <> 0, jump to PRG005_BEF8
 
-	LDA #$ff	 
+	LDA #$ff
 	STA Level_ObjIdxStartByScreen,X	 ; Level_ObjIdxStartByScreen[X] = $FF (means no objects this screen)
 
 PRG005_BEF8:
@@ -6553,11 +6553,11 @@ PRG005_BEFE:
 	DEX		 ; X--
 	BPL PRG005_BEFE	 ; While X >= 0, loop!
 
-	LDA #$4f	 
+	LDA #$4f
 	STA PatTable_BankSel+5	 ; Set sixth pattern table to $4F
 
 	LDA Level_TilesetIdx
-	CMP #$0a	 
+	CMP #$0a
 	BNE PRG005_BF1C	 ; If Level_TilesetIdx <> 10 (Giant World), jump to PRG005_BF1C
 
 	; Setup object slot 4 for OBJ_GIANTBLOCKCTL
@@ -6567,7 +6567,7 @@ PRG005_BEFE:
 	STA Level_ObjectID+4
 
 PRG005_BF1C:
-	LDA Level_7Vertical	 
+	LDA Level_7Vertical
 	BNE PRG005_BF70	 ; If level is vertical, jump to PRG005_BF70
 
 	LDA Horz_Scroll
@@ -6625,7 +6625,7 @@ PRG005_BF55:
 	CMP Horz_Scroll_Hi
 	BNE PRG005_BF49	 ; If we haven't reached the high target yet, loop
 
-	LDA Temp_Var14	
+	LDA Temp_Var14
 	CMP Horz_Scroll
 	BNE PRG005_BF49	 ; If we haven't reached the low target yet, loop
 
@@ -6656,7 +6656,7 @@ PRG005_BF70:
 
 	LDA Level_VertScrollH
 	PHA		 ; Save Level_VertScrollH
-	
+
 	CLC
 	ADC LOSBSV_LookAheadHi+1
 	STA Temp_Var15	 ; Temp_Var15 = Level_VertScrollH + [LOSBSV_LookAheadHi+1]

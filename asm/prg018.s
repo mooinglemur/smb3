@@ -106,7 +106,7 @@ Tile_Layout_TS6_TS7_TS8:
 	.byte $AB, $AB, $75, $0A, $FE, $FE, $69, $5A, $36, $36, $5A, $36, $FF, $FF, $FF, $FF ; Tiles $E0 - $EF
 	.byte $12, $06, $E1, $06, $95, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Tiles $F0 - $FF
 
-	; Upper right 8x8 pattern per tile	
+	; Upper right 8x8 pattern per tile
 	.byte $FF, $FF, $FF, $07, $07, $EA, $99, $FF, $99, $FF, $62, $63, $7C, $7E, $FF, $FF ; Tiles $00 - $0F
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Tiles $10 - $1F
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $BA, $BA ; Tiles $20 - $2F
@@ -152,7 +152,7 @@ Tile_Attributes_TS6_TS7_TS8:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LevelLoad_TS6:
 	; Clear Tile memory
-	LDY #$00	 
+	LDY #$00
 PRG018_A40A:
 	LDA #TILE6_SKY
 	JSR Tile_Mem_ClearB
@@ -170,7 +170,7 @@ PRG018_A40A:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LevelLoad_TS7:
 	; Clear Tile memory
-	LDY #$00	 
+	LDY #$00
 
 	; No apparent visibility -- sky??
 PRG018_A41B:
@@ -180,24 +180,24 @@ PRG018_A41B:
 	BNE PRG018_A41B
 
 	; Used as Toad House main background blocks
-	LDY #$30	
+	LDY #$30
 PRG018_A426:
 	LDA #TILE7_TOADHOUSEBG
-	JSR Tile_Mem_ClearB	
-	INY		
-	CPY #$e0	
-	BNE PRG018_A426	
+	JSR Tile_Mem_ClearB
+	INY
+	CPY #$e0
+	BNE PRG018_A426
 
 	; No apparent visibility -- checkerboard floor??
 PRG018_A430:
 	LDA #TILE7_CHECKERBOARDUL
-	JSR Tile_Mem_ClearB	
-	INY		
+	JSR Tile_Mem_ClearB
+	INY
 	LDA #TILE7_CHECKERBOARDUR
 	JSR Tile_Mem_ClearB
-	INY		
-	CPY #$f0	
-	BNE PRG018_A430	
+	INY
+	CPY #$f0
+	BNE PRG018_A430
 
 	JMP LevelLoad	; Begin actual level loading!
 
@@ -258,17 +258,17 @@ LoadLevel_Generator_TS678:
 
 	LDA Temp_Var15
 	AND #%11100000
-	LSR A		
-	LSR A		
-	LSR A		
-	LSR A		
-	LSR A		
+	LSR A
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	TAX		 	; X = upper 3 bits of Temp_Var15 (0-7) (selects a multiple of 15 as the base)
 
 	LDA LL_ShapeDef
-	LSR A	
-	LSR A	
-	LSR A	
+	LSR A
+	LSR A
+	LSR A
 	LSR A			; A = upper 4 bits of LL_ShapeDef shifted down
 	CLC
 	ADC PRG018_A483,X	; Add multiple of 15
@@ -324,7 +324,7 @@ LoadLevel_Generator_TS678:
 	.word FAR014_LoadLevel_TopDecoBlocks		; 38 - Top-Deco Rectangle Right waving water pool
 	.word FAR014_LoadLevel_TopDecoBlocks		; 39 - Top-Deco Rectangle Water wrong-way BG
 	.word FAR014_LoadLevel_TopDecoBlocks		; 40 - Top-Deco Rectangle Diamond blocks (not really any deco on top)
-	.word FAR014_LoadLevel_TopDecoBlocks		; 41 - Top-Deco Rectangle Sand ground 
+	.word FAR014_LoadLevel_TopDecoBlocks		; 41 - Top-Deco Rectangle Sand ground
 	.word FAR014_LoadLevel_TopDecoBlocks		; 42 - Top-Deco Rectangle orange block??
 	.word FAR014_LoadLevel_IceBricks		; 43 - Run of ice bricks
 	.word FAR014_LoadLevel_VTransitPipeRun		; 44 - Vertical in-level transit pipe
@@ -340,13 +340,13 @@ LoadLevel_Generator_TS678:
 	.word LoadLevel_UnderwaterCirclesH	; 54 - Horizontal run of the little circles
 	.word FAR014_LoadLevel_DonutLifts		; 55 - Run of donut lifts
 	.word LoadLevel_UpwardSpikes		; 56 - Run of upward pointing spikes
-	.word LoadLevel_WaterFill		; 57 - Rectangle of water tiles 
+	.word LoadLevel_WaterFill		; 57 - Rectangle of water tiles
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LeveLoad_FixedSizeGen_TS678
 ;
-; Much simpler generators that are fixed-size, commonly used for 
-; just single tile placement styles (although a couple relatively 
+; Much simpler generators that are fixed-size, commonly used for
+; just single tile placement styles (although a couple relatively
 ; complex ones exist in here as well)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LeveLoad_FixedSizeGen_TS678:
@@ -358,11 +358,11 @@ LeveLoad_FixedSizeGen_TS678:
 
 	LDA Temp_Var15
 	AND #%11100000
-	LSR A		
+	LSR A
 	CLC
-	ADC LL_ShapeDef	
+	ADC LL_ShapeDef
 	TAX		 	; Resultant index is put into 'X'
-	JSR DynJump	 
+	JSR DynJump
 
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word LoadLevel_PipeElbows		;  0 - Upper left pipe elbow
@@ -382,7 +382,7 @@ LeveLoad_FixedSizeGen_TS678:
 	.word LoadLevel_18UNK_B			; 14 - UNKNOWN garbage background tile
 	.word LoadLevel_18UNK_B			; 15 - UNKNOWN garbage background tile
 	.word FAR014_LoadLevel_PowerBlock		; 16 - ? block with flower
-	.word FAR014_LoadLevel_PowerBlock		; 17 - ? block with leaf 
+	.word FAR014_LoadLevel_PowerBlock		; 17 - ? block with leaf
 	.word FAR014_LoadLevel_PowerBlock		; 18 - ? block with star
 	.word FAR014_LoadLevel_PowerBlock		; 19 - ? block with coin OR star
 	.word FAR014_LoadLevel_PowerBlock		; 20 - ? block with coin (??)
@@ -420,7 +420,7 @@ LeveLoad_FixedSizeGen_TS678:
 LL_SceneryVPipe_CrossChk:	.byte TILE8_SCENPIPE_HT,     TILE8_SCENPIPE_HB,     TILE8_MINIPIPE_HM,     TILE1_PIPEHT,          TILE1_PIPEHB
 LL_SceneryVPipe_CrossChk_End:
 
-	; Replace it with corresponding cross tile! 
+	; Replace it with corresponding cross tile!
 LL_SceneryVPipe_CrossL:	.byte TILE8_SCENPIPE_VL_HTC, TILE8_SCENPIPE_VL_HBC, TILE8_SCENPIPE_VL_HMC, TILE8_SCENPIPE_VL_HTC, TILE8_SCENPIPE_VL_HBC
 LL_SceneryVPipe_CrossR:	.byte TILE8_SCENPIPE_VR_HTC, TILE8_SCENPIPE_VR_HBC, TILE8_SCENPIPE_VR_HMC, TILE8_SCENPIPE_VR_HTC, TILE8_SCENPIPE_VR_HBC
 
@@ -476,9 +476,9 @@ PRG018_A5C1:
 	CLC
 	ADC #16
 	STA TileAddr_Off
-	TAY	
+	TAY
 	LDA Map_Tile_AddrH
-	ADC #$00	 
+	ADC #$00
 	STA Map_Tile_AddrH
 
 	DEC Temp_Var3		; Temp_Var3-- (height decrement)
@@ -500,7 +500,7 @@ LL_SceneryVPipe_CheckCrossL:
 	LDX #(LL_SceneryVPipe_CrossChk_End - LL_SceneryVPipe_CrossChk - 1)
 	LDA (Map_Tile_AddrL),Y	 ; Get tile here
 PRG018_A5E3:
-	CMP LL_SceneryVPipe_CrossChk,X	 
+	CMP LL_SceneryVPipe_CrossChk,X
 	BEQ PRG018_A5F0	 	; If this tile is one of the ones in the list, jump to PRG018_A5F0
 	DEX		 ; X--
 	BPL PRG018_A5E3	 ; While X >= 0, loop!
@@ -509,7 +509,7 @@ PRG018_A5E3:
 	JMP PRG018_A5F3	 	; Jump to PRG018_A5F3
 
 PRG018_A5F0:
-	LDA LL_SceneryVPipe_CrossL,X	 ; $A5F0 
+	LDA LL_SceneryVPipe_CrossL,X	 ; $A5F0
 
 PRG018_A5F3:
 	RTS		 ; Return
@@ -520,7 +520,7 @@ LL_SceneryVPipe_CheckCrossR:
 	LDX #(LL_SceneryVPipe_CrossChk_End - LL_SceneryVPipe_CrossChk - 1)
 	LDA (Map_Tile_AddrL),Y	 ; Get tile here
 PRG018_A5F8:
-	CMP LL_SceneryVPipe_CrossChk,X	 
+	CMP LL_SceneryVPipe_CrossChk,X
 	BEQ PRG018_A605	 	; If this tile is one of the ones in the list, jump to PRG018_A5F0
 	DEX		 ; X--
 	BPL PRG018_A5F8	 ; While X >= 0, loop!
@@ -529,7 +529,7 @@ PRG018_A5F8:
 	JMP PRG018_A608  	; Jump to PRG018_A5F3
 
 PRG018_A605:
-	LDA LL_SceneryVPipe_CrossR,X	 ; $A5F0 
+	LDA LL_SceneryVPipe_CrossR,X	 ; $A5F0
 PRG018_A608:
 	RTS		 ; Return
 
@@ -579,21 +579,21 @@ PRG018_A62C:
 	ADC #16
 	STA TileAddr_Off
 	LDA Map_Tile_AddrH
-	ADC #$00	 
+	ADC #$00
 	STA Map_Tile_AddrH
 
 	INX		 ; X++
 	STX Temp_Var5	 ; Temp_Var5 = X (backup update)
-	CPX #$02	 
+	CPX #$02
 	BNE PRG018_A618	 ; If X <> 2, loop!
 
 	RTS		 ; Return
-	
+
 	; If the pipe being constructed crosses one of these...
 LL_SceneryHPipe_CrossChk:	.byte TILE1_PIPEVL, TILE1_PIPEVR, TILE8_MINIPIPE_VM
 LL_SceneryHPipe_CrossChk_End:
 
-	; Replace it with corresponding cross tile! 
+	; Replace it with corresponding cross tile!
 LL_SceneryHPipe_CrossT:	.byte TILE8_SCENPIPE_HT_VLC, TILE8_SCENPIPE_HT_VRC, TILE8_SCENPIPE_HT_VMC
 LL_SceneryHPipe_CrossB:	.byte TILE8_SCENPIPE_HB_VLC, TILE8_SCENPIPE_HB_VRC, TILE8_SCENPIPE_HB_VMC
 
@@ -663,7 +663,7 @@ PRG018_A687:
 	ADC #16
 	STA TileAddr_Off
 	LDA Map_Tile_AddrH
-	ADC #$00	
+	ADC #$00
 	STA Map_Tile_AddrH
 
 	INX		 ; X++
@@ -714,9 +714,9 @@ PRG018_A6CB:
 	CLC
 	ADC #16
 	STA TileAddr_Off
-	TAY		
+	TAY
 	LDA Map_Tile_AddrH
-	ADC #$00	 
+	ADC #$00
 	STA Map_Tile_AddrH
 
 	DEX		 ; X-- (height decrement)
@@ -749,7 +749,7 @@ LoadLevel_BGVMinipipe:
 	LDA #TILE8_BGPIPE_MVT	; BG minipipe vertical top
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
-	JMP PRG018_A6FC	 ; $A6F5 
+	JMP PRG018_A6FC	 ; $A6F5
 
 PRG018_A6F8:
 	LDA #TILE8_BGPIPE_MVM	; BG minipipe vertical middle
@@ -758,10 +758,10 @@ PRG018_A6F8:
 PRG018_A6FC:
 
 	; Go to next line by adding 16
-	TYA	
+	TYA
 	CLC
 	ADC #16
-	TAY	
+	TAY
 	LDA Map_Tile_AddrH
 	ADC #$00
 	STA Map_Tile_AddrH
@@ -795,12 +795,12 @@ LoadLevel_BGHPipeLeft:
 PRG018_A71C:
 	LDY TileAddr_Off	 ; Y = TileAddr_Off
 
-	LDA Temp_Var3	
+	LDA Temp_Var3
 	STA Temp_Var4		 ; Temp_Var4 = Temp_Var3
 
 	LDA LL_BGPipeHEnd,X	 ; BG pipe vertical end
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
-	JMP PRG018_A730	 ; $A728 
+	JMP PRG018_A730	 ; $A728
 
 PRG018_A72B:
 	LDA LL_BGPipeHMid,X	 ; BG pipe vertical middle
@@ -844,7 +844,7 @@ LoadLevel_BGHPipeRight:
 PRG018_A753:
 	LDY TileAddr_Off	 ; Y = TileAddr_Off
 
-	LDA Temp_Var3	
+	LDA Temp_Var3
 	STA Temp_Var4		 ; Temp_Var4 = Temp_Var3
 
 PRG018_A75A:
@@ -954,7 +954,7 @@ LoadLevel_Nothing18:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LoadLevel_UnderwaterScenery
 ;
-; Generates a variable 1-16 height version of the underwater plant 
+; Generates a variable 1-16 height version of the underwater plant
 ; things or the water circle things (what ARE those anyway?)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LL_UnderwaterScenery:
@@ -967,14 +967,14 @@ LoadLevel_UnderwaterScenery:
 
 	SEC
 	SBC #$d0
-	LSR A	
-	LSR A	
-	LSR A	
-	LSR A	
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	TAX		 ; X = relative index
 
 	PLA		 ; Restore LL_ShapeDef
-	AND #$0f	 
+	AND #$0f
 	STA Temp_Var3	 ; Temp_Var3 = lower 4 bits of LL_ShapeDef
 
 	LDY TileAddr_Off	 ; Y = TileAddr_Off
@@ -994,7 +994,7 @@ PRG018_A7DE:
 	TYA
 	CLC
 	ADC #16
-	TAY	
+	TAY
 	LDA Map_Tile_AddrH
 	ADC #$00
 	STA Map_Tile_AddrH
@@ -1034,7 +1034,7 @@ LoadLevel_PipeElbows:
 	CLC
 	ADC #16
 	STA TileAddr_Off
-	TAY	
+	TAY
 	LDA Map_Tile_AddrH
 	ADC #$00
 	STA Map_Tile_AddrH
@@ -1095,7 +1095,7 @@ PRG018_A83D:
 ; Alternate clear to all black tiles for vertical level
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LoadLevel_VerticalAltClear:
-	LDY #$00	
+	LDY #$00
 PRG018_A84A:
 	LDA #TILE8_BLACK
 	JSR Tile_Mem_ClearV
@@ -1113,9 +1113,9 @@ PRG018_A84A:
 LoadLevel_TwoRowsWater:
 	; Backup Map_Tile_AddrL/H to Temp_Var1/2
 	LDA Map_Tile_AddrL
-	STA Temp_Var1	
+	STA Temp_Var1
 	LDA Map_Tile_AddrH
-	STA Temp_Var2	
+	STA Temp_Var2
 
 	LDA LL_ShapeDef
 	AND #$0f
@@ -1148,7 +1148,7 @@ PRG018_A86C:
 	CLC
 	ADC #16
 	STA TileAddr_Off
-	TAY	
+	TAY
 
 	DEX		 ; X-- (row decrement)
 	BPL PRG018_A868	 ; While X >= 0, loop!
@@ -1159,7 +1159,7 @@ PRG018_A86C:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LoadLevel_GrayBlock
 ;
-; Inserts a 1-16 width gray block that runs until it hits an 
+; Inserts a 1-16 width gray block that runs until it hits an
 ; orange block tile (the main terrain of underwater levels)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LL_GrayLeft:	.byte TILE6_GRAYPLATFORM_UL, TILE6_GRAYPLATFORM_ML
@@ -1189,7 +1189,7 @@ PRG018_A8A4:
 	CMP #TILE6_ORANGEBLK_UL
 	BLT PRG018_A8B5	 	; If tile is less than the orange block's tiles, jump to PRG018_A8B5
 
-	CMP #TILE6_ORANGEBLK_UR	 
+	CMP #TILE6_ORANGEBLK_UR
 	BLT PRG018_A8EA	 	; If in range of the orange block tiles, jump to PRG018_A8EA (RTS)
 
 PRG018_A8B5:
@@ -1245,7 +1245,7 @@ LL_OrangeRight:	.byte TILE6_ORANGEBLK_UR, TILE6_ORANGEBLK_LR
 
 LoadLevel_OrangeBlock:
 	; Get byte from layout data
-	LDY #$00	 
+	LDY #$00
 	LDA (Level_LayPtr_AddrL),Y
 	STA Temp_Var4
 
@@ -1396,7 +1396,7 @@ PRG018_A98C:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LoadLevel_WaterFill
 ;
-; 1-256 x 1-32 rectangle of water 
+; 1-256 x 1-32 rectangle of water
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LoadLevel_WaterFill:
 	LDY #$00
@@ -1425,49 +1425,49 @@ LoadLevel_WaterFill:
 	LDY TileAddr_Off	 ; Y = TileAddr_Off
 
 	LDX Temp_Var3		 ; X = Temp_Var3 (width)
- 
+
 PRG018_A9BE:
-	LDA #TILE6_WATERTOP	; Top of water tile 
+	LDA #TILE6_WATERTOP	; Top of water tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 	JSR LoadLevel_NextColumn	 ; Next column
 
-	DEX		 ; X-- 
-	CPX #$ff	  
+	DEX		 ; X--
+	CPX #$ff
 	BNE PRG018_A9BE	 ; While X >= 0, loop!
- 
-	JMP PRG018_A9DB	 ; Jump to PRG018_A9DB 
+
+	JMP PRG018_A9DB	 ; Jump to PRG018_A9DB
 
 PRG018_A9CD:
-	LDX Temp_Var3		 ; X = Temp_Var3 
+	LDX Temp_Var3		 ; X = Temp_Var3
 PRG018_A9CF:
-	LDA #TILE6_WATER	; Water tile 
+	LDA #TILE6_WATER	; Water tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 	JSR LoadLevel_NextColumn	 ; Next column
 
-	DEX		 ; X-- 
-	CPX #$ff 
+	DEX		 ; X--
+	CPX #$ff
 	BNE PRG018_A9CF	 ; While X >= 0, loop!
 
-PRG018_A9DB: 
+PRG018_A9DB:
 	; Restore Map_Tile_Addr from backup
-	LDA Temp_Var1 
-	STA Map_Tile_AddrL 
-	LDA Temp_Var2 
+	LDA Temp_Var1
+	STA Map_Tile_AddrL
+	LDA Temp_Var2
 	STA Map_Tile_AddrH
 
-	; Go to next row by adding 16 
-	LDA TileAddr_Off 
+	; Go to next row by adding 16
+	LDA TileAddr_Off
 	CLC
-	ADC #16 
-	STA TileAddr_Off 
-	TAY 
-	LDA Map_Tile_AddrH 
-	ADC #$00 
-	STA Map_Tile_AddrH 
-	STA Temp_Var2 
+	ADC #16
+	STA TileAddr_Off
+	TAY
+	LDA Map_Tile_AddrH
+	ADC #$00
+	STA Map_Tile_AddrH
+	STA Temp_Var2
 	DEC Temp_Var4		 ; Temp_Var4-- (height decrement)
-	BPL PRG018_A9CD	 	; While Temp_Var4 >= 0, loop! 
+	BPL PRG018_A9CD	 	; While Temp_Var4 >= 0, loop!
 	RTS		 ; Return
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1488,7 +1488,7 @@ LoadLevel_ArrowLifts:
 
 	LDY TileAddr_Off	 ; Y = TileAddr_Off
 
-	LDA LL_ArrowLifts,X	 ; Get arrow lift left tile 
+	LDA LL_ArrowLifts,X	 ; Get arrow lift left tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 	INY		 ; Next column; this is OK for vertical levels, nowhere to the right
@@ -1524,16 +1524,16 @@ LoadLevel_LargeWater:
 	LDA Map_Tile_AddrL
 	STA Temp_Var1
 	LDA Map_Tile_AddrH
-	STA Temp_Var2	
+	STA Temp_Var2
 
 	; This determines height of the water rectangle, which is number of rows to bottom of screen
-	LDA Temp_Var15	
+	LDA Temp_Var15
 	AND #%00011111	; lower 5 bits of Temp_Var15 used here
 
 	STA Temp_Var3
 	LDA #26		; Full screen rows
 	SEC
-	SBC Temp_Var3	
+	SBC Temp_Var3
 	STA Temp_Var3	; Temp_Var3 = $1a - lower 5 bits
 
 	LDY TileAddr_Off	 ; Y = TileAddr_Off
@@ -1546,10 +1546,10 @@ PRG018_AA3A:
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X--
-	CPX #$ff	 
+	CPX #$ff
 	BNE PRG018_AA3A	 ; While X <> $FF, loop
 
-	JMP PRG018_AA55	 ; $AA46 
+	JMP PRG018_AA55	 ; $AA46
 
 PRG018_AA49:
 	LDA #TILE6_WATER	 ; Water tile
@@ -1573,9 +1573,9 @@ PRG018_AA55:
 	CLC
 	ADC #16
 	STA TileAddr_Off
-	TAY	
+	TAY
 	LDA Map_Tile_AddrH
-	ADC #$00	
+	ADC #$00
 	STA Map_Tile_AddrH
 	STA Temp_Var2
 
@@ -1603,10 +1603,10 @@ PRG018_AA7F:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 	; Go to next row by adding 16
-	TYA	
+	TYA
 	CLC
 	ADC #16
-	TAY	
+	TAY
 	LDA Map_Tile_AddrH
 	ADC #$00
 	STA Map_Tile_AddrH
@@ -1651,7 +1651,7 @@ PRG018_AAA8:
 	; Restore Map_Tile_Addr from backup
 	LDA Temp_Var1
 	STA Map_Tile_AddrL
-	LDA Temp_Var2	
+	LDA Temp_Var2
 	STA Map_Tile_AddrH
 
 	; Go to next row by adding 16
@@ -1696,14 +1696,14 @@ PRG018_AAE6:
 	LDX #TILE7_TOADHOUSEBGSHADR	; If tile wasn't top-shaded, we're clear to use the right-shaded background
 
 PRG018_AAE8:
-	TXA		 
+	TXA
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 	; Go to next row by adding 16
 	TYA
 	CLC
 	ADC #16
-	TAY	
+	TAY
 	LDA Map_Tile_AddrH
 	ADC #$00
 	STA Map_Tile_AddrH
@@ -1714,7 +1714,7 @@ PRG018_AAE8:
 	RTS	; Return
 
 
-;;; NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE 
+;;; NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE
 
 	; At some point, it seemed there was an idea that each Toad House,
 	; where each house would have an ID value from the map, would track
@@ -1744,7 +1744,7 @@ THouse_ChestOpenBit:	.byte $08, $04, $02, $01
 ; One of the up-to-3 boxes that appear in a Toad House
 ;
 ; Also contains code for the unused feature of "pre-open" the chest...
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	; Chest tiles
 LL_Chest:	.byte TILE7_CHEST_UL, TILE7_CHEST_UR, TILE7_CHEST_LL, TILE7_CHEST_LR
 
@@ -1756,15 +1756,15 @@ PRG018_AB0C:
 	STA (Map_Tile_AddrL),Y	; Store into tile mem
 	INY		 	; Next column (not edge checked!  But okay for Toad House)
 	INX		 	; X++ (next chest tile)
-	TXA		 
-	AND #$01	 
+	TXA
+	AND #$01
 	BNE PRG018_AB0C	 	; Only fall through on even 'X' values...
 
 	; Go to next row by adding 16
 	LDA TileAddr_Off
 	CLC
 	ADC #16
-	TAY	
+	TAY
 	LDA Map_Tile_AddrH
 	ADC #$00
 	STA Map_Tile_AddrH
@@ -1799,7 +1799,7 @@ PRG018_AB38:
 	LDA #TILE7_CHEST_OPEN_UL
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
-	INY		 ; $AB4A 
+	INY		 ; $AB4A
 
 	LDA #TILE7_CHEST_OPEN_UR
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
@@ -1831,7 +1831,7 @@ LoadLevel_ToadMiniChest:
 	LDX #$03	 	; X = 3 (all FOUR potential chests)
 
 	; Check if mini chest was placed at one of the key locations...
-	TYA		 
+	TYA
 	AND #$0f	 ; By current column...
 PRG018_AB5C:
 	CMP THouse_ChestColumns,X
@@ -1861,13 +1861,13 @@ PRG018_AB76:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 PRG018_AB77:	.byte $06, $07
 LoadLevel_18UNK_B:
-	LDA LL_ShapeDef	
+	LDA LL_ShapeDef
 	SEC
-	SBC #$0e	
-	LSR A		
-	LSR A		
-	LSR A		
-	LSR A		
+	SBC #$0e
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	TAX		 ; X = relative index
 
 	LDY TileAddr_Off	 ; Y = TileAddr_Off

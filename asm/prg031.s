@@ -71,44 +71,44 @@
 .pushseg
 .segment "DMC"
 .endif
-DMC01:	.byte $55, $55, $55, $95, $AA, $2A, $95, $E0, $7F, $FC, $C0, $F1, $03, $28, $FE, $FF 
-	.byte $FF, $F1, $5F, $3F, $00, $00, $00, $00, $00, $00, $08, $80, $C0, $F1, $FF, $C7 
-	.byte $8B, $1F, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $AB, $6A, $9B, $AA, $92, $52, $25 
-	.byte $95, $24, $25, $92, $80, $4A, $50, $05, $00, $00, $80, $20, $42, $04, $08, $E2 
-	.byte $FF, $01, $80, $6D, $AB, $6D, $DF, $BB, $77, $7B, $AB, $AF, $DD, $D5, $7D, $DD 
-	.byte $BF, $FF, $EF, $B6, $6D, $6F, $BB, $6D, $AF, $2A, $95, $94, $24, $49, $92, $88 
-	.byte $42, $84, $48, $88, $04, $09, $49, $92, $24, $51, $22, $A5, $92, $22, $49, $AA 
-	.byte $52, $A9, $AA, $5A, $55, $AD, $55, $55, $AD, $6D, $B5, $AD, $6D, $B5, $6D, $DB 
+DMC01:	.byte $55, $55, $55, $95, $AA, $2A, $95, $E0, $7F, $FC, $C0, $F1, $03, $28, $FE, $FF
+	.byte $FF, $F1, $5F, $3F, $00, $00, $00, $00, $00, $00, $08, $80, $C0, $F1, $FF, $C7
+	.byte $8B, $1F, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $AB, $6A, $9B, $AA, $92, $52, $25
+	.byte $95, $24, $25, $92, $80, $4A, $50, $05, $00, $00, $80, $20, $42, $04, $08, $E2
+	.byte $FF, $01, $80, $6D, $AB, $6D, $DF, $BB, $77, $7B, $AB, $AF, $DD, $D5, $7D, $DD
+	.byte $BF, $FF, $EF, $B6, $6D, $6F, $BB, $6D, $AF, $2A, $95, $94, $24, $49, $92, $88
+	.byte $42, $84, $48, $88, $04, $09, $49, $92, $24, $51, $22, $A5, $92, $22, $49, $AA
+	.byte $52, $A9, $AA, $5A, $55, $AD, $55, $55, $AD, $6D, $B5, $AD, $6D, $B5, $6D, $DB
 DMC01_End:
 
-DMC02:	.byte $55, $60, $6B, $79, $EA, $F8, $FF, $43, $82, $24, $00, $20, $8E, $ED, $C7, $A5 
-	.byte $1F, $10, $B7, $7F, $FF, $FF, $4D, $63, $C1, $15, $24, $41, $92, $28, $09, $4D 
-	.byte $25, $44, $42, $10, $CA, $BE, $FB, $FF, $7F, $DF, $F5, $EE, $D3, $31, $0E, $FF 
-	.byte $41, $10, $00, $21, $92, $20, $00, $F4, $38, $56, $5D, $EB, $F9, $9D, $3C, $BF 
-	.byte $ED, $E7, $D7, $AA, $6C, $59, $16, $A2, $00, $61, $83, $F0, $72, $3A, $0B, $81 
-	.byte $45, $41, $09, $DA, $F1, $FD, $FF, $FF, $5E, $AF, $C4, $4B, $D3, $C9, $8A, $82 
-	.byte $24, $89, $28, $06, $02, $47, $55, $E1, $3D, $AE, $EF, $BC, $F4, $52, $D5, $55 
-	.byte $BD, $BC, $7A, $1E, $57, $51, $0A, $25, $29, $A8, $A8, $38, $69, $D3, $88, $AA 
-	.byte $18, $78, $6C, $BA, $DE, $7D, $ED, $FB, $43, $E7, $34, $4C, $2C, $25, $AD, $92 
-	.byte $A4, $51, $A5, $C8, $62, $E2, $06, $8D, $C7, $F1, $AD, $65, $37, $B4, $AC, $5A 
-	.byte $4D, $9F, $3E, $6D, $3C, $A5, $B2, $24, $A9, $A2, $92, $86, $A9, $44, $45, $EE 
-	.byte $2C, $5E, $AA, $2D, $AE, $53, $9F, $4A, $9D, $3D, $4E, $8D, $3B, $8A, $A9, $E5 
-	.byte $C8, $B2, $2C, $34, $52, $D4, $59, $B1, $D2, $8A, $55, $C3, $5B, $A9, $55, $8B 
-	.byte $76, $7C, $79, $6C, $2B, $CE, $F2, $64, $31, $8E, $64, $45, $72, $64, $D1, $92 
-	.byte $E3, $54, $AD, $5A, $35, $55, $D7, $58, $1E, $1D, $55, $4E, $1D, $57, $56, $55 
-	.byte $CB, $AA, $AA, $2A, $69, $A5, $4A, $AA, $AA, $4A, $4D, $6A, $31, $4D, $D3, $A9 
-	.byte $6A, $AD, $7A, $5C, $65, $AB, $AA, $AC, $CA, $72, $AA, $4A, $B5, $D0, $8A, $95 
-	.byte $AC, $54, $95, $6C, $D9, $52, $5B, $A5, $AA, $D5, $4A, $B5, $2C, $4B, $B6, $D4 
-	.byte $34, $9D, $95, $56, $55, $55, $55, $55, $9A, $2A, $15, $A7, $AA, $52, $2D, $55 
-	.byte $69, $95, $B6, $AA, $65, $D5, $6A, $AA, $5A, $EA, $58, $55, $69, $6A, $A9, $96 
-	.byte $D2, $34, $95, $53, $A9, $A9, $2A, $35, $55, $D3, $AA, $6A, $55, $B5, $E2, $AA 
-	.byte $34, $B5, $9C, $C6, $B1, $95, $AA, $A9, $AA, $B4, $52, $55, $8B, $A9, $9A, $A6 
-	.byte $AA, $9A, $5A, $6A, $A5, $56, $56, $65, $55, $55, $AD, $B4, $B2, $AA, $54, $55 
-	.byte $2D, $D5, $AA, $AC, $AA, $52, $2B, $4B, $95, $AA, $AA, $B2, $2A, $AB, $AA, $6A 
-	.byte $A5, $55, $D5, $B4, $AA, $AA, $AA, $A9, $AA, $AA, $52, $55, $59, $A9, $A5, $AA 
-	.byte $56, $5A, $A5, $95, $55, $55, $55, $55, $55, $55, $55, $55, $55, $55, $55, $55 
-	.byte $55, $55, $55, $55, $55, $55, $53, $35, $55, $D5, $54, $55, $55, $55, $A9, $A5 
-	.byte $AA, $AA, $6A, $59, $69, $55, $55, $B5, $AA, $AA, $B2, $2C, $2B, $55, $55, $55 
+DMC02:	.byte $55, $60, $6B, $79, $EA, $F8, $FF, $43, $82, $24, $00, $20, $8E, $ED, $C7, $A5
+	.byte $1F, $10, $B7, $7F, $FF, $FF, $4D, $63, $C1, $15, $24, $41, $92, $28, $09, $4D
+	.byte $25, $44, $42, $10, $CA, $BE, $FB, $FF, $7F, $DF, $F5, $EE, $D3, $31, $0E, $FF
+	.byte $41, $10, $00, $21, $92, $20, $00, $F4, $38, $56, $5D, $EB, $F9, $9D, $3C, $BF
+	.byte $ED, $E7, $D7, $AA, $6C, $59, $16, $A2, $00, $61, $83, $F0, $72, $3A, $0B, $81
+	.byte $45, $41, $09, $DA, $F1, $FD, $FF, $FF, $5E, $AF, $C4, $4B, $D3, $C9, $8A, $82
+	.byte $24, $89, $28, $06, $02, $47, $55, $E1, $3D, $AE, $EF, $BC, $F4, $52, $D5, $55
+	.byte $BD, $BC, $7A, $1E, $57, $51, $0A, $25, $29, $A8, $A8, $38, $69, $D3, $88, $AA
+	.byte $18, $78, $6C, $BA, $DE, $7D, $ED, $FB, $43, $E7, $34, $4C, $2C, $25, $AD, $92
+	.byte $A4, $51, $A5, $C8, $62, $E2, $06, $8D, $C7, $F1, $AD, $65, $37, $B4, $AC, $5A
+	.byte $4D, $9F, $3E, $6D, $3C, $A5, $B2, $24, $A9, $A2, $92, $86, $A9, $44, $45, $EE
+	.byte $2C, $5E, $AA, $2D, $AE, $53, $9F, $4A, $9D, $3D, $4E, $8D, $3B, $8A, $A9, $E5
+	.byte $C8, $B2, $2C, $34, $52, $D4, $59, $B1, $D2, $8A, $55, $C3, $5B, $A9, $55, $8B
+	.byte $76, $7C, $79, $6C, $2B, $CE, $F2, $64, $31, $8E, $64, $45, $72, $64, $D1, $92
+	.byte $E3, $54, $AD, $5A, $35, $55, $D7, $58, $1E, $1D, $55, $4E, $1D, $57, $56, $55
+	.byte $CB, $AA, $AA, $2A, $69, $A5, $4A, $AA, $AA, $4A, $4D, $6A, $31, $4D, $D3, $A9
+	.byte $6A, $AD, $7A, $5C, $65, $AB, $AA, $AC, $CA, $72, $AA, $4A, $B5, $D0, $8A, $95
+	.byte $AC, $54, $95, $6C, $D9, $52, $5B, $A5, $AA, $D5, $4A, $B5, $2C, $4B, $B6, $D4
+	.byte $34, $9D, $95, $56, $55, $55, $55, $55, $9A, $2A, $15, $A7, $AA, $52, $2D, $55
+	.byte $69, $95, $B6, $AA, $65, $D5, $6A, $AA, $5A, $EA, $58, $55, $69, $6A, $A9, $96
+	.byte $D2, $34, $95, $53, $A9, $A9, $2A, $35, $55, $D3, $AA, $6A, $55, $B5, $E2, $AA
+	.byte $34, $B5, $9C, $C6, $B1, $95, $AA, $A9, $AA, $B4, $52, $55, $8B, $A9, $9A, $A6
+	.byte $AA, $9A, $5A, $6A, $A5, $56, $56, $65, $55, $55, $AD, $B4, $B2, $AA, $54, $55
+	.byte $2D, $D5, $AA, $AC, $AA, $52, $2B, $4B, $95, $AA, $AA, $B2, $2A, $AB, $AA, $6A
+	.byte $A5, $55, $D5, $B4, $AA, $AA, $AA, $A9, $AA, $AA, $52, $55, $59, $A9, $A5, $AA
+	.byte $56, $5A, $A5, $95, $55, $55, $55, $55, $55, $55, $55, $55, $55, $55, $55, $55
+	.byte $55, $55, $55, $55, $55, $55, $53, $35, $55, $D5, $54, $55, $55, $55, $A9, $A5
+	.byte $AA, $AA, $6A, $59, $69, $55, $55, $B5, $AA, $AA, $B2, $2C, $2B, $55, $55, $55
 DMC02_End:
 
 .ifdef X16
@@ -118,40 +118,40 @@ DMC02_End:
 .ifdef NES
 	;
 
-	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF 
-	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF 
-	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF 
-	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF 
-	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF 
-	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF 
-	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF 
-	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF 
+	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 .endif
 
 Music_PlayDMC:
 	LDA DMC_Queue	 ; Get value queued for DMC
-	CMP #$7e	 
+	CMP #$7e
 	BEQ Music_StopDMC	; If rest value was queued, jump to Music_StopDMC
 	LDA DMC_Queue	 	; A = queue value
 	BNE PRG031_E2E1	 	; If something was queued, jump to PRG031_E2E1
 
 	; Nothing queued...
-	LDA DMC_Current 
+	LDA DMC_Current
 	BEQ Music_StopDMC	; If nothing is playing, jump to Music_StopDMC
 	DEC DMC_Time	 	; DMC_Time--
 	BNE PRG031_E2E0	 	; If time has not expired on DMC, jump to PRG031_E2E0 (RTS)
 
 Music_StopDMC:
-	LDA #$00	 
+	LDA #$00
 	STA DMC_Current ; Stop any current DMC sound
-	LDA #$0f	 
+	LDA #$0f
 	sta_PAPU_EN	 ; Disable DMC
 
 PRG031_E2E0:
 	RTS		 ; Return
 
 PRG031_E2E1:
-	STA DMC_Current 
+	STA DMC_Current
 	TAY		 ; Y = DMC_Current
 
 	LDA DMC_MODCTL_LUT-1,Y		; Subtract 1 from LUT address since $00 is disabled and $01 is first DMC sound
@@ -164,12 +164,12 @@ PRG031_E2E1:
 	LDA DMC_MODLEN_LUT-1,Y		; Subtract 1 from LUT address since $00 is disabled and $01 is first DMC sound
 	sta_PAPU_MODLEN	 		; Set PAPU_MODLEN (length of sound)
 
-	LDA #$a0	 
+	LDA #$a0
 	STA DMC_Time	 ; DMC_Time = $A0 (always apparently)
 
-	LDA #$0f	 
+	LDA #$0f
 	sta_PAPU_EN	 ; Disable DMC
-	LDA #$1f	 
+	LDA #$1f
 	sta_PAPU_EN	 ; Enable DMC
 	RTS		 ; Return
 
@@ -253,7 +253,7 @@ Music_GetRestTicks:
 	ADC Music_RestH_Off	; Add this to Music_RestH_Off
 
 	TAY			; Y = A
-	LDA Music_RestH_LUT,Y 	; Get value from Music_RestH_LUT 
+	LDA Music_RestH_LUT,Y 	; Get value from Music_RestH_LUT
 	RTS		 	; Return
 
 SndMus_QueueCommonJ:
@@ -261,14 +261,14 @@ SndMus_QueueCommonJ:
 
 ; FIXME: Anybody want to claim this?
 ; $E34C
-	JMP Music_StopAll	 
+	JMP Music_StopAll
 
 Sound_PlayMusic:
 	LDA Sound_QMusic1
 	BNE SndMus_QueueCommonJ	; If music from set 1 has been queued, jump to SndMus_QueueCommonJ
 
 	; Music has not been queued from set 1...
-	LDA SndCur_Music1	 
+	LDA SndCur_Music1
 	BEQ PRG031_E364	 	; If no music is currently playing in set 1, jump to PRG031_E364
 
 	LDA Sound_QMusic2
@@ -288,15 +288,15 @@ PRG031_E364:
 	; The following check is probably superfluous, as Set 1 should have
 	; already been handled above...
 	LDA Sound_QMusic1
-	BNE SndMus_QueueCommonJ	; If music from set 1 has been queued, jump to SndMus_QueueCommonJ  
+	BNE SndMus_QueueCommonJ	; If music from set 1 has been queued, jump to SndMus_QueueCommonJ
 
 	; Set 2 is funny; it uses index in low bit and high bit.  ($01-$0F and $10-$F0)
 	; Not really sure what the point of that is, except perhaps to break it up into two sets.
 	; Allows 16 values though not all are used ($D0, $E0, $F0)
 
 	; I'm breaking the Set 2 into Set 2A ($01-$0F) and Set 2B ($10-$F0)
-	LDA Sound_QMusic2	
-	AND #MUS2B_MASK	
+	LDA Sound_QMusic2
+	AND #MUS2B_MASK
 	BEQ SndMus_QueueCommonJ	; If music selection is not Set 2B (or none queued), jump to SndMus_QueueCommonJ
 
 	; If you're here, that means that there is a Set 2B queue
@@ -304,17 +304,17 @@ PRG031_E364:
 	LDA Sound_QMusic2
 	BNE SndMus_QueueSet2B	; Whatever was queued, jump to SndMus_QueueSet2B
 
-	LDA SndCur_Music2	 
+	LDA SndCur_Music2
 	BNE PRG031_E3EB	 ; If something is playing in Set 2, jump to PRG031_E3EB
 
 	RTS		 ; Return
 
-	;;;; 
+	;;;;
 SndMus_QueueSet2B:
 	; For queuing any Set 2B music $10 - $F0
 
 	STA SndCur_Music2	; Store which Set 2 song we're playing
-	LDY #$00	 	
+	LDY #$00
 	STY SndCur_Music1	; Stop any Set 1 song
 
 	; Shift it down 4 bits to make it a 1-15 index
@@ -344,8 +344,8 @@ SndMus2B_NextOrStop:
 SndMus2B_Next:
 	INC Music_NextIndex	; Music_NextIndex++	(This makes the index always 1 ahead)
 
-	LDY Music_NextIndex	; 
-	CPY Music_End		; 
+	LDY Music_NextIndex	;
+	CPY Music_End		;
 	BNE SndMus2B_LoadNext 	; If Music_NextIndex <> Music_End, jump to SndMus2B_LoadNext
 
 	; We've reached the end of the song!
@@ -363,7 +363,7 @@ SndMus2B_LoadNext:
 
 	; Get and store rest lookup base index for this segment in Music_RestH_Base
 	LDA Music_Set2B_Headers,Y
-	STA Music_RestH_Base	
+	STA Music_RestH_Base
 
 	; Get and store the base address into [Music_Base_H][Music_Base_L]
 	LDA Music_Set2B_Headers+1,Y
@@ -416,7 +416,7 @@ SndMus_QueueCommon:
 
 PRG031_E401:
 	STA SndCur_Music2	; Store what set 2 song we're playing
-	CMP #$09	 	
+	CMP #$09
 	BEQ PRG031_E411	 ; If queueing song $09 (coin heaven, sky map, etc.), jump to PRG031_E411
 	CMP #$0a
 	BEQ PRG031_E411	 ; If queueing song $0A Invincibility, jump to PRG031_E411
@@ -425,7 +425,7 @@ PRG031_E401:
 	STY Music_RestH_Off	 ; Reset the rest lookup offset adjust value
 
 PRG031_E411:
-	LDY #$00	
+	LDY #$00
 	STY SndCur_Music1 ; Stop any Set 1 song playing
 
 	TAY		  		; Y = A
@@ -437,7 +437,7 @@ PRG031_E411:
 	ADC #$02	 		; A += 2 (Reason for adding two: The index counter is always one ahead, and the end index is INCLUSIVE!)
 	STA Music_End	 		; Set Music_End
 
-	LDA Music_Set2A_Loops-1,Y	; Because Y starts at '1', we must subtract 1 from the LUT address 
+	LDA Music_Set2A_Loops-1,Y	; Because Y starts at '1', we must subtract 1 from the LUT address
 	STA Music_Loop	 		; Set Music_Loop
 
 	LDA Music_Start	 		; A = Music_Start
@@ -448,8 +448,8 @@ SndMus2A_NextOrStop:
 SndMus2A_Next:
 	INC Music_NextIndex	 	; Music_NextIndex++
 
-	LDY Music_NextIndex	 	; 
-	CPY Music_End	 		; 
+	LDY Music_NextIndex	 	;
+	CPY Music_End	 		;
 	BNE SndMus2A_LoadNext	 	; If Music_NextIndex <> Music_End, jump to SndMus2A_LoadNext
 
 	; We've reached the end of the song!
@@ -463,7 +463,7 @@ SndMus_Queue1:
 	STA SndCur_Music1	; SndCur_Music1 = queued music
 	LDY SndCur_Music2	; Y = SndCur_Music2
 	STY Music2_Hold	 	; If a "set 2" song is playing, back up which one it is; we'll restart it after this song finishes (only really used for the "time low" song)
-	LDY #$00	 	; 
+	LDY #$00	 	;
 	STY SndCur_Music2	; Stop "set 2" song (if any)
 	STY Music_RestH_Off	; Clear the rest lookup base offset value
 
@@ -473,7 +473,7 @@ SndMus_Queue1:
 	; not really used at all...
 PRG028_E456:
 	INY		 ; Y++
-	LSR A		 ; 
+	LSR A		 ;
 	BCC PRG028_E456	 ; If we haven't hit a bit, go around again...
 
 SndMus2A_LoadNext:
@@ -581,7 +581,7 @@ Music_EndSegment:
 	BEQ PRG031_E4F7		; If not, jump to PRG031_E4F7
 
 	; Set 1 music...
-	CMP #$40	 
+	CMP #$40
 	BNE Music_StopAll	; If we NOT were playing the "time warning" song, jump to Music_StopAll
 
 	; If we were playing the "time warning" song, we need to restart the song which was playing...
@@ -603,7 +603,7 @@ Music_EndSegment:
 PRG031_E4F7:
 	; Segment ended on a Set 2A/B song...
 	LDA SndCur_Music2
-	AND #$f0	 
+	AND #$f0
 	BEQ PRG031_E518	 	; If we're NOT playing something from Set 2B, jump to PRG031_E518 (SndMus2A_Next)
 	JMP SndMus2B_Next 	; Otherwise, jump to SndMus2B_Next
 
@@ -613,9 +613,9 @@ Music_StopAll:
 	STA SndCur_Music2	; Stop any Set 2 song
 	STA Music2_Hold	 	; Clear any hold on a Set 2 song
 	STA Music_RestH_Off	; Clear any rest lookup offset
- 
+
 	sta_PAPU_EN	 ; Disable all tracks
-	LDX #$0f	 
+	LDX #$0f
 	stx_PAPU_EN	 ; Enable all tracks
 	RTS		 ; Return
 
@@ -630,7 +630,7 @@ PRG031_E51E:
 
 	; $ff is only valid after a "note on" event!
 	; This is not the right time for it, so it is simply skipped over
-	CMP #$ff	 
+	CMP #$ff
 	BNE PRG031_E528	 	; If byte is NOT $ff, jump to PRG031_E528
 
 	INC Music_Sq2TrkOff	; Music_Sq2TrkOff++
@@ -656,7 +656,7 @@ PRG031_E535:
 
 Music_Sq2NoteOn:
 	TAX			 ; X = A (saving A)
-	LDA SndCur_Level1	 ; 
+	LDA SndCur_Level1	 ;
 	BNE PRG031_E574		 ; If a "level 1" sound is playing, you can't use Square 2!
 
 	; Level 1 sound is not playing...
@@ -668,7 +668,7 @@ Music_Sq2NoteOn:
 
 	; Music_LOST4FB ($04FB) apparently was some kind of note length override, but it appears to now be unused
 	LDA Music_LOST4FB
-	JMP PRG031_E559	 ; Jump to PRG031_E559... 
+	JMP PRG031_E559	 ; Jump to PRG031_E559...
 
 PRG031_E550:
 	LDA Music_Sq2RestH
@@ -676,18 +676,18 @@ PRG031_E550:
 	JSR Music_CalcNoteLen	; X = $82  A = $3f or $16
 
 PRG031_E559:
-	STA Music_Sq2NoteLen	; Set new note length 
+	STA Music_Sq2NoteLen	; Set new note length
 
 	LDY Music_Sq2TrkOff	; Y = Music_Sq2TrkOff
 	INC Music_Sq2TrkOff	; Music_Sq2TrkOff++
 	LDA (Music_Base_L),Y	; Get next byte from music segment..
-	CMP #$ff	 
+	CMP #$ff
 	BNE PRG031_E571	 	; If value is NOT $FF, jump to PRG031_E571
 
 	; Value was $FF!  This activates the bend effect used on a few songs
 	LDA Sound_Sq2_CurFL
 	STA Music_Sq2Bend
-	JMP PRG031_E535	
+	JMP PRG031_E535
 
 PRG031_E571:
 	; Value was not $ff, forget it...
@@ -723,7 +723,7 @@ PRG031_E594:
 	BNE Music_Sq1Track
 
 PRG031_E5A7:
-	LDA #$00	
+	LDA #$00
 	STA Music_Sq2Bend	 ; When playing a level 1 sound, prevent bend effects!
 
 
@@ -739,8 +739,8 @@ PRG031_E5B1:
 	LDY Music_Sq1TrkOff	; Y = Music_Sq1TrkOff
 	INC Music_Sq1TrkOff	; Music_Sq1TrkOff++
 	LDA (Music_Base_L),Y	; Get next byte from music segment data
-	BPL PRG031_E5DA	 	; If byte is $00 - $7f, jump to PRG031_E5DA 
-	CMP #$ff	
+	BPL PRG031_E5DA	 	; If byte is $00 - $7f, jump to PRG031_E5DA
+	CMP #$ff
 	BNE PRG031_E5C5	 	; If not $ff, jump to PRG031_E5C5
 
 	; $ff only works after a "note on" event
@@ -750,7 +750,7 @@ PRG031_E5B1:
 PRG031_E5C5:
 	; Byte was $80 - $fe ...
 	TAX		 	; Save A
-	AND #$f0		; A &= $f0 
+	AND #$f0		; A &= $f0
 	STA Music_Sq1Patch	; Result -> Music_Sq1Patch
 	TXA		 	; Restore A (current byte of music data)
 	JSR Music_GetRestTicks
@@ -780,13 +780,13 @@ Music_Sq1NoteOn:
 	; Value in range $01 - $7f
 	TAX
 	LDA SndCur_Player
-	ORA SndCur_Map	
+	ORA SndCur_Map
 	BNE PRG031_E625	 ; If Player or Map sounds active, you can't play on this track!  Jump to PRG031_E625
 	TXA		 ; Restore A
 
 	JSR Sound_Sq1_NoteOn_NoPAPURAMP	; Play note!  Returns 0 if $7e rest was played...
 	BNE PRG031_E601	 ; If last note was NOT a rest, jump to PRG031_E601
- 
+
 	LDA Music_LOST4FB	; A = Music_LOST4FB
 	JMP PRG031_E60A	 	; Jump to PRG031_E60A...
 
@@ -796,19 +796,19 @@ PRG031_E601:
 	JSR Music_CalcNoteLen	; X = $82  A = $3f or $16
 
 PRG031_E60A:
-	STA Music_Sq1NoteLen	; Set new note length 
+	STA Music_Sq1NoteLen	; Set new note length
 
 	LDY Music_Sq1TrkOff	; Y = Music_Sq1TrkOff
 	INC Music_Sq1TrkOff	; Music_Sq1TrkOff++
 	LDA (Music_Base_L),Y	; Get next byte from music segment
-	CMP #$ff	 
+	CMP #$ff
 	BNE PRG031_E622	 	; If byte <> $ff, jump to PRG031_E622
 
 	; Activate bend effects on square 1!
 
 	; Music_Sq1Bend = Sound_Sq1_CurFL
-	LDA Sound_Sq1_CurFL 
-	STA Music_Sq1Bend 
+	LDA Sound_Sq1_CurFL
+	STA Music_Sq1Bend
 
 	JMP PRG031_E5D2	 	; Jump to PRG031_E5D2
 
@@ -823,7 +823,7 @@ PRG031_E625:
 
 PRG031_E62B:
 	LDA SndCur_Player
-	ORA SndCur_Map	 
+	ORA SndCur_Map
 	BNE PRG031_E660	 ; If playing "player" or "map" sounds, jump to PRG031_E660
 
 	LDA Music_Sq1Bend
@@ -843,7 +843,7 @@ PRG031_E648:
 	LDX Music_Sq1Patch 	; X = current "patch"
 	JSR Music_PatchGetCTL 	; Gets a PAPU_CTLx value for the current patch -> A
 	sta_PAPU_CTL1		; Store patch value into PAPU_CTL1
-	LDA Music_Sq1AltRamp	
+	LDA Music_Sq1AltRamp
 	BNE PRG031_E65B	 	; If the alternate ramp value is in effect, don't lose it!
 	LDA #$7f		; Standard ramp value
 
@@ -853,7 +853,7 @@ PRG031_E65B:
 
 PRG031_E660:
 	; "Player" or "Map" sound in effect; cancel bend effects
-	LDA #$00	 
+	LDA #$00
 	STA Music_Sq1Bend
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -874,10 +874,10 @@ Music_TriTrack:
 
 	; Byte $80 - $ff... goes directly to the rest value routine
 	; No "patches" available on the triangle track
-	JSR Music_GetRestTicks	
+	JSR Music_GetRestTicks
 	STA Music_TriRestH		; Update rest hold value
 
-	LDA #$1f	 
+	LDA #$1f
 	sta_PAPU_TCR1	 ; $1f written to PAPU_TCR1
 
 	LDY Music_TriTrkPos	; Y = Music_TriTrkPos
@@ -888,7 +888,7 @@ Music_TriTrack:
 Music_TriNoteOn:
 	; Triangle track, value $00 - $7f
 	JSR Sound_Tri_NoteOn	; Play note!  (Will return $00 if $7e rest was played)
-	BEQ PRG031_E6B2	 	; If last note was a rest, jump to PRG031_E6B2 
+	BEQ PRG031_E6B2	 	; If last note was a rest, jump to PRG031_E6B2
 
 	LDA Music_TriRestH
 	CMP #$0a
@@ -927,12 +927,12 @@ PRG031_E6B4:
 ; Noise's music track code
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Music_NseTrack:
-	LDA Music_NseTrkPos	; Music_NseTrack 
+	LDA Music_NseTrkPos	; Music_NseTrack
 	BEQ Music_PCMTrack	; If Music_NseTrack = 0 (disabled), jump to Music_PCMTrack
 
 	DEC Music_NoiseRest	; Music_NoiseRest--
 	BNE Music_PCMTrack	; If track is not done resting, just jump to Music_PCMTrack
- 
+
 PRG031_E6C7:
 	LDY Music_NseTrkPos	; Y = Music_NseTrkPos
 	INC Music_NseTrkPos	; Music_NseTrkPos++
@@ -960,11 +960,11 @@ Music_NseNoteOn:
 
 	; Plug in appropriate noise values for this "note"
 	LDA Music_NoiseLUTA,Y
-	sta_PAPU_NCTL1	 	
-	LDA Music_NoiseLUTB,Y	
-	sta_PAPU_NFREQ1	 	
-	LDA Music_NoiseLUTC,Y	
-	sta_PAPU_NFREQ2		
+	sta_PAPU_NCTL1
+	LDA Music_NoiseLUTB,Y
+	sta_PAPU_NFREQ1
+	LDA Music_NoiseLUTC,Y
+	sta_PAPU_NFREQ2
 
 	; Reset rest value
 	LDA Music_NseRestH
@@ -1008,13 +1008,13 @@ PRG031_E713:
 
 PRG031_E72F:
 	STA DMC_Queue	 	; Store note into DMC queue
-	LDA Music_DMCRestH	
+	LDA Music_DMCRestH
 	STA Music_DMCRest	; Music_DMCRest = Music_DMCRestH
 
 PRG031_E738:
 	JSR Music_PlayDMC	 ; Play DMC sound!
 
-	LDA #$00	 
+	LDA #$00
 	STA DMC_Queue	 ; Clear the DMC queue
 	RTS		 ; Return
 
@@ -1081,7 +1081,7 @@ Music_PatchGetCTL:
 
 	PLA		 ; Restore A
 
-	CMP #19	
+	CMP #19
 	BLT PRG031_E79E	 ; If rest value < 19, jump to PRG031_E79E
 
 	; Music playing not too quickly uses the "long" set
@@ -1105,8 +1105,8 @@ PRG031_E79E:
 
 PRG031_E7A8:
 	; In any case, current note length selects a value from the patch data...
-	LDA (Music_PatchAdrL),Y	
-	RTS		 
+	LDA (Music_PatchAdrL),Y
+	RTS
 
 
 	; Quick and dirty function that writes X to the CTL and Y to the RAMP of Square 1
@@ -1131,7 +1131,7 @@ Sound_Sq1_NoteOn_NoPAPURAMP:
 	LDX #$00
 
 PRG031_E7C1:
-	CMP #$7e	 
+	CMP #$7e
 	BNE PRG031_E7C8	 ; If note <> $7E, jump to PRG031_E7C8
 
 	; If note is $7E (rest), then we're done!
@@ -1149,14 +1149,14 @@ PRG031_E7C8:
 	; Notes are stored as double value for convenience here (spares a shift)
 	; So "24" is an entire octave for doubled note values, get it?
 
-	; The following loop transforms a note into a relative 
+	; The following loop transforms a note into a relative
 	; "octave lookup" for the note base frequency; essentially,
 	; this is (Note MOD 12), just no such instruction available
 PRG031_E7D1:
 	INC Sound_Octave ; Sound_Octave++ (Sound_Octave will have the octave level after this, essentially Note / 12)
 	SEC
 	SBC #24	 	  ; A -= 24 (down an octave)
-	BPL PRG031_E7D1	  ; While above zero, loop! 
+	BPL PRG031_E7D1	  ; While above zero, loop!
 
 PRG031_37D9:
 	CLC
@@ -1166,33 +1166,33 @@ PRG031_37D9:
 	; Y should now be a lookup into the note table!
 	; Store this resultant frequency into Sound_Sqr_FreqL/H
 	LDA Square1_Table_Notes,Y
-	STA Sound_Sqr_FreqL		
+	STA Sound_Sqr_FreqL
 	LDA Square1_Table_Notes+1,Y
-	STA Sound_Sqr_FreqH		
+	STA Sound_Sqr_FreqH
 
 	; Sound_Octave now holds the octave level
 	; This loops to adjust the base frequency to the proper octave
 PRG031_E7E7:
-	LSR Sound_Sqr_FreqH	
-	ROR Sound_Sqr_FreqL	
+	LSR Sound_Sqr_FreqH
+	ROR Sound_Sqr_FreqL
 	DEC Sound_Octave	; Sound_Octave--
 	BNE PRG031_E7E7	 ; While Sound_Octave > 0, loop!
 
 	PLA		 ; Retrieve original note
-	CMP #56		 ; 
+	CMP #56		 ;
 	BCC PRG031_E7F7	 ; If note is less than 56, skip the decrement
 	DEC Sound_Sqr_FreqL	 ; Minor adjustment to resultant frequency?
 PRG031_E7F7:
 	TXA		 ; A = X  (0 = square 1, 4 = square 2)
-	CMP #$04	 ;  
+	CMP #$04	 ;
 	BNE PRG031_E808	 ; If on Square 1, jump to PRG031_E808
 
 	; Square 2 only...
 	LDA Music_Sq1Patch
-	CMP #$e0	 ; 
+	CMP #$e0	 ;
 	BEQ PRG031_E818	 ; If Music_Sq1Patch = $E0, jump to PRG031_E818 (some alternate SQ2 routine??)
 
-	LDA Music_Sq1Bend,X	
+	LDA Music_Sq1Bend,X
 	BNE PRG031_E851	 	; If bend in effect on this track, jump to PRG031_E851
 
 PRG031_E808:
@@ -1253,7 +1253,7 @@ Music_UpdateBend:
 	; Basically if (rest & 3) <> 3, jump to PRG031_E860
 	LSR A
 	BCC PRG031_E860
-	LSR A	
+	LSR A
 	BCC PRG031_E860
 
 	; Diminish the bend
@@ -1261,10 +1261,10 @@ Music_UpdateBend:
 
 PRG031_E860:
 	LDA Music_Sq1Bend,X 	; Get current bend
-	CMP Sound_Sq1_CurFL,X	; Compare to current frequency 
+	CMP Sound_Sq1_CurFL,X	; Compare to current frequency
 	BGE PRG031_E870		; If bend >= Sound_Sq1_CurFL, jump to PRG031_E870
 
-	LDA #$00	 	
+	LDA #$00
 	STA Music_Sq1Bend,X	; Clear/disable bend
 	LDA Sound_Sq1_CurFL,X	; Just get current frequency
 
@@ -1509,12 +1509,12 @@ DMC05_End:
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	; The following two LUTs are used together via Update_Request
 	; See index values UPDATERASTER_*
-IntNMI_UpdSel_Table:	
+IntNMI_UpdSel_Table:
 	.byte $a0	; UPDATERASTER_32PIXPART (opt. flag UPDATERASTER_32PIXSHOWSPR)
 	.byte $40	; UPDATERASTER_SPADEGAME
 	.byte $a0	; UPDATERASTER_WATERLINE
 
-IntNMI_Raster_Table:	
+IntNMI_Raster_Table:
 	.byte $40	; UPDATERASTER_32PIXPART (opt. flag UPDATERASTER_32PIXSHOWSPR)
 	.byte $60	; UPDATERASTER_SPADEGAME
 	.byte $a0	; UPDATERASTER_WATERLINE
@@ -1533,7 +1533,7 @@ IntNMI:
 	TYA		 ; Reg Y -> A
 	PHA		 ; Push A (Y) onto stack
 
-	; Push the three temp vars onto the stack 
+	; Push the three temp vars onto the stack
 	LDA Temp_Var1
 	PHA
 	LDA Temp_Var2
@@ -1568,17 +1568,17 @@ PRG031_F4B3:
 	; Update_Select activity begin...
 
 	LDA Update_Select	 ; Get the Update_Select value
-	CMP #$80	 ; 
+	CMP #$80	 ;
 	BNE PRG031_F4BD	 ; If Update_Select <> $80 (Purely vertical level), jump to PRG031_F4BD
 	JMP UpdSel_Vertical	 ; Otherwise, jump to UpdSel_Vertical
 
-PRG031_F4BD: 
-	CMP #$40	 ; 
+PRG031_F4BD:
+	CMP #$40	 ;
 	BNE PRG031_F4C4	 ; If Update_Select <> $40 (Spade Game), jump to PRG031_F4C4
 	JMP FAR022_UpdSel_Roulette	 ; Otherwise, jump to UpdSel_Roulette
 
 PRG031_F4C4:
-	CMP #$00	 ; 
+	CMP #$00	 ;
 	BNE PRG031_F4D5	 ; If Update_Select <> $00 FIXME, jump to PRG031_F4D5
 
 	; MMC3 event
@@ -1586,16 +1586,16 @@ PRG031_F4C4:
 	sta_MMC3_COMMAND 		; Set MMC3 command
 	LDA #26	 			; Page 26
 	sta_MMC3_PAGE	 		; Set MMC3 page
-	JMP PRG031_F610	 		; 
+	JMP PRG031_F610	 		;
 
 PRG031_F4D5:
-	CMP #$a0	 ; 
+	CMP #$a0	 ;
 	BNE PRG031_F4DC	 ; If Update_Select <> $A0 (32 pixel parition), jump to PRG031_F4DC
 
 	JMP UpdSel_32PixPart	 ; Otherwise, jump to UpdSel_32PixPart
 
 PRG031_F4DC:
-	CMP #$20	 ;  
+	CMP #$20	 ;
 	BNE PRG031_F4E3	 ; If Update_Select <> $20 (Title Screen), jump to PRG031_F4E3
 	JMP UpdSel_Title	 ; Otherwise, jump to UpdSel_Title
 
@@ -1610,7 +1610,7 @@ PRG031_F4E3:
 	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
 
-	LDA VBlank_Tick	
+	LDA VBlank_Tick
 	BNE PRG031_F51D	 	; If VBlank_Tick <> 0, jump to PRG031_F51D
 
 	LDA #MMC3_8K_TO_PRG_A000	; Changing PRG ROM at A000
@@ -1625,15 +1625,15 @@ PRG031_F4E3:
 	; Set pages at A000 and C000
 	JSR PRGROM_Change_Both
 
-	LDA Graphics_Queue	
+	LDA Graphics_Queue
 	BNE PRG031_F519	 	; If we don't need to reset the graphics buffer, jump to PRG031_F519
 
 	LDA #$00	 	; Reset the graphics buffer
-	STA Graphics_BufCnt	
-	STA Graphics_Buffer	
+	STA Graphics_BufCnt
+	STA Graphics_Buffer
 
 PRG031_F519:
-	LDA #$00	 
+	LDA #$00
 	STA Graphics_Queue	 ; Buffer reset (if pending) not needed, we just did it ourselves
 
 PRG031_F51D:
@@ -1641,18 +1641,18 @@ PRG031_F51D:
 	lda_PPU_STAT	 	; read PPU status to reset the high/low latch
 
 	; Unknown hardware thing?  Is this for synchronization?
-	LDA #$3f	 	; 
+	LDA #$3f	 	;
 	sta_PPU_VRAM_ADDR	; Access PPU address #3Fxx
-	LDA #$00	 	; 
+	LDA #$00	 	;
 	sta_PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
-	sta_PPU_VRAM_ADDR	; 
+	sta_PPU_VRAM_ADDR	;
 	sta_PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
 
 	LDA PPU_CTL2_Copy	; Get current PPU_CTL2 settings in RAM
 	ORA #$18	; A | 18 (BG + SPR)
 	sta_PPU_CTL2	; Sprites/BG are forced to be visible regardless of PPU_CTL2_Copy
 
-	LDA PPU_CTL1_Mod	
+	LDA PPU_CTL1_Mod
 	ORA #%10101000	; In addition to anything else specified by PPU_CTL1_Mod, Generate VBlank Resets, use 8x16 sprites, sprites use PT2
 	sta_PPU_CTL1	; Set above settings
 	lda_PPU_STAT	; read PPU status to reset the high/low latch
@@ -1700,7 +1700,7 @@ PRG031_F567:
 	; Jump to the sound engine, newly inserted at page A000!
 	JSR Sound_Engine_Begin
 
-	; Change A000/C000 back to whatever they were before the sound engine 
+	; Change A000/C000 back to whatever they were before the sound engine
 	JSR PRGROM_Change_Both
 
 	INC Counter_1	 ; Simply increments every frame, used for timing
@@ -1709,7 +1709,7 @@ PRG031_F567:
 	LDA PAGE_CMD
 	sta_MMC3_COMMAND
 
-	; Pull (pop) the three temp vars from the stack 
+	; Pull (pop) the three temp vars from the stack
 	PLA
 	STA Temp_Var3
 	PLA
@@ -1739,7 +1739,7 @@ UpdSel_Vertical:
 	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
 
-	LDA VBlank_Tick	 
+	LDA VBlank_Tick
 	BNE PRG031_F5D3	 		; If VBlank_Tick <> 0, jump to PRG031_F5D3
 
 	LDA #MMC3_8K_TO_PRG_A000	; Changing PRG ROM at A000
@@ -1754,7 +1754,7 @@ UpdSel_Vertical:
 	; Set pages at A000 and C000
 	JSR PRGROM_Change_Both
 
-	LDA Graphics_Queue	
+	LDA Graphics_Queue
 	BNE PRG031_F5CF	 	; If we don't need to reset the buffer, jump to PRG031_F5CF
 
 	; Reset graphics buffer
@@ -1763,18 +1763,18 @@ UpdSel_Vertical:
 	STA Graphics_Buffer
 
 PRG031_F5CF:
-	LDA #$00	 
+	LDA #$00
 	STA Graphics_Queue	 ; Graphics Buffer reset
 
 PRG031_F5D3:
 	lda_PPU_STAT	 	; read PPU status to reset the high/low latch
 
 	; Unknown hardware thing?  Is this for synchronization?
-	LDA #$3f	 	; 
+	LDA #$3f	 	;
 	sta_PPU_VRAM_ADDR	; Access PPU address #3Fxx
-	LDA #$00	 	; 
+	LDA #$00	 	;
 	sta_PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
-	sta_PPU_VRAM_ADDR	; 
+	sta_PPU_VRAM_ADDR	;
 	sta_PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
 
 	LDA PPU_CTL2_Copy	; Get current PPU_CTL2 settings in RAM
@@ -1809,9 +1809,9 @@ PRG031_F610:
 	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
 
-	LDA Map_EnterLevelFX	 
+	LDA Map_EnterLevelFX
 	BEQ PRG031_F631	 ; If Map_EnterLevelFX = 0 (not entering a level), jump to PRG031_F631
-	CMP #$01	 ; 
+	CMP #$01	 ;
 	BNE PRG031_F62E	 ; If Map_EnterLevelFX <> 1 (only other value would be 2, during the level "opening" effect, not used in US version), jump to PRG031_F62E
 
 	; This is being called while level is being entered...
@@ -1837,11 +1837,11 @@ PRG031_F631:
 	lda_PPU_STAT	 	; read PPU status to reset the high/low latch
 
 	; Unknown hardware thing?  Is this for synchronization?
-	LDA #$3f	 	; 
+	LDA #$3f	 	;
 	sta_PPU_VRAM_ADDR	; Access PPU address #3Fxx
-	LDA #$00	 	; 
+	LDA #$00	 	;
 	sta_PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
-	sta_PPU_VRAM_ADDR	; 
+	sta_PPU_VRAM_ADDR	;
 	sta_PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
 
 	LDA PPU_CTL2_Copy	; Get current PPU_CTL2 settings in RAM
@@ -1864,7 +1864,7 @@ PRG031_F631:
 	sta_MMC3_IRQENABLE ; Start the IRQ counter
 	CLI		 ; Enable maskable interrupts
 	DEC VBlank_Tick ; Decrement VBlank_Tick
-	JMP PRG031_F567	 ; 
+	JMP PRG031_F567	 ;
 
 UpdSel_32PixPart:
 	LDA #$00	 ; A = 0
@@ -1894,23 +1894,23 @@ UpdSel_32PixPart:
 	BNE PRG031_F6B8	 ; If we don't need to reset the buffer, jump to PRG031_F6B8
 
 	; Reset graphics buffer
-	LDA #$00	 
+	LDA #$00
 	STA Graphics_BufCnt
 	STA Graphics_Buffer
 
 PRG031_F6B8:
-	LDA #$00	 
+	LDA #$00
 	STA Graphics_Queue	; Graphics Buffer reset
 
 PRG031_F6BC:
 	lda_PPU_STAT	 	; read PPU status to reset the high/low latch
 
 	; Unknown hardware thing?  Is this for synchronization?
-	LDA #$3f	 	; 
+	LDA #$3f	 	;
 	sta_PPU_VRAM_ADDR	; Access PPU address #3Fxx
-	LDA #$00	 	; 
+	LDA #$00	 	;
 	sta_PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
-	sta_PPU_VRAM_ADDR	; 
+	sta_PPU_VRAM_ADDR	;
 	sta_PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
 
 	LDA PPU_CTL2_Copy	; Get current PPU_CTL2 settings in RAM
@@ -1975,19 +1975,19 @@ PRG031_F72B:
 	BNE PRG031_F744	 ; If we don't need to reset the graphics buffer, jump to PRG031_F744
 
 	; Reset graphics buffer
-	LDA #$00	 
+	LDA #$00
 	STA Graphics_BufCnt
 	STA Graphics_Buffer
 
 PRG031_F744:
-	LDA #$00	 
+	LDA #$00
 	STA Graphics_Queue	 ; Graphics Buffer reset
 
 PRG031_F748:
 	lda_PPU_STAT
 
 	LDA #$00
-	sta_PPU_VRAM_ADDR	; 
+	sta_PPU_VRAM_ADDR	;
 	sta_PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
 
 	LDA PPU_CTL2_Copy	; Get current PPU_CTL2 settings in RAM
@@ -2073,7 +2073,7 @@ PRG031_F7B0:
 	LDA PAPU_MODCTL_Copy
 	PHA		 ; Save A
 	AND #$7f	 ; Basically don't disturb DMC, but disable interrupt, if active
-	sta_PAPU_MODCTL	 ; 
+	sta_PAPU_MODCTL	 ;
 
 	LDA Raster_Effect	 ; Get status bar mode
 
@@ -2091,7 +2091,7 @@ PRG031_F7CA:
 	BNE PRG031_F7D1	 ; If not, go to PRG031_F7D1
 	JMP IntIRQ_TitleEnding	 ; Otherwise, jump to IntIRQ_TitleEnding
 
-PRG031_F7D1: 
+PRG031_F7D1:
 	CMP #$60	 ; Are we in "Spade Game" mode?
 	BNE PRG031_F7D8	 ; If not, go to PRG031_F7D8
 	JMP IntIRQ_SpadeGame	 ; Otherwise, jump to IntIRQ_SpadeGame
@@ -2110,9 +2110,9 @@ PRG031_F7DF:
 
 IntIRQ_Vertical:
 	sta_MMC3_IRQENABLE ; Active IRQ
-	NOP		 ; 
-	NOP		 ; 
-	NOP		 ; 
+	NOP		 ;
+	NOP		 ;
+	NOP		 ;
 	LDY #$0b	 ; Y = $0B
 	LDA Level_Tileset ; A = current tileset
 	CMP #17
@@ -2122,9 +2122,9 @@ IntIRQ_Vertical:
 PRG031_F7F8:
 	LDX #$00	 ; X = 0
 
-	CMP #$00	 ; 
+	CMP #$00	 ;
 	BEQ PRG031_F871	 ; If tileset = 0 (World map), go to PRG031_F871
-	CMP #$07	 ; 
+	CMP #$07	 ;
 	BEQ PRG031_F871	 ; If tileset = 7 (Toad house), go to PRG031_F871
 	CMP #17
 	BEQ PRG031_F871	 ; If tileset = 17 (N-Spade), go to PRG031_F871
@@ -2138,7 +2138,7 @@ PRG031_F7F8:
 	sta_PPU_VRAM_ADDR
 
 	stx_PPU_CTL2	 ; Sprites + BG invisible
-	lda_PPU_STAT	 ; 
+	lda_PPU_STAT	 ;
 
 	; Because vertical scroll will not change after frame begins (second write to
 	; PPU_SCROLL will always be unused until next frame), the hack for MMC3 split
@@ -2174,13 +2174,13 @@ PRG031_F7F8:
 	LDA #MMC3_1K_TO_PPU_1800
 	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1800
-	sta_MMC3_PAGE	
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1C00
-	sta_MMC3_COMMAND	
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1C00
 	sta_MMC3_PAGE
-	 
-	LDA #$18	 ; 
+
+	LDA #$18	 ;
 	sta_PPU_CTL2	 ; Sprites + BG now visible
 	JMP PRG031_F8B3
 
@@ -2221,11 +2221,11 @@ PRG031_F8B3:
 	LDA PPU_CTL1_Copy
 	ORA PPU_CTL1_Mod	; Combine bits from PPU_CTL1_Copy into PPU_CTL1_Mod
 	sta_PPU_CTL1	 ; Store result into actual register
-	lda_PPU_STAT	 ; 
+	lda_PPU_STAT	 ;
 
-	LDA #$00	 ; 
+	LDA #$00	 ;
 	sta_PPU_SCROLL	 ; Horizontal Scroll = 0
-	LDA Vert_Scroll ; 
+	LDA Vert_Scroll ;
 	sta_PPU_SCROLL	 ; Vertical Scroll updated
 
 IntIRQ_Finish:
@@ -2266,7 +2266,7 @@ PRG031_F8E0:
 	stx_PPU_VRAM_ADDR
 
 	stx_PPU_CTL2	 ; Hide BG + Sprites
-	lda_PPU_STAT	 ; 
+	lda_PPU_STAT	 ;
 
 	; Because vertical scroll will not change after frame begins (second write to
 	; PPU_SCROLL will always be unused until next frame), the hack for MMC3 split
@@ -2277,12 +2277,12 @@ PRG031_F8E0:
 	stx_PPU_VRAM_ADDR	; ... so we're now reading at $0700
 	lda_PPU_VRAM_DATA
 
-	; Couple of tilesets have slightly different effects 
+	; Couple of tilesets have slightly different effects
 	LDA Level_Tileset
-	CMP #$00	 ; 
+	CMP #$00	 ;
 	BEQ PRG031_F955	 ; If A = 0 (On world map), go to PRG031_F955
-	CMP #$07	 ; 
-	BEQ PRG031_F955	 ; If A = 7 (Toad house), go to PRG031_F955 
+	CMP #$07	 ;
+	BEQ PRG031_F955	 ; If A = 7 (Toad house), go to PRG031_F955
 	; But not N-Spade?
 
 	; Load status bar graphics and hide any sprites from appearing over the status bar
@@ -2291,7 +2291,7 @@ PRG031_F8E0:
 	LDA #MMC3_2K_TO_PPU_0000
 	sta_MMC3_COMMAND
 	LDA StatusBarCHR_0000
-	sta_MMC3_PAGE	
+	sta_MMC3_PAGE
  	LDA #MMC3_2K_TO_PPU_0800
 	sta_MMC3_COMMAND
 	LDA StatusBarCHR_0800
@@ -2300,7 +2300,7 @@ PRG031_F8E0:
 	sta_MMC3_COMMAND
 
 	; Use blank tiles for all sprite graphics
-	LDA SpriteHideCHR_1000	
+	LDA SpriteHideCHR_1000
 	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1400
 	sta_MMC3_COMMAND
@@ -2308,11 +2308,11 @@ PRG031_F8E0:
 	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1800
 	sta_MMC3_COMMAND
-	LDA SpriteHideCHR_1800	
+	LDA SpriteHideCHR_1800
 	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1C00
 	sta_MMC3_COMMAND
-	LDA SpriteHideCHR_1C00	
+	LDA SpriteHideCHR_1C00
 	sta_MMC3_PAGE
 
 	JMP PRG031_F997	 ; Jump to PRG031_F997
@@ -2356,14 +2356,14 @@ PRG031_F997:
 	LDA PPU_CTL1_Copy	 ; PPU_CTL1 copy
 	ORA #$01	 ; Force $2400 nametable address
 	sta_PPU_CTL1	 ; Set it in the register
-	lda_PPU_STAT	 ; 
-	LDA #$00	 ; 
+	lda_PPU_STAT	 ;
+	LDA #$00	 ;
 	sta_PPU_SCROLL	 ; Horizontal scroll = 0
-	LDA Vert_Scroll ; 
+	LDA Vert_Scroll ;
 	sta_PPU_SCROLL	 ; Vertical scroll update as-is
 	JMP IntIRQ_Finish	 ; Clean up IRQ
 
-IntIRQ_32PixelPartition:	; $F9B3 
+IntIRQ_32PixelPartition:	; $F9B3
 
 	; Lotta no-ops??
 	NOP
@@ -2387,9 +2387,9 @@ PRG031_F9C3:
 	DEX		 ; X--
 	BNE PRG031_F9C3 ; While X > 0, loop
 
-	LDA #$10	 ; 
+	LDA #$10	 ;
 	sta_PPU_CTL2	 ; Only show sprites (?)
-	lda_PPU_STAT	 ; 
+	lda_PPU_STAT	 ;
 
 	; Because vertical scroll will not change after frame begins (second write to
 	; PPU_SCROLL will always be unused until next frame), the hack for MMC3 split
@@ -2424,30 +2424,30 @@ IntIRQ_32PixPart_HideSprites:	; $F9E3
 	LDA #MMC3_1K_TO_PPU_1800
 	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1800
-	sta_MMC3_PAGE	
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1C00
-	sta_MMC3_COMMAND	
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1C00
 	sta_MMC3_PAGE
 
 
 IntIRQ_32PixelPartition_Part3:
 	lda_PPU_STAT
-	LDA PPU_CTL1_Copy	
+	LDA PPU_CTL1_Copy
 	ORA PPU_CTL1_Mod	; Combine bits from PPU_CTL1_Copy into PPU_CTL1_Mod
 	sta_PPU_CTL1	 ; Stored to the register!
 
 	LDA Horz_Scroll
-	sta_PPU_SCROLL	 ; Set horizontal scroll 
+	sta_PPU_SCROLL	 ; Set horizontal scroll
 	LDA Vert_Scroll
 	sta_PPU_SCROLL	 ; Set vertical scroll
 
-	LDA #$18	 ; 
+	LDA #$18	 ;
 	sta_PPU_CTL2	 ; BG + Sprites now visible
 
 	INC Raster_State ; Raster_State = 1
 
-	LDA #27		 ; 
+	LDA #27		 ;
 	sta_MMC3_IRQCNT	 ; Next interrupt in 27 lines
 	sta_MMC3_IRQDISABLE	 ; Disable IRQ...
 	JMP IntIRQ_32PixelPartition_Part5	 ; Jump to IntIRQ_32PixelPartition_Part5
@@ -2482,7 +2482,7 @@ PRG031_FA41:
 	stx_PPU_VRAM_ADDR
 
 	stx_PPU_CTL2	 ; Sprites + BG hidden
-	lda_PPU_STAT	 ; 
+	lda_PPU_STAT	 ;
 
 	; Because vertical scroll will not change after frame begins (second write to
 	; PPU_SCROLL will always be unused until next frame), the hack for MMC3 split
@@ -2517,24 +2517,24 @@ PRG031_FA41:
 	LDA #MMC3_1K_TO_PPU_1800
 	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1800
-	sta_MMC3_PAGE	
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1C00
-	sta_MMC3_COMMAND	
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1C00
 	sta_MMC3_PAGE
 
-	LDA #$18	 ; 
+	LDA #$18	 ;
 	sta_PPU_CTL2	 ; Sprites + BG now visible
 	LDA PPU_CTL1_Copy
 	ORA PPU_CTL1_Mod	; Combine bits from PPU_CTL1_Copy into PPU_CTL1_Mod
 	sta_PPU_CTL1	 ; Update the PPU_CTL1 register..
-	lda_PPU_STAT	 ; 
+	lda_PPU_STAT	 ;
 
-	LDA #$00	 ; 
+	LDA #$00	 ;
 	sta_PPU_SCROLL	 ; Horizontal scroll locked at zero
-	LDA Vert_Scroll	
+	LDA Vert_Scroll
 	sta_PPU_SCROLL	 ; Vertical scroll as-is
-	LDA #$00	 ; 
+	LDA #$00	 ;
 	STA Raster_State ; Clear Raster_State (no more effects)
 	JMP IntIRQ_Finish	 ; Clean up IRQ
 
@@ -2574,7 +2574,7 @@ PRG031_FAE7:
 	; Another of these common delay loops, this time dynamic...
 	LDX Roulette_RasterDelay,Y	 ; Get value based on Raster_State
 PRG031_FAEA:
-	NOP		 ; ? 
+	NOP		 ; ?
 	DEX		 ; X--
 	BNE PRG031_FAEA	 ; While > 0, loop...
 
@@ -2607,16 +2607,16 @@ PRG031_FAEA:
 	LDA #MMC3_1K_TO_PPU_1800
 	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1800
-	sta_MMC3_PAGE	
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1C00
-	sta_MMC3_COMMAND	
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1C00
 	sta_MMC3_PAGE
 
 PRG031_FB34:
-	lda_PPU_STAT	 ; 
+	lda_PPU_STAT	 ;
 
-	CPY #$03	 ; 
+	CPY #$03	 ;
 	BEQ PRG031_FB57	 ; If Raster_State = 3, jump to PRG031_FB57
 
 	; Raster_State < 3...
@@ -2627,22 +2627,22 @@ PRG031_FB34:
 	sta_PPU_CTL1	 	; .. and the actual PPU_CTL1 register
 	LDA Roulette_Pos,Y	 ; Get horizontal scroll position for this row
 	sta_PPU_SCROLL	 ; Store the horizontal
-	LDA #$00	 ; 
+	LDA #$00	 ;
 	sta_PPU_SCROLL	 ; Vertical = 0
-	INY		 ; 
+	INY		 ;
 	STY Raster_State ; Raster_State++
 	JMP IntIRQ_Finish_NoDis	 ; Cleanup and finish (for THIS Raster_State)
 
 PRG031_FB57:
 	; Raster_State = 3 ...
-	LDA PPU_CTL1_Copy	
+	LDA PPU_CTL1_Copy
 	ORA PPU_CTL1_Mod	; Combine bits from PPU_CTL1_Copy into PPU_CTL1_Mod
 	sta_PPU_CTL1	 ; Update actual register
-	LDA #$00	 ; 
+	LDA #$00	 ;
 	sta_PPU_SCROLL	 ; Horizontal Scroll = 0
-	LDA Vert_Scroll ; 
+	LDA Vert_Scroll ;
 	sta_PPU_SCROLL	 ; Vertical Scroll updated (should generally not be moving here :)
-	LDA #$00	 ; 
+	LDA #$00	 ;
 	STA Raster_State	 ; Raster_State = 0
 	JMP IntIRQ_Finish	 ; Clean up IRQ, we're done!
 
@@ -2666,7 +2666,7 @@ PRG031_FB80:
 	DEX		 ; X--
 	BNE PRG031_FB80 ; While X > 0, loop
 
-	LDA #$10	 ; 
+	LDA #$10	 ;
 	sta_PPU_CTL2	 ; Only show sprites
 
 	; Only loads Pattern Table 2 in this case...
@@ -2681,9 +2681,9 @@ PRG031_FB80:
 	LDA #MMC3_1K_TO_PPU_1800
 	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1800
-	sta_MMC3_PAGE	
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1C00
-	sta_MMC3_COMMAND	
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1C00
 	sta_MMC3_PAGE
 
@@ -2698,7 +2698,7 @@ PRG031_FB80:
 	sta_PPU_SCROLL	 ; Update Vertical Scroll
 	INC Raster_State ; Raster_State++
 
-	LDA #27	 
+	LDA #27
 	sta_MMC3_IRQCNT	 ; Next IRQ in 27 lines
 
 	; Some kind of delay loop?
@@ -2708,7 +2708,7 @@ PRG031_FBD3:
 	DEX		 ; X--
 	BPL PRG031_FBD3 ; While X >= 0, loop
 
-	LDA #$18	 ; 
+	LDA #$18	 ;
 	sta_PPU_CTL2	 ; Sprites + BG now visible
 
 	; Dead code?  Or timing/cycle filler
@@ -2740,7 +2740,7 @@ PRG031_FBE7:
 	stx_PPU_VRAM_ADDR
 
 	stx_PPU_CTL2	 ; Most importantly, hide BG + Sprites
-	lda_PPU_STAT	 ; 
+	lda_PPU_STAT	 ;
 
 	; Because vertical scroll will not change after frame begins (second write to
 	; PPU_SCROLL will always be unused until next frame), the hack for MMC3 split
@@ -2775,25 +2775,25 @@ PRG031_FBE7:
 	LDA #MMC3_1K_TO_PPU_1800
 	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1800
-	sta_MMC3_PAGE	
+	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1C00
-	sta_MMC3_COMMAND	
+	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1C00
 	sta_MMC3_PAGE
 
-	LDA #$18	 ; 
+	LDA #$18	 ;
 	sta_PPU_CTL2	 ; Sprites + BG now visible
 
 	LDA PPU_CTL1_Copy
 	ORA PPU_CTL1_Mod	; Combine bits from PPU_CTL1_Copy into PPU_CTL1_Mod
 	sta_PPU_CTL1	 ; Update the actual register
-	lda_PPU_STAT	 ; 
+	lda_PPU_STAT	 ;
 
-	LDA #$00	 ; 
+	LDA #$00	 ;
 	sta_PPU_SCROLL	 ; Horizontal Scroll = 0
-	LDA Vert_Scroll ; 
+	LDA Vert_Scroll ;
 	sta_PPU_SCROLL	 ; Update Vertical Scroll
-	LDA #$00	 ; 
+	LDA #$00	 ;
 	STA Raster_State	 ; Raster_State = 0
 	JMP IntIRQ_Finish	 ; Clean up IRQ
 
@@ -2813,7 +2813,7 @@ PRGROM_Change_Both:	; $FC6F
 	sta_MMC3_COMMAND 		; Set MMC3 command
 	LDA PAGE_C000	 		; Page @ PAGE_C000
 	sta_MMC3_PAGE	 		; Set MMC3 page
-	
+
 	; Setting PRG ROM A000 to page specified in PAGE_A000
 	LDA #MMC3_8K_TO_PRG_A000	; Changing PRG ROM at A000
 	sta_MMC3_COMMAND 		; Set MMC3 command
@@ -2867,7 +2867,7 @@ PRG031_FCC6:
 
 	STA Temp_Var1	 ; Temp_Var1 = A
 
-	LDA #$02	 
+	LDA #$02
 	STA Temp_Var2	 ; Temp_Var2 = 2
 
 PRG031_FCCC:
@@ -2888,16 +2888,16 @@ StatusBar_DrawCardPiece:
 	LDY Graphics_BufCnt 	; Current position within graphics buffer
 
 	; Store the upper tiles of the card in the buffer
-	LDA CardUL,X	 
-	STA Graphics_Buffer+3,Y	 
-	LDA CardUR,X	 
-	STA Graphics_Buffer+4,Y	 
+	LDA CardUL,X
+	STA Graphics_Buffer+3,Y
+	LDA CardUR,X
+	STA Graphics_Buffer+4,Y
 
 	; Store the lower tiles of the card in the buffer
-	LDA CardLL,X	 
-	STA Graphics_Buffer+8,Y	 
-	LDA CardLR,X	 
-	STA Graphics_Buffer+9,Y	 
+	LDA CardLL,X
+	STA Graphics_Buffer+8,Y
+	LDA CardLR,X
+	STA Graphics_Buffer+9,Y
 
 	LDX Player_Current	; X = Player_Current
 	BEQ PRG031_FCFF		; If player = 0 (Mario), jump to PRG031_FCFF
@@ -2911,7 +2911,7 @@ PRG031_FCFF:
 	TAX		 	; A = X
 
 	LDA CardVStartU,X
-	STA Graphics_Buffer+1,Y	 
+	STA Graphics_Buffer+1,Y
 
 	LDA CardVStartL,X
 	STA Graphics_Buffer+6,Y
@@ -2922,12 +2922,12 @@ PRG031_FCFF:
 	BEQ PRG031_FD1C	 ; If level is not vertical, jump to PRG031_FD1C
 
 	LDA #$27	 ; A = $27 (Vertical)
-PRG031_FD1C: 
+PRG031_FD1C:
 	LDX Level_Tileset
-	CPX #16	 
+	CPX #16
 	BEQ PRG031_FD27	 ; If Level_Tileset = 16 (Spade game), jump to PRG031_FD27
 
-	CPX #17	
+	CPX #17
 	BNE PRG031_FD29	 ; If Level_Tileset = 17 (N-Spade), jump to PRG031_FD29
 
 PRG031_FD27:
@@ -2965,7 +2965,7 @@ PRG031_FD29:
 Player_GetCard:
 	PHA		 ; Save which card we're getting
 
-	LDY Player_Current 
+	LDY Player_Current
 	BEQ PRG031_FD4C	 ; If Player is Mario, jump to PRG031_FD4C
 
 	LDY #<(Inventory_Cards2 - Inventory_Cards)
@@ -3039,13 +3039,13 @@ Sprite_RAM_Clear:	; $FD84
 	LDY #$00	 ; Y = 0
 
 PRG031_FD86:
-	LDA #$f8	 	; A = $F8 
+	LDA #$f8	 	; A = $F8
 	STA Sprite_RAM,  Y	; Next X value
 	LDA #$01	 	; A = $01
 	STA Sprite_RAM+1,Y	; Next Y value
-	INY		 ; 
-	INY		 ; 
-	INY		 ; 
+	INY		 ;
+	INY		 ;
+	INY		 ;
 	INY		 ; Y += 4
 	BNE PRG031_FD86	 ; While Y does not equal zero (covers all 256 bytes)
 
@@ -3060,12 +3060,12 @@ PRG031_FD86:
 ; does not set them to 8x16 ??
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Scroll_PPU_Reset:	; $FD97
-	LDA #$00	 ; 
+	LDA #$00	 ;
 	sta_PPU_SCROLL	 ; Horizontal scroll = 0
 	STA Horz_Scroll ; Horz_Scroll = 0
 	sta_PPU_SCROLL	 ; Vertical scroll = 0
 	STA Vert_Scroll ; Vert_Scroll = 0
-	LDA #$08	 ; 
+	LDA #$08	 ;
 	sta_PPU_CTL1	 ; Sprites in PT2
 	RTS		 ; Return
 
@@ -3077,9 +3077,9 @@ Scroll_PPU_Reset:	; $FD97
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Reset_PPU_Clear_Nametables:	; $FDA9
 	; Reset graphics buffer
-	LDA #$00	  
+	LDA #$00
 	STA Graphics_BufCnt
-	STA Graphics_Buffer	 
+	STA Graphics_Buffer
 
 Reset_PPU_Clear_Nametables2:
 	; NMI PPU_CTL2 and clear both nametables
@@ -3094,10 +3094,10 @@ Reset_PPU_Clear_Nametables2:
 ; Clear_PPU_CTL2_Copy
 ;
 ; Clears the PPU_CTL2_Copy variable and also the
-; PPU_CTL2 register itself 
+; PPU_CTL2 register itself
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Clear_PPU_CTL2_Copy:	; $FDBF
-	LDA #$00	 
+	LDA #$00
 	STA PPU_CTL2_Copy	; Clears PPU_CTL2_Copy (though sprites/BG overridden as visible anyway)
 	sta_PPU_CTL2	 	; At this point, clearing PPU_CTL2 altogether, though likely it will shortly be updated
 	RTS		 	; Return
@@ -3107,19 +3107,19 @@ Clear_PPU_CTL2_Copy:	; $FDBF
 ; Clear_Nametable
 ;
 ; This subroutine clears an entire nametable, specified by
-; the initial value of A ($20 for NT 0, $28 for NT2, and 
+; the initial value of A ($20 for NT 0, $28 for NT2, and
 ; technically the other two could be specified as well)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Clear_Nametable:	; $FDC7:
 	STA Temp_Var1		; Save A
 
-	lda_PPU_STAT	 	; 
-	LDA #$00	 	; 
+	lda_PPU_STAT	 	;
+	LDA #$00	 	;
 	sta_PPU_CTL1		; Most likely most importantly to prevent any more Resets
 
 	LDA Temp_Var1		; Restore A (from Reset_PPU_Clear_Nametables, this is $20 or $28, Nametable 0 or Nametable 2)
 	sta_PPU_VRAM_ADDR	; Write this as high byte VRAM address select
-	LDA #$00 
+	LDA #$00
 	sta_PPU_VRAM_ADDR	; $00 as low byte for VRAM address (Reset_PPU_Clear_Nametables selects nametable 1 or 2)
 
 	; This writes over the entire selected name table and attribute table with $FC
@@ -3142,7 +3142,7 @@ PRG031_FDE1:
 
 	; This will write over the attribute table (technically the prior loop does an
 	; unnecessary overrun... probably just a simpler loop to code.)
-	LDY #$40	 ; Y = $40 
+	LDY #$40	 ; Y = $40
 	LDA #$00	 ; A = 0
 PRG031_FDFB:
 	sta_PPU_VRAM_DATA	 ; Write $00 to AT
@@ -3159,13 +3159,13 @@ PRG031_FDFB:
 ; is the initial value of A ($20 for NT 0, $28 for NT2)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Clear_Nametable_Short:	; $FE02
-	lda_PPU_STAT	 	; 
-	LDA #$00	 	; 
+	lda_PPU_STAT	 	;
+	LDA #$00	 	;
 	sta_PPU_CTL1		; Most likely most importantly to prevent any more Resets
 
 	LDA Temp_Var1		; Restore A (from Reset_PPU_Clear_Nametables, this is $20 or $28, Nametable 0 or Nametable 2)
 	sta_PPU_VRAM_ADDR	; Write this as high byte VRAM address select
-	LDA #$00 
+	LDA #$00
 	sta_PPU_VRAM_ADDR	; $00 as low byte for VRAM address (Reset_PPU_Clear_Nametables selects nametable 1 or 2)
 
 	LDX #$03	 ; X = 3
@@ -3315,7 +3315,7 @@ DynJump:	; $FE99
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Read_Joypads
 ;
-; This subroutine reads the status of both joypads 
+; This subroutine reads the status of both joypads
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Read_Joypads_UnkTable:
@@ -3338,7 +3338,7 @@ PRG031_FEC3:
 	CMP Temp_Var1	 ; Check if same
 	BNE PRG031_FEC3	 ; If not, do it again
 
-	ORA Temp_Var2	 ; 
+	ORA Temp_Var2	 ;
 	PHA		 ; Push A
 	AND #$0f	 ; A &= $0F
 	TAX		 ; A -> X
@@ -3348,18 +3348,18 @@ PRG031_FEC3:
 	ORA Read_Joypads_UnkTable,X	 ; FIXME: A |= Read_Joypads_UnkTable[X]
 	PHA		 	; Save A
 	STA Temp_Var3	 	; Temp_Var3 = A
-	EOR Controller1,Y	; 
-	AND Temp_Var3	 	; 
+	EOR Controller1,Y	;
+	AND Temp_Var3	 	;
 	STA Controller1Press,Y	; Figures which buttons have only been PRESSED this frame as opposed to those which are being held down
-	STA Pad_Input	 	; 
+	STA Pad_Input	 	;
 	PLA		 	; Restore A
-	STA Controller1,Y	; 
-	STA Pad_Holding	 ; 
-	DEY		 ; Y-- 
+	STA Controller1,Y	;
+	STA Pad_Holding	 ;
+	DEY		 ; Y--
 	BPL PRG031_FEC0	 ; If Y hasn't gone negative (it should just now be 0), Read other joypad
 
 	; Done reading joypads
-	LDY Player_Current	 
+	LDY Player_Current
 	BEQ PRG031_FF11	 ; If Player_Curren = 0 (Mario), jump to PRG031_FF11
 
 	LDA Controller1
@@ -3391,14 +3391,14 @@ PRG031_FF11:
 Read_Joypad:	; $FF12
 
 	; Joypad reading is weird, and actually requires 8 accesses to the joypad I/O to get all the buttons:
-	; Read #1: A 
-	;      #2: B 
+	; Read #1: A
+	;      #2: B
 	;      #3: Select
-	;      #4: Start 
-	;      #5: Up    
-	;      #6: Down  
-	;      #7: Left  
-	;      #8: Right 
+	;      #4: Start
+	;      #5: Up
+	;      #6: Down
+	;      #7: Left
+	;      #8: Right
 
 	; This Resets BOTH controllers
 	LDA #$01	 ; A = 1 (strobe)
@@ -3453,9 +3453,9 @@ Read_Joypad_Loop:
 IntReset:
 	SEI		 ; Disable maskable interrupts
 	CLD		 ; Clear decimal (no BCD math, not there should be anyway)
-	LDA #$00	 ; 
+	LDA #$00	 ;
 	sta_PPU_CTL2	 ; Most likely mainly to make BG and SPRITES invisible
-	LDA #$08	 ; 
+	LDA #$08	 ;
 	sta_PPU_CTL1	 ; Sprites in Pattern Table 2
 	LDX #$02	 ; X = 2
 
@@ -3477,19 +3477,19 @@ VBlank_Wait_Loop:
 	sty_MMC3_SRAM_EN ; Disable MMC3 SRAM (?)
 	sty_MMC3_IRQDISABLE ; Disable MMC3 IRQ generation
 
-	LDA #%00001111	 ; 
+	LDA #%00001111	 ;
 	sta_PAPU_EN	 ; Enable rectangle wave 1 & 2, triangle, and noise channels
-	LDA #$00	 ; 
+	LDA #$00	 ;
 	sta_PAPU_MODCTL	 ; disable DMC IRQs
 
-	; Any write to $4017 resets both the frame counter, and the clock divider. 
-	; Sometimes, games will write to this register in order to synchronize the 
-	; sound hardware's internal timing, to the sound routine's timing (usually 
-	; tied into the Reset code). The frame IRQ frequency is slightly smaller than 
-	; the PPU's vertical retrace frequency, so you can see why games would desire 
+	; Any write to $4017 resets both the frame counter, and the clock divider.
+	; Sometimes, games will write to this register in order to synchronize the
+	; sound hardware's internal timing, to the sound routine's timing (usually
+	; tied into the Reset code). The frame IRQ frequency is slightly smaller than
+	; the PPU's vertical retrace frequency, so you can see why games would desire
 	; this syncronization.
 
-	LDA #$40	 ; 
+	LDA #$40	 ;
 	sta_FRAMECTR_CTL ; disable APU frame IRQ
 
 	lda_PPU_STAT
@@ -3500,25 +3500,25 @@ VBlank_Wait_Loop:
 	; The following writes 16 twice to PPU_VRAM_ADDR a total of 16 times
 	; Not sure what the point of this is?  Must be some kind of hardware thing??
 PRG031_FF80:
-	sta_PPU_VRAM_ADDR	 ; 
-	sta_PPU_VRAM_ADDR	 ; 
+	sta_PPU_VRAM_ADDR	 ;
+	sta_PPU_VRAM_ADDR	 ;
 	EOR #$00	 ; Do nothing??
 	DEX		 ; X--
 	BNE PRG031_FF80	 ; While X > 0, loop
 
-	LDA #$01	 ; 
+	LDA #$01	 ;
 	sta_MMC3_MIRROR	 ; MMC3 command for Vertical mirroring
-	LDA #$80	 ; 
+	LDA #$80	 ;
 	sta_MMC3_SRAM_EN ; Re-enable MMC3 SRAM (?)
 
 	; Clear $07FF - $0000, excluding $01xx
-	LDY #$07		 
+	LDY #$07
 	JSR Clear_RAM_thru_ZeroPage
 
 	LDA #25
-	STA PAGE_C000	 
+	STA PAGE_C000
 	LDA #24
-	STA PAGE_A000	 
+	STA PAGE_A000
 	JSR PRGROM_Change_Both2		; Change A000 to page 25 and C000 to page 24
 
 	; NOPs?
@@ -3533,7 +3533,7 @@ PT2_Full_CHRROM_Switch:	 ; $FFAD
 	LDY #$05	 ; Loop Y from 5 to 0, effecting all pattern selections
 
 PT2_Full_CHRROM_Loop:
-	TYA		 ; A = Y 
+	TYA		 ; A = Y
 	ORA #$40	 ; A = 5 | $40 = $45 (When 5, MMC3_1K_TO_PPU_1C00; decrements thru other pages)
 	sta_MMC3_COMMAND ; Set MMC3 command
 	LDA PatTable_BankSel,Y ; Offset into the Pattern Table 2 LUT for this page

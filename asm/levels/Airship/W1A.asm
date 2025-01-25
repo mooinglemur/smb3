@@ -1,5 +1,5 @@
 ; Original address was $ADB7
-; World 1 Airship 
+; World 1 Airship
 	.word W1Airship_BossL	; Alternate level layout
 	.word W1Airship_BossO	; Alternate object layout
 	.byte LEVEL1_SIZE_06 | LEVEL1_YSTART_0B0

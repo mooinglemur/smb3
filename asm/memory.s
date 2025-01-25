@@ -338,7 +338,7 @@ Scroll_VertUpd:       ; Indicates every 8 pixels update up or down, in vertical 
 Scroll_LeftUpd:       ; Indicates every 8 pixels update going to the left, or $FF if screen moves right
 	.res 1
 
-; Prepares to perform a Video_Update when possible, indexes the "Video_Upd_Table" 
+; Prepares to perform a Video_Update when possible, indexes the "Video_Upd_Table"
 ; in PRG030 OR Video_Upd_Table2 in PRG025 (whichever is currently in context)
 ; Also resets the graphics buffer afterward, since the RAM buffer is
 ; constantly being called to possibly perform its own updates after this value
@@ -428,7 +428,7 @@ Horz_Scroll:          ; Horizontal scroll of name table
 	.res 1
 .endif
 
-PPU_CTL1_Copy:        ; Holds PPU_CTL1 register data 
+PPU_CTL1_Copy:        ; Holds PPU_CTL1 register data
 	.res 1
 
 ; NOTE: CONTEXT -- Page 0 RAM changes meaning depending on the "context", i.e. what state
@@ -457,7 +457,7 @@ Title_ObjY:           ; $8D-$94 Title screen object Y positions
 	.res 8
 Title_ObjXVel:        ; $95-$9C X velocities of title screen objects (4.4FP)
 	.res 8
-Title_ObjYVel:        ; $9D-$A3 Y velocities of title screen objects 
+Title_ObjYVel:        ; $9D-$A3 Y velocities of title screen objects
 	.res 8
 Title_XPosFrac:       ; $A5-$AC X position extended precision of objects (provides 4-bit fixed point)
 	.res 8
@@ -546,7 +546,7 @@ Title_ObjMLDir:       ; $EA-$EB Mario / Luigi vector direction bitfield (1 = Lef
 	.res 2
 Title_ObjMLQueue:     ; $EC-$ED Mario / Luigi queue to do something ($04 = Luigi's rebound off Mario, $10 = Kick shell, $20 = Begin carrying, $40 = Clear carry/bonk, do kick)
 	.res 2
-Title_EventIndex:     ; Title background event index (dynamic jump index for events on the title 
+Title_EventIndex:     ; Title background event index (dynamic jump index for events on the title
 	.res 1
 Title_EventGrafX:     ; Title background current graphic index to load (loads items from Video_Upd_Table2 in PRG025)
 	.res 1
@@ -619,7 +619,7 @@ Map_HandTrap_XHi:     ; Hand Trap X Hi (most vars are shared with warp wind, but
 	.res 1
 Map_WWOrHT_X:         ; Warp Whistle wind or Hand Trap X position
 	.res 1
-Map_WWOrHT_Cnt:       ; Warp Whistle wind or Hand Trap counter 
+Map_WWOrHT_Cnt:       ; Warp Whistle wind or Hand Trap counter
 	.res 1
 Map_WWOrHT_Dir:       ; Direction the Warp Whistle wind travels (0 = right, 1 = left)
 	.res 1
@@ -682,7 +682,7 @@ Map_StarsXSteps:      ; During World Intro, number of "steps" remaining in the X
 	.res 1
 Map_StarsRadCnt:      ; During World Intro, adds $70 per display frame and adds 1 to the radius when it overflows
 	.res 1
-Map_StarsCenterX:     ; During World Intro, X center of stars 
+Map_StarsCenterX:     ; During World Intro, X center of stars
 	.res 1
 Map_StarsCenterY:     ; During World Intro, Y center of stars
 	.res 1
@@ -1702,7 +1702,7 @@ Objects_Timer:        ; $0518-$051F "Timer" values; automatically decrements to 
 ; NOTE: Until Timer2 expires, object will not hit other objects.
 ; Probably used as a dampener to keep an object from slaughtering
 ; another bunch of objects TOO quickly!
-Objects_Timer2:       ; $0520-$0527 "Timer" values; automatically decrements to zero 
+Objects_Timer2:       ; $0520-$0527 "Timer" values; automatically decrements to zero
 	.res 8
 
 ; All the Level_BlockChgX/Y values are aligned to nearest 16 (i.e. tile coordinate)
@@ -1834,7 +1834,7 @@ Player_IsDucking:     ; Set when Player is ducking down
 Player_WhiteBlkCnt:   ; White block counter; counts up while Player is standing on white block and holding down
 	.res 1
 
-; Level_PipeMove is set to various values that dictate 
+; Level_PipeMove is set to various values that dictate
 ; how Player is moving within a pipe
 ;
 ; The lower 2 bits form a direction as follows:
@@ -1883,7 +1883,7 @@ Player_Bounce:        ; Set to cause block bounce (upper 4 bits specifies what k
 	.res 1
 Player_BounceDir:     ; Direction of Player bounce -- 0 = Down, 1 = Up, 2 = Left, 3 = Right
 	.res 1
-Player_BounceObj:     ; Set if it was a kicked shelled object that hit the bounce block (i.e. don't bounce the Player if the object is the one that hit) 
+Player_BounceObj:     ; Set if it was a kicked shelled object that hit the bounce block (i.e. don't bounce the Player if the object is the one that hit)
 	.res 1
 Counter_ByPlayerSpd:  ; A counter which increments faster as the Player goes faster
 	.res 1
@@ -1927,7 +1927,7 @@ Player_SandSink:      ; Sinking in quicksand! (holds Y when quicksand hit in upp
 
 ; Player_PartDetEn: "32 Pixel Partition Detection" enabler
 ; When set, if Player Y >= 160, Player detects bottom two rows of tiles implicitly
-; Used with Update_Request = UPDATERASTER_32PIXPART if there's a floor 
+; Used with Update_Request = UPDATERASTER_32PIXPART if there's a floor
 ; (i.e. NOT used in levels with fixed water; for that, see FloatLevel_PlayerWaterStat)
 Player_PartDetEn:
 	.res 1
@@ -2007,7 +2007,7 @@ Level_TimerEn:        ; Set to disable clock (bit 7 will also disable level anim
 Kill_Tally:           ; Counter that increases with each successful hit of an object without touching the ground
 	.res 1
 
-Objects_KillTally:    ; $05F5-$05F9 OBJECT SLOTS 0 - 4 ONLY: Kill_Tally for a kicked shell as it hits other enemies 
+Objects_KillTally:    ; $05F5-$05F9 OBJECT SLOTS 0 - 4 ONLY: Kill_Tally for a kicked shell as it hits other enemies
 	.res 5
 
 PlayerProj_YHi:       ; $05FA-$05FB Player projectile Y Hi
@@ -2039,7 +2039,7 @@ Ending_CmdBuffer:     ; $0600-$06C0 Buffer used during ending sequence
 ; unused ($600-$601)
 	.res 2
 
-Level_Tile_Head:      ; Tile at Player's head 
+Level_Tile_Head:      ; Tile at Player's head
 	.res 1
 Level_Tile_GndL:      ; Tile at Player's feet left
 	.res 1
@@ -2225,8 +2225,8 @@ Objects_QSandCtr:     ; $06EB-$06F2 When enemy has fallen into quicksand, increm
 TileAddr_Off:         ; During level loading, specifies an offset into the current Mem_Tile_Addr setting
 	.res 1
 
-; LevLoad_Unused1-4 are initialized when about to load a level, 
-; but never used.  May have been reserved or intended or 
+; LevLoad_Unused1-4 are initialized when about to load a level,
+; but never used.  May have been reserved or intended or
 ; even debugging, but who knows now...
 LevLoad_Unused1:
 	.res 1
@@ -2305,14 +2305,14 @@ Map_ReturnStatus:     ; When 0, level panel is cleared; otherwise, Player is con
 	.res 1
 MaxPower_Tick:        ; When Player has maximum "power" charge, this counts for the flashing [P]
 	.res 1
-Player_Score:         ; $0715 (H)-$0717 (L) treated as 3-byte integer, with least significant zero on display not part of this value 
+Player_Score:         ; $0715 (H)-$0717 (L) treated as 3-byte integer, with least significant zero on display not part of this value
 	.res 3
 
 ; unused ($718)
 	.res 1
 
 ; Each byte of PatTable_BankSel sets the VROM available at
-; 0000 (first half BG), 0800 (second half BG, typ animated), 
+; 0000 (first half BG), 0800 (second half BG, typ animated),
 ; 1000 (1/4 sprites), 1400 (2/4 sprites), 1800 (3/4 sprites),
 ; and 1C00 (4/4 sprites), respectively
 PatTable_BankSel:     ; $0719-$071E  Provides an array of 6 pages to set the entire Pattern Table [BG_Full_CHRROM_Switch]
@@ -2440,7 +2440,7 @@ Objects_ColorCycle:   ; $0768-$076F Cycles colors of object and decrements to ze
 	.res 8
 
 ; Objects_Var6: Special hardcoded behavior for the following objects ONLY:
-; OBJ_FIRECHOMP, OBJ_CHAINCHOMPFREE, OBJ_BLOOPERCHILDSHOOT, 
+; OBJ_FIRECHOMP, OBJ_CHAINCHOMPFREE, OBJ_BLOOPERCHILDSHOOT,
 ; OBJ_BLOOPERWITHKIDS, or OBJ_FIRESNAKE
 ; ... as the X/Y buffer slot they occupy (see Object_Delete)
 Objects_Var6:         ; $0770-$0774 General purpose variable 6 (except as noted above)
@@ -2531,7 +2531,7 @@ Palette_Term:         ; Set to zero as terminator, per requirement of the Video_
 	.res 1
 ; ********************************************************************************
 
-; BigQBlock_GotIt: 
+; BigQBlock_GotIt:
 ;	Big ? Blocks can only be retrieved once; this is a bitfield that marks which
 ;	ones you've gotten by setting a bit per screen space in the Big ? Block area.
 ;	Basically, if you reenter a Big ? Block area after opening it, it won't reappear!
@@ -2762,7 +2762,7 @@ Vs_PlayerFlashInv:    ; $690C-$690D Mario/Luigi Flashing invicibility (?)
 	.res 2
 Vs_SpawnCnt2:         ; FIXME describe better
 	.res 1
-Vs_TooLongCnt:        ; Increments after each round of spawning; if it overflows, "game ender" fireballs are spawned 
+Vs_TooLongCnt:        ; Increments after each round of spawning; if it overflows, "game ender" fireballs are spawned
 	.res 1
 Vs_CurIndex:          ; Current index (Player or object)
 	.res 1
@@ -3034,7 +3034,7 @@ Level_AScrlMoveRepeat: ; Repeat current move until zero (decrements each full ex
 	.res 1
 Level_AScrlLoopCurMove: ; Current "movement loop" index (into AScroll_MovementLoop)
 	.res 1
-Level_AScrlSclLastDir: ; Auto scroll "Scroll_LastDir" 
+Level_AScrlSclLastDir: ; Auto scroll "Scroll_LastDir"
 	.res 1
 Level_AScrlMoveTicks: ; Counts down to zero, decrements Level_AScrlMoveRepeat (goes to next "movement")
 	.res 1
@@ -3054,9 +3054,9 @@ Level_AScrlHVel:      ; Auto scroll horizontal "velocity"
 	.res 1
 Level_AScrlVVel:      ; Auto scroll vertical "velocity"
 	.res 1
-Level_AScrlHVelFrac:  ; Auto scroll horizontal velocity fractional accumulator 
+Level_AScrlHVelFrac:  ; Auto scroll horizontal velocity fractional accumulator
 	.res 1
-Level_AScrlVVelFrac:  ; Auto scroll vertical velocity fractional accumulator 
+Level_AScrlVVelFrac:  ; Auto scroll vertical velocity fractional accumulator
 	.res 1
 Level_AScrlHVelCarry: ; '1' when last auto scroll H Velocity fraction accumulation rolled over
 	.res 1
@@ -3113,7 +3113,7 @@ Bowser_Tiles:         ; $7A61-$7A62 Bowser's detected tiles (to determine what t
 	.res 2
 Bowser_Counter1:      ; A counter used by Bowser, decrements to zero
 	.res 1
-Bowser_Counter2:      ; A counter used by Bowser, decrements to zero 
+Bowser_Counter2:      ; A counter used by Bowser, decrements to zero
 	.res 1
 Bowser_Counter3:      ; A counter used by Bowser, random setting, decrements to zero
 	.res 1
@@ -3194,7 +3194,7 @@ Object_BufferX:       ; $7C20-$7C3F / $7C40-$7C5F
 Object_BufferY:       ; $7C60-$7C7F / $7C80-$7C9F
 	.res 32*2
 
-; Variables used by Chain Chomps ONLY -- manages the chain links 
+; Variables used by Chain Chomps ONLY -- manages the chain links
 ChainChomp_ChainX1:   ; $7CA0-$7CA4 Chain Link 1 X
 	.res 5
 ChainChomp_ChainX2:   ; $7CA5-$7CA9 Chain Link 2 X
@@ -3311,7 +3311,7 @@ Map_Completions:      ; $7D00-$7D3F (Mario), $7D40-$7D7F (Luigi) Allows a MAX of
 ; B = Hammer
 ; C = Warp Whistle
 ; D = Music Box
-Inventory_Items:      ; $7D80-$7D9B Mario, 4 rows of 7 items 
+Inventory_Items:      ; $7D80-$7D9B Mario, 4 rows of 7 items
 	.res 4*7
 Inventory_Cards:      ; $7D9C-$7D9E Mario, 3 cards
 	.res 3
@@ -3320,7 +3320,7 @@ Inventory_Score:      ; $7D9F-$7DA1 Mario, 3 byte score
 Inventory_Coins:      ; Mario's coins
 	.res 1
 
-Inventory_Items2:     ; $7DA3-$7DBE Luigi, 4 rows of 7 items 
+Inventory_Items2:     ; $7DA3-$7DBE Luigi, 4 rows of 7 items
 	.res 4*7
 Inventory_Cards2:     ; $7DBF-$7DC1 Luigi, 3 cards
 	.res 3
@@ -3435,7 +3435,7 @@ Map_SprRAMOffDistr:   ; A free running counter on the map only which distributes
 ;  6: Sidestepper Only
 ;  7: Coin Fountain
 ;  8: Spiny Only
-;  9: Fighter Fly Only 
+;  9: Fighter Fly Only
 ; 10: Sidestepper Only
 ; 11: Ladder and [?] blocks
 Map_2PVsGame:

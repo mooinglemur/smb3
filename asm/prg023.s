@@ -98,7 +98,7 @@ Tile_Layout_TS10:
 	.byte $AB, $AB, $30, $31, $33, $33, $2A, $2A, $0E, $1E, $2A, $2C, $2A, $2C, $0E, $2E ; Tiles $E0 - $EF
 	.byte $89, $06, $E1, $06, $1E, $3E, $23, $06, $48, $06, $31, $33, $34, $39, $57, $FF ; Tiles $F0 - $FF
 
-	; Upper right 8x8 pattern per tile	
+	; Upper right 8x8 pattern per tile
 	.byte $FF, $FF, $FF, $07, $07, $EA, $FF, $FC, $FD, $FE, $FF, $FF, $FF, $FF, $FF, $FF ; Tiles $00 - $0F
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Tiles $10 - $1F
 	.byte $FF, $FF, $FF, $FF, $41, $44, $6D, $6F, $65, $69, $67, $FC, $4A, $4A, $BA, $BA ; Tiles $20 - $2F
@@ -144,9 +144,9 @@ Tile_Attributes_TS10:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LevelLoad_TS10:
 	; Clear Tile memory
-	LDY #$00	 
+	LDY #$00
 PRG023_A40A:
-	LDA #TILE10_SKY		; just clear everything to sky	 
+	LDA #TILE10_SKY		; just clear everything to sky
 	JSR Tile_Mem_ClearB
 	JSR Tile_Mem_ClearA
 	CPY #$f0
@@ -172,17 +172,17 @@ LoadLevel_Generator_TS10:
 
 	LDA Temp_Var15
 	AND #%11100000
-	LSR A		
-	LSR A		
-	LSR A		
-	LSR A		
-	LSR A		
+	LSR A
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	TAX		 	; X = upper 3 bits of Temp_Var15 (0-7) (selects a multiple of 15 as the base)
 
 	LDA LL_ShapeDef
-	LSR A	
-	LSR A	
-	LSR A	
+	LSR A
+	LSR A
+	LSR A
 	LSR A			; A = upper 4 bits of LL_ShapeDef shifted down
 	CLC
 	ADC PRG023_A419,X	; Add multiple of 15
@@ -238,7 +238,7 @@ LoadLevel_Generator_TS10:
 	.word FAR014_LoadLevel_TopDecoBlocks		; 38 - Top-Deco Rectangle Right waving water pool
 	.word FAR014_LoadLevel_TopDecoBlocks		; 39 - Top-Deco Rectangle Water wrong-way BG
 	.word FAR014_LoadLevel_TopDecoBlocks		; 40 - Top-Deco Rectangle Diamond blocks (not really any deco on top)
-	.word FAR014_LoadLevel_TopDecoBlocks		; 41 - Top-Deco Rectangle Sand ground 
+	.word FAR014_LoadLevel_TopDecoBlocks		; 41 - Top-Deco Rectangle Sand ground
 	.word FAR014_LoadLevel_TopDecoBlocks		; 42 - Top-Deco Rectangle orange block??
 	.word FAR014_LoadLevel_IceBricks		; 43 - Run of ice bricks
 	.word FAR014_LoadLevel_VTransitPipeRun		; 44 - Vertical in-level transit pipe
@@ -259,8 +259,8 @@ LoadLevel_Generator_TS10:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LeveLoad_FixedSizeGen_TS10
 ;
-; Much simpler generators that are fixed-size, commonly used for 
-; just single tile placement styles (although a couple relatively 
+; Much simpler generators that are fixed-size, commonly used for
+; just single tile placement styles (although a couple relatively
 ; complex ones exist in here as well)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LeveLoad_FixedSizeGen_TS10:
@@ -272,11 +272,11 @@ LeveLoad_FixedSizeGen_TS10:
 
 	LDA Temp_Var15
 	AND #%11100000
-	LSR A		
+	LSR A
 	CLC
-	ADC LL_ShapeDef	
+	ADC LL_ShapeDef
 	TAX		 	; Resultant index is put into 'X'
-	JSR DynJump	 
+	JSR DynJump
 
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word LoadLevel_AirshipMisc		;  0 - Horizontal screw tile
@@ -296,7 +296,7 @@ LeveLoad_FixedSizeGen_TS10:
 	.word LoadLevel_MetalSquare		; 14 - Metal support square
 	.word LoadLevel_Black14Rows		; 15 - 14 rows of black
 	.word FAR014_LoadLevel_PowerBlock		; 16 - ? block with flower
-	.word FAR014_LoadLevel_PowerBlock		; 17 - ? block with leaf 
+	.word FAR014_LoadLevel_PowerBlock		; 17 - ? block with leaf
 	.word FAR014_LoadLevel_PowerBlock		; 18 - ? block with star
 	.word FAR014_LoadLevel_PowerBlock		; 19 - ? block with coin OR star
 	.word FAR014_LoadLevel_PowerBlock		; 20 - ? block with coin (??)
@@ -391,8 +391,8 @@ LoadLevel_WoodBodyLong:
 
 	LDA LL_ShapeDef
 	SEC
-	SBC #$20	
-	LSR A		
+	SBC #$20
+	LSR A
 	LSR A
 	LSR A
 	LSR A
@@ -473,7 +473,7 @@ LoadLevel_WoodVertShortRepeat:
 	STA Temp_Var3		 ; Temp_Var3 = lower 4 bits of LL_ShapeDef
 
 PRG023_A5BA:
-	LDX #$02	
+	LDX #$02
 	JSR PRG023_A578	 ; Generate 3 high vertical log
 
 	; Restore Map_Tile_Addr from backup
@@ -887,14 +887,14 @@ LoadLevel_WoodFloor:
 
 	SEC
 	SBC #$e0
-	LSR A	
-	LSR A	
-	LSR A	
-	LSR A	
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	TAX		 ; X = relative index
 
 	PLA		 ; Restore LL_ShapeDef
-	AND #$0f	 
+	AND #$0f
 	STA Temp_Var3	 ; Temp_Var3 = lower 4 bits of LL_ShapeDef
 
 	LDY TileAddr_Off ; Y = TileAddr_Off
@@ -963,7 +963,7 @@ PRG023_A7A9:
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X--
-	BNE PRG023_A7A9	 ; $A7B1 
+	BNE PRG023_A7A9	 ; $A7B1
 
 	LDA #TILE10_ROPERAIL_END
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
@@ -1058,7 +1058,7 @@ PRG023_A816:
 	LDA LL_Crate,X	 	 ; Get crate left tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 	JMP PRG023_A827	 	 ; Jump to PRG023_A827
- 
+
 PRG023_A822:
 	LDA LL_Crate+3,X	 ; Get crate middle tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
@@ -1137,7 +1137,7 @@ PRG023_A86D:
 	JMP PRG023_A85C	 ; Jump to PRG023_A85C
 
 PRG023_A887:
-	BPL PRG023_A85C	 ; $A887 
+	BPL PRG023_A85C	 ; $A887
 	RTS		 ; Return
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1208,13 +1208,13 @@ PRG023_A8CE:
 
 	DEC Temp_Var3	 ; Temp_Var3-- (tile counter decrement)
 	INX		 ; X++
-	TXA		 
-	AND #$01	 
+	TXA
+	AND #$01
 	BNE PRG023_A8CE	 ; New row every 2 tiles
 
 	JSR LL23_ReturnTileAndNextRow	 ; Return to beginning, then go to next row
 
-	LDA Temp_Var3	
+	LDA Temp_Var3
 	BNE PRG023_A8CE	 ; If Temp_Var3 > 0 (tiles to go), loop!
 
 	RTS		 ; Return
@@ -1264,9 +1264,9 @@ LL_WoodTipsUnderside:
 LoadLevel_WoodTipsUnderside:
 	LDY TileAddr_Off ; Y = TileAddr_Off
 
-	LDA LL_ShapeDef	 
+	LDA LL_ShapeDef
 	SEC
-	SBC #$0a	 
+	SBC #$0a
 	TAX		 ; X = relative index
 
 	LDA LL_WoodTipsUnderside,X	; Wooden tips and underside left tile
@@ -1492,7 +1492,7 @@ PRG023_A9E4:
 ; LoadLevel_Black14Rows
 ;
 ; Adds 14 rows of entire-screen-width black tiles; NOTE!  Must be
-; aligned to left edge of screen!  Does not use common "next 
+; aligned to left edge of screen!  Does not use common "next
 ; column" function and doesn't check for wraps...
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LoadLevel_Black14Rows:
@@ -1554,7 +1554,7 @@ PRG023_AA6D:
 	LDA Map_Tile_AddrH
 	STA Temp_Var2
 
-	LDA #$04	 
+	LDA #$04
 	STA Temp_Var4	 ; Temp_Var4 = 4
 
 PRG023_AA79:
@@ -1609,7 +1609,7 @@ LoadLevel_IntroAirship:
 
 PRG023_AB23:
 	LDA LL_IntroAirship,X	 ; Intro airship tile
-	CMP #$ff	 
+	CMP #$ff
 	BEQ PRG023_AB33	 ; If this is the terminator, jump to PRG023_AB33
 
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
@@ -1635,7 +1635,7 @@ PRG023_AB33:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LoadLevel_Ledge:
 	LDX #$00	 ; X = 0
-	JMP PRG023_AB45	 ; Jump to PRG023_AB45 
+	JMP PRG023_AB45	 ; Jump to PRG023_AB45
 
 LL_RockyTiles:	.byte TILE10_LEDGE, TILE10_ROCKYWRENCH_HOLE
 
@@ -1683,14 +1683,14 @@ LoadLevel_MiniShip:
 
 	LDA LL_ShapeDef
 	SEC
-	SBC #$01	
+	SBC #$01
 	TAX		 ; X = relative index
 
 	LDA LL_W8MiniShipRows,X	 ; Get number of rows for this ship
 	STA Temp_Var3		 ; Temp_Var3 holds the rows
 
 	LDA LL_W8MiniShipIndex,X ; Get starting index of mini ship
-	TAX		 
+	TAX
 
 	LDY TileAddr_Off 	; Y = TileAddr_Off
 
@@ -1764,9 +1764,9 @@ LL23_GetLayoutByte_AndBackup:
 
 	; Backup Map_Tile_AddrL/H into Temp_Var1/2
 	LDA Map_Tile_AddrL
-	STA Temp_Var1	
+	STA Temp_Var1
 	LDA Map_Tile_AddrH
-	STA Temp_Var2	
+	STA Temp_Var2
 
 	RTS		 ; Return
 

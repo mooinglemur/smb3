@@ -253,7 +253,7 @@ W10FO:		.include "objects/1-F.asm"	; World 1 Fortress
 W10F_AltO:	.include "objects/1-FA.asm"	; World 1 Fortress Alternate
 W3F2O:		.include "objects/3-F2.asm"	; World 3 2nd Fortress
 W3F2_AltO:	.include "objects/3-F2A.asm"	; World 3 2nd Fortress Alternate
-W3F1O:		.include "objects/3-F1.asm"	; World 3 1st Fortress 
+W3F1O:		.include "objects/3-F1.asm"	; World 3 1st Fortress
 W3F1_AltO:	.include "objects/3-F1A.asm"	; World 3 1st Fortress Alternate
 W5F1O:		.include "objects/5-F1.asm"	; World 5 Ground Fortress
 W5F1_AltO:	.include "objects/5-F1A.asm"	; World 5 Ground Fortress Alternate

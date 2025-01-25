@@ -162,11 +162,11 @@
 
 .segment "PRG030"
 
-Tile_Mem_Addr:	
+Tile_Mem_Addr:
 	; This breaks up the overall "tile" layout memory into screen-based chunks
 	; With a screen width of 256 pixels, that makes 16 blocks across every "screen",
 	; NTSC res of 224, two screens tall, is 448 / 16px-per-tile = 28 POTENTIAL rows per screen
-	; but the status bar occludes one, so only 27 rows are stored... 
+	; but the status bar occludes one, so only 27 rows are stored...
 	; Up to 15 screens!
 	.word Tile_Mem,       Tile_Mem+$01B0, Tile_Mem+$0360, Tile_Mem+$0510, Tile_Mem+$06C0, Tile_Mem+$0870, Tile_Mem+$0A20, Tile_Mem+$0BD0
 	.word Tile_Mem+$0D80, Tile_Mem+$0F30, Tile_Mem+$10E0, Tile_Mem+$1290, Tile_Mem+$1440, Tile_Mem+$15F0, Tile_Mem+$17A0
@@ -204,7 +204,7 @@ Tile_Mem_AddrVH:
 ;	TVA: Target Video Address, typ. inside the nametable somewhere
 ;	CMD: 	- Bit 7 set = Use vertical updates (32B) else use horizontal (1B)
 ;		- Bit 6 set = Means that there is only one byte of DATA, repeated
-;		- Bits 0-5  = Count of bytes to write directly to PPU 
+;		- Bits 0-5  = Count of bytes to write directly to PPU
 ;	DATA: Raw byte(s) to write to the PPU, count specified by CMD
 ; After a data chunk has been read, a new TVA is expected, or a $00 byte which terminates the stream.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -358,7 +358,7 @@ Video_3CMAppear3:
 	vaddr $23DB
 	.byte $02, $FB, $FE
 	.byte $00	; Terminator
-	
+
 Video_3CMAppear4:
 	vaddr $23D3
 	.byte $02, $6A, $9A
@@ -528,7 +528,7 @@ PAUSE_Sprites:
 PAUSE_Sprites_End:
 
 	; The BGM per world (see also World_BGM_Restore in PRG010)
-World_BGM:	
+World_BGM:
 	.byte MUS2A_WORLD1, MUS2A_WORLD2, MUS2A_WORLD3, MUS2A_WORLD4
 	.byte MUS2A_WORLD5, MUS2A_WORLD6, MUS2A_WORLD7, MUS2A_WORLD8
 	.byte MUS2A_WARPWHISTLE
@@ -541,7 +541,7 @@ World_BGM:
 IntReset_Part2:
 	lda_PPU_STAT	 ;
 	BPL IntReset_Part2 ; Wait until VBlank
-	LDA #$00	 ; 
+	LDA #$00	 ;
 	sta_PPU_CTL2	 ; Most importantly, hide sprites/bg
 	sta_PPU_CTL1	 ; Most likely just to disable further Resets
 
@@ -558,14 +558,14 @@ IntReset_Part2:
 	; The following loop clears all of $6000 - $7FFF ... a lot of RAM!
 PRG030_8437:
 	LDA #$00	 	; A = 0
-	STA (Temp_Var1),Y	; Clear 
+	STA (Temp_Var1),Y	; Clear
 	DEY			; Y--
 	BNE PRG030_8437	 	; While Y is not zero, loop (since Y started at 0, this does a full 256 bytes)
 
 	; This decrement then moves to $7E, $7D ... $60
 	DEC Temp_Var2	 ; Next lower page
 	LDA Temp_Var2	 ; Get page -> A
-	CMP #$5f	 ; 
+	CMP #$5f	 ;
 	BNE PRG030_8437	 ; If A <> $5F, loop again (clears down to $6000)
 
 	; Clear $07FF - $0000, excluding $01xx
@@ -587,30 +587,30 @@ PRG030_8437:
 	STA Map_NSpade_NextScore+2
 
 PRG030_845A:
-	JSR Sprite_RAM_Clear	 
-	JSR Scroll_PPU_Reset	 
+	JSR Sprite_RAM_Clear
+	JSR Scroll_PPU_Reset
 	JSR Reset_PPU_Clear_Nametables
 
 	; Load title screen graphics
 	LDA #$78
 	STA PatTable_BankSel
-	LDA #$7a	
+	LDA #$7a
 	STA PatTable_BankSel+1
-	LDA #$20	
+	LDA #$20
 	STA PatTable_BankSel+2
-	LDA #$21	
+	LDA #$21
 	STA PatTable_BankSel+3
-	LDA #$04	
+	LDA #$04
 	STA PatTable_BankSel+4
-	LDA #$7f	
+	LDA #$7f
 	STA PatTable_BankSel+5
 
 	; Load page 24 into A000 and page 25 into C000
-	LDA #24	 
+	LDA #24
 	STA PAGE_A000
-	LDA #25	 
+	LDA #25
 	STA PAGE_C000
-	JSR PRGROM_Change_Both2	
+	JSR PRGROM_Change_Both2
 
 	LDA #$20
 	STA Update_Select	 ; Update_Select = $20 (Title Screen)
@@ -632,7 +632,7 @@ PRG030_84A0:
 	STA PAGE_C000
 	LDA #11
 	STA PAGE_A000
-	JSR PRGROM_Change_Both2	
+	JSR PRGROM_Change_Both2
 
 
 	JSR Map_Init	 ; Initialize map variables (page 11)
@@ -648,7 +648,7 @@ PRG030_84A0:
 	LDA #$f8
 	STA Map_UnusedGOFlag
 
-	LDA #$00	 ; 
+	LDA #$00	 ;
 	sta_PPU_CTL2	 ; Most importantly, hide sprites/bg
 
 	; Stop Update_Select activity temporarily while we initialize
@@ -663,8 +663,8 @@ PRG030_84D1:
 	BPL PRG030_84D1	 ; While Y >= 0, loop!
 
 PRG030_84D7:
-	JSR Sprite_RAM_Clear	 
-	JSR Scroll_PPU_Reset	 
+	JSR Sprite_RAM_Clear
+	JSR Scroll_PPU_Reset
 	JSR Reset_PPU_Clear_Nametables
 
 	; Init for lost bonus game??
@@ -687,15 +687,15 @@ PRG030_84D7:
 	STA Bonus_DieCnt
 
 	; Reload the timer tick for the next time it's used
-	LDA #$28	
+	LDA #$28
 	STA Level_TimerTick
 
 	; Unused699 = 3 (never used)
-	LDA #$03	 
+	LDA #$03
 	STA Unused699
 
 	; Update_Select = $C0
-	LDA #$c0	 	
+	LDA #$c0
 	STA Update_Select
 
 	; Load world map graphics
@@ -717,7 +717,7 @@ PRG030_84D7:
 
 	LDX Player_Current	; X = Player_Current
 	LDA #<(Inventory_Score - Inventory_Items)	; Base offset to score from Inventory_Items
-	CPX #$00	 	; 
+	CPX #$00	 	;
 	BEQ PRG030_853F	 	; If X = 0 (Player is Mario), jump to PRG030_853F
 	CLC
 	ADC #<(Inventory_Score2 - Inventory_Score)	 ; Otherwise, add $23
@@ -733,7 +733,7 @@ PRG030_8542:
 	STA Player_Score,X	; Store into buffer area..
 	INY		 	; Y++
 	INX		 	; X++
-	CPX #$03	 
+	CPX #$03
 	BNE PRG030_8542	 ; While X <> 3, loop
 
 
@@ -761,7 +761,7 @@ PRG030_8552:
 	DEX		 ; X--
 	BPL PRG030_8552	 ; If more players to initialize, loop!
 
-	LDA #$00	 
+	LDA #$00
 	STA Level_Tileset	 ; Map uses Level_Tileset = 0
 	STA World_EnterState	 ; World_EnterState = 0 (just arriving)
 	STA Map_EnterLevelFX	 ; Scratch = 0
@@ -770,26 +770,26 @@ PRG030_8552:
 	STA Map_Intro_Tick	 ; Map_Intro_Tick = 0 (forces init in some functions)
 
 PRG030_857E:
-	JSR Sprite_RAM_Clear	 
-	JSR Scroll_PPU_Reset	 
+	JSR Sprite_RAM_Clear
+	JSR Scroll_PPU_Reset
 	JSR Reset_PPU_Clear_Nametables
 
-	LDA #$01	 
+	LDA #$01
 	sta_MMC3_MIRROR	 ; Set vertical mirroring
 
 	LDX Player_Current	 ; X = current Player index
 
 	LDA World_Map_Power,X	; X = Player's current world map power
-	STA Map_Power_Disp	; Set as powerup currently displayed 
+	STA Map_Power_Disp	; Set as powerup currently displayed
 
 	LDY #$00	 ; "Darkness" flag (only works correctly on World 8 level 2)
 	LDA World_Num	 ; A = World_Num
-	CMP #$07	 
+	CMP #$07
 	BNE PRG030_85A5	 ; If this is NOT World 8, jump to PRG030_85A5
 
 	; We're in World 8...
 	LDA World_Map_XHi,X
-	CMP #$02	 
+	CMP #$02
 	BNE PRG030_85A5	 ; If NOT on the third level of World 8, jump to PRG030_85A5
 	INY		 ; Activate darkness
 
@@ -807,13 +807,13 @@ PRG030_85A5:
 
 	; Set A000 page to 12
 	LDA #12
-	STA PAGE_A000	 
+	STA PAGE_A000
 	JSR PRGROM_Change_A000
 
 	JSR Map_Reload_with_Completions	 	; Load map and set already completed levels
 	JSR Fill_Tile_AttrTable_ByTileset	; Load tile attribute tiles by the tileset
 
-	LDA Inventory_Open	
+	LDA Inventory_Open
 	BNE PRG012_85CE		; If Inventory is open, jump to PRG012_85CE
 
 	; If Inventory is not open
@@ -830,15 +830,15 @@ PRG012_85CE:
 	LDY Player_Current	; Y = current Player index
 
 	; This sets up the scroll correctly given wherever the Player last was on the map
-	LDA Map_Prev_XOff,Y	 
+	LDA Map_Prev_XOff,Y
 	STA Scroll_Temp	 ; Scroll_Temp = X offset
 	LDA Map_Prev_XHi,Y	 ; A = hi byte of X offset
 	JSR Scroll_Update_Ranges ; Off to Scroll_Update_Ranges...
 
-	LDA #$00	 
+	LDA #$00
 	STA Scroll_LastDir	 ; Scroll_LastDir = 0
 
-	LDA Scroll_ColumnL	
+	LDA Scroll_ColumnL
 	STA Scroll_ColumnR	; Scroll_ColumnR = Scroll_ColumnL
 
 	; Scroll_Cols2Upd = 32 (full dirty scroll update sweep)
@@ -852,8 +852,8 @@ PRG012_85CE:
 	; Switch to page 26 @ A000
 	LDA #MMC3_8K_TO_PRG_A000
 	sta_MMC3_COMMAND
-	LDA #26		
-	sta_MMC3_PAGE	 
+	LDA #26
+	sta_MMC3_PAGE
 
 	JSR StatusBar_Update_Cards	 ; Update status bar cards
 	JSR StatusBar_UpdateValues	 ; Update other status bar stuff
@@ -879,11 +879,11 @@ PRG030_8617:
 	JSR Map_W8DarknessFill	; Fill in the entire screen with black
 
 PRG030_8625:
-	LDA World_Num	 
+	LDA World_Num
 	CMP #$08
 	BNE PRG030_8634	 ; If World_Num <> 8 (World 9 / Warp Zone), jump to PRG030_8634
 
-	LDA #$2b	
+	LDA #$2b
 	JSR Video_Do_Update	 ; Print the "WELCOME TO WARP ZONE" banner
 	JSR PRGROM_Change_A000	 ; Fix bank A000
 
@@ -891,8 +891,8 @@ PRG030_8634:
 	LDY Player_Current	 ; Y = Player_Current
 	LDA Map_Prev_XOff,Y	 ; Get player's previous X offset (low byte)
 	STA Horz_Scroll	 ; Set the scroll to that
-	STA Scroll_Temp	 
-	LDA Map_Prev_XHi,Y	 ; Get player's previous X offset (high byte) 
+	STA Scroll_Temp
+	LDA Map_Prev_XHi,Y	 ; Get player's previous X offset (high byte)
 	STA Horz_Scroll_Hi	 ; Store as current scroll "high"
 	JSR Scroll_Update_Ranges
 
@@ -900,8 +900,8 @@ PRG030_8646:
 	JSR Map_DrawAndPan	 ; Draw and pan map as necessary
 
 	; Pushes any buffered graphics thru
-	LDA #$00	 	
-	JSR Video_Do_Update	
+	LDA #$00
+	JSR Video_Do_Update
 
 	LDA Map_DrawPanState
 	BNE PRG030_8646	 	; If some kind of map drawing/panning activity is occurring, loop around
@@ -915,7 +915,7 @@ PRG030_8646:
 	BNE PRG030_86A2	; If inventory is open, jump to PRG030_86A2
 
 	; Set bank at A000 to page 11
-	LDA #11	
+	LDA #11
 	STA PAGE_A000
 	JSR PRGROM_Change_A000
 
@@ -939,11 +939,11 @@ PRG030_8676:
 
 	; Push the buffered update
 	LDA #$00
-	JSR Video_Do_Update	 
+	JSR Video_Do_Update
 
-	LDX World_Num	 	
+	LDX World_Num
 	LDY World_BGM,X		; Get BGM index for this world
-	CPX #4	 	
+	CPX #4
 	BNE PRG030_8698		; If we're NOT on world 5, jump to PRG030_8698
 
 	; World 5 special handling (Sky part different music)
@@ -953,11 +953,11 @@ PRG030_8676:
 
 	; Otherwise...
 	LDY #MUS2A_SKY	 ; Use Sky music!
-	JMP PRG030_869F	 
+	JMP PRG030_869F
 
 PRG030_8698:
 	; Either not world 5, or ground-side of world 5
-	LDA Map_MusicBox_Cnt	
+	LDA Map_MusicBox_Cnt
 	BEQ PRG030_869F		; If Map_MusicBox_Cnt = 0, jump to PRG030_869F
 	LDY #MUS2A_MUSICBOX	 	; Otherwise, play the music box song
 
@@ -968,15 +968,15 @@ PRG030_86A2:
 	LDA #$00
 	STA Inventory_Open	; Inventory_Open = 0
 
-	LDA #$ef	 	
+	LDA #$ef
 	STA Vert_Scroll	; Vert_Scroll = $EF (map always stays at this height)
 
-	LDA #$c0	 	
+	LDA #$c0
 	STA Update_Select	; Update_Select = $C0 (Normal)
 
 	; Switch bank A000 to page 11
-	LDA #11	
-	STA PAGE_A000	 
+	LDA #11
+	STA PAGE_A000
 	JSR PRGROM_Change_A000
 	JSR Map_DoAnimations	; On page 11
 
@@ -997,39 +997,39 @@ PRG030_86A2:
 	JSR Palette_FadeIn	 ; On page 26 -- Fade in the world map
 
 	; Switch bank A000 to page 11
-	LDA #11	 
-	STA PAGE_A000	 
+	LDA #11
+	STA PAGE_A000
 	JSR PRGROM_Change_A000
 
 WorldMap_Loop:
 	JSR GraphicsBuf_Prep_And_WaitVSync	; This is probably just using it to VSync
 	JSR Sprite_RAM_Clear	 		; Clear sprites!
 
-	; Switch bank A000 to page 11 
+	; Switch bank A000 to page 11
 	LDA #11
-	STA PAGE_A000	
+	STA PAGE_A000
 	JSR PRGROM_Change_A000
 	JSR Map_DoAnimations	; On page 11 -- animate world map
 
 	LDA InvFlip_Counter
 	BNE PRG030_86F9	 	; If InvFlip_Counter <> 0, jump to PRG030_86F9
 
-	LDA Inventory_Open	
+	LDA Inventory_Open
 	BEQ PRG030_8715	 	; If Inventory_Open = 0, jump to PRG030_8715
 
 PRG030_86F9:
 	; Inventory_Open <> 0 && InvFlip_Counter = 0 ...
 
 	; Switch bank A000 to page 26
-	LDA #26	
+	LDA #26
 	STA PAGE_A000
 	JSR PRGROM_Change_A000
 	JSR Map_DoInventory_And_PoofFX	; Do everything with that inventory bar (On page 26)
 
 	; Switch bank A000 to page 11
-	LDA #11	 
+	LDA #11
 	STA PAGE_A000
-	JSR PRGROM_Change_A000	
+	JSR PRGROM_Change_A000
 
 	JSR World5_Sky_AddCloudDeco	 ; World 5 sky area gets an extra cloud sprite (strange?)
 	JSR WorldMap_UpdateAndDraw	 ; Update and draw map graphics
@@ -1037,15 +1037,15 @@ PRG030_86F9:
 
 PRG030_8715:
 	; Switch bank A000 to page 11
-	LDA #11	 
+	LDA #11
 	STA PAGE_A000
 	JSR PRGROM_Change_A000
 
 	JSR Map_DoMap	 		; Do the map!
 
 	LDA Map_Operation
-	CMP #$02	 
-	BLT PRG030_8732	 		; If Map_Operation < 2, jump to PRG030_8732 
+	CMP #$02
+	BLT PRG030_8732	 		; If Map_Operation < 2, jump to PRG030_8732
 
 	; Map_Operation >= 2...
 
@@ -1057,11 +1057,11 @@ PRG030_8715:
 
 PRG030_8732:
 	LDY Map_Operation
-	CPY #$0d	 
+	CPY #$0d
 	BNE PRG030_873F	 		; If Map_Operation <> $D (Normal), jump to PRG030_873F
 
 	LDA Map_WarpWind_FX
-	CMP #$03	 
+	CMP #$03
 	BEQ PRG030_874F	 		; If Map_WarpWind_FX = 3 (initialize for warp island), jump to PRG030_874F
 
 PRG030_873F:
@@ -1070,12 +1070,12 @@ PRG030_873F:
 	CPY #$04
 	BEQ PRG030_874F	 		; If Map_Operation <> $4, jump to PRG010_874F
 
-	CPY #$0f	 
+	CPY #$0f
 	BLT WorldMap_Loop	 	; If Map_Operation < $F (edge scroll), jump to WorldMap_Loop
 
 	; Map_Operation >= $F...
 
-	LDX Player_Current	
+	LDX Player_Current
 	LDA Map_Player_SkidBack,X
 	BEQ PRG030_87BD			; If Map_Player_SkidBack = 0, jump to PRG030_87BD
 
@@ -1088,9 +1088,9 @@ PRG030_874F:
 	JSR GraphicsBuf_Prep_And_WaitVSync	 ; Likely just using this for VSync
 
 	; Disable the display
-	LDA #$00	 
+	LDA #$00
 	STA PPU_CTL2_Copy
-	sta_PPU_CTL2	 
+	sta_PPU_CTL2
 
 	; Stop Update_Select activity temporarily
 	INC UpdSel_Disable
@@ -1099,7 +1099,7 @@ PRG030_874F:
 	BNE PRG030_8772	 		; If Map_WarpWind_FX <> 0 (warp wind is active), jump to PRG030_8772
 
 	LDA Map_Operation
-	CMP #$04	 
+	CMP #$04
 	BNE PRG030_8775	 		; If Map_Operation <> 4, jump to PRG030_8775
 
 PRG030_8772:
@@ -1110,12 +1110,12 @@ PRG030_8775:
 
 	LDX Player_Current
 
-	; Store current map scroll positions and Player positions 
+	; Store current map scroll positions and Player positions
 	; into the respective backup variables...
 	LDA Horz_Scroll
 	STA Map_Prev_XOff,X
 
-	LDA Horz_Scroll_Hi	
+	LDA Horz_Scroll_Hi
 	STA Map_Prev_XHi,X
 
 	LDA World_Map_Y,X
@@ -1128,7 +1128,7 @@ PRG030_8775:
 	STA Map_Entered_X,X
 
 	LDA Map_UnusedPlayerVal2,X
-	STA Map_Previous_UnusedPVal2,X	
+	STA Map_Previous_UnusedPVal2,X
 
 	LDA #$00
 	STA Map_Player_SkidBack,X
@@ -1140,13 +1140,13 @@ PRG030_879B:
 	CPX Total_Players
 	BNE PRG030_87A9	 	; If not at the total Player count, jump to PRG030_87A9
 
-	LDA #$00	 
+	LDA #$00
 	STA Player_Current	; Otherwise, back to 0 (basically keeps at 0 for 1P or goes 0, 1, 0, 1...)
 PRG030_87A9:
 
 	LDA Player_Current
-	TAX		 
-	LDA Player_Lives,X	
+	TAX
+	LDA Player_Lives,X
 	BMI PRG030_879B	 	; If Player's lives are negative (dead!), jump to PRG030_879B (makes assumption at least ONE Player is alive...)
 
 	LDA #$00
@@ -1170,40 +1170,40 @@ PRG030_87BD:
 	STA Map_Entered_Y,X
 	LDA World_Map_XHi,X
 	STA Map_Entered_XHi,X
-	LDA World_Map_X,X	
-	STA Map_Entered_X,X	
-	LDA Map_UnusedPlayerVal2,X	
-	STA Map_Previous_UnusedPVal2,X	
+	LDA World_Map_X,X
+	STA Map_Entered_X,X
+	LDA Map_UnusedPlayerVal2,X
+	STA Map_Previous_UnusedPVal2,X
 
 	LDA #$00
 	STA Map_EnterLevelFX		; Map_EnterLevelFX = 0
 	STA Map_EntTran_BorderLoop	; Map_EntTran_BorderLoop = 0
 	STA Update_Select		; Update_Select = 0
 	STA World_EnterState		; World_EnterState = 0
- 
+
 	JSR Map_Clear_EntTranMem	; Clear entrance transition memory
 
 	; Set initial "high" parts of VRAM addresses
-	LDA #$28	 
+	LDA #$28
 	STA Map_EntTran_BVAddrH	 	; top VRAM high
 	STA Map_EntTran_BVAddrH+2	; left VRAM high
 	STA Map_EntTran_BVAddrH+3	; right VRAM high
 
-	LDA #$2a	 
+	LDA #$2a
 	STA Map_EntTran_BVAddrH+1	; bottom VRAM high
 
-	LDA #$00	 
+	LDA #$00
 	STA Map_EntTran_BVAddrL	 	; top VRAM low
 	STA Map_EntTran_BVAddrL+3	; right VRAM low
 
-	LDA #$1f	 
+	LDA #$1f
 	STA Map_EntTran_BVAddrL+2	; left VRAM low
 	STA Map_EntTran_TBCnt	 	; Map_EntTran_TBCnt also happens to be $1f
 
-	LDA #$e0	 
+	LDA #$e0
 	STA Map_EntTran_BVAddrL+1	; bottom VRAM low
 
-	LDA #$17	 
+	LDA #$17
 	STA Map_EntTran_LRCnt	 	; Map_EntTran_LRCnt = $17
 
 
@@ -1220,7 +1220,7 @@ PRG030_881D:
 	BPL PRG030_881D	 	; While X >= 0, loop!
 
 	LDA Map_EntTran_BVAddrL+2
-	AND #$1f	 
+	AND #$1f
 	STA Map_EntTran_BVAddrL+2
 
 	LDA #$30
@@ -1232,11 +1232,11 @@ PRG030_881D:
 	; Loop until V-Blank is not occurring
 PRG030_883E:
 	lda_PPU_STAT
-	AND #$80	
-	BNE PRG030_883E	
+	AND #$80
+	BNE PRG030_883E
 
 	LDA #%10101000		; sprites on PT2, 8x16 sprites, generate V-Blank NMIs
-	sta_PPU_CTL1	 
+	sta_PPU_CTL1
 	STA PPU_CTL1_Copy	; Keep PPU_CTL1_Copy in sync!
 
 	; The actual border rendering occurs in the interrupt's "Update_Select" routine
@@ -1268,10 +1268,10 @@ PRG030_884C:
 PRG030_8868:
 	LDA Sprite_RAM+$03,X	; Get this sprite's X coordinate
 	AND #$f8	 	; Only considering its nearest-8 position (aligned to the pattern-based border)
-	CMP Temp_Var1		
+	CMP Temp_Var1
 	BNE PRG030_8876	 	; If this sprite hasn't been touched yet, jump to PRG030_8876
 
-	LDA #$f8	 
+	LDA #$f8
 	STA Sprite_RAM+$00,X	; Set this sprite's Y to $F8 (make invisible)
 
 PRG030_8876:
@@ -1288,13 +1288,13 @@ PRG030_887F:
 
 	; This calculates the border's relative Y position -> Temp_Var1
 	LDA Map_EntTran_BVAddrL,X
-	AND #$c0	
+	AND #$c0
 	STA Temp_Var1
 	LDA Map_EntTran_BVAddrH,X
-	LSR A		
-	ROR Temp_Var1	
-	LSR A		
-	ROR Temp_Var1	
+	LSR A
+	ROR Temp_Var1
+	LSR A
+	ROR Temp_Var1
 
 	LDX #$00	 	; X = 0
 PRG030_8891:
@@ -1303,7 +1303,7 @@ PRG030_8891:
 	CMP Temp_Var1
 	BNE PRG030_889F	 	; If this sprite hasn't been touched yet, jump to PRG030_889F
 
-	LDA #$f8	 
+	LDA #$f8
 	STA Sprite_RAM+$00,X	; Set this sprite's Y to $F8 (make invisible)
 
 PRG030_889F:
@@ -1332,13 +1332,13 @@ PRG030_88AD:
 
 	LDA #%00101000	 	; use 8x16 sprites, sprites use PT2 (NOTE: No VBlank trigger!)
 	STA PPU_CTL1_Copy	; Keep PPU_CTL1_Copy in sync!
-	sta_PPU_CTL1	 	
+	sta_PPU_CTL1
 
 	; Disable display
 	LDA #$00
 	sta_PPU_CTL2
 
-	LDA #$04	
+	LDA #$04
 	STA Level_TimerMSD	; Level_TimerMSD = 4
 
 PRG030_88C8:
@@ -1358,7 +1358,7 @@ PRG030_88C8:
 
 	STA Temp_Var1	; Temp_Var1 = 0
 
-	LDX #$05	
+	LDX #$05
 	STX Temp_Var2	; Temp_Var2 = 5
 
 	; Going to clear memory from $9D to $01
@@ -1418,15 +1418,15 @@ PRG030_891A:
 	; Level_ObjPtr_AddrL/H and Level_ObjPtrOrig_AddrL/H (object list pointer)
 	; Level_LayPtr_AddrL/H and Level_LayPtrH_AddrL/H (tile layout pointer)
 	; Level_Tileset
-	JSR Map_PrepareLevel	 
+	JSR Map_PrepareLevel
 
 PRG030_892A:
 	LDA World_Num
-	CMP #$08	
+	CMP #$08
 	BNE PRG030_893F	 ; If World_Num <> 8 (World 9), jump to PRG030_893F
 
 	; Warp zone special
-	LDA #MUS1_STOPMUSIC	 
+	LDA #MUS1_STOPMUSIC
 	STA Sound_QMusic1	; Stop BGM
 
 	; The destination world is fed back out through Map_Warp_PrevWorld
@@ -1439,7 +1439,7 @@ PRG030_893F:
 	LDA ClearPattern_ByTileset,Y
 	STA ClearPattern	 	; ClearPattern = ClearPattern_ByTileset[Y]
 
-	CPY #$07	 
+	CPY #$07
 	BNE PRG030_8964	 	; If Level_Tileset <> 7 (Toad House), jump to PRG030_8964
 
 	; Toad House object pointer override!
@@ -1448,15 +1448,15 @@ PRG030_893F:
 	LDA Level_ObjPtr_AddrL
 	STA THouse_ID		; Toad House ID; not used, would have tracked boxes already opened (multiple visits perhaps??)
 	LDA Level_ObjPtr_AddrH
-	STA THouse_Treasure	 
+	STA THouse_Treasure
 
 	; Force object set at TOADO (Toad and the message object)
 	LDA #<TOADO
 	STA Level_ObjPtr_AddrL
-	STA Level_ObjPtrOrig_AddrL	
+	STA Level_ObjPtrOrig_AddrL
 	LDA #>TOADO
 	STA Level_ObjPtr_AddrH
-	STA Level_ObjPtrOrig_AddrH	
+	STA Level_ObjPtrOrig_AddrH
 
 PRG030_8964:
 
@@ -1472,8 +1472,8 @@ PRG030_8968:
 	; Clears $80 bytes starting at Player_XHi ($75, gameplay context)
 	LDY #$80	 ; Y = $80
 	LDA #$00	 ; A = 0
-	STA LevelJctBQ_Flag	 ; LevelJctBQ_Flag = 0 
-PRG030_8975: 
+	STA LevelJctBQ_Flag	 ; LevelJctBQ_Flag = 0
+PRG030_8975:
 	STA Player_XHi,Y
 	DEY		 ; Y--
 	BNE PRG030_8975	 ; While Y >= 0, loop!
@@ -1481,7 +1481,7 @@ PRG030_8975:
 PRG030_897B:
 	; Level junctions enter here, to continue with preparation to display!
 
-	LDA #$00	
+	LDA #$00
 	STA Vert_Scroll_Off	; Vert_Scroll_Off = 0
 
 	; If Level_Tileset = 16 (Spade game sliding cards) or 17 (N-Spade), jump to PRG030_89AB
@@ -1489,15 +1489,15 @@ PRG030_897B:
 	CMP #16
 	BEQ PRG030_89AB
 	CMP #17
-	BEQ PRG030_89AB	
+	BEQ PRG030_89AB
 
 	; Inline clone of "SetPages_ByTileset"
 	; Change A000 and C000 pages by Level_Tileset
 	LDY Level_Tileset
 	LDA PAGE_C000_ByTileset,Y
-	STA PAGE_C000	 
+	STA PAGE_C000
 	LDA PAGE_A000_ByTileset,Y
-	STA PAGE_A000	 
+	STA PAGE_A000
 	JSR PRGROM_Change_Both2
 
 	JSR LevelLoad_ByTileset			; Load the level layout data!
@@ -1527,7 +1527,7 @@ PRG030_89AB:
 PRG030_89C4:
 	STA PatTable_BankSel+1	 ; Select second bank of BG VROM
 
-	LDA Level_Tileset	
+	LDA Level_Tileset
 	CMP #16
 	BEQ PRG030_89D1	 	; If Level_Tileset = 16 (Spade game sliders), jump to PRG030_89D1
 
@@ -1564,8 +1564,8 @@ PRG030_89D1:
 	; Switch to page 26 @ A000
 	LDA #MMC3_8K_TO_PRG_A000
 	sta_MMC3_COMMAND
-	LDA #26		
-	sta_MMC3_PAGE	 
+	LDA #26
+	sta_MMC3_PAGE
 
 	JSR StatusBar_Update_Cards	 ; Update status bar cards
 	JSR StatusBar_UpdateValues	 ; Update other status bar stuff
@@ -1820,7 +1820,7 @@ PRG030_8B51:
 	STA Vert_Scroll_Hi
 
 	; Junction complete (and inventory is NOT open)
-	LDA #$00	 
+	LDA #$00
 	STA Inventory_Open
 	STA Level_JctCtl
 
@@ -1833,7 +1833,7 @@ PRG030_8B6D:
 	JMP PRG030_9009	 ; Jump to PRG030_9009
 
 PRG030_8B78:
-	LDA #$00	
+	LDA #$00
 	STA Raster_Effect ; Raster_Effect = $00 (Normal status bar)
 	STA UpdSel_Disable	; Resume Update_Select activity
 
@@ -1909,7 +1909,7 @@ PRG030_8B9A:
 
 	JMP PRG030_8BDF	; Jump to PRG030_8BDF
 
-PRG030_8BD5: 
+PRG030_8BD5:
 
 	; First screen is always where non-vertical maps start
 	LDA Tile_Mem_Addr
@@ -1918,7 +1918,7 @@ PRG030_8BD5:
 	STA Map_Tile_AddrH
 
 PRG030_8BDF:
-	LDA #$00	
+	LDA #$00
 	STA Map_EntTran_VLHalf	 ; Map_EntTran_VLHalf = 0
 
 	LDA Vert_Scroll
@@ -1928,7 +1928,7 @@ PRG030_8BDF:
 	; flag we're performing this on the lower vertical
 	LDA Map_Tile_AddrL
 	CLC
-	ADC #$f0	 
+	ADC #$f0
 	STA Map_Tile_AddrL	; Map_Tile_AddrL += $F0
 
 	LDA #$01
@@ -1955,7 +1955,7 @@ PRG030_8C00:
 
 	; Copy in the four low bytes
 	LDA BoxOut_InitVAddrL0,Y
-	STA Map_EntTran_BVAddrL	
+	STA Map_EntTran_BVAddrL
 
 	LDA BoxOut_InitVAddrL2,Y
 	STA Map_EntTran_BVAddrL+2
@@ -1972,10 +1972,10 @@ PRG030_8C00:
 	LDA #$04
 	STA Map_EntTran_TBCnt	 ; Map_EntTran_TBCnt = 4
 
-	LDY #$01	
+	LDY #$01
 	STY Map_EntTran_LRCnt	 ; Map_EntTran_LRCnt= 1
 
-	LDA #$00	 
+	LDA #$00
 	STA Update_Select	; Insist (again!) that Update_Select = 0
 
 PRG030_8C3E:
@@ -2036,7 +2036,7 @@ PRG030_8C8C:
 	INC Temp_Var14		 ; Temp_Var14++ (tile pattern layout high, jump to next pattern)
 
 	LDA Map_EntTran_VRAMGap
-	AND #$01	
+	AND #$01
 	BEQ PRG030_8C9D	 	; If Map_EntTran_VRAMGap & 1 jump to PRG030_8C9D
 
 	INC Temp_Var14		 ; Temp_Var14++ (tile pattern layout high, jump to next pattern)
@@ -2055,7 +2055,7 @@ PRG030_8CAA:
 	STA Map_EnterLevelFX	 ; Map_EnterLevelFX = 2 (begin the proper box out effect!)
 
 	LDA Map_EntTran_Cnt
-	CMP #$34	 
+	CMP #$34
 	BEQ PRG030_8CB8	 ; If Map_EntTran_Cnt = $34, jump to PRG030_8CB8
 	JMP PRG030_8C3E	 ; Otherwise, loop!
 
@@ -2072,7 +2072,7 @@ PRG030_8CB8:
 	STA Map_EnterLevelFX	 ; Map_EnterLevelFX = 0
 
 	LDX #$c0	 	; X = $C0 (Normal style updating)
-	LDA Level_7Vertical	
+	LDA Level_7Vertical
 	BEQ PRG030_8CD1	 	; If not a vertical level, jump to PRG030_8CD1
 
 	LDX #$80	 ; X = $80 (Vertical style updating)
@@ -2081,12 +2081,12 @@ PRG030_8CD1:
 	STX Update_Select	 ; Set Update_Select as appropriate
 
 	LDA Level_Tileset
-	CMP #15	 
+	CMP #15
 	BEQ PRG030_8CDE	 ; If Level_Tileset = 15 (bonus game intro), jump to PRG030_8CDE
 	JMP PRG030_8DCB	 ; Jump to PRG030_8DCB
 
 PRG030_8CDE:
-	; Bonus game intro 
+	; Bonus game intro
 
 	LDA #$04
 	STA BonusText_CharPause	; BonusText_CharPause = $04
@@ -2113,7 +2113,7 @@ PRG030_8CDE:
 	LDA #$78
 	STA BonusDie_Y
 	STA BonusDie_X
-	
+
 	; Queue the bonus music
 	LDA #MUS2A_BONUSGAME
 	STA Level_MusicQueue
@@ -2147,7 +2147,7 @@ PRG030_8D23:
 	; Exiting the Bonus Game loop...
 
 	LDA #%00101000	 	; use 8x16 sprites, sprites use PT2 (NOTE: No VBlank trigger!)
-	sta_PPU_CTL1	 	
+	sta_PPU_CTL1
 	STA PPU_CTL1_Copy	; Keep PPU_CTL1_Copy in sync!
 
 	LDA Bonus_GameType
@@ -2261,7 +2261,7 @@ PRG030_BDA9:
 
 	CPY #Video_Upd_AddrL
 	BGE PRG030_BDA9	 ; If Y >= Video_Upd_AddrL, jump to PRG030_BDA9
-PRG030_8DB2: 
+PRG030_8DB2:
 	CPY #$ff
 	BNE PRG030_BDA6	 ; If Y <> $FF (underflow), loop!
 .endif
@@ -2324,7 +2324,7 @@ Level_MainLoop:
 	JSR GraphicsBuf_Prep_And_WaitVSync
 
 	LDA SndCur_Map
-	AND #$04	
+	AND #$04
 	BNE PRG030_8DF4	; If enter level sound is still playing, jump to PRG030_8DF4
 
 	LDA Level_MusicQueue
@@ -2344,7 +2344,7 @@ PRG030_8DF4:
 	BMI PRG030_8E2E	 	; If bit 7 is set (animations disabled), jump to PRG030_8E2E
 
 	LDY Level_Tileset
-	CPY #$05	 
+	CPY #$05
 	BNE PRG030_8E1D	 	; If Level_Tileset <> 5 (pipe world plant infestation), jump to PRG030_8E1D
 
 
@@ -2361,7 +2361,7 @@ PRG030_8DF4:
 	CMP PlantInfest_ACnt_Max
 	BNE PRG030_8E13	 	; If PlantInfest_ACnt <> PlantInfest_ACnt_Max, jump to PRG030_8E13
 
-	LDA #$00	 
+	LDA #$00
 	STA PlantInfest_ACnt	; PlantInfest_ACnt = 0
 
 PRG030_8E13:
@@ -2398,18 +2398,18 @@ PRG030_8E31:
 	; AIRSHIP ONLY
 
 	LDY PatTable_BankSel+1
-	CPY #$6a	
+	CPY #$6a
 	BEQ PRG030_8E5D	 ; If the current animation active pattern table is $6A (Airship standard), jump to PRG030_8E5D (do nothing)
 
 	; Otherwise...
 	LDA Counter_1
-	AND #$03	
+	AND #$03
 	BNE PRG030_8E5D	 ; Only update every 4 ticks (otherwise nothing, jump to PRG030_8E5D)
 
 	INY
 	INY		; +2 pattern tables
 
-	CPY #$76	 
+	CPY #$76
 	BNE PRG030_8E4A	 ; If we're at $76, jump to PRG030_8E4A
 
 	LDY #$70	 ; Otherwise, use $70
@@ -2423,12 +2423,12 @@ PRG030_8E4F:
 
 	LDA Counter_1
 	AND #$18
-	LSR A	
-	LSR A	
-	LSR A		
+	LSR A
+	LSR A
+	LSR A
 	TAX	        ; 0-3, changing every 8 ticks
 
-	LDA PT2_Anim,X	
+	LDA PT2_Anim,X
 	STA PatTable_BankSel+1 ; Set pattern for this tick
 
 PRG030_8E5D:
@@ -2437,16 +2437,16 @@ PRG030_8E5D:
 	LDA SndCur_Pause
 	BNE PRG030_8E79	 ; Can't unpause game while pause sound is playing
 
-	LDA Pad_Input	
+	LDA Pad_Input
 	AND #PAD_START
 	BEQ PRG030_8E79	 ; If Player is NOT pressing START, jump to PRG030_8E79
 
 	LDX #PAUSE_STOPMUSIC	 ; for Sound_QPause, pause sound
 
 	LDA Level_PauseFlag
-	EOR #$01	 
+	EOR #$01
 	STA Level_PauseFlag	 ; Toggle pause flag
- 
+
 	BNE PRG030_8E76	 ; If game is now paused, jump to PRG030_8E76
 
 	LDX #PAUSE_RESUMEMUSIC	 ; for Sound_QPause, resume sound
@@ -2498,7 +2498,7 @@ PRG030_8E9D:
 	BPL PRG030_8E9D	 ; While Y >= 0, loop!
 
 	; Updates palette
-	LDA #$06	 
+	LDA #$06
 	STA Graphics_Queue
 
 	; Nothing else to do while paused; loop!
@@ -2519,7 +2519,7 @@ PRG030_8EAD:
 	; Forms a value of current "scroll row" in upper 4 bits
 	; and "current screen" in lower 4 bits -> Scroll_Temp
 	LDA Vert_Scroll
-	AND #$f0	 
+	AND #$f0
 	ORA Vert_Scroll_Hi
 	STA Scroll_Temp
 
@@ -2534,7 +2534,7 @@ PRG030_8EC9:
 	JSR Scroll_Update_Ranges
 
 PRG030_8ECC:
-	LDA Level_JctCtl	 
+	LDA Level_JctCtl
 	BEQ PRG030_8EE7	 	; If not junctioning, jump to PRG030_8EE7
 
 	; Level junction!
@@ -2563,7 +2563,7 @@ PRG030_8EE7:
 	STA Level_ScrollDiffH	 ; Level_ScrollDiffH = 0
 	STA Level_ScrollDiffV	 ; Level_ScrollDiffV = 0
 
-	LDA #$08	 
+	LDA #$08
 	STA PAGE_A000	 ; Load page 8 @ A000
 
 	; Change both A000/C000 pages!
@@ -2578,7 +2578,7 @@ PRG030_8EE7:
 	; Load page 0 @ C000
 	LDA #$00
 	STA PAGE_C000
-	JSR PRGROM_Change_Both2	 
+	JSR PRGROM_Change_Both2
 
 	JSR Objects_HandleScrollAndUpdate
 
@@ -2634,7 +2634,7 @@ PRG030_8F42:
 	STA PAGE_C000
 	JSR PRGROM_Change_C000
 
-	; If scroll updates need to be committed, jump to PRG030_8F80 
+	; If scroll updates need to be committed, jump to PRG030_8F80
 	LDA Scroll_ToVRAMHi
 	BNE PRG030_8F80
 	LDA Scroll_ToVRAMHA
@@ -2649,7 +2649,7 @@ PRG030_8F42:
 	BNE PRG030_8F80	 ; If we have a video update to do, skip the status bar updates for this frame, jump to PRG030_8F80
 
 	; Switch bank A000 to page 26
-	LDA #26	
+	LDA #26
 	STA PAGE_A000
 	JSR PRGROM_Change_A000
 
@@ -2704,10 +2704,10 @@ PRG030_8FA8:
 
 	; Disable the display
 	STA PPU_CTL2_Copy
-	sta_PPU_CTL2	 
+	sta_PPU_CTL2
 
 PRG030_8FB2:
-	LDA #$01	 
+	LDA #$01
 	sta_MMC3_MIRROR	 ; Set vertical mirroring
 
 	LDX Player_Current	 ; X = LDX Player_Current
@@ -2767,7 +2767,7 @@ PRG030_8FFC:
 
 	LDA #%00101000	 	; use 8x16 sprites, sprites use PT2 (NOTE: No VBlank trigger!)
 	STA PPU_CTL1_Copy	; Keep PPU_CTL1_Copy in sync!
-	sta_PPU_CTL1	 	
+	sta_PPU_CTL1
 
 	JMP PRG030_9097	 	; Jump to PRG030_9097
 
@@ -2998,7 +2998,7 @@ PRG030_9133:
 	; GAME OVER!!
 
 	; Set Player as twirling (in case they Continue...)
-	LDA #$01	 
+	LDA #$01
 	STA a:World_Map_Twirl,X
 
 	; Init map vars
@@ -3013,12 +3013,12 @@ PRG030_9133:
 	STA Map_GameOver_CursorY
 
 PRG030_9149:
-	JSR Sprite_RAM_Clear	 
-	JSR Scroll_PPU_Reset	 
+	JSR Sprite_RAM_Clear
+	JSR Scroll_PPU_Reset
 	JSR Reset_PPU_Clear_Nametables
 
 	LDA #%00101000	 	; use 8x16 sprites, sprites use PT2 (NOTE: No VBlank trigger!)
-	sta_PPU_CTL1	 	
+	sta_PPU_CTL1
 	STA PPU_CTL1_Copy	; Keep PPU_CTL1_Copy in sync!
 
 	LDA World_EnterState
@@ -3083,7 +3083,7 @@ PRG030_9185:
 	STA World_Map_Dir,X
 
 	LDA #%00101000	 	; use 8x16 sprites, sprites use PT2 (NOTE: No VBlank trigger!)
-	sta_PPU_CTL1	 	
+	sta_PPU_CTL1
 	STA PPU_CTL1_Copy	; Keep PPU_CTL1_Copy in sync!
 
 	LDY #$00	 ; Y = 0
@@ -3125,7 +3125,7 @@ PRG030_91D1:
 	JSR Video_Do_Update
 
 	; Set page @ A000 to 26
-	LDA #26		
+	LDA #26
 	STA PAGE_A000
 	JSR PRGROM_Change_A000
 
@@ -3191,10 +3191,10 @@ PRG030_924B:
 	JSR Video_Do_Update	 ; Push through what's in graphics buffer
 
 PRG030_9257:
-	LDA #$ef	 	
+	LDA #$ef
 	STA Vert_Scroll	; Vert_Scroll = $EF (map always stays at this height)
 
-	LDA #$c0	 	
+	LDA #$c0
 	STA Update_Select	; Update_Select = $C0 (Normal)
 
 	; Switch bank A000 to page 27
@@ -3210,8 +3210,8 @@ PRG030_9257:
 	JSR Palette_FadeIn	 ; On page 26 -- Fade in the world map
 
 	; Switch bank A000 to page 11
-	LDA #11	 
-	STA PAGE_A000	 
+	LDA #11
+	STA PAGE_A000
 	JSR PRGROM_Change_A000
 
 PRG030_927E:
@@ -3237,7 +3237,7 @@ PRG030_927E:
 	; More than 2 Players
 
 PRG030_929C:
-	
+
 	; Stop music
 	LDA #MUS1_STOPMUSIC
 	STA Sound_QMusic1
@@ -3320,7 +3320,7 @@ PRG030_9304:
 PRG030_9314:
 	LDA #$3f
 	STA Temp_Var1	 ; Temp_Var1 = $3F
- 
+
 PRG030_9318:
 	TYA
 	EOR #$40
@@ -3442,7 +3442,7 @@ PRG030_939A:
 	STA Level_MusicQueue
 
 PRG030_93B1:
-	JSR Sprite_RAM_Clear	 ; Clear Sprite RAM 
+	JSR Sprite_RAM_Clear	 ; Clear Sprite RAM
 	JSR Vs_2PVsPauseHandler	 ; Handle pausing
 
 	LDA a:Level_ExitToMap
@@ -3581,7 +3581,7 @@ PRG030_948E:
 	RTS		 ; Return
 
 PRG030_948F:
-	; BUG!! Apparently the game is SUPPOSED to delete all 
+	; BUG!! Apparently the game is SUPPOSED to delete all
 	; bonus objects after a game over, but code starts with
 	; the wrong index (see immediately below) and that causes
 	; this to not work correctly!  Strange, huh?
@@ -3642,7 +3642,7 @@ SetPages_ByTileset:	; $94BB
 	LDA PAGE_C000_ByTileset,Y
 	STA PAGE_C000
 	LDA PAGE_A000_ByTileset,Y
-	STA PAGE_A000	 
+	STA PAGE_A000
 	JMP PRGROM_Change_Both2		; JUMP to page routine, do not continue below...
 
 
@@ -3663,14 +3663,14 @@ Video_Do_Update:	; $94CD
 	LDA Video_Upd_Table,Y
 	STA Video_Upd_AddrL
 	LDA Video_Upd_Table+1,Y
-	STA Video_Upd_AddrH	
+	STA Video_Upd_AddrH
 
 	; Set page @ A000 to 26
 	LDA #26
 	STA PAGE_A000
 	JSR PRGROM_Change_A000
 
-	JSR Video_Misc_Updates	 
+	JSR Video_Misc_Updates
 
 	PLA		 ; Pop A
 
@@ -3713,26 +3713,26 @@ Tile_Attributes_TS15_TS16_TS17:
 
 Fill_Tile_AttrTable_ByTileset:
 	LDA Level_Tileset
-	ASL A		 
+	ASL A
 	TAY		 	; Y = Level_Tileset << 1
 
 	; Index into TileAttribute_ByTileset and store address to [Temp_Var2][Temp_Var1]
 	LDA TileAttribute_ByTileset,Y
-	STA Temp_Var1		
+	STA Temp_Var1
 	LDA TileAttribute_ByTileset+1,Y
-	STA Temp_Var2		
+	STA Temp_Var2
 
 	LDY #$07		; Y = 7
 PRG030_952C:
-	LDA (Temp_Var1),Y	
-	STA Tile_AttrTable,Y	
+	LDA (Temp_Var1),Y
+	STA Tile_AttrTable,Y
 	DEY			; Y--
 	BPL PRG030_952C	 	; While Y >= 0, loop!
 
 	RTS			; Return
 
 	; This LUTs are for the unused-in-US-release "Box out" effect when a level starts
-	
+
 	; This one selects the appropriate init values for everything
 	; else based on what the vertical start position is...
 BoxOut_ByVStart:	.byte $00, $30, $70, $B0, $EF	; Needs to sync with GamePlay_VStart
@@ -3774,16 +3774,16 @@ BoxOut_SetThisBorderVRAM:
 	BEQ PRG030_95AD	 ; If the initial index was 4, jump to PRG030_95AD (RTS)
 
 	LDA Map_EntTran_Temp
-	CMP #$ff	 
+	CMP #$ff
 	BNE PRG030_95AD	 ; If Map_EntTran_Temp <> $FF, jump to PRG030_95AD (RTS)
 
 	LDY Map_EntTran_BorderLoop	 ; Y = current border index (0-3: Top 0, bottom 1, right 2, left 3)
 
 	; Prevent out of range video writes
 	LDA Map_EntTran_BVAddrH,Y
-	CMP #$28	 
+	CMP #$28
 	BGE PRG030_95AD	 	; If border's VRAM high address >= $28, jump to PRG030_95AD (RTS)
- 
+
 	LDA Map_EntTran_VAddrH
 	CMP #$23
 	BLT PRG030_95AD	 	; If border's VRAM high address < $23, jump to PRG030_95AD (RTS)
@@ -3801,7 +3801,7 @@ BoxOut_SetThisBorderVRAM:
 	STA Map_EntTran_VAddrL
 
 	LDA Map_EntTran_BorderLoop	 ; A = current border index (0-3: Top 0, bottom 1, right 2, left 3)
-	AND #$02	
+	AND #$02
 	BEQ PRG030_95AD	 	; If not doing right side update, jump to PRG030_95AD (RTS)
 
 	STX Map_EntTran_Temp	 ; Store X (LRCnt) into Map_EntTran_Temp
@@ -3810,7 +3810,7 @@ PRG030_95AD:
 	RTS		 ; Return
 
 
-	; As part of the "boxing out" effect, calculate adjusted VRAM 
+	; As part of the "boxing out" effect, calculate adjusted VRAM
 	; addresses as fit to the arbitrary positioning of the screen
 BoxOut_CalcOffsets:
 	; I'll let someone else figure this out in particular,
@@ -3832,7 +3832,7 @@ BoxOut_CalcOffsets:
 	ROR Map_EntTran_TileOff
 	LDA Map_EntTran_VAddrL
 	AND #$1f
-	LSR A	
+	LSR A
 	CLC
 	ADC Map_EntTran_TileOff
 	STA Map_EntTran_TileOff
@@ -3847,14 +3847,14 @@ BoxOut_CalcWhich8x8:
 	STA Map_EntTran_Tile8x8
 
 	LDA Map_EntTran_VAddrL
-	AND #$20	 
-	BNE PRG030_95EF	
+	AND #$20
+	BNE PRG030_95EF
 
 	ASL Map_EntTran_Tile8x8
 	JMP PRG030_95F3	 	; Jump to PRG030_95F3
 
-PRG030_95EF: 
-	SEC		 
+PRG030_95EF:
+	SEC
 	ROL Map_EntTran_Tile8x8
 
 PRG030_95F3:
@@ -3878,7 +3878,7 @@ Map_Calc_NT2Addr_By_XY:
 	; Basically a ROL without the carry being involved
 	ASL A
 	ADC #$00
-	ASL A	
+	ASL A
 	ADC #$00
 	STA Temp_Var13	 	; Stored into Temp_Var13
 
@@ -3887,7 +3887,7 @@ Map_Calc_NT2Addr_By_XY:
 	LSR A
 	LSR A
 	STA Temp_Var14 	; Temp_Var14 = X coord >> 3
- 
+
 	LDA Temp_Var13		; A = Temp_Var13
 	AND #%11		; Get just the lower 2 bits (which are the upper 2 bits of Y coordinate)
 	ORA #$28		; OR $28 (upper byte of video address for Nametable 2)
@@ -3985,7 +3985,7 @@ PRG030_9654:
 
 PRG030_965E:
 	LDA Map_EntTran_VAddrH
-	AND #$08	 
+	AND #$08
 	BEQ PRG030_966C	 ; If "high" address is not halfway through vertically, jump to PRG030_966C
 
 	; Otherwise, offset halfway through screen
@@ -3996,23 +3996,23 @@ PRG030_965E:
 
 PRG030_966C:
 	LDA Level_Tileset
-	ASL A		
-	TAY		 
+	ASL A
+	TAY
 
 	; Set Temp_Var13/14 to point to the layout data for this Tileset
 	LDA TileLayout_ByTileset,Y
-	STA Temp_Var13	
+	STA Temp_Var13
 	LDA TileLayout_ByTileset+1,Y
-	STA Temp_Var14	
+	STA Temp_Var14
 
 	LDY Map_EntTran_TileOff
 	LDA (Map_Tile_AddrL),Y	 ; Get the tile we're working on
 
-	TAY		 
+	TAY
 	LDA Map_EntTran_Tile8x8
 	CLC
-	ADC Temp_Var14		
-	STA Temp_Var14		
+	ADC Temp_Var14
+	STA Temp_Var14
 	LDA (Temp_Var13),Y	 ; Get the specific 8x8 tile of the tile we're working on
 
 	STA Scroll_ColorStrip,X ; Store into the strip
@@ -4024,14 +4024,14 @@ PRG030_966C:
 ; This subroutine updates Scroll_ColumnL/R based on
 ; where the screen has currently scrolled to...
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-Scroll_Update_Ranges: 
+Scroll_Update_Ranges:
 	LDY Level_7Vertical
 	BNE PRG030_96A5	 	; If Level_7Vertical, jump to PRG030_96A5
 
 	; Non-vertical map
 	; Expected that 'A' is currently set to the "Hi byte" of the X Scroll coordinate
 
-	; This loop puts the lower 4 bits of the "hi byte" X into the 
+	; This loop puts the lower 4 bits of the "hi byte" X into the
 	; upper 4 bits of Scroll_Temp, and shifts Scroll_Temp 4 bits down... or basically,
 	; Scroll_Temp = (Scroll_Temp >> 4) | (A << 4)
 
@@ -4048,7 +4048,7 @@ PRG030_9695:
 	LDA Scroll_Temp	; A = result from loop...
 	STA Scroll_ColumnL	; Store as the current "left side" column
 	CLC
-	ADC #16	
+	ADC #16
 	STA Scroll_ColumnR	; Scroll_ColumnR = Scroll_ColumnL + 16 (always -- 256/16 = 16 columns spanning the screen)
 	RTS			; Return!
 
@@ -4059,10 +4059,10 @@ PRG030_96A5:
 	BEQ PRG030_96B7	 	; If Scroll_Temp = 0, jump to PRG030_96B7
 
 	SEC
-	SBC #16			
+	SBC #16
 	STA Scroll_Temp	; Scroll_Temp -= 16
 
-	CMP #$f0	 
+	CMP #$f0
 	BLT PRG030_96B7	 ; If Scroll_Temp < $F0 (would only happen if it was previously $00-$0F), jump to PRG030_96B7
 
 	SEC
@@ -4070,7 +4070,7 @@ PRG030_96A5:
 	STA Scroll_Temp	; Scroll_Temp -= 17
 
 PRG030_96B7:
-	LDA Scroll_Temp	
+	LDA Scroll_Temp
 	STA Scroll_VOffsetT	; Scroll_VOffsetT = Scroll_Temp
 
 	; Calculate bottom tile row offset
@@ -4082,7 +4082,7 @@ PRG030_96B7:
 	ADC #$10	 	; A = Scroll_Temp + $F0
 
 PRG030_96C2:
-	CMP #$f0	 	
+	CMP #$f0
 	BLT PRG030_96CB	 	; If A < $F0, jump to PRG030_96CB
 	AND #$0f	 	; A &= $F
 	CLC
@@ -4094,7 +4094,7 @@ PRG030_96CB:
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	; Clear_RAM_thru_ZeroPage
-	; 
+	;
 	; Starting at the page provided in Y, this will clear everything
 	; (except the stack space) $YY00 to $0000
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -4131,26 +4131,26 @@ PRG030_96DD:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 GraphicsBuf_Prep_And_WaitVSync:	; 96E5
 	LDA Graphics_Queue
-	ASL A		 	
+	ASL A
 	TAY		 	; Y = Graphics_Queue * 2
 
 	; Get the address where the video update data is
 	LDA Video_Upd_Table,Y
 	STA Video_Upd_AddrL
 	LDA Video_Upd_Table+1,Y
-	STA Video_Upd_AddrH	
+	STA Video_Upd_AddrH
 
-	LDA #$01	
+	LDA #$01
 	STA VBlank_TickEn	 ; Enable the VBlank tick
-	LDA #$00	 
+	LDA #$00
 	STA VBlank_Tick	 ; Force VBlank_Tick = 0, so we know when a VBlank has occurred
 
 	; Waiting for VBlank...
 PRG030_96FB:
 	LDA VBlank_Tick
-	BPL PRG030_96FB	
+	BPL PRG030_96FB
 
-	LDA #$00	 
+	LDA #$00
 	STA VBlank_TickEn	 ; Disable the VBlank
 
 	CLI		 ; Enable further masked interrupts
@@ -4165,12 +4165,12 @@ PRG030_96FB:
 ; Tile_Mem_ClearA
 ;
 ; $1B0 is the size of one screen, so this essentially writes to the
-; same place on all screens, offset by 'Y'.  Unfortunately since 
+; same place on all screens, offset by 'Y'.  Unfortunately since
 ; one screen is $1B0, 'Y' cannot cover the entire space, so we have
 ; Tile_Mem_ClearB with a different offset...
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Tile_Mem_ClearA:	; $9705
-	STA Tile_Mem,Y	 
+	STA Tile_Mem,Y
 	STA Tile_Mem+$1B0,Y
 	STA Tile_Mem+$360,Y
 	STA Tile_Mem+$510,Y
@@ -4216,7 +4216,7 @@ Tile_Mem_ClearB:	; $9734
 	RTS		 ; Return
 
 
-	; Array of bank selections by Level_BG_Page1_2 
+	; Array of bank selections by Level_BG_Page1_2
 	; What LEVEL4_BGBANK_INDEX references
 Level_BG_Pages1:
 	.byte $00	;  0 Not Used
@@ -4274,7 +4274,7 @@ Level_BG_Pages2:
 ;
 ; The master level loader function!  Without this, there's no game!
 ;
-; This function performs all the work necessary to translate 
+; This function performs all the work necessary to translate
 ; "layout" data into functional geometry.  Note that based on
 ; the value of Level_Tileset, there are different "generators"
 ; that are employed, so while the overall macro format is consistent,
@@ -4325,8 +4325,8 @@ LevelLoad:	; $97B7
 	LDY #$04	 ; Y = 4 (in case we're skipping first 4 bytes of header)
 
 	; If we're using a "junction" device (door/pipe/etc.), we don't want to (incorrectly) set the "alternates"...
-	LDA Level_JctCtl	 
-	CMP #$80	 
+	LDA Level_JctCtl
+	CMP #$80
 	BEQ PRG030_980D	 ; If Level_JctCtl = $80, jump to PRG030_980D (use current Level_AltLayout/Level_AltObjects values)
 
 	LDY #$00	 ; Y = 0
@@ -4338,25 +4338,25 @@ LevelLoad:	; $97B7
 	INY
 	LDA (Level_LayPtr_AddrL),Y
 	STA Level_AltLayout+1
-	INY		 
+	INY
 
 	LDA (Level_LayPtr_AddrL),Y
 	STA Level_AltObjects
-	INY		
+	INY
 	LDA (Level_LayPtr_AddrL),Y
 	STA Level_AltObjects+1
-	INY		
+	INY
 
-	LDA Level_JctCtl	
+	LDA Level_JctCtl
 	BNE PRG030_980D	 ; If Level_JctCtl <> 0, jump to PRG030_980D (skip setting vertical start position)
 
 	LDA (Level_LayPtr_AddrL),Y
 	AND #%11100000
-	LSR A	
-	LSR A	
-	LSR A	
-	LSR A	
-	LSR A	
+	LSR A
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	TAX		 	; X = upper 3 bits, shifted down, from byte 4 (0-7)
 
 	; Set up the vertical starting position!
@@ -4366,7 +4366,7 @@ LevelLoad:	; $97B7
 	LDA GamePlay_YStart,X
 	STA Player_Y		; Player_Y = GamePlay_YStart[X]
 
-	LDA #$00	 
+	LDA #$00
 	STA Player_XHi		; Player_XHi = 0
 
 	; Set the starting vertical position
@@ -4379,10 +4379,10 @@ PRG030_980D:
 	LDA (Level_LayPtr_AddrL),Y
 	AND #%00001111
 	STA Level_Width
-	STA Level_SizeOrig	 
+	STA Level_SizeOrig
 
 	;;;;;;;;;;;;;;;
-	INY		 
+	INY
 
 	; First 3 bits of byte 5 determine the palette select for tiles
 	LDA (Level_LayPtr_AddrL),Y
@@ -4392,33 +4392,33 @@ PRG030_980D:
 	; Next 2 bits select an object palette, root value 8
 	LDA (Level_LayPtr_AddrL),Y
 	AND #%00011000
-	LSR A		
-	LSR A		
-	LSR A		
+	LSR A
+	LSR A
+	LSR A
 	ORA #%00001000		; forces minimum value of 8
 	STA PalSel_Obj_Colors
 
 	; Next 2 bits sets Level_SelXStart (sets Player_X after level starts)
 	LDA (Level_LayPtr_AddrL),Y
 	AND #%01100000
-	LSR A		
-	LSR A		
-	LSR A		
-	LSR A		
-	LSR A		
-	STA Level_SelXStart	 
+	LSR A
+	LSR A
+	LSR A
+	LSR A
+	LSR A
+	STA Level_SelXStart
 
 	; Finally, bit 7 sets Level_UnusedFlag (unused; only set, never read)
 	LDA (Level_LayPtr_AddrL),Y
-	AND #$80	
-	STA Level_UnusedFlag 
+	AND #$80
+	STA Level_UnusedFlag
 
 	;;;;;;;;;;;;;;;
-	INY		 
+	INY
 
 	; Bit 7 of byte 6 sets Level_PipeNotExit
 	LDA (Level_LayPtr_AddrL),Y
-	AND #$80	 
+	AND #$80
 	STA Level_PipeNotExit
 
 	; Bits 5-6 set Level_FreeVertScroll
@@ -4466,19 +4466,19 @@ PRG030_9864:
 	LDA Level_SizeOrig
 	STA Vert_Scroll_Hi
 	STA Player_YHi		; Player's Y High is the same!
-	JMP PRG030_9893	
+	JMP PRG030_9893
 
 
 PRG030_987C:
-	LDA #$00	
+	LDA #$00
 	STA Level_SizeOrig	; ?? Why?
 
-	LDA Player_YHi	
+	LDA Player_YHi
 	BEQ PRG030_988E	 	; If the Player Y high is zero, jump to PRG030_988E
 
 	LDA Level_Width
 	STA Vert_Scroll_Hi
-	STA Player_YHi	
+	STA Player_YHi
 	STA Level_SizeOrig
 
 PRG030_988E:
@@ -4491,25 +4491,25 @@ PRG030_9893:
 
 	; Bits 0-3 set Level_AltTileset
 	LDA (Level_LayPtr_AddrL),Y
-	AND #$0f	
+	AND #$0f
 	STA Level_AltTileset
 
 	;;;;;;;;;;;;;;;
-	INY		; Y++	
+	INY		; Y++
 
 	; Bits 5-7 of byte 7 set Level_InitAction (sets an action to begin level, see Level_InitAction_JumpTable)
 	LDA (Level_LayPtr_AddrL),Y
-	AND #%11100000	 
-	LSR A		 
-	LSR A		 
-	LSR A		 
-	LSR A		 
-	LSR A		 
+	AND #%11100000
+	LSR A
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	STA Level_InitAction
 
 	; Bits 0-4 set Level_BG_Page1_2 (an index to which pages of BG graphics should be loaded)
 	LDA (Level_LayPtr_AddrL),Y
-	AND #%00011111	 
+	AND #%00011111
 	STA Level_BG_Page1_2
 
 	;;;;;;;;;;;;;;;
@@ -4520,12 +4520,12 @@ PRG030_9893:
 
 	; Bits 6-7 of byte 8 select a time setting (0=300, 1=400, 2=200, 3=000 [unlimited])
 	LDA (Level_LayPtr_AddrL),Y
-	AND #%11000000	
-	CLC		
-	ROL A		
-	ROL A		
-	ROL A		
-	TAX		
+	AND #%11000000
+	CLC
+	ROL A
+	ROL A
+	ROL A
+	TAX
 	LDA GamePlay_TimeStart,X
 	STA Level_TimerMSD
 	BNE PRG030_98C8	 	; If not using the 000 time, jump to PRG030_98C8
@@ -4543,7 +4543,7 @@ PRG030_98C8:
 
 	CPX #MUS2B_PSWITCH
 	BEQ PRG030_98DE		; If playing the P-Tab music, don't queue this song right now
-	CPX #MUS2A_INVINCIBILITY		
+	CPX #MUS2A_INVINCIBILITY
 	BEQ PRG030_98DE		; If playing the Invincibility music, don't queue this song right now
 
 	; Queue this music to play
@@ -4566,7 +4566,7 @@ PRG030_98EE:
 	LDY #$00	 		; Y = 0 (beginning of post-header)
 
 	LDA (Level_LayPtr_AddrL),Y	; Get next byte
-	CMP #$ff	 		
+	CMP #$ff
 	BEQ PRG030_9934	 		; If $FF, jump to PRG030_9934 (RTS)
 
 	; Otherwise...
@@ -4588,12 +4588,12 @@ PRG030_98EE:
 	ADC Level_LayPtr_AddrL
 	STA Level_LayPtr_AddrL
 	LDA Level_LayPtr_AddrH
-	ADC #$00	 
+	ADC #$00
 	STA Level_LayPtr_AddrH
 
 	LDA Temp_Var15		 	; Retrieve first byte we read
-	AND #$e0	 
-	CMP #$e0	 
+	AND #$e0
+	CMP #$e0
 	BNE PRG030_991E	 		; If its upper 3 bits are not all set, jump to PRG030_991E
 
 	; *****************
@@ -4630,7 +4630,7 @@ PRG030_991E:
 
 	; Otherwise, we handle this as a construction command, and so turn
 	; to the "generators" which define what the bytes mean...
-	JSR LeveLoad_Generators	
+	JSR LeveLoad_Generators
 
 	JMP PRG030_9931	 	; (Essentially) loop around (pointless jump, heh)
 
@@ -4656,7 +4656,7 @@ PRG030_9934:
 ; to a specified "screen", and also sets TileAddr_Off to an offset
 ; within that screen.
 ;
-; Takes input parameters of Temp_Var15 and Temp_Var16 and from 
+; Takes input parameters of Temp_Var15 and Temp_Var16 and from
 ; there generates:
 ;
 ; Guide to help visualize the input:
@@ -4679,10 +4679,10 @@ LoadLevel_Set_TileMemAddr:
 
 
 	LDA Temp_Var15	 ; Get that first byte
-	ASL A		
-	ASL A		
-	ASL A		
-	ASL A		
+	ASL A
+	ASL A
+	ASL A
+	ASL A
 	STA Temp_Var7	 ; Temp_Var7 = Temp_Var15 << 4 (take lower 4 bits and multiply by 16)
 
 	LDA Temp_Var16	 ; Second byte
@@ -4695,9 +4695,9 @@ LoadLevel_Set_TileMemAddr:
 
 	LDA Temp_Var16	 ; Second byte
 	AND #$f0	 ; Upper 4 bits
-	LSR A		 
-	LSR A		 
-	LSR A		 
+	LSR A
+	LSR A
+	LSR A
 	TAX		 ; X = (Temp_Var16 & $F0) >> 3 (value in upper 4 bits times 2, 2 byte index for Tile_Mem_Addr)
 
 	; X = 7654 0 <-- '0' is a one-up shift, not bit 0 of Temp_Var16
@@ -4738,11 +4738,11 @@ PRG030_9969:
 	LDA Tile_Mem_Addr+1,X
 	STA Map_Tile_AddrH
 
-	STA Temp_Var5	
+	STA Temp_Var5
 	INC Temp_Var5		; Temp_Var5 = Map_Tile_AddrH + 1
 
-	LDA Temp_Var15	
-	AND #$10	
+	LDA Temp_Var15
+	AND #$10
 	BEQ PRG030_997F		; If bit 4 of the first byte is not set, jump to PRG030_997F
 
 	; Otherwise, Map_Tile_AddrH++
@@ -4761,22 +4761,22 @@ PRG030_997F:
 ; Anyone want to detail the algorithm, go right ahead...
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Randomize:
-	LDX #$00	
-	LDY #$09	
-	LDA Random_Pool	
-	AND #$02	
-	STA Temp_Var1	
-	LDA RandomN	
-	AND #$02	
-	EOR Temp_Var1	
-	CLC		
-	BEQ PRG030_999A	
-	SEC		
+	LDX #$00
+	LDY #$09
+	LDA Random_Pool
+	AND #$02
+	STA Temp_Var1
+	LDA RandomN
+	AND #$02
+	EOR Temp_Var1
+	CLC
+	BEQ PRG030_999A
+	SEC
 PRG030_999A:
 	ROR Random_Pool,X
-	INX		 
-	DEY		 
-	BNE PRG030_999A	 
+	INX
+	DEY
+	BNE PRG030_999A
 
 	RTS		 ; Return
 
@@ -5031,7 +5031,7 @@ TileLayoutPage_ByTileset:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Scroll_Dirty_Update
 ;
-; This function performs a full-screen redraw of all tiles, 
+; This function performs a full-screen redraw of all tiles,
 ; used when first showing map/level, but not for scrolling!
 ; (Though it does call the same routine USED for scrolling)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -5047,8 +5047,8 @@ Scroll_Dirty_Update:
 PRG030_9AC5:
 	; Set proper Page @ A000 for tile layout data
 	LDY Level_Tileset
-	LDA TileLayoutPage_ByTileset,Y	
-	STA PAGE_A000	 
+	LDA TileLayoutPage_ByTileset,Y
+	STA PAGE_A000
 	JSR PRGROM_Change_A000
 
 	; Buffers a single 8x8 column of tiles
@@ -5077,7 +5077,7 @@ PRG030_9AC5:
 	AND #$08	 	; Every half screen
 	CMP PRG030_9AA5,X
 	BNE PRG030_9B02	 	; For updating on half-tiles (??), jump to PRG030_9B02
-	LDA Scroll_ColumnR,X	
+	LDA Scroll_ColumnR,X
 	CLC
 	ADC PRG030_9AA1,X
 	STA Scroll_ColumnR,X
@@ -5116,8 +5116,8 @@ PRG030_9B10:
 PRG030_9B26:
 	; Set proper Page @ A000 for tile layout data
 	LDY Level_Tileset
-	LDA TileLayoutPage_ByTileset,Y	
-	STA PAGE_A000	 
+	LDA TileLayoutPage_ByTileset,Y
+	STA PAGE_A000
 	JSR PRGROM_Change_A000
 
 	JSR VScroll_PageAndDoPatAttrRow	 ; Do the row of patterns and attributes for vertical scroll
@@ -5217,15 +5217,15 @@ PRG030_9B9B:
 	STY Scroll_RightUpd,X	 ; Store our right/left update
 
 	LDA Scroll_LastDir
-	EOR #$01	 
-	TAX		 
-	LDA #$ff	 
+	EOR #$01
+	TAX
+	LDA #$ff
 	STA Scroll_RightUpd,X	 ; Store $FF on the other side
 
 	JSR Scroll_DoColumn	 ; Render a column of tiles...
 
 PRG030_9BA9:
-	LDA Scroll_UpdAttrFlag	
+	LDA Scroll_UpdAttrFlag
 	BEQ PRG030_9BB1	 	; If Scroll_UpdAttrFlag is not set (not time to update attributes), jump to PRG030_9BB1 (RTS)
 
 	JSR Scroll_Do_AttrColumn ; Otherwise, Render a column of attributes...
@@ -5248,8 +5248,8 @@ PRG030_9BB2:
 VScroll_PageAndDoPatAttrRow:
 	; Set proper Page @ A000 for tile layout data
 	LDY Level_Tileset
-	LDA TileLayoutPage_ByTileset,Y	
-	STA PAGE_A000	 
+	LDA TileLayoutPage_ByTileset,Y
+	STA PAGE_A000
 	JSR PRGROM_Change_A000
 
 	JSR VScroll_CalcPatternVRAMAddr	 ; Calculate start of pattern row
@@ -5261,7 +5261,7 @@ PRG030_9BD2:
 PRG030_9BD3:	.byte $00, $01
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Scroll_DoColumn	
+; Scroll_DoColumn
 ;
 ; This subroutine renders a "column" of 8x8 blocks for the
 ; screen scrolling.  Also used by the "dirty update" routine
@@ -5270,31 +5270,31 @@ PRG030_9BD3:	.byte $00, $01
 Scroll_DoColumn:
 	; Set proper Page @ A000 for tile layout data
 	LDY Level_Tileset
-	LDA TileLayoutPage_ByTileset,Y	
-	STA PAGE_A000	 
+	LDA TileLayoutPage_ByTileset,Y
+	STA PAGE_A000
 	JSR PRGROM_Change_A000
 
 	LDX Scroll_LastDir	; X = Scroll_LastDir
 	LDA Scroll_RightUpd,X	; Related last update value
 	AND #$08	 	; Take just whether we've moved onto an 8
-	LSR A		 	
-	LSR A		 
-	LSR A		 
+	LSR A
+	LSR A
+	LSR A
 	STA Scroll_OddEven	; <Scroll_OddEven is 0 for 0, 1 for 8
 	LDX Scroll_LastDir	; X = Scroll_LastDir
 	LDA Horz_Scroll	; A = Horz_Scroll
 	AND #$0f	 	; A is now 0-15
-	CPX #$00	 	
+	CPX #$00
 	BNE PRG030_9BFD	 	; If Scroll_LastDir = 0 (last scrolled right), jump to PRG030_9BFD
 
 	; Last scrolled left
-	CMP #$04	 	
+	CMP #$04
 	BGE PRG030_9C01	 ; If the horizontal scroll is 4-15, jump to PRG030_9C01
 	JMP PRG030_9C06	 ; Otherwise, jump to PRG030_9C06
 
 PRG030_9BFD:
 	; Last scrolled right
-	CMP #12	
+	CMP #12
 	BGE PRG030_9C06	 ; If the horizontal scroll is 12-15, jump to PRG030_9C06
 
 PRG030_9C01:	; (Scrolled left and scroll is 4-15) OR (Scrolled right and scroll is 0-11)
@@ -5304,7 +5304,7 @@ PRG030_9C01:	; (Scrolled left and scroll is 4-15) OR (Scrolled right and scroll 
 	STA Scroll_UpdAttrFlag
 
 PRG030_9C06:
-	LDA Level_Tileset 
+	LDA Level_Tileset
 	ASL A		 ; A = Level_Tileset << 1 (index into TileLayout_ByTileset)
 	TAY		 ; -> 'Y'
 
@@ -5317,12 +5317,12 @@ PRG030_9C06:
 	; by its index number; note that top and bottom half use a common
 	; low byte.
 	LDA TileLayout_ByTileset,Y
-	STA Temp_Var11		 
-	STA Temp_Var13		 
+	STA Temp_Var11
+	STA Temp_Var13
 
 	; The following takes the high byte of the "TileLayout_ByTileset"
 	; and either adds nothing or a jump of 512, and still adds a jump of
-	; 256 to the after address 
+	; 256 to the after address
 	LDX TileLayout_ByTileset+1,Y	; X = High byte of address (block 0 of tile)
 	LDA Scroll_OddEven		; A = Scroll_OddEven
 	BEQ PRG030_9C1B			; If Scroll_OddEven = 0, jump to PRG030_9C1B
@@ -5337,16 +5337,16 @@ PRG030_9C1B:
 	LDX Scroll_LastDir		; X = Scroll_LastDir
 	LDA Scroll_ColumnR,X	 	; A = appropriate current column (right or left)
 	AND #$f0	 	 	; Checking what screen we're on (every 16 columns is a screen's worth)
-	LSR A		 
-	LSR A		 
-	LSR A		 
+	LSR A
+	LSR A
+	LSR A
 	TAY		 		; Y = ((Scroll_ColumnR & $F0) >> 3), or basically, 2 for every screen we've moved (for indexing...)
 
 	; Set the address of the tiles we need to modify!
 	LDA Tile_Mem_Addr,Y
-	STA Temp_Var15	
+	STA Temp_Var15
 	LDA Tile_Mem_Addr+1,Y
-	STA Temp_Var16	
+	STA Temp_Var16
 
 	LDA #26	 		; Number of rows to update (NTSC res of 224, two screens tall, is 448 / 16px-per-tile = 26)
 	STA Temp_Var1		; Temp_Var1 = 26 (see immediately above)
@@ -5370,12 +5370,12 @@ PRG030_9C40:
 
 	LDA Temp_Var2
 	CLC
-	ADC #16	
+	ADC #16
 	STA Temp_Var2	 	; Temp_Var2 += 16 (next row in this column is 16 bytes down)
 	BCC PRG030_9C5A	 	; If we haven't overflowed, jump to PRG030_9C5A
 	INC Temp_Var16	; Otherwise we need to increment the upper part of the tile address
 PRG030_9C5A:
-	INX		 
+	INX
 	INX		 ; X += 2 (two tiles added)
 
 	DEC Temp_Var1	 ; Temp_Var1--
@@ -5389,7 +5389,7 @@ PRG030_9C5A:
 	ORA Scroll_OddEven	; Apply the odd/even (forms an 8x8 current column)
 	STA Scroll_LastCol8	; Store this in Scroll_LastCol8
 
-	LDA #$20	 	; 
+	LDA #$20	 	;
 	STA Scroll_ToVRAMHi	; Scroll_ToVRAMHi = $20
 	JMP SetPages_ByTileset	; JUMP to SetPages_ByTileset (restores page A000 most importantly, and will do the RTS)
 
@@ -5421,22 +5421,22 @@ Scroll_Do_AttrColumn:
 
 PRG030_9C87:
 	STY Temp_Var1		; column, possibly offset, into Temp_Var1
-	LDA #$00	 	
+	LDA #$00
 	STA Temp_Var2		; Temp_Var2 = 0
 
 PRG030_9C8D:
 	LDA Temp_Var1		; A = Temp_Var1 (column, possibly offset)
 	AND #$f0	 	; Figure out which SCREEN we're on
-	LSR A		 
-	LSR A		 
+	LSR A
+	LSR A
 	LSR A		 	; A >> 3 (2 byte per screen index)
 	TAY		 	; Y = A
 
 	; Setup pointer to tile memory we need to be focusing on!
-	LDA Tile_Mem_Addr,Y	
-	STA Temp_Var15		
-	LDA Tile_Mem_Addr+1,Y	
-	STA Temp_Var16	
+	LDA Tile_Mem_Addr,Y
+	STA Temp_Var15
+	LDA Tile_Mem_Addr+1,Y
+	STA Temp_Var16
 
 	LDX Temp_Var2	 	; X = Temp_Var2
 	LDA Temp_Var1	 	; A = Temp_Var1
@@ -5455,14 +5455,14 @@ PRG030_9CA6:
 PRG030_9CB5:
 	INX			; X++ (next byte in the Scroll_ColorStrip)
 	STX Temp_Var2		; Temp_Var2 = X
-	CPX #27	
+	CPX #27
 	BNE PRG030_9CD0	 	; If X <> 27, jump to PRG030_9CD0
 
 	; X is 27, we need to go to the next page
 	LDX Scroll_LastDir	; X = Scroll_LastDir
 	LDY Scroll_ColumnR,X	; Get the column
 	TYA		 	; A = Y
-	AND #$01	 	; 
+	AND #$01	 	;
 	BNE PRG030_9CCB	 	; If odd, jump to PRG030_9CCB
 	TYA			; A = Y (back to the column)
 	CLC
@@ -5478,43 +5478,43 @@ PRG030_9CD0:
 
 
 	LDY #$00	 ; Y = 0
-	LDX #$00	 ; X = 0 
+	LDX #$00	 ; X = 0
 
 PRG030_9CD8:
 	; Attributes store colors for 4 tiles in one byte, this
 	; forms the coloring information for all four blocks; this
 	; also explains the odd-but-necessary offsets
 	LDA Scroll_ColorStrip,X
-	LSR A		 
+	LSR A
 	LSR A		 ; A >>= 2
 	ORA Scroll_ColorStrip+27,X
-	LSR A		 
-	LSR A		 ; A >>= 2 
+	LSR A
+	LSR A		 ; A >>= 2
 	ORA Scroll_ColorStrip+1,X
-	LSR A		 
+	LSR A
 	LSR A		 ; A >>= 2
 	ORA Scroll_ColorStrip+28,X
 
 	STA Scroll_AttrStrip,Y
 	INX		 ; X++
 	INX		 ; X++
-	CPY #$07	 
+	CPY #$07
 	BNE PRG030_9CF8	 ; If Y <> 7, jump to PRG030_9CF8
 
 	; Only store half the attribute data on row 7
-	LDA Scroll_AttrStrip,Y	
+	LDA Scroll_AttrStrip,Y
 	AND #$0f
-	STA Scroll_AttrStrip,Y	
+	STA Scroll_AttrStrip,Y
 	DEX		 ; X--	; Redo other half later!
 
 PRG030_9CF8:
 	INY		 ; Y++
-	CPY #14	 	 
+	CPY #14
 	BNE PRG030_9CD8	 ; If Y <> 14, loop!
 
-	LDA #$23	 
+	LDA #$23
 	STA Scroll_ToVRAMHA	; Scroll_ToVRAMHA = $23
-	LDX Scroll_LastDir	
+	LDX Scroll_LastDir
 	LDA Scroll_ColumnR,X	; Get column
 	AND #$0f	 	; Screen relative
 	LSR A		 	; A >> 1 (every two blocks when dealing with attributes)
@@ -5522,7 +5522,7 @@ PRG030_9CF8:
 	STA Scroll_LastAttr	; Store into Scroll_LastAttr
 
 	; Scroll_UpdAttrFlag = 0
-	LDA #$00	 
+	LDA #$00
 	STA Scroll_UpdAttrFlag
 
 	RTS		 	; Return!
@@ -5676,7 +5676,7 @@ VScroll_CalcAttributeVRAMAddr:
 
 	LDA Scroll_VOffsetT,X
 	AND #$20
-	BEQ PRG030_9DBB	
+	BEQ PRG030_9DBB
 
 	; Scroll_LastAttr += 8
 	LDA Scroll_LastAttr
@@ -5718,7 +5718,7 @@ Scroll_Do_AttrRow:
 	LDA Temp_Var9
 	CLC
 	ADC #$10
-	STA Temp_Var9 
+	STA Temp_Var9
 
 PRG030_9DDE:
 	INC Temp_Var9		 ; Temp_Var9++ (next column)
@@ -5773,7 +5773,7 @@ PRG030_9E11:
 ; also reloads 'Y' with the tile in Temp_Var11
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 TileLayout_GetBaseAddr:
-	LDA Level_Tileset 
+	LDA Level_Tileset
 	ASL A
 	TAX		 ; X = Level_Tileset * 2
 
@@ -5817,7 +5817,7 @@ VScroll_TileQuads2Attrs:
 ;
 ; Gets tile in vertical level
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-Player_GetTileV:	; $9E3C 
+Player_GetTileV:	; $9E3C
 
 	; Temp_Var13 / Temp_Var14 -- Y Hi and Lo
 	; Temp_Var15 / Temp_Var16 -- X Hi and Lo
@@ -5882,20 +5882,20 @@ LevelJct_GetVScreenH:
 	ADC PRG030_9E6C,Y	; Player_Y += Player_YHi[Y]
 	BCS PRG030_9E8A	 	; If carry set (overflow occurred), jump to PRG030_9E8A
 
-	CMP #$f0	
+	CMP #$f0
 	BLT PRG030_9E8E	 	; If result is < $F0, jump to PRG030_9E8E
 
 PRG030_9E8A:
 	; Add $10 and roll over 'Y' (Considered in the lower vertical half)
 	CLC
 	ADC #$10
-	INY	
+	INY
 
 PRG030_9E8E:
 	RTS		 ; Return
 
 
-	; Something similar to LevelJct_GetVScreenH, but I'm 
+	; Something similar to LevelJct_GetVScreenH, but I'm
 	; not quite following the purpose
 LevelJct_GetVScreenH2:
 	; A = Player_Y
@@ -5929,7 +5929,7 @@ Player_GetTileAndSlope_Normal:	; $9E9D
 	; Temp_Var15 / Temp_Var16 -- X Hi and Lo
 
 	; Clear slope array
-	LDA #$00	
+	LDA #$00
 	STA Player_Slopes
 	STA Player_Slopes+1	; Not used; see below with Temp_Var1 assignment
 	STA Player_Slopes+2	; Not used; see below with Temp_Var1 assignment
@@ -5942,8 +5942,8 @@ Player_GetTileAndSlope_Normal:	; $9E9D
 	STA Level_TileOff	 ; Level_TileOff = Temp_Var16 >> 4 (current column Player is in)
 
 	LDA Temp_Var15
-	AND #$0f	
-	ASL A		
+	AND #$0f
+	ASL A
 	TAX		 ; X = (Temp_Var15 & $0F) << 1 (current "high" part of Player X shifted up by 1, indexing Tile Mem)
 
 	; Set Map_Tile_AddrL/H to appropriate screen based on Player's position
@@ -6014,7 +6014,7 @@ PRG030_9EDB:
 	SBC Tile_AttrTable,Y	; Subtract the root tile value
 	TAY		 	; Y = result
 
-	LDA (Temp_Var3),Y		; Get value 
+	LDA (Temp_Var3),Y		; Get value
 	STA Player_Slopes,X	; Store into Player_Slopes
 
 PRG030_9F0D:
@@ -6081,7 +6081,7 @@ PRG030_9F80:
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 
 IntIRQ_32PixelPartition_Part2:	; $9FA0
-	LDA Update_Request	 
+	LDA Update_Request
 	AND #UPDATERASTER_32PIXSHOWSPR
 	BNE PRG030_9FAA	 ; If UPDATERASTER_32PIXSHOWSPR is set, go to PRG030_9FAA
 

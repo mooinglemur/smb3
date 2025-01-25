@@ -127,7 +127,7 @@ Tile_Layout_TS3:
 	.byte $AB, $AB, $22, $77, $77, $28, $77, $77, $2A, $FE, $32, $FE, $24, $26, $FE, $77 ; Tiles $E0 - $EF
 	.byte $61, $FF, $E1, $FF, $2E, $3A, $3A, $77, $77, $77, $7E, $2E, $FE, $FF, $FF, $FF ; Tiles $F0 - $FF
 
-	; Upper right 8x8 pattern per tile	
+	; Upper right 8x8 pattern per tile
 	.byte $FC, $FC, $FE, $07, $07, $EA, $FF, $59, $FF, $5C, $5E, $FF, $FF, $FF, $FF, $FF ; Tiles $00 - $0F
 	.byte $FF, $FF, $FF, $49, $4B, $FC, $27, $FC, $FC, $FC, $42, $FC, $40, $33, $FC, $07 ; Tiles $10 - $1F
 	.byte $59, $07, $5C, $5E, $07, $40, $4F, $FE, $FE, $49, $4B, $FE, $39, $FF, $BA, $BA ; Tiles $20 - $2F
@@ -176,13 +176,13 @@ LevelLoad_TS3:
 	; Clear Tile memory
 	; Hills style just clears all to sky; the split loops perhaps
 	; suggests there was to be something a little more interesting?
-	LDY #$00	 
+	LDY #$00
 PRG016_A40A:
 	LDA #TILE3_SKY
 	JSR Tile_Mem_ClearB
 	JSR Tile_Mem_ClearA
-	CPY #$10	 
-	BNE PRG016_A40A	 
+	CPY #$10
+	BNE PRG016_A40A
 
 PRG016_A416:
 	LDA #TILE3_SKY
@@ -211,17 +211,17 @@ LoadLevel_Generator_TS3:
 
 	LDA Temp_Var15
 	AND #%11100000
-	LSR A		
-	LSR A		
-	LSR A		
-	LSR A		
-	LSR A		
+	LSR A
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	TAX		 	; X = upper 3 bits of Temp_Var15 (0-7) (selects a multiple of 15 as the base)
 
 	LDA LL_ShapeDef
-	LSR A	
-	LSR A	
-	LSR A	
+	LSR A
+	LSR A
+	LSR A
 	LSR A			; A = upper 4 bits of LL_ShapeDef shifted down
 	CLC
 	ADC PRG016_A425,X	; Add multiple of 15
@@ -277,7 +277,7 @@ LoadLevel_Generator_TS3:
 	.word FAR014_LoadLevel_TopDecoBlocks		; 38 - Top-Deco Rectangle Right waving water pool
 	.word FAR014_LoadLevel_TopDecoBlocks		; 39 - Top-Deco Rectangle Water wrong-way BG
 	.word FAR014_LoadLevel_TopDecoBlocks		; 40 - Top-Deco Rectangle Diamond blocks (not really any deco on top)
-	.word FAR014_LoadLevel_TopDecoBlocks		; 41 - Top-Deco Rectangle Sand ground 
+	.word FAR014_LoadLevel_TopDecoBlocks		; 41 - Top-Deco Rectangle Sand ground
 	.word FAR014_LoadLevel_TopDecoBlocks		; 42 - Top-Deco Rectangle orange block??
 	.word FAR014_LoadLevel_IceBricks		; 43 - Run of ice bricks
 	.word FAR014_LoadLevel_VTransitPipeRun		; 44 - Vertical in-level transit pipe
@@ -319,8 +319,8 @@ LoadLevel_Generator_TS3:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LeveLoad_FixedSizeGen_TS3
 ;
-; Much simpler generators that are fixed-size, commonly used for 
-; just single tile placement styles (although a couple relatively 
+; Much simpler generators that are fixed-size, commonly used for
+; just single tile placement styles (although a couple relatively
 ; complex ones exist in here as well)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LeveLoad_FixedSizeGen_TS3:
@@ -332,11 +332,11 @@ LeveLoad_FixedSizeGen_TS3:
 
 	LDA Temp_Var15
 	AND #%11100000
-	LSR A		
+	LSR A
 	CLC
-	ADC LL_ShapeDef	
+	ADC LL_ShapeDef
 	TAX		 	; Resultant index is put into 'X'
-	JSR DynJump	 
+	JSR DynJump
 
 	.word FAR014_LoadLevel_Corner			;  0 - Above Ground upper-left corner tile
 	.word FAR014_LoadLevel_Corner			;  1 - Underground/Hills normal upper-left corner tile
@@ -355,7 +355,7 @@ LeveLoad_FixedSizeGen_TS3:
 	.word FAR014_LoadLevel_Nothing			; 14 - NOTHING!  (Old removed? unknown?)
 	.word FAR014_LoadLevel_Door2			; 15 - Door style 2
 	.word FAR014_LoadLevel_PowerBlock		; 16 - ? block with flower
-	.word FAR014_LoadLevel_PowerBlock		; 17 - ? block with leaf 
+	.word FAR014_LoadLevel_PowerBlock		; 17 - ? block with leaf
 	.word FAR014_LoadLevel_PowerBlock		; 18 - ? block with star
 	.word FAR014_LoadLevel_PowerBlock		; 19 - ? block with coin OR star
 	.word FAR014_LoadLevel_PowerBlock		; 20 - ? block with coin (??)
@@ -393,7 +393,7 @@ LeveLoad_FixedSizeGen_TS3:
 	.word FAR014_LoadLevel_PrefabBlock		; 52 - 8x7 prefab block (Entry 4)
 	.word FAR014_LoadLevel_PrefabBlock		; 53 - 8x7 prefab block (Entry 5)
 	.word FAR014_LoadLevel_PrefabBlock		; 54 - 8x7 prefab block (Entry 6)
-	.word FAR014_LoadLevel_PrefabBlock		; 55 - 8x7 prefab block (Entry 7) 
+	.word FAR014_LoadLevel_PrefabBlock		; 55 - 8x7 prefab block (Entry 7)
 	.word FAR014_LoadLevel_PrefabBlock		; 56 - 8x7 prefab block (Entry 8)
 	.word FAR014_LoadLevel_PrefabBlock		; 57 - 8x7 prefab block (Entry 9)
 	.word FAR014_LoadLevel_PrefabBlock		; 58 - 8x7 prefab block (Entry 10)
