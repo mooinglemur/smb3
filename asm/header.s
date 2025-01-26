@@ -12,7 +12,7 @@
 .ifdef X16
 .segment "CBMSTUB"
 	.word $0801
-	.word *+9
+	.word $080B
 	.word $0000
 	.byte $9e,"2061",$00 ; SYS 2061
 	.byte $00,$00

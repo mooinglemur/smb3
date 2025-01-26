@@ -224,7 +224,25 @@ x16_inc = 1
     RAM_WIN_SIZE      = $2000
     ROM_WIN           = $C000
 
+    .scope ExtAPI
+        CLEAR_STATUS                  := 1
+        GETLFS                        := 2
+        MOUSE_SPRITE_OFFSET           := 3
+        JOYSTICK_PS2_KEYCODES         := 4
+        ISO_CURSOR_CHAR               := 5
+        PS2KBD_TYPEMATIC              := 6
+        PFKEY                         := 7
+        PS2DATA_FETCH                 := 8
+        PS2DATA_RAW                   := 9
+        CURSOR_BLINK                  := 10
+        LED_UPDATE                    := 11
+        MOUSE_SET_POSITION            := 12
+        SCNSIZ                        := 13
+        KBD_LEDS                      := 14
+    .endscope
+
     .scope Kernal
+        EXTAPI                        := $FEAB
         ENTROPY_GET                   := $FECF
         CONSOLE_set_paging_message    := $FED5
         CONSOLE_put_image             := $FED8

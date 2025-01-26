@@ -2203,3 +2203,9 @@ FALL_OBJECT                    = 4 ; Fall rate for objects
 FALLRATE_TAILWAGMAX            = 8 ; Maximum Y velocity falling rate when wagging raccoon tail
 FALLRATE_MAX                   = $40 ; Maximum Y velocity falling rate
 FALLRATE_OBJECTMAX             = $60 ; Maximum Y velocity falling rate of an object
+
+; X16 Constants here
+VERA_SPRITE_BASE  = $00000  ; 32 2K regions of 64 8x8 4bpp sprites
+VERA_TILE_BASE    = $10000  ; 8 4K regions 
+VERA_MAP_BASE_NT0 = $18000  ; 8K 64x64 tile map
+VERA_MAP_BASE_NT1 = $1A000  ; 8K 64x64 tile map

@@ -34,7 +34,8 @@ SPRBANKS += 118 127
 
 BGCHRS    = $(addprefix $(SRC)/chrbg, $(addsuffix .s, $(BGBANKS)))
 SPRCHRS   = $(addprefix $(SRC)/chrspr, $(addsuffix .s, $(SPRBANKS)))
-OBJS    = $(sort $(patsubst $(SRC)/%.s,$(OBJ)/%.o,$(SRCS) $(BGCHRS) $(SPRCHRS)))
+CHRLUTS   = $(SRC)/chrluts.s
+OBJS    = $(sort $(patsubst $(SRC)/%.s,$(OBJ)/%.o,$(SRCS) $(BGCHRS) $(SPRCHRS) $(CHRLUTS)))
 
 
 default: all
@@ -50,6 +51,9 @@ $(SRC)/chrbg%.s: ./CHR/chr%.pcx
 $(SRC)/chrspr%.s: ./CHR/chr%.pcx
 	./scripts/pcx2vera4bpp.py $< $@ CHRSPR$*
 
+$(SRC)/chrluts.s:
+	./scripts/chr2bank.py $(SRC)/chrluts.s 32 "$(BGBANKS)" "$(SPRBANKS)"
+
 $(OBJ)/%.o: $(SRC)/%.s $(INC)/*.inc | $(OBJ)
 	$(AS) $(ASFLAGS) $< -o $@
 
@@ -58,4 +62,4 @@ $(OBJ):
 
 .PHONY: clean
 clean:
-	$(RM) $(EXE) $(OBJS) $(MAPFILE) $(SYMFILE) $(BGCHRS) $(SPRCHRS) TANOOKI.BIN KURIBO.BIN
+	$(RM) $(EXE) $(OBJS) $(MAPFILE) $(SYMFILE) $(BGCHRS) $(SPRCHRS) $(CHRLUTS) TANOOKI.BIN

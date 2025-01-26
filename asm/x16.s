@@ -1,5 +1,18 @@
 .ifdef X16
 
+.include "../inc/defines.inc"
+.include "../inc/x16.inc"
+
+.scope NESPort
+	.import PPURESET
+	.import bit_PPUSTATUS
+	.import ldx_PPUSTATUS
+	.import sta_MMC3_MIRROR
+.endscope
+
+.import bgbanks, bgpages
+.import sprbanks, sprpages
+
 .export X16_lda_JOYPAD_y
 .export X16_lda_PPU_STAT
 .export X16_lda_PPU_VRAM_DATA
@@ -58,32 +71,395 @@
 .export X16_sty_PPU_SCROLL
 .export X16_sty_PPU_VRAM_ADDR
 
+.segment "X16BSS"
+X16_MMC3_COMMAND:
+	.res 1
+X16_MMC3_IRQCNT:
+	.res 1
+X16_MMC3_IRQ_ENABLED:
+	.res 1
 
+; These variables track what CHR banks are loaded in VERA VRAM
+; and provides a way to handle dynamic loading
+
+X16_pt0a_loaded:
+	.res 8
+X16_pt0b_loaded:
+	.res 8
+X16_pt0_lru:
+	.res 8
+X16_pt0_idx_active:
+	.res 1
+
+X16_pt1_loaded:
+	.res 32
+X16_pt1_lru:
+	.res 32
+X16_pt1a_idx_active:
+	.res 1
+X16_pt1b_idx_active:
+	.res 1
+X16_pt1c_idx_active:
+	.res 1
+X16_pt1d_idx_active:
+	.res 1
 
 .segment "X16STARTUP"
 start:
+	stz X16::Reg::ROMBank
+
+	jsr X16_load_tanooki_bin
+	bcs nobin
+	jsr X16_init_dynamic_chr
+
+	lda #4
+	sta X16::Reg::ROMBank
+	rts
+nobin:
+	jsr X16::Kernal::PRIMM
+	.byte "UNABLE TO LOAD TANOOKI.BIN",13,0
+
+	lda #4
+	sta X16::Reg::ROMBank
 	rts
 
 
+.proc X16_load_tanooki_bin
+	; Use last-used disk device to load bin
+	lda #X16::ExtAPI::GETLFS
+	jsr X16::Kernal::EXTAPI
+	lda #1
+	ldy #2
+	jsr X16::Kernal::SETLFS
+
+	lda #fnend-fn
+	ldx #<fn
+	ldy #>fn
+	jsr X16::Kernal::SETNAM
+
+	lda #1
+	sta X16::Reg::RAMBank
+	lda #0
+	ldx #<$a000
+	ldy #>$a000
+	jmp X16::Kernal::LOAD
+fn:
+	.byte "TANOOKI.BIN"
+fnend:
+.endproc
+
+.proc X16_init_dynamic_chr
+	; initialize the loaded and lru structures
+	; for the dynamic CHRROM management
+	ldx #31
+loop1:
+	lda #$ff
+	sta X16_pt1_loaded,x
+	txa
+	sta X16_pt1_lru,x
+	dex
+	bpl loop1
+
+	ldx #7
+loop2:
+	lda #$ff
+	sta X16_pt0a_loaded,x
+	sta X16_pt0b_loaded,x
+	txa
+	sta X16_pt0_lru,x
+	dex
+	bpl loop2
+
+	ldx #0
+	ldy #$76
+	sty X16_pt0a_loaded
+	jsr X16_load_bgtiles_a
+
+	ldx #0
+	ldy #$78
+	sty X16_pt0b_loaded
+	jsr X16_load_bgtiles_b
+
+	stz X16_pt0_idx_active
+
+	ldx #0
+	ldy #0
+	jsr X16_load_sprtiles
+	stz X16_pt1_loaded
+
+	stz X16_pt1a_idx_active
+	stz X16_pt1b_idx_active
+	stz X16_pt1c_idx_active
+	stz X16_pt1d_idx_active
+
+	rts
+.endproc
+
+.proc X16_load_sprtiles
+	lda #<VERA_SPRITE_BASE
+	sta Vera::Reg::AddrL
+	txa
+	asl
+	asl
+	asl
+	clc
+	adc #>VERA_SPRITE_BASE
+	sta Vera::Reg::AddrM
+	lda #^(VERA_SPRITE_BASE) | $10
+	adc #0
+	sta Vera::Reg::AddrH
+
+	lda X16::Reg::RAMBank
+	pha
+
+	lda sprbanks,y
+	beq panic
+
+	sta X16::Reg::RAMBank
+
+	lda sprpages,y
+	beq panic
+
+	tay
+	jmp X16_load_2k_to_VERA ; restores ram bank from stack
+panic:
+	stp
+.endproc
 
 
+.proc X16_load_bgtiles_a
+	lda #<VERA_TILE_BASE
+	sta Vera::Reg::AddrL
+	txa
+	asl
+	asl
+	asl
+	clc
+	adc #>VERA_TILE_BASE
+	sta Vera::Reg::AddrM
+	lda #^(VERA_TILE_BASE) | $10
+	adc #0
+	sta Vera::Reg::AddrH
+
+	lda X16::Reg::RAMBank
+	pha
+
+	lda bgbanks,y
+	beq panic
+
+	sta X16::Reg::RAMBank
+
+	lda bgpages,y
+	beq panic
+
+	tay
+	jmp X16_load_2k_to_VERA ; restores ram bank from stack
+panic:
+	stp
+.endproc
+
+.proc X16_load_bgtiles_b
+	lda #<VERA_TILE_BASE
+	sta Vera::Reg::AddrL
+	txa
+	asl
+	asl
+	asl
+	clc
+	adc #>(VERA_TILE_BASE + $04)
+	sta Vera::Reg::AddrM
+	lda #^(VERA_TILE_BASE) | $10
+	adc #0
+	sta Vera::Reg::AddrH
+
+	lda X16::Reg::RAMBank
+	pha
+
+	lda bgbanks,y
+	beq panic
+
+	sta X16::Reg::RAMBank
+
+	lda bgpages,y
+	beq panic
+
+	tay
+	jmp X16_load_2k_to_VERA ; restores ram bank from stack
+panic:
+	stp
+.endproc
+
+.proc X16_load_2k_to_VERA
+	stp
+	php
+	sei
+	sty READPAGE
+
+	ldy #8 ; read 8 pages
+	ldx #0
+loop:
+	lda $ff00,x
+READPAGE = * - 1
+	sta Vera::Reg::Data0
+	inx
+	bne loop
+	inc READPAGE
+	dey
+	bne loop
+
+	plp
+	pla
+	sta X16::Reg::RAMBank
+	rts
+.endproc
 
 .segment "X16BRIDGE"
 ; stubs for now
 
 X16_lda_JOYPAD_y:
 X16_lda_PPU_STAT:
-X16_lda_PPU_VRAM_DATA:
-X16_ldx_PPU_STAT:
+	rts
+
+.proc X16_lda_PPU_VRAM_DATA
+	; In SMB3, we never actually need to read out of VRAM.
+	; it's used to tickle the vertical scroll mid-frame
+	rts
+.endproc
+
+.proc X16_ldx_PPU_STAT
+	JSRFAR NESPort::ldx_PPUSTATUS, 31
+	rts
+.endproc
+
 X16_sta_FRAMECTR_CTL:
 X16_sta_JOYPAD:
-X16_sta_MMC3_COMMAND:
-X16_sta_MMC3_IRQCNT:
-X16_sta_MMC3_IRQDISABLE:
-X16_sta_MMC3_IRQENABLE:
-X16_sta_MMC3_IRQLATCH:
-X16_sta_MMC3_MIRROR:
-X16_sta_MMC3_PAGE:
+	rts
+
+.proc X16_sta_MMC3_COMMAND
+	sta X16_MMC3_COMMAND
+	rts
+.endproc
+
+.proc X16_sta_MMC3_IRQCNT
+	sta X16_MMC3_IRQCNT
+	rts
+.endproc
+
+.proc X16_sta_MMC3_IRQDISABLE
+	stz X16_MMC3_IRQ_ENABLED
+	rts
+.endproc
+
+.proc X16_sta_MMC3_IRQENABLE
+	pha
+	lda #$80
+	sta X16_MMC3_IRQ_ENABLED
+	pla
+	rts
+.endproc
+
+.proc X16_sta_MMC3_IRQLATCH
+	php
+	sei
+	pha
+
+	; get the current scanline (/2)
+
+	bit Vera::Reg::IEN       ; set or clear V based on scanline (8)
+redo:
+	lda Vera::Reg::IRQLineL
+	bvs hi
+lo:
+	bit Vera::Reg::IEN
+	bvs redo                 ; we transitioned, check again
+	clc
+	bra cont
+hi:
+	bit Vera::Reg::IEN
+	bvc redo                 ; we transitioned, check again
+	sec
+cont:
+	ror ; current scanline/2 with relative certainty is in .A
+	clc
+	adc X16_MMC3_IRQCNT
+	bcc :+
+	sbc #15 ; wraparound
+:	asl
+	sta Vera::Reg::IRQLineL
+	lda #$80
+	bcs sethi
+	trb Vera::Reg::IEN
+	bra end
+sethi:
+	tsb Vera::Reg::IEN
+end:
+	pla
+	plp
+	rts
+.endproc
+
+.proc X16_sta_MMC3_MIRROR
+	JSRFAR NESPort::sta_MMC3_MIRROR, 31
+	rts
+.endproc
+
+.proc X16_sta_MMC3_PAGE
+	php
+	pha
+	phx
+	phy
+	tax
+
+	lda X16_MMC3_COMMAND
+	and #$07
+	beq pt0a
+	dec
+	beq pt0b
+	dec
+	beq pt1a
+	dec
+	beq pt1b
+	dec
+	beq pt1c
+	dec
+	beq pt1d
+	dec
+	beq prgc
+prga: ; switch RAM bank
+	stx X16::Reg::RAMBank
+	bra end
+pt0a:
+	php
+	sei
+	stx @CMP1
+	; try to find a slot with the already loaded banks
+	ldy #7
+@loop1:
+	lda X16_pt0a_loaded,y
+	cmp #$ff
+@CMP1 = * - 1
+	bne @loop1
+
+pt0b:
+pt1a:
+pt1b:
+pt1c:
+pt1d:
+
+
+
+
+
+prgc:
+	; changing NES $C000 bank is a no-op on X16
+end:
+	ply
+	plx
+	pla
+	plp
+	rts
+.endproc
+
 X16_sta_PAPU_CT1:
 X16_sta_PAPU_CT1_x:
 X16_sta_PAPU_CT2:
@@ -211,7 +587,7 @@ X16_sty_PPU_VRAM_ADDR:
 ; $58-$59/088-089 - background (plant/pipe/underwater level, 2P vs)
 ; $5A/090 - sprite (object group 2/4, vertical donut lift, n-spade)
 ; $5B/091 - probably sprite, unknown
-; $5C-$5D/092-093 - background (princess/toad house/cards)
+; $5C-$5D/092-093 - background (princess/toad house/cards/inventory)
 ; $5E-$5F/094-095 - background (full alphabet text)
 ; $60-$61/096-097 - background (Pg2 general level)
 ; $62-$63/098-099 - background (Pg2 general level)
