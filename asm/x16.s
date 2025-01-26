@@ -2,6 +2,7 @@
 
 .include "../inc/defines.inc"
 .include "../inc/x16.inc"
+.macpack longbranch
 
 .scope NESPort
 	.import PPURESET
@@ -290,7 +291,6 @@ panic:
 .endproc
 
 .proc X16_load_2k_to_VERA
-	stp
 	php
 	sei
 	sty READPAGE
@@ -416,31 +416,96 @@ end:
 	dec
 	beq pt0b
 	dec
-	beq pt1a
+	jeq pt1a
 	dec
-	beq pt1b
+	jeq pt1b
 	dec
-	beq pt1c
+	jeq pt1c
 	dec
-	beq pt1d
+	jeq pt1d
 	dec
-	beq prgc
+	jeq prgc
 prga: ; switch RAM bank
 	stx X16::Reg::RAMBank
-	bra end
+	jmp end
 pt0a:
 	php
 	sei
 	stx @CMP1
 	; try to find a slot with the already loaded banks
-	ldy #7
+	ldy #8
 @loop1:
+	dey
+	bmi @nomatch
 	lda X16_pt0a_loaded,y
 	cmp #$ff
 @CMP1 = * - 1
 	bne @loop1
+	ldx X16_pt0_idx_active
+	lda X16_pt0b_loaded,x
+	cmp X16_pt0b_loaded,y
+	bne @loop1
+	; we found it
+@found:
+	sty X16_pt0_idx_active
+	jsr activate_tilemap
+	plp
+	bra end
+@nomatch:
+	ldx X16_pt0_lru+7 ; grab the least recently used index
+	lda @CMP1
+	sta X16_pt0a_loaded,x
+	tay
+	jsr X16_load_bgtiles_a
 
+	ldx X16_pt0_idx_active
+	lda X16_pt0b_loaded,x
+	ldx X16_pt0_lru+7
+	sta X16_pt0b_loaded,x
+	tay
+	jsr X16_load_bgtiles_b
+
+	ldy X16_pt0_lru+7
+	bra @found
 pt0b:
+	php
+	sei
+	stx @CMP1
+	; try to find a slot with the already loaded banks
+	ldy #8
+@loop1:
+	dey
+	bmi @nomatch
+	lda X16_pt0b_loaded,y
+	cmp #$ff
+@CMP1 = * - 1
+	bne @loop1
+	ldx X16_pt0_idx_active
+	lda X16_pt0a_loaded,x
+	cmp X16_pt0a_loaded,y
+	bne @loop1
+	; we found it
+@found:
+	sty X16_pt0_idx_active
+	jsr activate_tilemap
+	plp
+	bra end
+@nomatch:
+	ldx X16_pt0_lru+7 ; grab the least recently used index
+	lda @CMP1
+	sta X16_pt0b_loaded,x
+	tay
+	jsr X16_load_bgtiles_b
+
+	ldx X16_pt0_idx_active
+	lda X16_pt0a_loaded,x
+	ldx X16_pt0_lru+7
+	sta X16_pt0a_loaded,x
+	tay
+	jsr X16_load_bgtiles_a
+
+	ldy X16_pt0_lru+7
+	bra @found
 pt1a:
 pt1b:
 pt1c:
@@ -457,6 +522,34 @@ end:
 	plx
 	pla
 	plp
+	rts
+panic:
+	stp
+activate_tilemap:
+	tya
+	asl
+	asl
+	asl
+	clc
+	adc #<(((VERA_TILE_BASE >> 11) << 2) | $00)
+	sta Vera::Reg::L0TileBase
+	sta Vera::Reg::L1TileBase
+	; update the LRU
+	ldx #8
+	tya
+@loop1:
+	dex
+	bmi panic
+	cmp X16_pt0_lru,x
+	bne @loop1
+@loop2:
+	dex
+	bmi @mru
+	lda X16_pt0_lru,x
+	sta X16_pt0_lru+1,x
+	bra @loop2
+@mru:
+	sty X16_pt0_lru
 	rts
 .endproc
 
