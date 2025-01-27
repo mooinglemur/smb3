@@ -278,13 +278,20 @@ end:
 	sta OAM_3
 	sta OAM_4
 
+	lda #$3f
+	ldx PPUCTRL_SP16
+	beq start
+	dec
+start:
+	sta MASK
 	VERA_SET_ADDR Vera::VRAM_sprattr, 1
 	ldx #0
 loop:
 	clc
 	lda $ff01,x
 OAM_1a = (*-1)
-	and #$3f ; 0-63 per region
+	and #$3f ; $3f: 0-63 per region (or $3e: even numbers only if SP16).  Self-modded above.
+MASK = (*-1)
 	bit $ff01,x
 OAM_1b = (*-1)
 	bpl bottomhalf
@@ -509,9 +516,9 @@ is_nt1:
 nt_write:
 	stx Vera::Reg::Data0
 
-	lda Vera::Reg::AddrM
+	lda Vera::Reg::AddrL
 	eor #$40
-	sta Vera::Reg::AddrM
+	sta Vera::Reg::AddrL
 	stx Vera::Reg::Data0
 
 is_chr_ram: ; no-op, just auto-increment

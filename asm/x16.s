@@ -360,17 +360,37 @@ panic:
 .proc X16_load_2k_to_VERA
 	php
 	sei
-	sty READPAGE
+
+	sty READPAGE0
+	sty READPAGE1
+	sty READPAGE2
+	sty READPAGE3
 
 	ldy #8 ; read 8 pages
 	ldx #0
+	clc
 loop:
 	lda $ff00,x
-READPAGE = * - 1
+READPAGE0 = * - 1
+	sta Vera::Reg::Data0
+	lda $ff01,x
+READPAGE1 = * - 1
+	sta Vera::Reg::Data0
+	lda $ff02,x
+READPAGE2 = * - 1
+	sta Vera::Reg::Data0
+	lda $ff03,x
+READPAGE3 = * - 1
 	sta Vera::Reg::Data0
 	inx
+	inx
+	inx
+	inx
 	bne loop
-	inc READPAGE
+	inc READPAGE0
+	inc READPAGE1
+	inc READPAGE2
+	inc READPAGE3
 	dey
 	bne loop
 
@@ -541,6 +561,8 @@ X16_PPURESET:
 	PJFAR NESPort::PPURESET, 31
 
 X16_sta_FRAMECTR_CTL:
+	rts
+
 X16_sta_JOYPAD:
 	rts
 
@@ -818,24 +840,62 @@ activate_tilemap:
 .endproc
 
 X16_sta_PAPU_CT1:
+	rts
+
 X16_sta_PAPU_CT1_x:
+	rts
+
 X16_sta_PAPU_CT2:
+	rts
+
 X16_sta_PAPU_CTL1:
+	rts
+
 X16_sta_PAPU_CTL2:
+	rts
+
 X16_sta_PAPU_EN:
+	rts
+
 X16_sta_PAPU_FT1:
+	rts
+
 X16_sta_PAPU_FT1_x:
+	rts
+
 X16_sta_PAPU_FT2:
+	rts
+
 X16_sta_PAPU_MODADDR:
+	rts
+
 X16_sta_PAPU_MODCTL:
+	rts
+
 X16_sta_PAPU_MODLEN:
+	rts
+
 X16_sta_PAPU_NCTL1:
+	rts
+
 X16_sta_PAPU_NFREQ1:
+	rts
+
 X16_sta_PAPU_NFREQ2:
+	rts
+
 X16_sta_PAPU_RAMP1:
+	rts
+
 X16_sta_PAPU_RAMP2:
+	rts
+
 X16_sta_PAPU_TCR1:
+	rts
+
 X16_sta_PAPU_TFREQ1:
+	rts
+
 X16_sta_PAPU_TFREQ2:
 	rts
 
@@ -858,10 +918,20 @@ X16_sta_SPR_DMA:
 	PJFAR NESPort::sta_OAMDMA, 31
 
 X16_stx_PAPU_CT2:
+	rts
+
 X16_stx_PAPU_CTL1:
+	rts
+
 X16_stx_PAPU_CTL2:
+	rts
+
 X16_stx_PAPU_EN:
+	rts
+
 X16_stx_PAPU_NFREQ1:
+	rts
+
 X16_stx_PAPU_RAMP2:
 	rts
 
@@ -876,6 +946,8 @@ X16_sty_MMC3_IRQDISABLE:
 	rts
 
 X16_sty_PAPU_RAMP1:
+	rts
+
 X16_sty_PAPU_RAMP2:
 	rts
 
