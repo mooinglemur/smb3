@@ -7,10 +7,29 @@
 
 .segment "NESPORT"
 
+.import X16_pt1a_idx_active
+.import X16_pt1b_idx_active
+.import X16_pt1c_idx_active
+.import X16_pt1d_idx_active
+
+.export PPUCTRL
+.export PPUSTATUS
+
 .export PPURESET
 .export bit_PPUSTATUS
+.export lda_PPUSTATUS
 .export ldx_PPUSTATUS
 .export sta_MMC3_MIRROR
+.export sta_OAMDMA
+.export sta_PPUADDR
+.export sta_PPUCTRL
+.export sta_PPUDATA
+.export sta_PPUMASK
+.export sta_PPUSCROLL
+.export stx_PPUADDR
+.export stx_PPUMASK
+.export sty_PPUADDR
+.export sty_PPUSCROLL
 
 ; Variables here
 tmp0:
@@ -128,26 +147,6 @@ PPUSTATUS:
 	stz Vera::Reg::L1HScrollL
 	stz Vera::Reg::L1HScrollH
 
-
-
-; Zero out (most of) VRAM
-	stz Vera::Reg::Ctrl
-	lda #$10
-	sta Vera::Reg::AddrH
-	stz Vera::Reg::AddrL
-	stz Vera::Reg::AddrM
-
-	ldx #0
-	ldy #$FC
-	lda #$01
-eraseloop:
-	stz Vera::Reg::Data0
-	stz Vera::Reg::Data0
-	dex
-	bne eraseloop
-	dey
-	bne eraseloop
-
 	; now zero the attribute table
 	jsr bit_PPUSTATUS
 	lda #$23
@@ -224,14 +223,16 @@ end:
 	stz PPUADDR_LATCH
 	stz PPUSCROLL_LATCH
 	lda Vera::Reg::ISR
+
 	ror
 	ror
 	and #$80
 	ora PPUSTATUS
 	sta PPUSTATUS
+	bpl :+
 	lda #1
 	sta Vera::Reg::ISR
-	lda PPUSTATUS
+:	lda PPUSTATUS
 	sta PPUSTATUS+1
 	and #$7F
 	sta PPUSTATUS
@@ -260,9 +261,99 @@ end:
 	ror
 	sta PPUCTRL_HMIRROR
 	pla
-	php
+	plp
 	rts
 .endproc
+
+.proc sta_OAMDMA
+	php
+	pha
+	phx
+	phy
+
+	; .A contains the high byte of the OAM shadow
+	sta OAM_1a
+	sta OAM_1b
+	sta OAM_2
+	sta OAM_3
+	sta OAM_4
+
+	VERA_SET_ADDR Vera::VRAM_sprattr, 1
+	ldx #0
+loop:
+	clc
+	lda $ff01,x
+OAM_1a = (*-1)
+	and #$3f ; 0-63 per region
+	bit $ff01,x
+OAM_1b = (*-1)
+	bpl bottomhalf
+	bvc third
+fourth:
+	ldy X16_pt1d_idx_active
+	adc spr_addrl_offset,y
+	bra spridx_cont
+third:
+	ldy X16_pt1c_idx_active
+	adc spr_addrl_offset,y
+	bra spridx_cont
+bottomhalf:
+	bvc first
+second:
+	ldy X16_pt1b_idx_active
+	adc spr_addrl_offset,y
+	bra spridx_cont
+first:
+	ldy X16_pt1a_idx_active
+	adc spr_addrl_offset,y
+spridx_cont:
+	sta Vera::Reg::Data0
+	lda spr_addrm_offset,y
+	sta Vera::Reg::Data0 ; high index
+
+	lda $ff03,x
+OAM_2 = (*-1)
+	sta Vera::Reg::Data0 ; X pos
+	stz Vera::Reg::Data0 ; no high X position
+	lda $ff00,x
+OAM_3 = (*-1)
+	inc ; sprites are a row late on NES
+	sta Vera::Reg::Data0 ; Y pos
+	stz Vera::Reg::Data0 ; high Y position
+	lda $ff02,x ; [7] V-flip, [6] H-flip, [5] Priority, [1:0] Palette idx
+OAM_4 = (*-1)
+	pha ; save for palette idx
+	rol
+	rol
+	rol
+	and #3
+	bcs background_sprite
+	ora #%00001100
+	bra continue
+background_sprite:
+	ora #%00000100
+continue:
+	sta Vera::Reg::Data0
+	pla ; palette
+	and #3
+	clc
+	adc #4
+	ora PPUCTRL_SP16
+	sta Vera::Reg::Data0
+	inx
+	inx
+	inx
+	inx
+	bne loop
+
+	ply
+	plx
+	pla
+	plp
+	rts
+
+.endproc
+
 
 .proc sta_PPUADDR
 	php
@@ -630,49 +721,173 @@ attr_nt_write:
 	jmp auto_increment
 
 apply_palette_UL_UR:
-    txa
-    and #$03
-    asl
-    asl
-    asl
-    asl
-    sta Vera::Reg::Data0
-    sta Vera::Reg::Data0
 	txa
-    and #$0C
-    asl
-    asl
-    sta Vera::Reg::Data0
-    sta Vera::Reg::Data0
+	and #$03
+	asl
+	asl
+	asl
+	asl
+	sta Vera::Reg::Data0
+	sta Vera::Reg::Data0
+	txa
+	and #$0C
+	asl
+	asl
+	sta Vera::Reg::Data0
+	sta Vera::Reg::Data0
 
-    bra next_row
+	bra next_row
 
 apply_palette_LL_LR:
-    txa
-    and #$30
-    sta Vera::Reg::Data0
-    sta Vera::Reg::Data0
 	txa
-    and #$C0
-    lsr
-    lsr
-    sta Vera::Reg::Data0
-    sta Vera::Reg::Data0
+	and #$30
+	sta Vera::Reg::Data0
+	sta Vera::Reg::Data0
+	txa
+	and #$C0
+	lsr
+	lsr
+	sta Vera::Reg::Data0
+	sta Vera::Reg::Data0
 next_row:
-    lda tmp0
-    clc
-    adc #128
-    sta tmp0
-    sta Vera::Reg::AddrL
-    lda tmp1
-    adc #0
-    sta tmp1
-    sta Vera::Reg::AddrM
-    rts
+	lda tmp0
+	clc
+	adc #128
+	sta tmp0
+	sta Vera::Reg::AddrL
+	lda tmp1
+	adc #0
+	sta tmp1
+	sta Vera::Reg::AddrM
+	rts
 
 .endproc
 
+.proc sta_PPUMASK
+	php
+	sei
+	pha
+	sta PPUMASK
+	asl
+	asl
+	and #$60
+	sta @TMP0
+	lda PPUMASK
+	asl
+	and #$10
+	ora @TMP0
+	sta @TMP0
+	stz Vera::Reg::Ctrl
+	lda Vera::Reg::DCVideo
+	and #%10001111
+	ora #$ff
+@TMP0 = * - 1
+	sta Vera::Reg::DCVideo
+	pla
+	plp
+	rts
+.endproc
 
+.proc sta_PPUSCROLL
+	php
+	sei
+	pha
+	pha
+
+	lda PPUSCROLL_LATCH
+	beq horiz
+vert:
+	pla
+	sta PPUSCROLL_V
+	sta @TMP0
+	lda PPUCTRL
+	and #2
+	beq :+
+		lda #240
+	:
+	clc
+	adc @TMP0
+	sta Vera::Reg::L0VScrollL
+	sta @TMP0
+	lda #0
+	adc #0
+	sta Vera::Reg::L0VScrollH
+	sta @TMP1
+	lda #$ff
+@TMP0 = * - 1
+	sec
+	sbc #240
+	sta Vera::Reg::L1VScrollL
+	lda #$ff
+@TMP1 = * - 1
+	sbc #0
+	sta Vera::Reg::L1VScrollH
+
+	stz PPUSCROLL_LATCH
+	bra end
+horiz:
+	pla
+	sta PPUSCROLL_H
+	sta Vera::Reg::L0HScrollL
+	sta Vera::Reg::L1HScrollL
+	lda PPUCTRL
+	and #1
+	sta Vera::Reg::L0HScrollH
+	sta Vera::Reg::L1HScrollH
+	inc PPUSCROLL_LATCH
+end:
+	pla
+	plp
+	rts
+.endproc
+
+.proc stx_PPUADDR
+	php
+	phx
+	pha
+	txa
+	jsr sta_PPUADDR
+	pla
+	plx
+	plp
+	rts
+.endproc
+
+.proc stx_PPUMASK
+	php
+	phx
+	pha
+	txa
+	jsr sta_PPUMASK
+	pla
+	plx
+	plp
+	rts
+.endproc
+
+.proc sty_PPUADDR
+	php
+	phy
+	pha
+	tya
+	jsr sta_PPUADDR
+	pla
+	ply
+	plp
+	rts
+.endproc
+
+.proc sty_PPUSCROLL
+	php
+	phy
+	pha
+	tya
+	jsr sta_PPUSCROLL
+	pla
+	ply
+	plp
+	rts
+.endproc
 
 
 palette:
@@ -684,5 +899,16 @@ palette:
 ;152 150 152    8  76 196   48  50 236   92  30 228  136  20 176  160  20 100  152  34  32  120  60   0   84  90   0   40 114   0    8 124   0    0 118  40    0 102 120    0   0   0
 ;236 238 236   76 154 236  120 124 236  176  98 236  228  84 236  236  88 180  236 106 100  212 136  32  160 170   0  116 196   0   76 208  32   56 204 108   56 180 204   60  60  60
 ;236 238 236  168 204 236  188 188 236  212 178 236  236 174 236  236 174 212  236 180 176  228 196 144  204 210 120  180 222 120  168 226 144  152 226 180  160 214 228  160 162 160    
+
+spr_addrl_offset:
+.repeat 32, i
+	.byte <(i * 64)
+.endrepeat
+
+spr_addrm_offset:
+.repeat 32, i
+	.byte >(i * 64)
+.endrepeat
+
 
 .endif

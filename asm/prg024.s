@@ -1529,6 +1529,9 @@ X16_PRG024_Load_Video_Upd_Table2:
 	LDA #$00
 	STA VBlank_Tick	 ; Force VBlank_Tick = 0, so we know when a VBlank has occurred
 
+.ifdef X16
+	cli ; hack
+.endif
 	; Waiting for VBlank...
 PRG024_A81C:
 	LDA VBlank_Tick
@@ -1540,6 +1543,10 @@ PRG024_A81C:
 	CLI		 ; Enable further masked interrupts
 	RTS		 ; Return
 
+.ifdef X16
+.pushseg
+.segment "PRG024LOW"
+.endif
 
 IntIRQ_TitleEnding:
 	sta_MMC3_IRQENABLE
@@ -1577,6 +1584,9 @@ PRG024_A82B:
 	sta_MMC3_IRQDISABLE
 
 	JMP IntIRQ_Finish_NoDis	 ; Jump to IntIRQ_Finish_NoDis
+.ifdef X16
+.popseg
+.endif
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Video_Misc_Updates2

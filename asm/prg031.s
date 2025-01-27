@@ -17,6 +17,10 @@
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
 .include "../inc/nesswitch.inc"
+.ifdef X16
+.include "../inc/x16.inc"
+.import X16_nes_interrupt_inhibit
+.endif
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, VBlank_Tick, Horz_Scroll_Hi, PPU_CTL1_Mod
@@ -63,7 +67,7 @@
 .export Scroll_PPU_Reset, Sound1_XCTL_YRAMP, Sound2_XCTL_YRAMP, Sound_PlayMusic, Sound_Sq1_NoteOn
 .export Sound_Sq2_NoteOn, Sound_Sq2_NoteOn_NoPAPURAMP, Sprite_RAM_Clear, StatusBar_DrawCardPiece
 .export StatusBar_Update_Cards, VertLevel_ScreenH, VertLevel_ScreenL
-
+.export IntReset, IntIRQ, IntNMI
 
 .segment "PRG031"
 
@@ -1523,7 +1527,7 @@ IntNMI_Raster_Table:
 	; NMI INTERRUPT
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 IntNMI:
-	SEI		 ; Prevent further masked Interrupts
+	INT_SEI		 ; Prevent further masked Interrupts
 
 	; This pushes all the registers onto the stack
 	PHP		 ; Push processor status onto stack
@@ -1606,7 +1610,7 @@ PRG031_F4E3:
 	LDA #$00	 ; A = 0
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
-	LDA #$02	 ; A = 2
+	LDA #>Sprite_RAM	 ; A = 2
 	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
 
@@ -1670,7 +1674,7 @@ PRG031_F51D:
 	sta_MMC3_IRQCNT		; Store 192 into the IRQ count
 	sta_MMC3_IRQLATCH	; Store it into the latch (will be used later)
 	sta_MMC3_IRQENABLE	; Start the IRQ counter
-	CLI		; Enable maskable interrupts
+	INT_CLI		; Enable maskable interrupts
 
 PRG031_F55B:
 	; This is a common routine used by variants
@@ -1735,7 +1739,7 @@ UpdSel_Vertical:
 	LDA #$00	 ; A = 0
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
-	LDA #$02	 ; A = 2
+	LDA #>Sprite_RAM	 ; A = 2
 	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
 
@@ -1795,7 +1799,7 @@ PRG031_F5D3:
 	sta_MMC3_IRQCNT	 ; Store 192 into the IRQ count
 	sta_MMC3_IRQLATCH ; Store it into the latch (will be used later)
 	sta_MMC3_IRQENABLE ; Start the IRQ counter
-	CLI		 ; Enable maskable interrupts
+	INT_CLI		 ; Enable maskable interrupts
 	JMP PRG031_F55B	 ; Jump to PRG031_F55B
 
 PRG031_F610:
@@ -1805,7 +1809,7 @@ PRG031_F610:
 	LDA #$00	 ; A = 0
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
-	LDA #$02	 ; A = 2
+	LDA #>Sprite_RAM	 ; A = 2
 	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
 
@@ -1862,7 +1866,7 @@ PRG031_F631:
 	sta_MMC3_IRQCNT	 ; Store 192 into the IRQ count
 	sta_MMC3_IRQLATCH ; Store it into the latch (will be used later)
 	sta_MMC3_IRQENABLE ; Start the IRQ counter
-	CLI		 ; Enable maskable interrupts
+	INT_CLI		 ; Enable maskable interrupts
 	DEC VBlank_Tick ; Decrement VBlank_Tick
 	JMP PRG031_F567	 ;
 
@@ -1871,7 +1875,7 @@ UpdSel_32PixPart:
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
 
-	LDA #$02	 ; A = 2
+	LDA #>Sprite_RAM	 ; A = 2
 	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
 
@@ -1932,14 +1936,14 @@ PRG031_F6BC:
 	sta_MMC3_IRQCNT		; Store 160 into the IRQ count
 	sta_MMC3_IRQLATCH	; Store it into the latch (will be used later)
 	sta_MMC3_IRQENABLE	; Start the IRQ counter
-	CLI		; Enable maskable interrupts
+	INT_CLI		; Enable maskable interrupts
 	JMP PRG031_F55B	 ; Jump to PRG031_F55B
 
 UpdSel_Title:
 	LDA #$00	 ; A = 0
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
-	LDA #$02	 ; A = 2
+	LDA #>Sprite_RAM	 ; A = 2
 	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
 
@@ -2009,7 +2013,7 @@ PRG031_F748:
 	sta_MMC3_IRQCNT		; Store 193 into the IRQ count
 	sta_MMC3_IRQLATCH	; Store it into the latch (will be used later)
 	sta_MMC3_IRQENABLE	; Start the IRQ counter
-	CLI		; Enable maskable interrupts
+	INT_CLI		; Enable maskable interrupts
 
 	LDA VBlank_TickEn	 ; Check VBlank flag
 	BEQ PRG031_F786	 	; If A = 0, jump to PRG031_F786
@@ -2042,7 +2046,7 @@ SpriteHideCHR_1C00:	.byte $7e	; ALL BLANK TILES
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 IntIRQ:	 ; $F795 IRQ Interrupt (scanline from MMC3)
-	SEI		 ; Disable maskable interrupts
+	INT_SEI		 ; Disable maskable interrupts
 
 	; Save all registers
 	PHP		 ; Push processor status onto stack
@@ -3451,7 +3455,7 @@ Read_Joypad_Loop:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 IntReset:
-	SEI		 ; Disable maskable interrupts
+	INT_SEI		 ; Disable maskable interrupts
 	CLD		 ; Clear decimal (no BCD math, not there should be anyway)
 	LDA #$00	 ;
 	sta_PPU_CTL2	 ; Most likely mainly to make BG and SPRITES invisible
@@ -3461,7 +3465,9 @@ IntReset:
 
 VBlank_Wait_Loop:
 	lda_PPU_STAT
+.ifdef NES
 	BPL VBlank_Wait_Loop	; If VBlank NOT reported as occuring, loop around and check again!
+.endif
 
 	DEX		 	; X--
 	BNE VBlank_Wait_Loop	; X starts at 2, and goes to 1; so check once more?

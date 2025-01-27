@@ -41,7 +41,15 @@
 .import Level_TileOff, Level_Tile, Player_Slopes, Player_Suit, Player_IsDying
 .import __BONUSGAMEZP_LOAD__, __BONUSGAMEZP_SIZE__
 .import __BONUSGAMEVARS_LOAD__, __BONUSGAMEVARS_SIZE__
+.import __GAMEPLAYVARS_LOAD__
+.import __GAMEPLAYBSS_LOAD__
+.import __TITLEBSS_LOAD__
+.import __OAMSHADOW_LOAD__
+.import __GFXBSS_LOAD__
+.import __GENBSS1_LOAD__, __GENBSS1_SIZE__
+.import __GENBSS2_LOAD__, __GENBSS2_SIZE__
 .endif
+.import __GENSRAM_LOAD__
 ; BSS imports (low RAM and cart SRAM)
 .import Update_Select, Raster_Effect, Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, Level_SizeOrig
 .import Level_PipeNotExit, Level_PauseFlag, Level_SkipStatusBarUpd, Raster_State, Scroll_ToVRAMHi
@@ -550,9 +558,9 @@ IntReset_Part2:
 	STA Map_Unused7992
 
 	; Note: This is setting up the address $7F00 @ $00/$01, the last page of SRAM
-	LDY #$00	 ; Y = $00
+	LDY #<(__GENSRAM_LOAD__+$1F00)	 ; Y = $00
 	STY Temp_Var1	 ; <Temp_Var1 = $00
-	LDA #$7f	 ; A = $7F
+	LDA #>(__GENSRAM_LOAD__+$1F00)	 ; A = $7F
 	STA Temp_Var2	 ; <Temp_Var2 = $7F
 
 	; The following loop clears all of $6000 - $7FFF ... a lot of RAM!
@@ -565,7 +573,7 @@ PRG030_8437:
 	; This decrement then moves to $7E, $7D ... $60
 	DEC Temp_Var2	 ; Next lower page
 	LDA Temp_Var2	 ; Get page -> A
-	CMP #$5f	 ;
+	CMP #>(__GENSRAM_LOAD__-$0100)	 ;
 	BNE PRG030_8437	 ; If A <> $5F, loop again (clears down to $6000)
 
 	; Clear $07FF - $0000, excluding $01xx
@@ -4099,6 +4107,7 @@ PRG030_96CB:
 	; (except the stack space) $YY00 to $0000
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Clear_RAM_thru_ZeroPage:
+.ifdef NES
 	STY Temp_Var2	 ; Save Y in <Temp_Var2
 	LDY #$00	 ; Y = 0
 	STY Temp_Var1	 ; Clear <Temp_Var1
@@ -4117,6 +4126,47 @@ PRG030_96DD:
 	DEC Temp_Var2	 ; Next lower bank
 	BPL PRG030_96D5	 ; While we're >= bank $00
 	RTS		 ; Return
+.endif
+.ifdef X16
+	cpy #$07
+	bcc after_genbss2
+
+	ldx #<(__GENBSS2_SIZE__ - 1)
+loop1:
+	stz __GENBSS2_LOAD__, x
+	dex
+	bne loop1
+
+after_genbss2:
+	ldx #<(__GENBSS1_SIZE__ - 1)
+loop2:
+	stz __GENBSS1_LOAD__, x
+	dex
+	bne loop2
+
+	ldx #$ff
+loop3:
+	stz __GFXBSS_LOAD__, x
+	stz __OAMSHADOW_LOAD__, x
+	stz __TITLEBSS_LOAD__, x
+	stz __GAMEPLAYBSS_LOAD__, x
+	dex
+	bne loop3
+
+	ldx #$56
+loop4:
+	stz $a9, x
+	dex
+	bne loop4
+
+	ldx #$7d
+loop5:
+	stz $02, x
+	stz __GAMEPLAYVARS_LOAD__, x
+	dex
+	bne loop5
+	rts
+.endif
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; GraphicsBuf_Prep_And_WaitVSync

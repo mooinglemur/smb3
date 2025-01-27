@@ -1,18 +1,39 @@
 .ifdef X16
 
 .include "../inc/defines.inc"
+.include "../inc/macros.inc"
 .include "../inc/x16.inc"
 .macpack longbranch
 
 .scope NESPort
+	; vars
+	.import PPUCTRL
+	.import PPUSTATUS
+	; functions
 	.import PPURESET
 	.import bit_PPUSTATUS
+	.import lda_PPUSTATUS
 	.import ldx_PPUSTATUS
 	.import sta_MMC3_MIRROR
+	.import sta_OAMDMA
+	.import sta_PPUCTRL
+	.import sta_PPUADDR
+	.import sta_PPUDATA
+	.import sta_PPUMASK
+	.import sta_PPUSCROLL
+	.import stx_PPUADDR
+	.import stx_PPUMASK
+	.import sty_PPUADDR
+	.import sty_PPUSCROLL
 .endscope
 
 .import bgbanks, bgpages
 .import sprbanks, sprpages
+
+.import IntReset, IntIRQ, IntNMI
+
+.export X16_PJFAR_outbound
+.export X16_PJFAR_return
 
 .export X16_lda_JOYPAD_y
 .export X16_lda_PPU_STAT
@@ -52,7 +73,6 @@
 .export X16_sta_PPU_CTL1
 .export X16_sta_PPU_CTL2
 .export X16_sta_PPU_SCROLL
-.export X16_sta_PPU_SPR_ADDR
 .export X16_sta_PPU_VRAM_ADDR
 .export X16_sta_PPU_VRAM_DATA
 .export X16_sta_SPR_DMA
@@ -72,12 +92,23 @@
 .export X16_sty_PPU_SCROLL
 .export X16_sty_PPU_VRAM_ADDR
 
+.export X16_pt1a_idx_active
+.export X16_pt1b_idx_active
+.export X16_pt1c_idx_active
+.export X16_pt1d_idx_active
+
+.export X16_nes_interrupt_inhibit
+
 .segment "X16BSS"
 X16_MMC3_COMMAND:
 	.res 1
 X16_MMC3_IRQCNT:
 	.res 1
 X16_MMC3_IRQ_ENABLED:
+	.res 1
+kernal_irq_handler:
+	.res 2
+X16_nes_interrupt_inhibit:
 	.res 1
 
 ; These variables track what CHR banks are loaded in VERA VRAM
@@ -96,6 +127,7 @@ X16_pt1_loaded:
 	.res 32
 X16_pt1_lru:
 	.res 32
+X16_pt1_idx_active:   ; when treated as an array
 X16_pt1a_idx_active:
 	.res 1
 X16_pt1b_idx_active:
@@ -111,7 +143,14 @@ start:
 
 	jsr X16_load_tanooki_bin
 	bcs nobin
+
+	jsr X16_PPURESET
+
 	jsr X16_init_dynamic_chr
+
+	jsr X16_setup_handler
+
+	jmp IntReset ; Start Game
 
 	lda #4
 	sta X16::Reg::ROMBank
@@ -123,6 +162,34 @@ nobin:
 	lda #4
 	sta X16::Reg::ROMBank
 	rts
+
+.proc X16_setup_handler
+	php
+	sei
+
+	lda X16::Vec::IRQVec
+	sta kernal_irq_handler
+	lda X16::Vec::IRQVec+1
+	sta kernal_irq_handler+1
+
+	lda #<x16_irqhandler
+	sta X16::Vec::IRQVec
+	lda #>x16_irqhandler
+	sta X16::Vec::IRQVec+1
+
+	lda #$03
+	tsb Vera::Reg::IEN
+
+	stz X16_MMC3_IRQ_ENABLED
+	lda #$ff
+	sta MMC3_IRQCNT
+
+	lda #$ff
+	sta X16_nes_interrupt_inhibit
+
+	plp
+	rts
+.endproc
 
 
 .proc X16_load_tanooki_bin
@@ -314,11 +381,150 @@ READPAGE = * - 1
 .endproc
 
 .segment "X16BRIDGE"
-; stubs for now
+
+.proc x16_irqhandler
+	;stp
+	lda X16::Reg::RAMBank
+	sta RAMBANK_RESTORE
+
+	; are we vblank?
+	lda Vera::Reg::ISR
+	and #1
+	beq notvblank
+
+	lda Vera::Reg::Ctrl
+	pha
+	stz Vera::Reg::Ctrl
+	lda Vera::Reg::AddrL
+	pha
+	lda Vera::Reg::AddrM
+	pha
+	lda Vera::Reg::AddrH
+	pha
+
+	; run the kernal handler first
+	lda #>after_kernal_handler
+	pha
+	lda #<after_kernal_handler
+	pha
+	php
+	pha
+	phx
+	phy
+
+	jmp (kernal_irq_handler)
+after_kernal_handler:
+	lda #31
+	sta X16::Reg::RAMBank
+	lda #$80
+	sta NESPort::PPUSTATUS
+	lda NESPort::PPUCTRL
+
+	ldx #$ff
+RAMBANK_RESTORE = * - 1
+	stx X16::Reg::RAMBank
+	tax
+
+	bpl after_game_int_handler
+
+	lda #>after_game_int_handler
+	pha
+	lda #<after_game_int_handler
+	pha
+	php
+
+	jmp IntNMI
+notvblank:
+	lda #$02
+	sta Vera::Reg::ISR
+
+	bit X16_nes_interrupt_inhibit
+	bmi end
+
+	jsr X16_sta_MMC3_IRQLATCH
+
+	lda X16_MMC3_IRQ_ENABLED
+	beq end
+
+	lda Vera::Reg::Ctrl
+	pha
+	stz Vera::Reg::Ctrl
+	lda Vera::Reg::AddrL
+	pha
+	lda Vera::Reg::AddrM
+	pha
+	lda Vera::Reg::AddrH
+	pha
+
+	lda #>after_game_int_handler
+	pha
+	lda #<after_game_int_handler
+	pha
+	php
+
+	jmp IntIRQ
+
+after_game_int_handler:
+	pla
+	sta Vera::Reg::AddrH
+	pla
+	sta Vera::Reg::AddrM
+	pla
+	sta Vera::Reg::AddrL
+	pla
+	sta Vera::Reg::Ctrl
+end:
+	;stp
+	ply
+	plx
+	pla
+	rti
+.endproc
+
+X16_PJFAR_outbound:
+	pha ; 2 outbound bank
+	phx ; 1
+	tsx
+	lda $010b,x ; bring preserved flags to outbound
+	sta $0104,x
+	lda $010a,x ; bring preserved A to outbound
+	sta $0103,x
+	lda X16::Reg::RAMBank ; send preserved bank to return
+	sta $0109,x
+	plx ; 1
+	pla ; 2
+	sta X16::Reg::RAMBank ; set outbound bank
+	pla ; 3
+	plp ; 4
+	rts ; return to call (5-6), leaving our return (7-8) and state (9-b)
+
+X16_PJFAR_return:
+	; 6 - return flags (was b)
+	; 5 - return a (was a)
+	; 4 - return bank (was 9)
+	php ; 3
+	pha ; 2
+	phx ; 1
+	tsx
+	lda $0103,x
+	sta $0106,x
+	lda $0102,x
+	sta $0105,x
+	plx ; 1
+	pla ; 2
+	pla ; 3
+	pla ; 4
+	sta X16::Reg::RAMBank
+	pla ; 5
+	plp ; 6
+	rts
+
 
 X16_lda_JOYPAD_y:
-X16_lda_PPU_STAT:
 	rts
+
+X16_lda_PPU_STAT:
+	JSRFAR NESPort::lda_PPUSTATUS, 31
 
 .proc X16_lda_PPU_VRAM_DATA
 	; In SMB3, we never actually need to read out of VRAM.
@@ -327,9 +533,12 @@ X16_lda_PPU_STAT:
 .endproc
 
 .proc X16_ldx_PPU_STAT
-	JSRFAR NESPort::ldx_PPUSTATUS, 31
-	rts
+	PJFAR NESPort::ldx_PPUSTATUS, 31
+
 .endproc
+
+X16_PPURESET:
+	PJFAR NESPort::PPURESET, 31
 
 X16_sta_FRAMECTR_CTL:
 X16_sta_JOYPAD:
@@ -399,8 +608,7 @@ end:
 .endproc
 
 .proc X16_sta_MMC3_MIRROR
-	JSRFAR NESPort::sta_MMC3_MIRROR, 31
-	rts
+	PJFAR NESPort::sta_MMC3_MIRROR, 31
 .endproc
 
 .proc X16_sta_MMC3_PAGE
@@ -450,7 +658,7 @@ pt0a:
 	sty X16_pt0_idx_active
 	jsr activate_tilemap
 	plp
-	bra end
+	jmp end
 @nomatch:
 	ldx X16_pt0_lru+7 ; grab the least recently used index
 	lda @CMP1
@@ -507,14 +715,72 @@ pt0b:
 	ldy X16_pt0_lru+7
 	bra @found
 pt1a:
+	php
+	sei
+	lda #0
+	pha
+	bra pt1
 pt1b:
+	php
+	sei
+	lda #1
+	pha
+	bra pt1
 pt1c:
+	php
+	sei
+	lda #2
+	pha
+	bra pt1
 pt1d:
+	php
+	sei
+	lda #3
+	pha
+pt1:
+	stx @CMP1
+	; try to find a slot with the already loaded bank
+	ldy #32
+@loop1:
+	dey
+	bmi @nomatch
+	lda X16_pt1_loaded,y
+	cmp #$ff
+@CMP1 = * - 1
+	bne @loop1
+	; we found it
+@found:
+	tya
+	ply
+	sta X16_pt1_idx_active,y
 
+	; update the LRU
+	ldx #31
+	tya
+@loop1s:
+	dex
+	bmi panic
+	cmp X16_pt1_lru,x
+	bne @loop1s
+@loop2s:
+	dex
+	bmi @mrus
+	lda X16_pt1_lru,x
+	sta X16_pt1_lru+1,x
+	bra @loop2s
+@mrus:
+	sty X16_pt1_lru
 
-
-
-
+	plp
+	bra end
+@nomatch:
+	ldx X16_pt1_lru+31 ; grab the least recently used index
+	lda @CMP1
+	sta X16_pt1_loaded,x
+	tay
+	jsr X16_load_sprtiles
+	ldy X16_pt0_lru+31
+	bra @found
 prgc:
 	; changing NES $C000 bank is a no-op on X16
 end:
@@ -573,27 +839,53 @@ X16_sta_PAPU_RAMP2:
 X16_sta_PAPU_TCR1:
 X16_sta_PAPU_TFREQ1:
 X16_sta_PAPU_TFREQ2:
+	rts
+
 X16_sta_PPU_CTL1:
+	PJFAR NESPort::sta_PPUCTRL, 31
+
 X16_sta_PPU_CTL2:
+	PJFAR NESPort::sta_PPUMASK, 31
+
 X16_sta_PPU_SCROLL:
-X16_sta_PPU_SPR_ADDR:
+	PJFAR NESPort::sta_PPUSCROLL, 31
+
 X16_sta_PPU_VRAM_ADDR:
+	PJFAR NESPort::sta_PPUADDR, 31
+
 X16_sta_PPU_VRAM_DATA:
+	PJFAR NESPort::sta_PPUDATA, 31
+
 X16_sta_SPR_DMA:
+	PJFAR NESPort::sta_OAMDMA, 31
+
 X16_stx_PAPU_CT2:
 X16_stx_PAPU_CTL1:
 X16_stx_PAPU_CTL2:
 X16_stx_PAPU_EN:
 X16_stx_PAPU_NFREQ1:
 X16_stx_PAPU_RAMP2:
+	rts
+
 X16_stx_PPU_CTL2:
+	PJFAR NESPort::stx_PPUMASK, 31
+
 X16_stx_PPU_VRAM_ADDR:
+	PJFAR NESPort::stx_PPUADDR, 31
+
 X16_sty_MMC3_IRQDISABLE:
+	stz X16_MMC3_IRQ_ENABLED
+	rts
+
 X16_sty_PAPU_RAMP1:
 X16_sty_PAPU_RAMP2:
-X16_sty_PPU_SCROLL:
-X16_sty_PPU_VRAM_ADDR:
 	rts
+
+X16_sty_PPU_SCROLL:
+	PJFAR NESPort::sty_PPUSCROLL, 31
+
+X16_sty_PPU_VRAM_ADDR:
+	PJFAR NESPort::sty_PPUADDR, 31
 
 .endif
 
@@ -698,5 +990,5 @@ X16_sty_PPU_VRAM_ADDR:
 ; $78-$79/120-121 - background (title)
 ; $7A-$7B/122-123 - background (title)
 ; $7C-$7D/124-125 - backgtound (curtain/floor)
-; $7E/126 - sprite presumably unused
+; $7E/126 - sprite blank tiles over status bar
 ; $7F/127 - sprite (title)

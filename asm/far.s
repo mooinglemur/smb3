@@ -2,6 +2,10 @@
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
 
+; X16 imports
+.import X16_PJFAR_outbound
+.import X16_PJFAR_return
+
 ; PRG010 imports
 .import FX_MonoFlash_By_MapTick
 .import Map_GetTile

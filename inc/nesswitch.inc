@@ -110,7 +110,7 @@
     sta PPU_SPR_ADDR
 .endif
 .ifdef X16
-    jsr X16_sta_PPU_SPR_ADDR
+    ; no op
 .endif
 .endmacro
 
@@ -552,5 +552,23 @@
 .endif
 .ifdef X16
     jsr X16_sta_MMC3_IRQENABLE
+.endif
+.endmacro
+
+.macro INT_CLI
+.ifdef NES
+    cli
+.endif
+.ifdef X16
+    stz X16_nes_interrupt_inhibit
+.endif
+.endmacro
+
+.macro INT_SEI
+.ifdef NES
+    sei
+.endif
+.ifdef X16
+    dec X16_nes_interrupt_inhibit
 .endif
 .endmacro

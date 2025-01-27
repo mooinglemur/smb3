@@ -266,6 +266,9 @@
 .export QBoxOrange_Tiles, QBoxOrange_Tiles_End, Roulette_DrawBorderSprites, Roulette_DrawShapes
 .export Tile_Layout_TS15_TS16_TS17, UpdSel_Roulette, Video_NSpadeBG, Video_RoulBordAttr
 
+.ifdef X16
+.import X16_nes_interrupt_inhibit
+.endif
 
 
 .segment "PRG022"
@@ -2614,7 +2617,7 @@ UpdSel_Roulette:
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
 
-	LDA #$02	 ; A = 2
+	LDA #>Sprite_RAM	 ; A = 2
 	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
 
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
@@ -2691,7 +2694,7 @@ UpdSel_Roulette:
 	sta_MMC3_IRQLATCH
 	sta_MMC3_IRQENABLE
 
-	CLI		; Enable maskable interrupts
+	INT_CLI		; Enable maskable interrupts
 
 	JSR Read_Joypads	 ; Updates both joypads in RAM
 
