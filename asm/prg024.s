@@ -105,6 +105,10 @@
 .export Cinematic_ToadAndKing, DiagBox_RowOffs, DiagBox_RowOffs_End, Do_Ending2_IntCmd
 .export Do_Title_Screen, IntIRQ_TitleEnding, Rescue_Princess
 
+.ifdef X16
+.import X16_nes_interrupt_inhibit
+.endif
+
 .segment "PRG024"
 
 Cinematic_ToadAndKing:
@@ -1529,9 +1533,6 @@ X16_PRG024_Load_Video_Upd_Table2:
 	LDA #$00
 	STA VBlank_Tick	 ; Force VBlank_Tick = 0, so we know when a VBlank has occurred
 
-.ifdef X16
-	cli ; hack
-.endif
 	; Waiting for VBlank...
 PRG024_A81C:
 	LDA VBlank_Tick
@@ -1540,7 +1541,7 @@ PRG024_A81C:
 	LDA #$00
 	STA VBlank_TickEn	 ; Disable the VBlank
 
-	CLI		 ; Enable further masked interrupts
+	INT_CLI		 ; Enable further masked interrupts
 	RTS		 ; Return
 
 .ifdef X16
@@ -1674,6 +1675,7 @@ Do_Title_Screen:	; $A8AF
 	sta_PPU_CTL1
 	sta_PPU_CTL2
 
+.ifdef NES
 	; Clear the first 245 bytes of RAM
 	LDX #$f5	 ; X = 245
 PRG024_A8BF:
@@ -1681,8 +1683,20 @@ PRG024_A8BF:
 	STA Temp_Var1,X	; Clear this byte
 	DEX		 	; X--
 	BNE PRG024_A8BF	 	; Loop...
+.endif
+.ifdef X16
+	ldx #$56
+loop1:
+	stz $a9, x
+	dex
+	bne loop1
 
-
+	ldx #$75
+loop2:
+	stz $02, x
+	dex
+	bne loop2
+.endif
 	; Clearing memory used by various title screen objects
 	LDX #<(Title_ObjFrame - Title_MLAccelCnt + 6)
 PRG024_A8C8:
@@ -5057,6 +5071,7 @@ Rescue_Princess:
 	LDA #$80
 	STA Raster_Effect
 
+.ifdef NES
 	; Clears RAM $00-$F5
 	LDX #$f5	 ; X = $F5
 PRG024_B876:
@@ -5065,6 +5080,21 @@ PRG024_B876:
 
 	DEX		 ; X--
 	BNE PRG024_B876	 ; While X <> 0, loop!
+.endif
+.ifdef X16
+	ldx #$56
+loop1a:
+	stz $a9, x
+	dex
+	bne loop1a
+
+	ldx #$75
+loop2a:
+	stz $02, x
+	dex
+	bne loop2a
+.endif
+
 
 	; Scroll at lowest point
 	LDA #$ef

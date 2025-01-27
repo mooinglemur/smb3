@@ -1608,7 +1608,9 @@ PRG031_F4E3:
 	; "Normal" update ($C0)
 
 	LDA #$00	 ; A = 0
+.ifdef NES
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
+.endif
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
 	LDA #>Sprite_RAM	 ; A = 2
 	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
@@ -1670,10 +1672,22 @@ PRG031_F51D:
 
 	; This sets the status bar scroll fix for everything after the title screen!
 	; At scanline 192, the name table scroll is fixed to always display the status bar
+.ifdef NES
 	LDA #192		; A = 192
 	sta_MMC3_IRQCNT		; Store 192 into the IRQ count
 	sta_MMC3_IRQLATCH	; Store it into the latch (will be used later)
+.endif
 	sta_MMC3_IRQENABLE	; Start the IRQ counter
+.ifdef X16
+	; status bar scroll split at 384?
+	php
+	sei
+	lda #<384
+	sta Vera::Reg::IRQLineL
+	lda #(>384) << 6
+	tsb Vera::Reg::IEN
+	plp
+.endif
 	INT_CLI		; Enable maskable interrupts
 
 PRG031_F55B:
@@ -1737,7 +1751,9 @@ UpdSel_Vertical:
 	; COMPARE TO PRG031_F4E3
 
 	LDA #$00	 ; A = 0
+.ifdef NES
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
+.endif
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
 	LDA #>Sprite_RAM	 ; A = 2
 	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
@@ -1795,10 +1811,22 @@ PRG031_F5D3:
 	LDA Vert_Scroll
 	sta_PPU_SCROLL	 ; Vertical Scroll set
 
+.ifdef NES
 	LDA #192	 ; A = 192
 	sta_MMC3_IRQCNT	 ; Store 192 into the IRQ count
 	sta_MMC3_IRQLATCH ; Store it into the latch (will be used later)
+.endif
 	sta_MMC3_IRQENABLE ; Start the IRQ counter
+.ifdef X16
+	; status bar scroll split at 384?
+	php
+	sei
+	lda #<384
+	sta Vera::Reg::IRQLineL
+	lda #(>384) << 6
+	tsb Vera::Reg::IEN
+	plp
+.endif
 	INT_CLI		 ; Enable maskable interrupts
 	JMP PRG031_F55B	 ; Jump to PRG031_F55B
 
@@ -1807,7 +1835,9 @@ PRG031_F610:
 	; Following the "Normal" Update path...
 
 	LDA #$00	 ; A = 0
+.ifdef NES
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
+.endif
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
 	LDA #>Sprite_RAM	 ; A = 2
 	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
@@ -1862,17 +1892,31 @@ PRG031_F631:
 	LDA Vert_Scroll
 	sta_PPU_SCROLL	 ; Vertical Scroll set
 
+.ifdef NES
 	LDA #192	 ; A = 192
 	sta_MMC3_IRQCNT	 ; Store 192 into the IRQ count
 	sta_MMC3_IRQLATCH ; Store it into the latch (will be used later)
+.endif
 	sta_MMC3_IRQENABLE ; Start the IRQ counter
+.ifdef X16
+	; status bar scroll split at 384?
+	php
+	sei
+	lda #<384
+	sta Vera::Reg::IRQLineL
+	lda #(>384) << 6
+	tsb Vera::Reg::IEN
+	plp
+.endif
 	INT_CLI		 ; Enable maskable interrupts
 	DEC VBlank_Tick ; Decrement VBlank_Tick
 	JMP PRG031_F567	 ;
 
 UpdSel_32PixPart:
 	LDA #$00	 ; A = 0
+.ifdef NES
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
+.endif
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
 
 	LDA #>Sprite_RAM	 ; A = 2
@@ -1932,16 +1976,30 @@ PRG031_F6BC:
 	sta_PPU_SCROLL	; Vertical scroll set
 
 	; 32 pixel partition begins at line 160
+.ifdef NES
 	LDA #160
 	sta_MMC3_IRQCNT		; Store 160 into the IRQ count
 	sta_MMC3_IRQLATCH	; Store it into the latch (will be used later)
+.endif
 	sta_MMC3_IRQENABLE	; Start the IRQ counter
+.ifdef X16
+	; status bar scroll split at 384?
+	php
+	sei
+	lda #<320
+	sta Vera::Reg::IRQLineL
+	lda #(>320) << 6
+	tsb Vera::Reg::IEN
+	plp
+.endif
 	INT_CLI		; Enable maskable interrupts
 	JMP PRG031_F55B	 ; Jump to PRG031_F55B
 
 UpdSel_Title:
 	LDA #$00	 ; A = 0
+.ifdef NES
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
+.endif
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
 	LDA #>Sprite_RAM	 ; A = 2
 	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
@@ -2009,10 +2067,22 @@ PRG031_F748:
 	sta_PPU_SCROLL	; Vertical scroll set
 
 	; NOTE: Different from the typical 192 scanline count!
+.ifdef NES
 	LDA #193		; A = 193
 	sta_MMC3_IRQCNT		; Store 193 into the IRQ count
 	sta_MMC3_IRQLATCH	; Store it into the latch (will be used later)
+.endif
 	sta_MMC3_IRQENABLE	; Start the IRQ counter
+.ifdef X16
+	; status bar scroll split at 384?
+	php
+	sei
+	lda #<386
+	sta Vera::Reg::IRQLineL
+	lda #(>386) << 6
+	tsb Vera::Reg::IEN
+	plp
+.endif
 	INT_CLI		; Enable maskable interrupts
 
 	LDA VBlank_TickEn	 ; Check VBlank flag
@@ -2141,7 +2211,9 @@ PRG031_F7F8:
 	sta_PPU_VRAM_ADDR
 	sta_PPU_VRAM_ADDR
 
+.ifdef NES
 	stx_PPU_CTL2	 ; Sprites + BG invisible
+.endif
 	lda_PPU_STAT	 ;
 
 	; Because vertical scroll will not change after frame begins (second write to
@@ -2269,7 +2341,9 @@ PRG031_F8E0:
 	stx_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR
 
+.ifdef NES
 	stx_PPU_CTL2	 ; Hide BG + Sprites
+.endif
 	lda_PPU_STAT	 ;
 
 	; Because vertical scroll will not change after frame begins (second write to
@@ -2485,7 +2559,9 @@ PRG031_FA41:
 	stx_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR
 
+.ifdef NES
 	stx_PPU_CTL2	 ; Sprites + BG hidden
+.endif
 	lda_PPU_STAT	 ;
 
 	; Because vertical scroll will not change after frame begins (second write to
@@ -2743,7 +2819,9 @@ PRG031_FBE7:
 	stx_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR
 
+.ifdef NES
 	stx_PPU_CTL2	 ; Most importantly, hide BG + Sprites
+.endif
 	lda_PPU_STAT	 ;
 
 	; Because vertical scroll will not change after frame begins (second write to
@@ -3044,9 +3122,9 @@ Sprite_RAM_Clear:	; $FD84
 
 PRG031_FD86:
 	LDA #$f8	 	; A = $F8
-	STA Sprite_RAM,  Y	; Next X value
+	STA Sprite_RAM,  Y	; Next Y value
 	LDA #$01	 	; A = $01
-	STA Sprite_RAM+1,Y	; Next Y value
+	STA Sprite_RAM+1,Y	; Next X value
 	INY		 ;
 	INY		 ;
 	INY		 ;

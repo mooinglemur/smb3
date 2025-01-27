@@ -105,7 +105,7 @@ PPUSTATUS:
 ; [3] T256C ; 0
 ; [2] Bitmap Mode ; 0
 ; [1:0] Color Depth ; 2bpp
-	lda #%01010000
+	lda #%01010001
 	sta Vera::Reg::L0Config
 
 ; Set Map Base address (equivalent to the PPU nametables)
@@ -122,7 +122,7 @@ PPUSTATUS:
 ; [3] T256C ; 0
 ; [2] Bitmap Mode ; 0
 ; [1:0] Color Depth ; 2bpp
-	lda #%01010000
+	lda #%01010001
 	sta Vera::Reg::L1Config
 
 ; Set Map Base address (equivalent to the PPU nametables)
@@ -380,7 +380,6 @@ end:
 .proc sta_PPUCTRL
 	php
 	pha
-	phx
 	sta PPUCTRL
 	lsr
 	lsr
@@ -389,17 +388,14 @@ end:
 	and #1
 	sta PPUCTRL_SPPT
 	pla
-	pha
 	lsr
 	and #1
 	sta PPUCTRL_BGPT
-	pla
+	lda PPUCTRL
 	asl
 	and #$40
 	sta PPUCTRL_SP16
-
 @end:
-	plx
 	pla
 	plp
 	rts

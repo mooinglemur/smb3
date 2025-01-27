@@ -16,6 +16,9 @@
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
 .include "../inc/nesswitch.inc"
+.ifdef X16
+.include "../inc/x16.inc"
+.endif
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var8
@@ -167,6 +170,9 @@
 .export Tile_Mem_AddrVH, Tile_Mem_AddrVL, Tile_Mem_ClearA, Tile_Mem_ClearA, Tile_Mem_ClearB
 .export Tile_Mem_ClearB
 
+.ifdef X16
+.import X16_nes_interrupt_inhibit
+.endif
 
 .segment "PRG030"
 
@@ -4203,7 +4209,7 @@ PRG030_96FB:
 	LDA #$00
 	STA VBlank_TickEn	 ; Disable the VBlank
 
-	CLI		 ; Enable further masked interrupts
+	INT_CLI		 ; Enable further masked interrupts
 	RTS		 ; Return
 
 
@@ -6123,7 +6129,19 @@ PRG030_9F80:
 	NOP
 	NOP
 
+.ifdef NES
 	sta_MMC3_IRQLATCH ; Latch A (last set to 27!)
+.endif
+.ifdef X16
+	; status bar scroll split at 384?
+	php
+	sei
+	lda #<384
+	sta Vera::Reg::IRQLineL
+	lda #(>384) << 6
+	tsb Vera::Reg::IEN
+	plp
+.endif
 	sta_MMC3_IRQENABLE ; Enable IRQ again
 	JMP PRG031_FA3C	 ; Jump to PRG031_FA3C
 

@@ -2614,7 +2614,9 @@ UpdSel_Roulette:
 	; Performing some work that got skipped because we diverted here in the interrupt
 
 	LDA #$00	 ; A = 0
+.ifdef NES
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
+.endif
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
 
 	LDA #>Sprite_RAM	 ; A = 2

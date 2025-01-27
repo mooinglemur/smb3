@@ -417,7 +417,7 @@ after_kernal_handler:
 	lda #31
 	sta X16::Reg::RAMBank
 	lda #$80
-	sta NESPort::PPUSTATUS
+	tsb NESPort::PPUSTATUS
 	lda NESPort::PPUCTRL
 
 	ldx #$ff
@@ -718,26 +718,25 @@ pt1a:
 	php
 	sei
 	lda #0
-	pha
 	bra pt1
 pt1b:
 	php
 	sei
 	lda #1
-	pha
 	bra pt1
 pt1c:
 	php
 	sei
 	lda #2
-	pha
 	bra pt1
 pt1d:
 	php
 	sei
 	lda #3
-	pha
 pt1:
+	; A = pattern table 1 bank
+	; X = chr rom bank
+	pha
 	stx @CMP1
 	; try to find a slot with the already loaded bank
 	ldy #32
@@ -750,13 +749,12 @@ pt1:
 	bne @loop1
 	; we found it
 @found:
-	tya
-	ply
-	sta X16_pt1_idx_active,y
+	tya ; dynamic slot
+	plx ; MMC3 PT1 bank
+	sta X16_pt1_idx_active,x
 
 	; update the LRU
-	ldx #31
-	tya
+	ldx #32
 @loop1s:
 	dex
 	bmi panic
@@ -779,7 +777,7 @@ pt1:
 	sta X16_pt1_loaded,x
 	tay
 	jsr X16_load_sprtiles
-	ldy X16_pt0_lru+31
+	ldy X16_pt1_lru+31
 	bra @found
 prgc:
 	; changing NES $C000 bank is a no-op on X16
