@@ -71,6 +71,11 @@
 .import DynJump
 ; far imports
 .import FAR010_MapTile_Get_By_Offset
+
+.ifdef X16
+.import X16_gfx_upd_bank
+.endif
+
 ; exports
 .export HandleLevelJunction, LevelLoad_CopyObjectList, Level_Opening_Effect, Map_DoInventory_And_PoofFX
 .export Map_EnterLevel_Effect, Palette_FadeIn, Palette_FadeOut, Palette_PrepareFadeOut
@@ -3414,18 +3419,53 @@ PRG026_B292:
 Video_Misc_Updates:
 
 	LDY #$00	 	; Y = 0
+
+.ifdef X16
+	jsr X16_PRG026_LDA_Video_Upd_AddrL_y
+.pushseg
+.segment "PRG026LOW"
+X16_PRG026_LDA_Video_Upd_AddrL_y:
+	lda X16_gfx_upd_bank
+	beq :+
+	sta X16::Reg::RAMBank
+:
+.endif
 	LDA (Video_Upd_AddrL),Y	; Get byte
+.ifdef X16
+	pha
+	lda #26
+	sta X16::Reg::RAMBank
+	pla
+	rts
+.popseg
+	bne :+
+	stz X16_gfx_upd_bank
+	rts
+:
+.endif
+.ifdef NES
 	BEQ PRG026_B292	 	; If 0, jump to PRG026_B292 (RTS)
+.endif
 
 	ldx_PPU_STAT	 	; Flush video
 
 	sta_PPU_VRAM_ADDR	; Store byte into video address high
 	INY		 	; Y++
+.ifdef NES
 	LDA (Video_Upd_AddrL),Y	; Get next byte
+.endif
+.ifdef X16
+	jsr X16_PRG026_LDA_Video_Upd_AddrL_y
+.endif
 	sta_PPU_VRAM_ADDR	; Store byte into video address low
 
 	INY		 	; Y++
+.ifdef NES
 	LDA (Video_Upd_AddrL),Y	; Get next byte...
+.endif
+.ifdef X16
+	jsr X16_PRG026_LDA_Video_Upd_AddrL_y
+.endif
 
 	ASL A		 	; Its uppermost bit dictates whether to use horizontal (1B) or vertical (32B) advancement
 	PHA		 	; Save A
@@ -3458,7 +3498,12 @@ PRG026_B2C1:
 	BCS PRG026_B2C4	 ; If carry set, jump to PRG026_B2C4
 	INY		 ; Y++
 PRG026_B2C4:
+.ifdef NES
 	LDA (Video_Upd_AddrL),Y	; Get next byte
+.endif
+.ifdef X16
+	jsr X16_PRG026_LDA_Video_Upd_AddrL_y
+.endif
 	sta_PPU_VRAM_DATA	; Store into PPU
 	DEX		 	; X--
 	BNE PRG026_B2C1	 	; While X <> 0, loop!

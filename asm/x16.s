@@ -99,6 +99,7 @@
 
 .export X16_nes_interrupt_inhibit
 .export X16_current_blank_tile
+.export X16_gfx_upd_bank
 
 .segment "X16BSS"
 X16_MMC3_COMMAND:
@@ -139,6 +140,8 @@ X16_pt1c_idx_active:
 	.res 1
 X16_pt1d_idx_active:
 	.res 1
+X16_gfx_upd_bank:
+	.res 1
 
 .segment "X16STARTUP"
 start:
@@ -152,6 +155,8 @@ start:
 	jsr X16_init_dynamic_chr
 
 	jsr X16_setup_handler
+
+	stz X16_gfx_upd_bank
 
 	jmp IntReset ; Start Game
 
