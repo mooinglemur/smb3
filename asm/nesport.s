@@ -149,36 +149,16 @@ PPUSTATUS:
 	stz Vera::Reg::L1HScrollL
 	stz Vera::Reg::L1HScrollH
 
-	; now zero the attribute table
-	jsr bit_PPUSTATUS
-	lda #$23
-	jsr sta_PPUADDR
-	lda #$C0
-	jsr sta_PPUADDR
-
-	lda #$10
-	jsr sta_PPUCTRL
-
-	; now write this so it forces a change
-	; when the game inevitably sets the
-	; attributes later
-	ldx #64
-	lda #$FF
-attr_loop:
-	jsr sta_PPUDATA
-	dex
-	bne attr_loop
-
 	stz X16_current_blank_tile
 
-	; zero attributes for empty portion of both tilemaps
-	VERA_SET_ADDR (VERA_MAP_BASE_NT0 + (128 * 30) + 1), 2
+	; zero both tilemaps
+	VERA_SET_ADDR (VERA_MAP_BASE_NT0), 1
 	inc Vera::Reg::Ctrl
-	VERA_SET_ADDR (VERA_MAP_BASE_NT1 + (128 * 30) + 1), 2
+	VERA_SET_ADDR (VERA_MAP_BASE_NT1), 1
 	stz Vera::Reg::Ctrl
 	; clear 8.5 pages
-	ldx #2
-	lda #32
+	ldx #32
+	lda #0
 clearloop:
 .repeat 4
 	stz Vera::Reg::Data0

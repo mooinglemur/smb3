@@ -1599,7 +1599,20 @@ PRG024_A82B:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Video_Misc_Updates2:
 	LDY #$00	 	; Start at offset 0
+.ifdef X16
+	jsr X16_PRG024_LDA_Video_Upd_AddrL_y
+.pushseg
+.segment "PRG024LOW"
+X16_PRG024_LDA_Video_Upd_AddrL_y:
+	inc X16::Reg::RAMBank
+.endif
 	LDA (Video_Upd_AddrL),Y	; Get next byte from data
+.ifdef X16
+	dec X16::Reg::RAMBank
+	ora #0
+	rts
+.popseg
+.endif
 	BNE PRG024_A860	 	; If not $00 (terminator), process it @ PRG024_A860
 	RTS		 ; Return
 
@@ -1608,11 +1621,21 @@ PRG024_A860:
 
 	sta_PPU_VRAM_ADDR	; Store byte into video address high
 	INY		 	; Y++
+.ifdef NES
 	LDA (Video_Upd_AddrL),Y	; Get next byte
+.endif
+.ifdef X16
+	jsr X16_PRG024_LDA_Video_Upd_AddrL_y
+.endif
 	sta_PPU_VRAM_ADDR	; Store byte into video address low
 
 	INY		 	; Y++
+.ifdef NES
 	LDA (Video_Upd_AddrL),Y	; Get next byte...
+.endif
+.ifdef X16
+	jsr X16_PRG024_LDA_Video_Upd_AddrL_y
+.endif
 
 	ASL A		 	; Its uppermost bit dictates whether to use horizontal (1B) or vertical (32B) advancement
 	PHA		 	; Save A
@@ -1646,7 +1669,12 @@ PRG024_A888:
 	INY		 ; Y++
 
 PRG024_A88B:
+.ifdef NES
 	LDA (Video_Upd_AddrL),Y	; Get next byte
+.endif
+.ifdef X16
+	jsr X16_PRG024_LDA_Video_Upd_AddrL_y
+.endif
 	sta_PPU_VRAM_DATA	; Store into PPU
 	DEX		 	; X--
 	BNE PRG024_A888	 	; While X <> 0, loop!
