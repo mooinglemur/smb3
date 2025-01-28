@@ -645,9 +645,11 @@ attr_vmirror:
 	lda tmp0
 	clc
 	adc #<VERA_MAP_BASE_NT0
+	sta tmp0
 	sta Vera::Reg::AddrL
 	lda tmp1
 	adc #>VERA_MAP_BASE_NT0
+	sta tmp1
 	sta Vera::Reg::AddrM
 	lda #$20
 	adc #^VERA_MAP_BASE_NT0
@@ -670,9 +672,11 @@ attr_is_nt0:
 	lda #<VERA_MAP_BASE_NT0
 	clc
 	adc tmp0
+	sta tmp0
 	sta Vera::Reg::AddrL
 	lda #>VERA_MAP_BASE_NT0
 	adc tmp1
+	sta tmp1
 	sta Vera::Reg::AddrM
 	lda #$20
 	adc #^VERA_MAP_BASE_NT0
@@ -684,9 +688,11 @@ attr_is_nt1:
 	lda #<VERA_MAP_BASE_NT1
 	clc
 	adc tmp0
+	sta tmp0
 	sta Vera::Reg::AddrL
 	lda #>VERA_MAP_BASE_NT1
 	adc tmp1
+	sta tmp1
 	sta Vera::Reg::AddrM
 	lda #$20
 	adc #^VERA_MAP_BASE_NT1
