@@ -12,6 +12,8 @@
 .import X16_pt1c_idx_active
 .import X16_pt1d_idx_active
 
+.import X16_current_blank_tile
+
 .export PPUCTRL
 .export PPUSTATUS
 
@@ -166,6 +168,26 @@ attr_loop:
 	jsr sta_PPUDATA
 	dex
 	bne attr_loop
+
+	stz X16_current_blank_tile
+
+	; zero attributes for empty portion of both tilemaps
+	VERA_SET_ADDR (VERA_MAP_BASE_NT0 + (128 * 30) + 1), 2
+	inc Vera::Reg::Ctrl
+	VERA_SET_ADDR (VERA_MAP_BASE_NT1 + (128 * 30) + 1), 2
+	stz Vera::Reg::Ctrl
+	; clear 8.5 pages
+	ldx #2
+	lda #32
+clearloop:
+.repeat 4
+	stz Vera::Reg::Data0
+	stz Vera::Reg::Data1
+.endrepeat
+	dec
+	bne clearloop
+	dex
+	bpl clearloop
 
 do_4_3:
 ; Set the horizontal zoom (40 tiles wide)
@@ -613,7 +635,7 @@ is_attribute:
 	lsr
 	lsr
 	lsr
-	lda #0
+	lda #$04 ; carry moves to g, but we also plant a 1 in tmp0's low bit to point to the attr byte
 	ror
 	ror
 	; store it into the low byte
@@ -642,7 +664,7 @@ is_attribute:
 attr_vmirror:
 	lda tmp0
 	clc
-	adc #<(VERA_MAP_BASE_NT0+1)
+	adc #<VERA_MAP_BASE_NT0
 	sta Vera::Reg::AddrL
 	lda tmp1
 	adc #>VERA_MAP_BASE_NT0
@@ -658,11 +680,14 @@ attr_vmirror:
 
 	jmp auto_increment
 attr_hmirror:
+	lda #$40
+	trb tmp0
+
 	lda PPUADDR_H
 	and #$08
 	bne attr_is_nt1
 attr_is_nt0:
-	lda #<(VERA_MAP_BASE_NT0+1)
+	lda #<VERA_MAP_BASE_NT0
 	clc
 	adc tmp0
 	sta Vera::Reg::AddrL
@@ -673,23 +698,10 @@ attr_is_nt0:
 	adc #^VERA_MAP_BASE_NT0
 	sta Vera::Reg::AddrH
 
-	jsr apply_palette_UL_UR
-	jsr apply_palette_UL_UR
-	jsr apply_palette_LL_LR
-	jsr apply_palette_LL_LR
-
-	lda #<(VERA_MAP_BASE_NT0+1)
-	clc
-	adc tmp0
-	eor #$40
-	sta Vera::Reg::AddrL
-	lda #>VERA_MAP_BASE_NT0
-	adc tmp1
-	sta Vera::Reg::AddrM
-
 	bra attr_nt_write
+
 attr_is_nt1:
-	lda #<(VERA_MAP_BASE_NT1+1)
+	lda #<VERA_MAP_BASE_NT1
 	clc
 	adc tmp0
 	sta Vera::Reg::AddrL
@@ -700,30 +712,53 @@ attr_is_nt1:
 	adc #^VERA_MAP_BASE_NT1
 	sta Vera::Reg::AddrH
 
-	jsr apply_palette_UL_UR
-	jsr apply_palette_UL_UR
-	jsr apply_palette_LL_LR
-	jsr apply_palette_LL_LR
-
-	lda #<(VERA_MAP_BASE_NT1+1)
-	clc
-	adc tmp0
-	eor #$40
-	sta Vera::Reg::AddrL
-	lda #>VERA_MAP_BASE_NT1
-	adc tmp1
-	sta Vera::Reg::AddrM
-
 attr_nt_write:
 
-	jsr apply_palette_UL_UR
-	jsr apply_palette_UL_UR
-	jsr apply_palette_LL_LR
-	jsr apply_palette_LL_LR
+	jsr apply_palette_UL_UR_mirrored
+	jsr apply_palette_UL_UR_mirrored
+	jsr apply_palette_LL_LR_mirrored
+	jsr apply_palette_LL_LR_mirrored
 
 	jmp auto_increment
 
 apply_palette_UL_UR:
+	txa
+	and #$03
+	asl
+	asl
+	asl
+	asl
+	sta Vera::Reg::Data0
+	sta Vera::Reg::Data0
+	txa
+	and #$0C
+	asl
+	asl
+	sta Vera::Reg::Data0
+	sta Vera::Reg::Data0
+
+	jmp next_row
+
+apply_palette_UL_UR_mirrored:
+	txa
+	and #$03
+	asl
+	asl
+	asl
+	asl
+	sta Vera::Reg::Data0
+	sta Vera::Reg::Data0
+	txa
+	and #$0C
+	asl
+	asl
+	sta Vera::Reg::Data0
+	sta Vera::Reg::Data0
+
+	lda Vera::Reg::AddrL
+	adc #56 ; carry is clear already
+	sta Vera::Reg::AddrL
+
 	txa
 	and #$03
 	asl
@@ -752,6 +787,36 @@ apply_palette_LL_LR:
 	lsr
 	sta Vera::Reg::Data0
 	sta Vera::Reg::Data0
+
+	bra next_row
+
+apply_palette_LL_LR_mirrored:
+	txa
+	and #$30
+	sta Vera::Reg::Data0
+	sta Vera::Reg::Data0
+	txa
+	and #$C0
+	lsr
+	lsr
+	sta Vera::Reg::Data0
+	sta Vera::Reg::Data0
+
+	lda Vera::Reg::AddrL
+	adc #56 ; carry is clear already
+	sta Vera::Reg::AddrL
+
+	txa
+	and #$30
+	sta Vera::Reg::Data0
+	sta Vera::Reg::Data0
+	txa
+	and #$C0
+	lsr
+	lsr
+	sta Vera::Reg::Data0
+	sta Vera::Reg::Data0
+
 next_row:
 	lda tmp0
 	clc

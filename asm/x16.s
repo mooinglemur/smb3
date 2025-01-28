@@ -98,6 +98,7 @@
 .export X16_pt1d_idx_active
 
 .export X16_nes_interrupt_inhibit
+.export X16_current_blank_tile
 
 .segment "X16BSS"
 X16_MMC3_COMMAND:
@@ -109,6 +110,8 @@ X16_MMC3_IRQ_ENABLED:
 kernal_irq_handler:
 	.res 2
 X16_nes_interrupt_inhibit:
+	.res 1
+X16_current_blank_tile:
 	.res 1
 
 ; These variables track what CHR banks are loaded in VERA VRAM
@@ -302,6 +305,7 @@ panic:
 	asl
 	asl
 	asl
+	asl
 	clc
 	adc #>VERA_TILE_BASE
 	sta Vera::Reg::AddrM
@@ -333,8 +337,9 @@ panic:
 	asl
 	asl
 	asl
+	asl
 	clc
-	adc #>(VERA_TILE_BASE + $04)
+	adc #>(VERA_TILE_BASE) + $08
 	sta Vera::Reg::AddrM
 	lda #^(VERA_TILE_BASE) | $10
 	adc #0
@@ -836,7 +841,46 @@ activate_tilemap:
 	bra @loop2
 @mru:
 	sty X16_pt0_lru
+
+	; check to see if we need to zero out the bottom parts of the layers
+
+	lda X16_pt0b_loaded,y
+	bmi panic
+	lsr
+	tax
+	ldy blank_tile_per_chrbank,x
+	cpy X16_current_blank_tile
+	beq @end
+
+	; blast VRAM with the blank tile
+	VERA_SET_ADDR (VERA_MAP_BASE_NT0 + (128 * 30)), 2
+	inc Vera::Reg::Ctrl
+	VERA_SET_ADDR (VERA_MAP_BASE_NT1 + (128 * 30)), 2
+	stz Vera::Reg::Ctrl
+	; clear 8.5 pages
+	ldx #2
+	lda #32
+@clearloop:
+.repeat 4
+	sty Vera::Reg::Data0
+	sty Vera::Reg::Data1
+.endrepeat
+	dec
+	bne @clearloop
+	dex
+	bpl @clearloop
+	sty X16_current_blank_tile
+@end:
 	rts
+blank_tile_per_chrbank:
+	.byte $FF, $D6, $A0, $93, $85, $BF, $C0, $87
+	.byte $85, $E4, $00, $FF, $00, $00, $00, $CF
+	.byte $C8, $BC, $FF, $EC, $00, $F9, $00, $A3
+	.byte $DD, $DE, $86, $00, $85, $CE, $FF, $FF
+	.byte $FF, $96, $FF, $A5, $F7, $DC, $DA, $F9
+	.byte $9E, $D6, $FF, $FD, $87, $F9, $FA, $FF
+	.byte $FF, $FF, $FF, $FF, $B0, $FF, $85, $85
+	.byte $FF, $FF, $FF, $FC, $FC, $F8, $AA, $EF
 .endproc
 
 X16_sta_PAPU_CT1:
