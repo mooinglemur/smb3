@@ -44,10 +44,8 @@
 .export X16_sta_FRAMECTR_CTL
 .export X16_sta_JOYPAD
 .export X16_sta_MMC3_COMMAND
-.export X16_sta_MMC3_IRQCNT
 .export X16_sta_MMC3_IRQDISABLE
 .export X16_sta_MMC3_IRQENABLE
-.export X16_sta_MMC3_IRQLATCH
 .export X16_sta_MMC3_MIRROR
 .export X16_sta_MMC3_PAGE
 .export X16_sta_PAPU_CT1
@@ -471,8 +469,6 @@ notvblank:
 	bit X16_nes_interrupt_inhibit
 	bmi end
 
-	jsr X16_sta_MMC3_IRQLATCH
-
 	lda X16_MMC3_IRQ_ENABLED
 	beq end
 
@@ -581,11 +577,6 @@ X16_sta_JOYPAD:
 	rts
 .endproc
 
-.proc X16_sta_MMC3_IRQCNT
-	sta X16_MMC3_IRQCNT
-	rts
-.endproc
-
 .proc X16_sta_MMC3_IRQDISABLE
 	stz X16_MMC3_IRQ_ENABLED
 	rts
@@ -596,46 +587,6 @@ X16_sta_JOYPAD:
 	lda #$80
 	sta X16_MMC3_IRQ_ENABLED
 	pla
-	rts
-.endproc
-
-.proc X16_sta_MMC3_IRQLATCH
-	php
-	sei
-	pha
-
-	; get the current scanline (/2)
-
-	bit Vera::Reg::IEN       ; set or clear V based on scanline (8)
-redo:
-	lda Vera::Reg::IRQLineL
-	bvs hi
-lo:
-	bit Vera::Reg::IEN
-	bvs redo                 ; we transitioned, check again
-	clc
-	bra cont
-hi:
-	bit Vera::Reg::IEN
-	bvc redo                 ; we transitioned, check again
-	sec
-cont:
-	ror ; current scanline/2 with relative certainty is in .A
-	clc
-	adc X16_MMC3_IRQCNT
-	bcc :+
-	sbc #15 ; wraparound
-:	asl
-	sta Vera::Reg::IRQLineL
-	lda #$80
-	bcs sethi
-	trb Vera::Reg::IEN
-	bra end
-sethi:
-	tsb Vera::Reg::IEN
-end:
-	pla
-	plp
 	rts
 .endproc
 

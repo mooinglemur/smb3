@@ -851,33 +851,52 @@ next_row:
 	lda PPUSCROLL_LATCH
 	beq horiz
 vert:
-	pla
-	sta PPUSCROLL_V
-	sta @TMP0
+	stz PPUSCROLL_LATCH
 	lda PPUCTRL
 	and #2
 	beq :+
 		lda #240
 	:
+	sta @TMP0
+	pla
+	sta PPUSCROLL_V
 	clc
 	adc @TMP0
-	sta Vera::Reg::L0VScrollL
 	sta @TMP0
 	lda #0
 	adc #0
-	sta Vera::Reg::L0VScrollH
 	sta @TMP1
+	lda PPUSCROLL_V
+	cmp #240
+	bcc @noinv
+	dec @TMP1
+	clc
+	beq @noinv
+	sec
+@noinv:
 	lda #$ff
 @TMP0 = * - 1
+	sta Vera::Reg::L0VScrollL
+	lda #$ff
+@TMP1 = * - 1
+	sta Vera::Reg::L0VScrollH
+	bcs @above
+	lda @TMP0
 	sec
 	sbc #240
 	sta Vera::Reg::L1VScrollL
-	lda #$ff
-@TMP1 = * - 1
+	lda @TMP1
 	sbc #0
 	sta Vera::Reg::L1VScrollH
-
-	stz PPUSCROLL_LATCH
+	bra end
+@above:
+	lda @TMP0
+	clc
+	adc #240
+	sta Vera::Reg::L1VScrollL
+	lda @TMP1
+	adc #0
+	sta Vera::Reg::L1VScrollH
 	bra end
 horiz:
 	pla

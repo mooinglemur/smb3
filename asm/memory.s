@@ -449,7 +449,7 @@ PPU_CTL1_Copy:        ; Holds PPU_CTL1 register data
 
 Title_XPosHi:         ; $75-$7C "High" part of the extended precision X position for all objects
 	.res 8
-Title_YPosHi:         ; $7D-$84 "High" part of the extended precision X position for all objects
+Title_YPosHi:         ; $7D-$84 "High" part of the extended precision Y position for all objects
 	.res 8
 Title_ObjX:           ; $85-$8C Title screen object X positions
 	.res 8
@@ -468,11 +468,7 @@ Title_ObjYVelChng:    ; $B5-$B6 Mario / Luigi change in Y velocity flag
 Title_ObjMLFlags:     ; $B7-$B8 Mario / Luigi Sprite flags
 	.res 2
 Title_ObjMLMoveDir:   ; 0 = No move, 1 = Left, 2 = Right
-	.res 1
-
-; unused $BA
-	.res 1
-
+	.res 2
 Title_ObjMLAnimFrame: ; $BB-$BC Mario / Luigi animation frame
 	.res 2
 Title_ObjMLDirTicks:  ; $BD-$BE Mario / Luigi animation ticks

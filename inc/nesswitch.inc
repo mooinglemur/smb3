@@ -515,7 +515,7 @@
     sta MMC3_IRQCNT
 .endif
 .ifdef X16
-    jsr X16_sta_MMC3_IRQCNT
+    ; nop
 .endif
 .endmacro
 
@@ -524,7 +524,7 @@
     sta MMC3_IRQLATCH
 .endif
 .ifdef X16
-    jsr X16_sta_MMC3_IRQLATCH
+    ; nop
 .endif
 .endmacro
 

@@ -210,6 +210,9 @@
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
 .include "../inc/nesswitch.inc"
+.ifdef X16
+.include "../inc/x16.inc"
+.endif
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var10, Temp_Var11
@@ -2669,9 +2672,11 @@ UpdSel_Roulette:
 
 	lda_PPU_STAT
 
+.ifdef NES
 	LDA #$ff
 	sta_MMC3_IRQCNT
 	sta_MMC3_IRQLATCH
+.endif
 
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$00
@@ -2690,10 +2695,23 @@ UpdSel_Roulette:
 	sta_PPU_VRAM_ADDR
 	sta_PPU_VRAM_ADDR
 
+.ifdef NES
 	; Fire on scanline 32
 	LDA #$20
 	sta_MMC3_IRQCNT
 	sta_MMC3_IRQLATCH
+.endif
+.ifdef X16
+	php
+	sei
+	lda #<64
+	sta Vera::Reg::IRQLineL
+	lda #$80
+	trb Vera::Reg::IEN
+	lda #2
+	sta Vera::Reg::ISR ; ACK any pending line IRQs
+	plp
+.endif
 	sta_MMC3_IRQENABLE
 
 	INT_CLI		; Enable maskable interrupts

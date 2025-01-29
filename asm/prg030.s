@@ -4152,10 +4152,10 @@ loop2:
 
 	ldx #$ff
 loop3:
-	stz __GFXBSS_LOAD__, x
-	stz __OAMSHADOW_LOAD__, x
-	stz __TITLEBSS_LOAD__, x
-	stz __GAMEPLAYBSS_LOAD__, x
+	stz __GFXBSS_LOAD__-1, x
+	stz __OAMSHADOW_LOAD__-1, x
+	stz __TITLEBSS_LOAD__-1, x
+	stz __GAMEPLAYBSS_LOAD__-1, x
 	dex
 	bne loop3
 
@@ -4163,14 +4163,14 @@ loop3:
 loop4:
 	stz $a9, x
 	dex
-	bne loop4
+	bpl loop4
 
 	ldx #$7d
 loop5:
 	stz $02, x
 	stz __GAMEPLAYVARS_LOAD__, x
 	dex
-	bne loop5
+	bpl loop5
 	rts
 .endif
 
@@ -6138,8 +6138,10 @@ PRG030_9F80:
 	sei
 	lda #<384
 	sta Vera::Reg::IRQLineL
-	lda #(>384) << 6
+	lda #(>384) << 7
 	tsb Vera::Reg::IEN
+	lda #2
+	sta Vera::Reg::ISR ; ACK any pending line IRQs
 	plp
 .endif
 	sta_MMC3_IRQENABLE ; Enable IRQ again

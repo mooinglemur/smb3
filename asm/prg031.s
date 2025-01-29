@@ -1684,7 +1684,7 @@ PRG031_F51D:
 	sei
 	lda #<384
 	sta Vera::Reg::IRQLineL
-	lda #(>384) << 6
+	lda #(>384) << 7
 	tsb Vera::Reg::IEN
 	plp
 .endif
@@ -1823,7 +1823,7 @@ PRG031_F5D3:
 	sei
 	lda #<384
 	sta Vera::Reg::IRQLineL
-	lda #(>384) << 6
+	lda #(>384) << 7
 	tsb Vera::Reg::IEN
 	plp
 .endif
@@ -1904,7 +1904,7 @@ PRG031_F631:
 	sei
 	lda #<384
 	sta Vera::Reg::IRQLineL
-	lda #(>384) << 6
+	lda #(>384) << 7
 	tsb Vera::Reg::IEN
 	plp
 .endif
@@ -1988,7 +1988,7 @@ PRG031_F6BC:
 	sei
 	lda #<320
 	sta Vera::Reg::IRQLineL
-	lda #(>320) << 6
+	lda #(>320) << 7
 	tsb Vera::Reg::IEN
 	plp
 .endif
@@ -2001,9 +2001,20 @@ UpdSel_Title:
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
 .endif
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
+
+.ifdef X16 ; do these first on X16
+	LDA Horz_Scroll
+	sta_PPU_SCROLL	; Horizontal Scroll set
+	LDA Vert_Scroll
+	sta_PPU_SCROLL	; Vertical scroll set
+	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
+.endif
+
 	LDA #>Sprite_RAM	 ; A = 2
 	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
+.ifdef NES
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
+.endif
 
 	LDA VBlank_Tick
 	BNE PRG031_F748	 ; If VBlank_Tick <> 0, go to PRG031_F748
@@ -2061,10 +2072,12 @@ PRG031_F748:
 	sta_PPU_CTL1	; Set above settings
 	lda_PPU_STAT	; read PPU status to reset the high/low latch
 
+.ifdef NES ; X16 does it first
 	LDA Horz_Scroll
 	sta_PPU_SCROLL	; Horizontal Scroll set
 	LDA Vert_Scroll
 	sta_PPU_SCROLL	; Vertical scroll set
+.endif
 
 	; NOTE: Different from the typical 192 scanline count!
 .ifdef NES
@@ -2072,17 +2085,19 @@ PRG031_F748:
 	sta_MMC3_IRQCNT		; Store 193 into the IRQ count
 	sta_MMC3_IRQLATCH	; Store it into the latch (will be used later)
 .endif
-	sta_MMC3_IRQENABLE	; Start the IRQ counter
 .ifdef X16
-	; status bar scroll split at 384?
+	; title screen stage floor split
 	php
 	sei
-	lda #<386
+	lda #<380
 	sta Vera::Reg::IRQLineL
-	lda #(>386) << 6
+	lda #(>380) << 7
 	tsb Vera::Reg::IEN
+	lda #2
+	sta Vera::Reg::ISR ; ACK any pending line IRQs
 	plp
 .endif
+	sta_MMC3_IRQENABLE	; Start the IRQ counter
 	INT_CLI		; Enable maskable interrupts
 
 	LDA VBlank_TickEn	 ; Check VBlank flag
