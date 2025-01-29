@@ -64,6 +64,7 @@
 .import CineKing_Frame2, EndText_VL, EndText_VH, Ending_State
 .import __WORLDMAPZP_LOAD__, __WORLDMAPZP_SIZE__
 .import __WORLDMAPVARS_LOAD__, __WORLDMAPVARS_SIZE__
+.import __TITLEVARS_LOAD__, __TITLEVARS_SIZE__
 .endif
 ; BSS imports (low RAM and cart SRAM)
 .import Update_Select, Raster_Effect, Debug_Flag, Sprite_RAM, Graphics_BufCnt, Graphics_Buffer
@@ -1551,6 +1552,7 @@ PRG024_A81C:
 IntIRQ_TitleEnding:
 	sta_MMC3_IRQENABLE
 
+.ifdef NES
 	; Some kind of delay loop?
 	LDX #$04	 ; X = 4
 PRG024_A82B:
@@ -1570,7 +1572,7 @@ PRG024_A82B:
 	LDA PPU_CTL1_Copy
 	ORA PPU_CTL1_Mod	; Combine bits from PPU_CTL1_Copy into PPU_CTL1_Mod
 	sta_PPU_CTL1	 ; Stored to the register!
-
+.endif
 	lda_PPU_STAT
 
 	; H-Scroll locked at 0
@@ -1716,13 +1718,19 @@ PRG024_A8BF:
 loop1:
 	stz $a9, x
 	dex
-	bne loop1
+	bpl loop1
 
 	ldx #$75
 loop2:
 	stz $02, x
 	dex
-	bne loop2
+	bpl loop2
+
+	ldx #<__TITLEVARS_SIZE__
+loop3:
+	stz __TITLEVARS_LOAD__-1, x
+	dex
+	bne loop3
 .endif
 	; Clearing memory used by various title screen objects
 	LDX #<(Title_ObjFrame - Title_MLAccelCnt + 6)
