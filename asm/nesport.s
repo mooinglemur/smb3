@@ -150,8 +150,8 @@ PPUSCROLL_V:
 	inc Vera::Reg::Ctrl
 	VERA_SET_ADDR (VERA_MAP_BASE_NT1), 1
 	stz Vera::Reg::Ctrl
-	; clear 8.5 pages
-	ldx #32
+
+	ldx #16
 	lda #0
 clearloop:
 .repeat 4
