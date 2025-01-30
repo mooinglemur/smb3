@@ -2648,6 +2648,7 @@ UpdSel_Roulette:
 
 	lda_PPU_STAT
 
+.ifdef NES
 	; Unknown hardware thing?  Is this for synchronization?
 	LDX #$3f	 	;
 	stx_PPU_VRAM_ADDR	; Access PPU address #3Fxx
@@ -2655,6 +2656,7 @@ UpdSel_Roulette:
 	sta_PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
 	sta_PPU_VRAM_ADDR	;
 	sta_PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
+.endif
 
 	LDA PPU_CTL2_Copy
 	ORA #%00011000
@@ -2678,6 +2680,7 @@ UpdSel_Roulette:
 	sta_MMC3_IRQLATCH
 .endif
 
+.ifdef NES
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$00
 	sta_PPU_VRAM_ADDR
@@ -2694,6 +2697,7 @@ UpdSel_Roulette:
 	LDA #$00
 	sta_PPU_VRAM_ADDR
 	sta_PPU_VRAM_ADDR
+.endif
 
 .ifdef NES
 	; Fire on scanline 32

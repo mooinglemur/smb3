@@ -1646,6 +1646,7 @@ PRG031_F51D:
 
 	lda_PPU_STAT	 	; read PPU status to reset the high/low latch
 
+.ifdef NES
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$3f	 	;
 	sta_PPU_VRAM_ADDR	; Access PPU address #3Fxx
@@ -1653,6 +1654,7 @@ PRG031_F51D:
 	sta_PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
 	sta_PPU_VRAM_ADDR	;
 	sta_PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
+.endif
 
 	LDA PPU_CTL2_Copy	; Get current PPU_CTL2 settings in RAM
 	ORA #$18	; A | 18 (BG + SPR)
@@ -1790,12 +1792,14 @@ PRG031_F5D3:
 	lda_PPU_STAT	 	; read PPU status to reset the high/low latch
 
 	; Unknown hardware thing?  Is this for synchronization?
+.ifdef NES
 	LDA #$3f	 	;
 	sta_PPU_VRAM_ADDR	; Access PPU address #3Fxx
 	LDA #$00	 	;
 	sta_PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
 	sta_PPU_VRAM_ADDR	;
 	sta_PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
+.endif
 
 	LDA PPU_CTL2_Copy	; Get current PPU_CTL2 settings in RAM
 	ORA #$18	; A | 18 (BG + SPR)
@@ -1871,12 +1875,14 @@ PRG031_F631:
 	lda_PPU_STAT	 	; read PPU status to reset the high/low latch
 
 	; Unknown hardware thing?  Is this for synchronization?
+.ifdef NES
 	LDA #$3f	 	;
 	sta_PPU_VRAM_ADDR	; Access PPU address #3Fxx
 	LDA #$00	 	;
 	sta_PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
 	sta_PPU_VRAM_ADDR	;
 	sta_PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
+.endif
 
 	LDA PPU_CTL2_Copy	; Get current PPU_CTL2 settings in RAM
 	ORA #$18	; A | 18 (BG + SPR)
@@ -1954,12 +1960,14 @@ PRG031_F6BC:
 	lda_PPU_STAT	 	; read PPU status to reset the high/low latch
 
 	; Unknown hardware thing?  Is this for synchronization?
+.ifdef NES
 	LDA #$3f	 	;
 	sta_PPU_VRAM_ADDR	; Access PPU address #3Fxx
 	LDA #$00	 	;
 	sta_PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
 	sta_PPU_VRAM_ADDR	;
 	sta_PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
+.endif
 
 	LDA PPU_CTL2_Copy	; Get current PPU_CTL2 settings in RAM
 	ORA #$18	; A | 18 (BG + SPR)
@@ -2059,9 +2067,11 @@ PRG031_F744:
 PRG031_F748:
 	lda_PPU_STAT
 
+.ifdef NES
 	LDA #$00
 	sta_PPU_VRAM_ADDR	;
 	sta_PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
+.endif
 
 	LDA PPU_CTL2_Copy	; Get current PPU_CTL2 settings in RAM
 	ORA #$18	; A | 18 (BG + SPR)
@@ -2218,6 +2228,7 @@ PRG031_F7F8:
 	CMP #17
 	BEQ PRG031_F871	 ; If tileset = 17 (N-Spade), go to PRG031_F871
 
+.ifdef NES
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$00
 	sta_PPU_VRAM_ADDR
@@ -2225,6 +2236,7 @@ PRG031_F7F8:
 	sta_PPU_VRAM_ADDR
 	sta_PPU_VRAM_ADDR
 	sta_PPU_VRAM_ADDR
+.endif
 
 .ifdef NES
 	stx_PPU_CTL2	 ; Sprites + BG invisible
@@ -2236,10 +2248,12 @@ PRG031_F7F8:
 	; vertical scrolling is to change the nametable address that the PPU is reading
 	; at to where we would like it to be...
 	; In this case, the location of the beginning of the status bar!
+.ifdef NES
 	sty_PPU_VRAM_ADDR	 ; This is $0B unless tileset = $11, which it is then $03
 	LDA #$00
 	sta_PPU_VRAM_ADDR	; ... so we're now reading at $1100 or $0300
 	lda_PPU_VRAM_DATA
+.endif
 
 	; Load status bar graphics and hide any sprites from appearing over the status bar
 
@@ -2348,6 +2362,7 @@ PRG031_F8E0:
 	DEX		 ; X--
 	BNE PRG031_F8E0	 ; While X > 0, loop
 
+.ifdef NES
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$00
 	sta_PPU_VRAM_ADDR
@@ -2355,6 +2370,7 @@ PRG031_F8E0:
 	stx_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR
+.endif
 
 .ifdef NES
 	stx_PPU_CTL2	 ; Hide BG + Sprites
@@ -2365,10 +2381,12 @@ PRG031_F8E0:
 	; PPU_SCROLL will always be unused until next frame), the hack for MMC3 split
 	; vertical scrolling is to change the nametable address that the PPU is reading
 	; at to where we would like it to be...
+.ifdef NES
 	LDY #$07
 	sty_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR	; ... so we're now reading at $0700
 	lda_PPU_VRAM_DATA
+.endif
 
 	; Couple of tilesets have slightly different effects
 	LDA Level_Tileset
@@ -2488,11 +2506,13 @@ PRG031_F9C3:
 	; PPU_SCROLL will always be unused until next frame), the hack for MMC3 split
 	; vertical scrolling is to change the nametable address that the PPU is reading
 	; at to where we would like it to be...
+.ifdef NES
 	LDY #$0a	 ; Y = $0A
 	LDA #$80	 ; A = $80
 	sty_PPU_VRAM_ADDR	 ;
 	sta_PPU_VRAM_ADDR	 ; ... so we're now reading at $0A80, the top of the last two rows of tiles
 	lda_PPU_VRAM_DATA	 ;
+.endif
 
 	JMP IntIRQ_32PixelPartition_Part2	; Jump to IntIRQ_32PixelPartition_Part2
 
@@ -2566,6 +2586,7 @@ PRG031_FA41:
 	DEX		 ; X--
 	BNE PRG031_FA41 ; While X > 0, loop
 
+.ifdef NES
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$00
 	sta_PPU_VRAM_ADDR
@@ -2573,6 +2594,7 @@ PRG031_FA41:
 	stx_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR
+.endif
 
 .ifdef NES
 	stx_PPU_CTL2	 ; Sprites + BG hidden
@@ -2583,10 +2605,12 @@ PRG031_FA41:
 	; PPU_SCROLL will always be unused until next frame), the hack for MMC3 split
 	; vertical scrolling is to change the nametable address that the PPU is reading
 	; at to where we would like it to be...
+.ifdef NES
 	LDY #$0b
 	sty_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR	; ... so now we're reading at $0B00
 	lda_PPU_VRAM_DATA
+.endif
 
 	; This loads graphics into the "BG" side (PT1)
 	; I think the only reason they're using labeled constants
@@ -2826,6 +2850,7 @@ PRG031_FBE7:
 	DEX		 ; X--
 	BNE PRG031_FBE7 ; While X > 0, loop
 
+.ifdef NES
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$00
 	sta_PPU_VRAM_ADDR
@@ -2833,6 +2858,7 @@ PRG031_FBE7:
 	stx_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR
+.endif
 
 .ifdef NES
 	stx_PPU_CTL2	 ; Most importantly, hide BG + Sprites
@@ -2843,10 +2869,12 @@ PRG031_FBE7:
 	; PPU_SCROLL will always be unused until next frame), the hack for MMC3 split
 	; vertical scrolling is to change the nametable address that the PPU is reading
 	; at to where we would like it to be...
+.ifdef NES
 	LDY #$0b
 	sty_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR	; ... so now we're reading at $0B00
 	lda_PPU_VRAM_DATA
+.endif
 
 	; This loads graphics into the "BG" side (PT1)
 	; I think the only reason they're using labeled constants
@@ -3424,16 +3452,45 @@ Read_Joypads:
 	LDY #$01	 ; Joypad 2 then 1
 
 PRG031_FEC0:
+.ifdef NES
 	JSR Read_Joypad	 ; Read Joypad Y
-
+.endif
 	; FIXME: I THINK this is for switch debouncing??
 PRG031_FEC3:
+.ifdef NES
 	LDA Temp_Var1	 ; Pull result out of $00 -> A
 	PHA		 ; Push A
 	JSR Read_Joypad	 ; Read Joypad
 	PLA		 ; Pull A
 	CMP Temp_Var1	 ; Check if same
 	BNE PRG031_FEC3	 ; If not, do it again
+.endif
+.ifdef X16
+	phy
+	tya
+	bne @second_port
+
+	jsr X16::Kernal::JOYSTICK_GET
+	eor #$ff
+	sta Temp_Var1
+
+	lda #1
+	jsr X16::Kernal::JOYSTICK_GET
+	eor #$ff
+	tsb Temp_Var1
+
+	stz Temp_Var2
+	bra @cont
+@second_port:
+	inc
+	jsr X16::Kernal::JOYSTICK_GET
+	eor #$ff
+	sta Temp_Var1
+	stz Temp_Var2
+@cont:
+	ply
+	lda Temp_Var1
+.endif
 
 	ORA Temp_Var2	 ;
 	PHA		 ; Push A
@@ -3486,7 +3543,7 @@ PRG031_FF11:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Read_Joypad:	; $FF12
-
+.ifdef NES
 	; Joypad reading is weird, and actually requires 8 accesses to the joypad I/O to get all the buttons:
 	; Read #1: A
 	;      #2: B
@@ -3514,7 +3571,7 @@ Read_Joypad_Loop:
 	ROL Temp_Var2
 	DEX
 	BNE Read_Joypad_Loop	 ; Loop until 8 reads complete
-
+.endif
 	RTS		 ; Return
 
 .ifdef NES
@@ -3558,9 +3615,7 @@ IntReset:
 
 VBlank_Wait_Loop:
 	lda_PPU_STAT
-.ifdef NES
 	BPL VBlank_Wait_Loop	; If VBlank NOT reported as occuring, loop around and check again!
-.endif
 
 	DEX		 	; X--
 	BNE VBlank_Wait_Loop	; X starts at 2, and goes to 1; so check once more?
@@ -3593,6 +3648,7 @@ VBlank_Wait_Loop:
 
 	lda_PPU_STAT
 
+.ifdef NES
 	LDA #16		 ; A = 16
 	TAX		 ; X = 16
 
@@ -3604,6 +3660,7 @@ PRG031_FF80:
 	EOR #$00	 ; Do nothing??
 	DEX		 ; X--
 	BNE PRG031_FF80	 ; While X > 0, loop
+.endif
 
 	LDA #$01	 ;
 	sta_MMC3_MIRROR	 ; MMC3 command for Vertical mirroring

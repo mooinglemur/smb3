@@ -14,8 +14,12 @@
 
 .import X16_current_blank_tile
 
-.export PPUCTRL
-.export PPUSTATUS
+; needed in the main flow so they're defined there
+.import PPUCTRL
+.import PPUMASK
+.import PPUADDR_L
+.import PPUADDR_H
+.import PPUSTATUS
 
 .export PPURESET
 .export bit_PPUSTATUS
@@ -45,12 +49,6 @@ tmp3:
 
 PPUADDR_LATCH:
 	.res 1
-PPUADDR_L:
-	.res 1
-PPUADDR_H:
-	.res 1
-PPUCTRL:
-	.res 1
 PPUCTRL_BGPT:
 	.res 1
 PPUCTRL_SPPT:
@@ -65,16 +63,12 @@ PPUCTRL_NAMETABLE:
 	.res 1
 PPUDATA_BUFFER:
 	.res 1
-PPUMASK:
-	.res 1
 PPUSCROLL_LATCH:
 	.res 1
 PPUSCROLL_H:
 	.res 1
 PPUSCROLL_V:
 	.res 1
-PPUSTATUS:
-	.res 2 ; old value too
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ; MMC3 calls

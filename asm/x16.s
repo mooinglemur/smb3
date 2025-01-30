@@ -6,9 +6,6 @@
 .macpack longbranch
 
 .scope NESPort
-	; vars
-	.import PPUCTRL
-	.import PPUSTATUS
 	; functions
 	.import PPURESET
 	.import bit_PPUSTATUS
@@ -99,10 +96,14 @@
 .export X16_current_blank_tile
 .export X16_gfx_upd_bank
 
+.export PPUADDR_L
+.export PPUADDR_H
+.export PPUCTRL
+.export PPUMASK
+.export PPUSTATUS
+
 .segment "X16BSS"
 X16_MMC3_COMMAND:
-	.res 1
-X16_MMC3_IRQCNT:
 	.res 1
 X16_MMC3_IRQ_ENABLED:
 	.res 1
@@ -112,6 +113,18 @@ X16_nes_interrupt_inhibit:
 	.res 1
 X16_current_blank_tile:
 	.res 1
+
+; NESPort stuff that we need easy access to
+PPUADDR_L:
+	.res 1
+PPUADDR_H:
+	.res 1
+PPUCTRL:
+	.res 1
+PPUMASK:
+	.res 1
+PPUSTATUS:
+	.res 2 ; old value too
 
 ; These variables track what CHR banks are loaded in VERA VRAM
 ; and provides a way to handle dynamic loading
@@ -412,13 +425,14 @@ READPAGE3 = * - 1
 
 .proc x16_irqhandler
 	;stp
-	lda X16::Reg::RAMBank
-	sta RAMBANK_RESTORE
 
 	; are we vblank?
 	lda Vera::Reg::ISR
 	and #1
 	beq notvblank
+
+	lda X16::Reg::RAMBank
+	pha
 
 	lda Vera::Reg::Ctrl
 	pha
@@ -442,16 +456,9 @@ READPAGE3 = * - 1
 
 	jmp (kernal_irq_handler)
 after_kernal_handler:
-	lda #31
-	sta X16::Reg::RAMBank
 	lda #$80
-	tsb NESPort::PPUSTATUS
-	lda NESPort::PPUCTRL
-
-	ldx #$ff
-RAMBANK_RESTORE = * - 1
-	stx X16::Reg::RAMBank
-	tax
+	tsb PPUSTATUS
+	lda PPUCTRL
 
 	bpl after_game_int_handler
 
@@ -471,6 +478,13 @@ notvblank:
 
 	lda X16_MMC3_IRQ_ENABLED
 	beq end
+
+	lda PPUMASK
+	and #$18
+	beq end
+
+	lda X16::Reg::RAMBank
+	pha
 
 	lda Vera::Reg::Ctrl
 	pha
@@ -499,6 +513,8 @@ after_game_int_handler:
 	sta Vera::Reg::AddrL
 	pla
 	sta Vera::Reg::Ctrl
+	pla
+	sta X16::Reg::RAMBank
 end:
 	;stp
 	ply
@@ -550,7 +566,7 @@ X16_lda_JOYPAD_y:
 	rts
 
 X16_lda_PPU_STAT:
-	JSRFAR NESPort::lda_PPUSTATUS, 31
+	PJFAR NESPort::lda_PPUSTATUS, 31
 
 .proc X16_lda_PPU_VRAM_DATA
 	; In SMB3, we never actually need to read out of VRAM.

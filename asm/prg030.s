@@ -911,7 +911,17 @@ PRG030_8634:
 	JSR Scroll_Update_Ranges
 
 PRG030_8646:
+.ifdef X16
+	lda X16::Reg::RAMBank
+	pha
+	lda #10
+	sta X16::Reg::RAMBank
+.endif
 	JSR Map_DrawAndPan	 ; Draw and pan map as necessary
+.ifdef X16
+	pla
+	sta X16::Reg::RAMBank
+.endif
 
 	; Pushes any buffered graphics thru
 	LDA #$00
@@ -1055,7 +1065,17 @@ PRG030_8715:
 	STA PAGE_A000
 	JSR PRGROM_Change_A000
 
+.ifdef X16
+	pha
+	sta X16::Reg::RAMBank
+	lda #10
+	sta X16::Reg::RAMBank
+.endif
 	JSR Map_DoMap	 		; Do the map!
+.ifdef X16
+	pla
+	sta X16::Reg::RAMBank
+.endif
 
 	LDA Map_Operation
 	CMP #$02
