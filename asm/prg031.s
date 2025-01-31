@@ -1771,9 +1771,19 @@ UpdSel_Vertical:
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
 .endif
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
+.ifdef X16  ; this is the order on the X16
+	LDA Horz_Scroll
+	sta_PPU_SCROLL	 ; Horizontal Scroll set
+	LDA Vert_Scroll
+	sta_PPU_SCROLL	 ; Vertical Scroll set
+
+	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
+.endif
 	LDA #>Sprite_RAM	 ; A = 2
 	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
+.ifdef NES
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
+.endif
 
 	LDA VBlank_Tick
 	BNE PRG031_F5D3	 		; If VBlank_Tick <> 0, jump to PRG031_F5D3
@@ -1824,10 +1834,12 @@ PRG031_F5D3:
 	sta_PPU_CTL1	; Set above settings
 	lda_PPU_STAT	; read PPU status to reset the high/low latch
 
+.ifdef NES
 	LDA Horz_Scroll
 	sta_PPU_SCROLL	 ; Horizontal Scroll set
 	LDA Vert_Scroll
 	sta_PPU_SCROLL	 ; Vertical Scroll set
+.endif
 
 .ifdef NES
 	LDA #192	 ; A = 192
@@ -1857,9 +1869,19 @@ PRG031_F610:
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
 .endif
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
+.ifdef X16 ; this is the X16 order
+	LDA Horz_Scroll
+	sta_PPU_SCROLL	 ; Horizontal Scroll set
+	LDA Vert_Scroll
+	sta_PPU_SCROLL	 ; Vertical Scroll set
+
+	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
+.endif
 	LDA #>Sprite_RAM	 ; A = 2
 	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
+.ifdef NES
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
+.endif
 
 	LDA Map_EnterLevelFX
 	BEQ PRG031_F631	 ; If Map_EnterLevelFX = 0 (not entering a level), jump to PRG031_F631
@@ -1881,10 +1903,12 @@ PRG031_F631:
 	ORA #%10101000	; In addition to anything else specified by PPU_CTL1_Mod, Generate VBlank Resets, use 8x16 sprites, sprites use PT2
 	sta_PPU_CTL1	; Set above settings
 
+.ifdef NES
 	LDA Horz_Scroll
 	sta_PPU_SCROLL	 ; Horizontal Scroll set
 	LDA Vert_Scroll
 	sta_PPU_SCROLL	 ; Vertical Scroll set
+.endif
 
 	lda_PPU_STAT	 	; read PPU status to reset the high/low latch
 
@@ -1919,12 +1943,12 @@ PRG031_F631:
 .endif
 	sta_MMC3_IRQENABLE ; Start the IRQ counter
 .ifdef X16
-	; status bar scroll split at 384?
+	; status bar scroll split (level entry animation)
 	php
 	sei
-	lda #<384
+	lda #<381
 	sta Vera::Reg::IRQLineL
-	lda #(>384) << 7
+	lda #(>381) << 7
 	tsb Vera::Reg::IEN
 	plp
 .endif
