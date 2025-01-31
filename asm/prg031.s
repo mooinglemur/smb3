@@ -1695,12 +1695,12 @@ PRG031_F51D:
 .endif
 	sta_MMC3_IRQENABLE	; Start the IRQ counter
 .ifdef X16
-	; status bar scroll split at 384?
+	; status bar scroll split
 	php
 	sei
-	lda #<384
+	lda #<381
 	sta Vera::Reg::IRQLineL
-	lda #(>384) << 7
+	lda #(>381) << 7
 	tsb Vera::Reg::IEN
 	plp
 .endif
