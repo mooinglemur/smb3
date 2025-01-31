@@ -817,7 +817,17 @@ PRG030_85A5:
 	; Changes pages at A000 and C000 based on value Level_Tileset (0)
 	JSR SetPages_ByTileset	 ;	A000 = Page 11, C000 = Page 10
 
+.ifdef X16
+	lda X16::Reg::RAMBank
+	pha
+	lda #10
+	sta X16::Reg::RAMBank
+.endif
 	JSR Scroll_Map_SpriteBorder	; Draw sprite-based border on map
+.ifdef X16
+	pla
+	sta X16::Reg::RAMBank
+.endif
 
 	; Set A000 page to 12
 	LDA #12
@@ -890,7 +900,17 @@ PRG030_8617:
 	LDA World_8_Dark
 	BEQ PRG030_8625	 	; If World_8_Dark = 0 (not doing the effect), jump to PRG030_8625
 
+.ifdef X16
+	lda X16::Reg::RAMBank
+	pha
+	lda #10
+	sta X16::Reg::RAMBank
+.endif
 	JSR Map_W8DarknessFill	; Fill in the entire screen with black
+.ifdef X16
+	pla
+	sta X16::Reg::RAMBank
+.endif
 
 PRG030_8625:
 	LDA World_Num
@@ -943,7 +963,17 @@ PRG030_8646:
 	STA PAGE_A000
 	JSR PRGROM_Change_A000
 
+.ifdef X16
+	lda X16::Reg::RAMBank
+	pha
+	lda #10
+	sta X16::Reg::RAMBank
+.endif
 	JSR Map_IntroAttrSave	; Pick up the current attribute info under the box
+.ifdef X16
+	pla
+	sta X16::Reg::RAMBank
+.endif
 
 	LDX #$0E 		; X = 14 (standard $00 aligned box)
 
@@ -959,7 +989,17 @@ PRG030_8676:
 	TXA		 	; A = X ($0E/$0F, $10/$11)
 	JSR Video_Do_Update	; Do the World X intro box!
 
+.ifdef X16
+	lda X16::Reg::RAMBank
+	pha
+	lda #10
+	sta X16::Reg::RAMBank
+.endif
 	JSR Map_ConfigWorldIntro	; Apply the world number and lives count
+.ifdef X16
+	pla
+	sta X16::Reg::RAMBank
+.endif
 
 	; Push the buffered update
 	LDA #$00
@@ -1055,8 +1095,18 @@ PRG030_86F9:
 	STA PAGE_A000
 	JSR PRGROM_Change_A000
 
+.ifdef X16
+	pha
+	sta X16::Reg::RAMBank
+	lda #10
+	sta X16::Reg::RAMBank
+.endif
 	JSR World5_Sky_AddCloudDeco	 ; World 5 sky area gets an extra cloud sprite (strange?)
 	JSR WorldMap_UpdateAndDraw	 ; Update and draw map graphics
+.ifdef X16
+	pla
+	sta X16::Reg::RAMBank
+.endif
 	JMP WorldMap_Loop	 	; Loop back around...
 
 PRG030_8715:
@@ -3101,7 +3151,17 @@ PRG030_9185:
 	DEX		 ; X--
 	BPL PRG030_9185	; While X >= 0, loop!
 
+.ifdef X16
+	lda X16::Reg::RAMBank
+	pha
+	lda #10
+	sta X16::Reg::RAMBank
+.endif
 	JSR Scroll_Map_SpriteBorder	 ; Keep that map border going!
+.ifdef X16
+	pla
+	sta X16::Reg::RAMBank
+.endif
 
 	; Set page @ A000 to 12
 	LDA #12
@@ -3176,7 +3236,17 @@ PRG030_91D1:
 	LDA World_8_Dark
 	BEQ PRG030_9214	 	; If World_8_Dark = 0 (not doing the effect), jump to PRG030_9214
 
+.ifdef X16
+	lda X16::Reg::RAMBank
+	pha
+	lda #10
+	sta X16::Reg::RAMBank
+.endif
 	JSR Map_W8DarknessFill	; Fill in the entire screen with black
+.ifdef X16
+	pla
+	sta X16::Reg::RAMBank
+.endif
 
 PRG030_9214:
 
@@ -3190,7 +3260,17 @@ PRG030_9214:
 	JSR Scroll_Update_Ranges
 
 PRG030_9226:
+.ifdef X16
+	lda X16::Reg::RAMBank
+	pha
+	lda #10
+	sta X16::Reg::RAMBank
+.endif
 	JSR Map_DrawAndPan	 ; Draw and pan map as necessary
+.ifdef X16
+	pla
+	sta X16::Reg::RAMBank
+.endif
 
 	LDA #$00		 ; A = 0 (Graphics buffer push)
 	JSR Video_Do_Update	 ; Push through what's in graphics buffer
