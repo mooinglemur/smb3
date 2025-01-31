@@ -13,6 +13,9 @@
 ;---------------------------------------------------------------------------
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
+.ifdef X16
+.include "../inc/x16.inc"
+.endif
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var8
@@ -3503,6 +3506,15 @@ PRG011_B3D3:
 
 	; Get address Map_Object_Valid_Tiles (on page 10), store into Temp_Var15
 	; This lists valid tiles the object may travel over...
+.ifdef X16
+.pushseg
+	jmp X16_PRG011_check_map_object_valid_tiles_march
+.segment "PRG011LOW"
+X16_PRG011_check_map_object_valid_tiles_march:
+	lda #10
+	sta X16::Reg::RAMBank
+.endif
+
 	LDA Map_Object_Valid_Tiles,X
 	STA Temp_Var15
 	LDA Map_Object_Valid_Tiles+1,X
@@ -3516,10 +3528,24 @@ PRG011_B3EC:
 	CMP (Temp_Var15),Y
 	BEQ PRG011_B3F5	 	; If this tile is valid to travel over, jump to PRG011_B3F5
 	DEY		 ; Y--
+
 	BPL PRG011_B3EC	 ; While Y >= 0, loop!
+.ifdef NES
 	BMI PRG011_B3A3	 ; If we couldn't find a tile valid to travel over, jump to PRG011_B3A3 to choose anew...
 
 PRG011_B3F5:
+.endif
+.ifdef X16
+	lda #11
+	sta X16::Reg::RAMBank
+	jmp PRG011_B3A3
+PRG011_B3F5:
+	lda #11
+	sta X16::Reg::RAMBank
+	jmp real_PRG011_B3F5
+.popseg
+real_PRG011_B3F5:
+.endif
 	; Valid tile in front of us, now check if we can move one more!
 	; (Moves are in two tiles, not one; make sure "landing zone" is safe)
 	LDY Temp_Var13	 ; Y = Temp_Var13 (object we're working on)

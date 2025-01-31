@@ -1612,9 +1612,21 @@ PRG031_F4E3:
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
 .endif
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
+.ifdef X16 ; this is the order on X16
+	LDA Horz_Scroll
+	sta_PPU_SCROLL	; Horizontal Scroll set
+	LDA Vert_Scroll
+	CLC
+	ADC Vert_Scroll_Off	; Apply vertical offset (used for??)
+	sta_PPU_SCROLL		; Vertical scroll set
+
+	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
+.endif
 	LDA #>Sprite_RAM	 ; A = 2
 	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
+.ifdef NES
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
+.endif
 
 	LDA VBlank_Tick
 	BNE PRG031_F51D	 	; If VBlank_Tick <> 0, jump to PRG031_F51D
@@ -1665,12 +1677,14 @@ PRG031_F51D:
 	sta_PPU_CTL1	; Set above settings
 	lda_PPU_STAT	; read PPU status to reset the high/low latch
 
+.ifdef NES
 	LDA Horz_Scroll
 	sta_PPU_SCROLL	; Horizontal Scroll set
 	LDA Vert_Scroll
 	CLC
 	ADC Vert_Scroll_Off	; Apply vertical offset (used for??)
 	sta_PPU_SCROLL		; Vertical scroll set
+.endif
 
 	; This sets the status bar scroll fix for everything after the title screen!
 	; At scanline 192, the name table scroll is fixed to always display the status bar

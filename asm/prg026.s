@@ -56,6 +56,7 @@
 .import Level_LayPtrOrig_AddrH, Level_ObjPtrOrig_AddrL, Level_ObjPtrOrig_AddrH, StatusBar_PMT
 .import StatusBar_CoinH, StatusBar_CoinL, StatusBar_LivesH, StatusBar_LivesL, StatusBar_Score
 .import StatusBar_Time, Map_MusicBox_Cnt, Level_JctYLHStart, Level_JctXLHStart
+.import PAGE_C000
 ; imports from PRG006
 .import W503_EndO, BigQBlock8O, BigQBlock7O, BigQBlock6O, BigQBlock5O, BigQBlock4O, BigQBlock3O
 .import BigQBlock2O, BigQBlock1O
@@ -71,10 +72,6 @@
 .import DynJump
 ; far imports
 .import FAR010_MapTile_Get_By_Offset
-
-.ifdef X16
-.import X16_gfx_upd_bank
-.endif
 
 ; exports
 .export HandleLevelJunction, LevelLoad_CopyObjectList, Level_Opening_Effect, Map_DoInventory_And_PoofFX
@@ -3425,7 +3422,7 @@ Video_Misc_Updates:
 .pushseg
 .segment "PRG026LOW"
 X16_PRG026_LDA_Video_Upd_AddrL_y:
-	lda X16_gfx_upd_bank
+	lda PAGE_C000
 	beq :+
 	sta X16::Reg::RAMBank
 :
@@ -3438,14 +3435,8 @@ X16_PRG026_LDA_Video_Upd_AddrL_y:
 	pla
 	rts
 .popseg
-	bne :+
-	stz X16_gfx_upd_bank
-	rts
-:
 .endif
-.ifdef NES
 	BEQ PRG026_B292	 	; If 0, jump to PRG026_B292 (RTS)
-.endif
 
 	ldx_PPU_STAT	 	; Flush video
 

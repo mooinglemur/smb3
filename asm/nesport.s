@@ -207,6 +207,8 @@ end:
 .endproc
 
 .proc lda_PPUDATA ; this sub emulates a PPU read :D
+	; SMB3 only uses this for reading some bytes out of the attribute table in order to preserve them
+	; to show the World # box, so we only bother to have saved the attribute writes in sta_PPUDATA
     php
 	phy
 
@@ -266,7 +268,7 @@ end:
 
 .proc lda_PPUMASK
 	lda PPUMASK
-	rts 
+	rts
 .endproc
 
 .proc lda_PPUSTATUS

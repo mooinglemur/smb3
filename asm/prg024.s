@@ -108,7 +108,6 @@
 
 .ifdef X16
 .import X16_nes_interrupt_inhibit
-.import X16_gfx_upd_bank
 .endif
 
 .segment "PRG024"
@@ -1515,8 +1514,6 @@ GraphicsBuf_Prep_And_WaitVSyn2:
 .segment "PRG024LOW"
 X16_PRG024_Load_Video_Upd_Table2:
 	inc X16::Reg::RAMBank
-	lda #25
-	sta X16_gfx_upd_bank
 .endif
 	LDA Video_Upd_Table2,Y
 	STA Video_Upd_AddrL

@@ -14,6 +14,9 @@
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
 .include "../inc/nesswitch.inc"
+.ifdef X16
+.include "../inc/x16.inc"
+.endif
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var11
@@ -1126,7 +1129,9 @@ Map_Intro_Erase1Strip:
 	; Set page @ A000 to 12
 	LDA #12
 	STA PAGE_A000
+.ifdef NES
 	JSR PRGROM_Change_A000
+.endif
 
 	LDA Map_IntBoxErase
 	BNE PRG010_C5A9	 	; If Map_IntBoxErase <> 0, jump to PRG010_C5A9
@@ -1226,22 +1231,53 @@ PRG010_C5CC:
 	; in the order of upper-left, lower-left, upper-right, lower-right
 
 	; Upper-left
+.ifdef X16
+	jsr X16_PRG010_ldai_Temp_Var15_y
+.pushseg
+.segment "PRG010LOW"
+X16_PRG010_ldai_Temp_Var15_y:
+	lda PAGE_A000
+	sta X16::Reg::RAMBank
+.endif
 	LDA (Temp_Var15),Y	 	; Get first 8x8
+.ifdef X16
+	pha
+	lda #10
+	sta X16::Reg::RAMBank
+	pla
+	rts
+.popseg
+.endif
 	STA Scroll_PatStrip,X	 	; Store this 8x8 into the vertical strip
 
 	; Lower-left
 	INC Temp_Var16		; Jump to next layout chunk
+.ifdef X16
+	jsr X16_PRG010_ldai_Temp_Var15_y
+.endif
+.ifdef NES
 	LDA (Temp_Var15),Y	 	; Get next 8x8
+.endif
 	STA Scroll_PatStrip+1,X	; Store this 8x8 into vertical strip, next slot to the right
 
 	; Upper-right
 	INC Temp_Var16		; Jump to next layout chunk
+.ifdef X16
+	jsr X16_PRG010_ldai_Temp_Var15_y
+.endif
+.ifdef NES
 	LDA (Temp_Var15),Y	 	; Get next 8x8
+.endif
 	STA Scroll_PatStrip+$B,X	; Store into vertical strip
 
 	; Lower-right
 	INC Temp_Var16		; Jump to next layout chunk
+.ifdef X16
+	jsr X16_PRG010_ldai_Temp_Var15_y
+.endif
+.ifdef NES
 	LDA (Temp_Var15),Y	 	; Get next 8x8
+.endif
 	STA Scroll_PatStrip+$C,X	; Store into vertical strip
 
 	LDA Temp_Var1
@@ -1407,7 +1443,9 @@ PRG010_C6BB:
 	; In any case, put page 11 back in at A000
 	LDA #11
 	STA PAGE_A000
+.ifdef NES
 	JSR PRGROM_Change_A000
+.endif
 
 	RTS		 ; Return
 
@@ -2410,10 +2448,16 @@ Scroll_ColumnLOff:	.byte $00, $0F, $00
 
 Map_PanRight:
 	; Switch to page 12 @ A000 (for map tile 8x8 layout data)
+.ifdef NES
 	LDA #MMC3_8K_TO_PRG_A000
 	sta_MMC3_COMMAND
 	LDA #12
 	sta_MMC3_PAGE
+.endif
+.ifdef X16 ; XXX we're mutating PAGE_A000 here when NES wouldn't
+	lda #12
+	sta PAGE_A000
+.endif
 
 	LDY Map_ScrollOddEven		 ; Y = Map_ScrollOddEven
 
@@ -2467,12 +2511,21 @@ PRG010_CC7A:
 	INC Temp_Var16
 
 PRG010_CC98:
+.ifdef X16
+	jsr X16_PRG010_ldai_Temp_Var15_y
+.endif
+.ifdef NES
 	LDA (Temp_Var15),Y		; Get this pattern
+.endif
 	STA Scroll_PatStrip+$20,X	; Store into Scroll_PatStrip
 
 	INC Temp_Var16			; Temp_Var16++
-
+.ifdef X16
+	jsr X16_PRG010_ldai_Temp_Var15_y
+.endif
+.ifdef NES
 	LDA (Temp_Var15),Y		; Get this pattern
+.endif
 	STA Scroll_PatStrip+$21,X	; Store into Scroll_PatStrip
 
 	; X += 2
@@ -2520,10 +2573,16 @@ PRG010_CCC0:
 
 PRG010_CCD7:
 	; Switch to page 11 @ A000
+.ifdef NES
 	LDA #MMC3_8K_TO_PRG_A000
 	sta_MMC3_COMMAND
 	LDA #11
 	sta_MMC3_PAGE
+.endif
+.ifdef X16 ; XXX we're mutating PAGE_A000 here when NES wouldn't
+	lda #11
+	sta PAGE_A000
+.endif
 
 	JMP Scroll_Map_SpriteBorder	 ; Draw map sprite border and don't come back
 
@@ -3950,11 +4009,13 @@ W8D_GetNext8x8:
 	LDA Tile_Mem + $450,Y	 ; Get tile here
 	STA Temp_Var11		 ; -> Temp_Var11
 
+.ifdef NES
 	; Switch to page 12 @ A000 (for map tile 8x8 layout data)
 	LDA #MMC3_8K_TO_PRG_A000
 	sta_MMC3_COMMAND
 	LDA #12
 	sta_MMC3_PAGE
+.endif
 
 	JSR TileLayout_GetBaseAddr	 ; Set Temp_Var13/14 to layout pointer, and reload Y = Temp_Var11 (the tile)
 
@@ -3963,13 +4024,32 @@ W8D_GetNext8x8:
 	ADC Temp_Var14
 	STA Temp_Var14		; Temp_Var14 += Map_W8D_TileOff
 
+.ifdef X16
+	jsr X16_PRG010_ldai_Temp_Var13_y
+.pushseg
+.segment "PRG010LOW"
+X16_PRG010_ldai_Temp_Var13_y:
+	lda #12
+	sta X16::Reg::RAMBank
+.endif
 	LDA (Temp_Var13),Y	; Load this 8x8 pattern of tile
+.ifdef X16
+	pha
+	lda #10
+	sta X16::Reg::RAMBank
+	pla
+	rts
+.popseg
+.endif
+
+.ifdef NES
 	PHA		 ; Save it
 
 	; Restore previous page @ A000
 	JSR PRGROM_Change_A000
 
 	PLA		 ; Restore 8x8 pattern
+.endif
 
 	; Restore X and Y
 	LDY Temp_Var2
