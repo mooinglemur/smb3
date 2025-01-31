@@ -23,6 +23,7 @@
 
 .export PPURESET
 .export bit_PPUSTATUS
+.export lda_PPUDATA
 .export lda_PPUSTATUS
 .export ldx_PPUSTATUS
 .export sta_MMC3_MIRROR
@@ -69,6 +70,15 @@ PPUSCROLL_H:
 	.res 1
 PPUSCROLL_V:
 	.res 1
+
+	.res $C0 ; dummy reservation to keep attribute_table_0_raw-$C0 still within the $A000 space
+	         ; in order to avoid side effect issues in $9Fxx space when doing page-crossing
+			 ; indexed writes on X16 with a 65C816
+
+attribute_table_0_raw:
+	.res 64
+attribute_table_1_raw:
+	.res 64
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ; MMC3 calls
@@ -194,6 +204,51 @@ do_4_3:
 end:
 	rts
 
+.endproc
+
+.proc lda_PPUDATA ; this sub emulates a PPU read :D
+    php
+	phy
+
+	lda PPUADDR_H
+	and #$23
+	cmp #$23
+	bne non_attr
+
+	ldy PPUADDR_L
+	cpy #$c0
+	bcc non_attr
+
+	bit PPUCTRL_HMIRROR
+	bmi hmirror
+vmirror:  ; NT0 is at $2000 or $2800
+	lda PPUADDR_H
+	and #$04
+	bne at1
+at0:
+	lda attribute_table_0_raw-$C0,y
+	pha
+	bra end
+at1:
+	lda attribute_table_1_raw-$C0,y
+	pha
+	bra end
+hmirror:  ; NT0 is at $2000 or $2400
+	lda PPUADDR_H
+	and #$08
+	bne at1
+	bra at0
+non_attr:
+	lda PPUDATA_BUFFER
+	stz PPUDATA_BUFFER
+	pha
+end:
+	jsr auto_increment
+	pla
+	ply
+	plp
+	ora #0
+	rts
 .endproc
 
 .proc bit_PPUSTATUS
@@ -461,6 +516,27 @@ not_attribute:
 	asl tmp0
 	rol tmp1
 
+	; save attribute byte
+	ldy PPUADDR_L
+	bit PPUCTRL_HMIRROR
+	bmi save_att_hmirror
+save_att_vmirror:  ; NT0 is at $2000 or $2800
+	lda PPUADDR_H
+	and #$04
+	bne at1
+at0:
+	txa
+	sta attribute_table_0_raw-$C0,y
+	bra cont
+save_att_hmirror:  ; NT0 is at $2000 or $2400
+	lda PPUADDR_H
+	and #$08
+	beq at0
+at1:
+	txa
+	sta attribute_table_1_raw-$C0,y
+
+cont:
 	; if vertical mirroring/horizontal arrangement, we write this as is to NT0
 	bit PPUCTRL_HMIRROR
 	bmi hmirror
@@ -478,7 +554,7 @@ vmirror:
 
 	stx Vera::Reg::Data0
 
-	bra auto_increment
+	bra auto_i
 
 hmirror:
 	; if horizontal mirroring/vertical arrangement, we write this in both the left and right mirrors
@@ -518,30 +594,8 @@ nt_write:
 	stx Vera::Reg::Data0
 
 is_chr_ram: ; no-op, just auto-increment
-auto_increment:
-	; now handle the increment based on the value of the control register
-	lda PPUCTRL
-	and #$04
-	bne add32
-
-	clc
-	lda PPUADDR_L
-	adc #1
-	sta PPUADDR_L
-	lda PPUADDR_H
-	adc #0
-	and #$3F
-	sta PPUADDR_H
-	bra end
-add32:
-	clc
-	lda PPUADDR_L
-	adc #32
-	sta PPUADDR_L
-	lda PPUADDR_H
-	adc #0
-	and #$3F
-	sta PPUADDR_H
+auto_i:
+	jsr auto_increment
 end:
 	pla
 	ply
@@ -578,7 +632,7 @@ is_palette:
 	lda palette+1,y
 	sta Vera::Reg::Data0
 
-	bra auto_increment
+	bra auto_i
 is_attribute:
 	; if horizontal mirroring / vertical arrangement
 	; $23C0-23FF / $2BC0-2BFF = nametable 0
@@ -654,7 +708,7 @@ attr_vmirror:
 	jsr apply_palette_LL_LR
 	jsr apply_palette_LL_LR
 
-	jmp auto_increment
+	jmp auto_i
 attr_hmirror:
 	lda #$40
 	trb tmp0
@@ -699,7 +753,7 @@ attr_nt_write:
 	jsr apply_palette_LL_LR_mirrored
 	jsr apply_palette_LL_LR_mirrored
 
-	jmp auto_increment
+	jmp auto_i
 
 apply_palette_UL_UR:
 	txa
@@ -809,6 +863,34 @@ next_row:
 	sta Vera::Reg::AddrM
 	rts
 
+.endproc
+
+.proc auto_increment
+	; now handle the increment based on the value of the control register
+	lda PPUCTRL
+	and #$04
+	bne add32
+
+	clc
+	lda PPUADDR_L
+	adc #1
+	sta PPUADDR_L
+	lda PPUADDR_H
+	adc #0
+	and #$3F
+	sta PPUADDR_H
+	bra end
+add32:
+	clc
+	lda PPUADDR_L
+	adc #32
+	sta PPUADDR_L
+	lda PPUADDR_H
+	adc #0
+	and #$3F
+	sta PPUADDR_H
+end:
+	rts
 .endproc
 
 .proc sta_PPUMASK

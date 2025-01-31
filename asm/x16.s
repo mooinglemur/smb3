@@ -9,6 +9,7 @@
 	; functions
 	.import PPURESET
 	.import bit_PPUSTATUS
+	.import lda_PPUDATA
 	.import lda_PPUSTATUS
 	.import ldx_PPUSTATUS
 	.import sta_MMC3_MIRROR
@@ -568,16 +569,11 @@ X16_lda_JOYPAD_y:
 X16_lda_PPU_STAT:
 	PJFAR NESPort::lda_PPUSTATUS, 31
 
-.proc X16_lda_PPU_VRAM_DATA
-	; In SMB3, we never actually need to read out of VRAM.
-	; it's used to tickle the vertical scroll mid-frame
-	rts
-.endproc
+X16_lda_PPU_VRAM_DATA:
+	PJFAR NESPort::lda_PPUDATA, 31
 
-.proc X16_ldx_PPU_STAT
+X16_ldx_PPU_STAT:
 	PJFAR NESPort::ldx_PPUSTATUS, 31
-
-.endproc
 
 X16_PPURESET:
 	PJFAR NESPort::PPURESET, 31

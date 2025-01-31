@@ -2711,7 +2711,17 @@ PRG030_8F42:
 	STA PAGE_C000
 	JSR PRGROM_Change_C000
 
+.ifdef X16
+	lda X16::Reg::RAMBank
+	pha
+	lda #29
+	sta X16::Reg::RAMBank
+.endif
 	JSR BlockChange_Do	 ; Do Block Change event, if necessary
+.ifdef X16
+	pla
+	sta X16::Reg::RAMBank
+.endif
 
 	; Load page 0 @ C000
 	LDA #$00
