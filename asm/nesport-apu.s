@@ -487,7 +487,7 @@ sq_sweep_end:
 
 
 tri_get_output_level:
-	ldy #$0F
+	ldy #$0C
 	lda tri+TriState::LengthMute
 	bne tri_get_output_level_muted
 	lda tri+TriState::LinearMute
@@ -507,7 +507,9 @@ tri_lin:
 	beq tri_lin_noload
 	stz tri+TriState::LinearMute
 	lda tri+TriState::LinearCounterSetup
-	sta tri+TriState::LinearCounter
+	beq
+	dec ; this seems to solve random issues with hanging triangles but it might be clipping regular notes too
+:	sta tri+TriState::LinearCounter
 	bra tri_lin_loaded
 tri_lin_noload:
 	lda tri+TriState::ControlFlag
@@ -680,9 +682,7 @@ end:
 	and #$7F
 	sta tri+TriState::LinearCounterSetup
 	pla
-	rol
-	lda #0
-	rol
+	and #$80
 	sta tri+TriState::ControlFlag
 	rts
 .endproc
@@ -1132,9 +1132,6 @@ end:
 	rts
 .endproc
 
-
-
-
 voltbl:
 	.byte $C0,$D3,$E0,$E5
 	.byte $EA,$EE,$F1,$F3
@@ -1159,8 +1156,6 @@ noitbl:
 	.word $754A,$61BE,$494E,$3AA5
 	.word $2E73,$24F1,$18B1,$1278
 	.word $0C50,$093A,$049D,$024E
-
-
 
 vars:
 sq:
@@ -1194,5 +1189,7 @@ tmp5:
 tmp6:
 	.res 1
 end_vars:
+
+.assert * - vars < 256, error, "APU vars > 255 bytes"
 
 .endif

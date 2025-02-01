@@ -26,6 +26,7 @@
 	; APU
 	.import APU_tick
 	.import APU_reset
+	.import sta_FRAMECTR_CTL
 	.import sta_PAPU_CT1
 	.import sta_PAPU_CT1_x
 	.import sta_PAPU_CT2
@@ -57,6 +58,10 @@
 .import sprbanks, sprpages
 
 .import IntReset, IntIRQ, IntNMI
+
+.import DMC01, DMC02, DMC03, DMC04, DMC05, DMC06, DMC07, DMC08, DMC09
+.import DMC01_End, DMC02_End, DMC03_End, DMC04_End, DMC05_End
+.import DMC06_End, DMC07_End, DMC08_End, DMC09_End
 
 .export X16_PJFAR_outbound
 .export X16_PJFAR_return
@@ -191,6 +196,8 @@ start:
 
 	jsr X16_init_dynamic_chr
 
+	jsr X16_expand_dmc
+
 	jsr X16_setup_handler
 
 	jmp IntReset ; Start Game
@@ -230,10 +237,121 @@ nobin:
 	lda #$ff
 	sta X16_nes_interrupt_inhibit
 
+	stz PPUCTRL ; avoid race to early NMI entry
+
 	plp
 	rts
 .endproc
 
+.proc X16_expand_dmc
+	stz $9fba
+	; initialize state
+	lda #$3B
+	sta destbank
+	lda #<$A000
+	sta destptr
+	lda #>$A000
+	sta destptr+1
+
+	ldx #0
+outerloop:
+	stz level
+	txa
+	asl
+	tay
+	lda dmcs,y
+	sta srcptr
+	lda dmcs+1,y
+	sta srcptr+1
+	lda dmcends,y
+	sta endptr_l
+	lda dmcends+1,y
+	sta endptr_h
+	lda destbank
+	sta dmcbank,x
+	lda destptr
+	sta dmcptr_l,x
+	lda destptr+1
+	sta dmcptr_h,x
+innerloop:
+	ldy #30
+	sty X16::Reg::RAMBank
+	lda $ffff
+srcptr = * - 2
+	ldy #$ff
+destbank = * - 1
+	sty X16::Reg::RAMBank
+.repeat 8
+	lsr
+	jsr output
+.endrepeat
+	inc srcptr
+	bne :+
+	inc srcptr+1
+:	lda srcptr+1
+	cmp #$ff
+endptr_h = * - 1
+	bcc innerloop
+	lda srcptr
+	cmp #$ff
+endptr_l = * - 1
+	bcc innerloop
+	inx
+	cpx #9
+	bcc outerloop
+	rts
+output:
+	pha
+	bcc odown
+	lda level
+	adc #1 ; carry set, adds 2
+ocont:
+	bmi odone
+	sta level
+odone:
+	lda #$ff
+level = * - 1
+	sta $ffff
+destptr = * - 2
+	inc destptr
+	bne onoh
+	lda destptr+1
+	inc
+	cmp #$C0
+	bcc seth
+	sbc #$20
+	inc X16::Reg::RAMBank
+	inc destbank
+seth:
+	sta destptr+1
+onoh:
+	pla
+	rts
+odown:
+	lda level
+	sbc #1 ; carry clear, subtracts 2
+	bra ocont
+dmcs:
+	.word DMC01
+	.word DMC02
+	.word DMC03
+	.word DMC04
+	.word DMC05
+	.word DMC06
+	.word DMC07
+	.word DMC08
+	.word DMC09
+dmcends:
+	.word DMC01_End
+	.word DMC02_End
+	.word DMC03_End
+	.word DMC04_End
+	.word DMC05_End
+	.word DMC06_End
+	.word DMC07_End
+	.word DMC08_End
+	.word DMC09_End
+.endproc
 
 .proc X16_load_tanooki_bin
 	; Use last-used disk device to load bin
@@ -606,7 +724,7 @@ X16_PPURESET:
 	PJFAR NESPort::PPURESET, 31
 
 X16_sta_FRAMECTR_CTL:
-	rts
+	PJFAR NESPort::sta_FRAMECTR_CTL, 31
 
 X16_sta_JOYPAD:
 	rts
@@ -995,6 +1113,13 @@ X16_sty_PPU_SCROLL:
 
 X16_sty_PPU_VRAM_ADDR:
 	PJFAR NESPort::sty_PPUADDR, 31
+
+dmcptr_l:
+	.res 9
+dmcptr_h:
+	.res 9
+dmcbank:
+	.res 9
 
 .endif
 

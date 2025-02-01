@@ -69,6 +69,13 @@
 .export StatusBar_Update_Cards, VertLevel_ScreenH, VertLevel_ScreenL
 .export IntReset, IntIRQ, IntNMI
 
+.export DMC01, DMC01_End
+.export DMC02, DMC02_End
+.export DMC04, DMC04_End
+.export DMC05, DMC05_End
+.export DMC06, DMC06_End
+.export DMC09, DMC09_End
+
 .segment "PRG031"
 
 .ifdef X16
@@ -185,6 +192,7 @@ PRG031_E2E1:
 	; play DMC02 and just continue on through code, which would be noisy.
 
 DMC_MODADDR_LUT:
+.ifdef NES
 	MADR DMC01	; Sample  0 (DMC01)
 	MADR DMC02	; Sample  1 (DMC02)
 	MADR DMC03	; Sample  2 (DMC03)
@@ -201,6 +209,10 @@ DMC_MODADDR_LUT:
 	MADR DMC09	; Sample 13 (DMC09)
 	MADR DMC09	; Sample 14 (DMC09 slower)
 	MADR DMC09	; Sample 15 (DMC09 even slower)
+.endif
+.ifdef X16
+	.byte 1,2,3,2,4,5,5,6,6,7,7,5,8,9,9,9
+.endif
 
 DMC_MODLEN_LUT:
 	; these are (value << 4) + 1, that is minimum 1 byte long to FF1 bytes
