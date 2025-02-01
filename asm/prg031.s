@@ -1931,10 +1931,12 @@ PRG031_F631:
 
 	lda_PPU_STAT
 
+.ifdef NES
 	LDA Horz_Scroll
 	sta_PPU_SCROLL	 ; Horizontal Scroll set
 	LDA Vert_Scroll
 	sta_PPU_SCROLL	 ; Vertical Scroll set
+.endif
 
 .ifdef NES
 	LDA #192	 ; A = 192

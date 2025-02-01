@@ -6,7 +6,7 @@
 .macpack longbranch
 
 .scope NESPort
-	; functions
+	; PPU
 	.import PPURESET
 	.import bit_PPUSTATUS
 	.import lda_PPUDATA
@@ -23,6 +23,34 @@
 	.import stx_PPUMASK
 	.import sty_PPUADDR
 	.import sty_PPUSCROLL
+	; APU
+	.import APU_tick
+	.import APU_reset
+	.import sta_PAPU_CT1
+	.import sta_PAPU_CT1_x
+	.import sta_PAPU_CT2
+	.import sta_PAPU_CTL1
+	.import sta_PAPU_CTL2
+	.import sta_PAPU_EN
+	.import sta_PAPU_FT1
+	.import sta_PAPU_FT1_x
+	.import sta_PAPU_FT2
+	.import sta_PAPU_NCTL1
+	.import sta_PAPU_NFREQ1
+	.import sta_PAPU_NFREQ2
+	.import sta_PAPU_RAMP1
+	.import sta_PAPU_RAMP2
+	.import sta_PAPU_TCR1
+	.import sta_PAPU_TFREQ1
+	.import sta_PAPU_TFREQ2
+	.import stx_PAPU_CT2
+	.import stx_PAPU_CTL1
+	.import stx_PAPU_CTL2
+	.import stx_PAPU_EN
+	.import stx_PAPU_NFREQ1
+	.import stx_PAPU_RAMP2
+	.import sty_PAPU_RAMP1
+	.import sty_PAPU_RAMP2
 .endscope
 
 .import bgbanks, bgpages
@@ -456,11 +484,11 @@ after_kernal_handler:
 	tsb PPUSTATUS
 	lda PPUCTRL
 
-	bpl after_game_int_handler
+	bpl after_game_nmi_handler
 
-	lda #>after_game_int_handler
+	lda #>after_game_nmi_handler
 	pha
-	lda #<after_game_int_handler
+	lda #<after_game_nmi_handler
 	pha
 	php
 
@@ -473,10 +501,6 @@ notvblank:
 	bmi end
 
 	lda X16_MMC3_IRQ_ENABLED
-	beq end
-
-	lda PPUMASK
-	and #$18
 	beq end
 
 	lda X16::Reg::RAMBank
@@ -492,6 +516,10 @@ notvblank:
 	lda Vera::Reg::AddrH
 	pha
 
+	lda PPUMASK
+	and #$18
+	beq after_game_nmi_handler
+
 	lda #>after_game_int_handler
 	pha
 	lda #<after_game_int_handler
@@ -499,6 +527,10 @@ notvblank:
 	php
 
 	jmp IntIRQ
+after_game_nmi_handler:
+	lda #31
+	sta X16::Reg::RAMBank
+	jsr NESPort::APU_tick
 
 after_game_int_handler:
 	pla
@@ -847,31 +879,31 @@ blank_tile_per_chrbank:
 .endproc
 
 X16_sta_PAPU_CT1:
-	rts
+	PJFAR NESPort::sta_PAPU_CT1, 31
 
 X16_sta_PAPU_CT1_x:
-	rts
+	PJFAR NESPort::sta_PAPU_CT1_x, 31
 
 X16_sta_PAPU_CT2:
-	rts
+	PJFAR NESPort::sta_PAPU_CT2, 31
 
 X16_sta_PAPU_CTL1:
-	rts
+	PJFAR NESPort::sta_PAPU_CTL1, 31
 
 X16_sta_PAPU_CTL2:
-	rts
+	PJFAR NESPort::sta_PAPU_CTL2, 31
 
 X16_sta_PAPU_EN:
-	rts
+	PJFAR NESPort::sta_PAPU_EN, 31
 
 X16_sta_PAPU_FT1:
-	rts
+	PJFAR NESPort::sta_PAPU_FT1, 31
 
 X16_sta_PAPU_FT1_x:
-	rts
+	PJFAR NESPort::sta_PAPU_FT1_x, 31
 
 X16_sta_PAPU_FT2:
-	rts
+	PJFAR NESPort::sta_PAPU_FT2, 31
 
 X16_sta_PAPU_MODADDR:
 	rts
@@ -883,28 +915,28 @@ X16_sta_PAPU_MODLEN:
 	rts
 
 X16_sta_PAPU_NCTL1:
-	rts
+	PJFAR NESPort::sta_PAPU_NCTL1, 31
 
 X16_sta_PAPU_NFREQ1:
-	rts
+	PJFAR NESPort::sta_PAPU_NFREQ1, 31
 
 X16_sta_PAPU_NFREQ2:
-	rts
+	PJFAR NESPort::sta_PAPU_NFREQ2, 31
 
 X16_sta_PAPU_RAMP1:
-	rts
+	PJFAR NESPort::sta_PAPU_RAMP1, 31
 
 X16_sta_PAPU_RAMP2:
-	rts
+	PJFAR NESPort::sta_PAPU_RAMP2, 31
 
 X16_sta_PAPU_TCR1:
-	rts
+	PJFAR NESPort::sta_PAPU_TCR1, 31
 
 X16_sta_PAPU_TFREQ1:
-	rts
+	PJFAR NESPort::sta_PAPU_TFREQ1, 31
 
 X16_sta_PAPU_TFREQ2:
-	rts
+	PJFAR NESPort::sta_PAPU_TFREQ2, 31
 
 X16_sta_PPU_CTL1:
 	PJFAR NESPort::sta_PPUCTRL, 31
@@ -925,22 +957,22 @@ X16_sta_SPR_DMA:
 	PJFAR NESPort::sta_OAMDMA, 31
 
 X16_stx_PAPU_CT2:
-	rts
+	PJFAR NESPort::stx_PAPU_CT2, 31
 
 X16_stx_PAPU_CTL1:
-	rts
+	PJFAR NESPort::stx_PAPU_CTL1, 31
 
 X16_stx_PAPU_CTL2:
-	rts
+	PJFAR NESPort::stx_PAPU_CTL2, 31
 
 X16_stx_PAPU_EN:
-	rts
+	PJFAR NESPort::stx_PAPU_EN, 31
 
 X16_stx_PAPU_NFREQ1:
-	rts
+	PJFAR NESPort::stx_PAPU_NFREQ1, 31
 
 X16_stx_PAPU_RAMP2:
-	rts
+	PJFAR NESPort::stx_PAPU_RAMP2, 31
 
 X16_stx_PPU_CTL2:
 	PJFAR NESPort::stx_PPUMASK, 31
@@ -953,10 +985,10 @@ X16_sty_MMC3_IRQDISABLE:
 	rts
 
 X16_sty_PAPU_RAMP1:
-	rts
+	PJFAR NESPort::sty_PAPU_RAMP1, 31
 
 X16_sty_PAPU_RAMP2:
-	rts
+	PJFAR NESPort::sty_PAPU_RAMP2, 31
 
 X16_sty_PPU_SCROLL:
 	PJFAR NESPort::sty_PPUSCROLL, 31
