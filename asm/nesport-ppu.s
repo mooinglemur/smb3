@@ -199,7 +199,6 @@ do_4_3:
 	lda #(480 >> 1)
 	sta Vera::Reg::DCVStop
 
-
 	stz Vera::Reg::Ctrl
 end:
 	rts
@@ -328,8 +327,11 @@ end:
 	sta OAM_1a
 	sta OAM_1b
 	sta OAM_2
+	sta OAM_2b
 	sta OAM_3
+	sta OAM_3b
 	sta OAM_4
+	sta OAM_4b
 
 	lda #$3f
 	ldx PPUCTRL_SP16
@@ -343,6 +345,7 @@ loop:
 	clc
 	lda $ff01,x
 OAM_1a = (*-1)
+	beq masking_sprite
 	and #$3f ; $3f: 0-63 per region (or $3e: even numbers only if SP16).  Self-modded above.
 MASK = (*-1)
 	bit $ff01,x
@@ -400,6 +403,7 @@ continue:
 	adc #4
 	ora PPUCTRL_SP16
 	sta Vera::Reg::Data0
+return:
 	inx
 	inx
 	inx
@@ -411,9 +415,50 @@ continue:
 	pla
 	plp
 	rts
-
+masking_sprite: ; handle special masking sprite
+	lda $ff02,x
+OAM_4b = (*-1)
+	tay
+	lda masking_spr_addr_l,y
+	sta Vera::Reg::Data0
+	lda masking_spr_addr_h,y
+	sta Vera::Reg::Data0
+	lda $ff03,x
+OAM_2b = (*-1)
+	sta Vera::Reg::Data0 ; X pos
+	stz Vera::Reg::Data0 ; no high X position
+	lda $ff00,x
+OAM_3b = (*-1)
+	inc ; sprites are a row late on NES
+	sta Vera::Reg::Data0 ; Y pos
+	stz Vera::Reg::Data0 ; high Y position
+	lda masking_spr_attrs,y
+	sta Vera::Reg::Data0
+	lda masking_spr_palette,y
+	sta Vera::Reg::Data0
+	bra return
 .endproc
 
+masking_spr_addr_l:
+	.byte <(LEFT_VERT_PIPE_MASK_SPRITE >> 5)
+	.byte <(RIGHT_VERT_PIPE_MASK_SPRITE >> 5)
+	.byte <(LEFT_KAIZO_BLOCK_MASK_SPRITE >> 5)
+	.byte <(RIGHT_KAIZO_BLOCK_MASK_SPRITE >> 5)
+masking_spr_addr_h:
+	.byte >(LEFT_VERT_PIPE_MASK_SPRITE >> 5)
+	.byte >(RIGHT_VERT_PIPE_MASK_SPRITE >> 5)
+	.byte >(LEFT_KAIZO_BLOCK_MASK_SPRITE >> 5)
+	.byte >(RIGHT_KAIZO_BLOCK_MASK_SPRITE >> 5)
+masking_spr_attrs:
+	.byte $0C
+	.byte $0C
+	.byte $0C
+	.byte $0C
+masking_spr_palette:
+	.byte $42
+	.byte $42
+	.byte $41
+	.byte $41
 
 .proc sta_PPUADDR
 	php

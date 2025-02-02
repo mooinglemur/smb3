@@ -1984,13 +1984,26 @@ PRG001_A8F7:
 	STA Sprite_RAM+4,Y
 
 	; Masking tile
+.ifdef NES
 	LDA #$77
+.endif
+.ifdef X16
+	lda #$00 ; canary value for masking sprite
+.endif
 	STA Sprite_RAM+1,Y
 	STA Sprite_RAM+5,Y
 
 	; Set sprite priority
+.ifdef NES
 	LDA #%00100000
+.endif
+.ifdef X16
+	lda #$02 ; kaizo block masking sprite
+.endif
 	STA Sprite_RAM+2,Y
+.ifdef X16
+	inc
+.endif
 	STA Sprite_RAM+6,Y
 
 	; Set sprite X's side by side

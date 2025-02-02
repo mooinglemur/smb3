@@ -67,6 +67,8 @@
 
 .import IntReset, IntIRQ, IntNMI
 
+.importzp Temp_Var1, Temp_Var2, Temp_Var3
+
 .import DMC01, DMC02, DMC03, DMC04, DMC05, DMC06, DMC07, DMC08, DMC09
 .import DMC01_End, DMC02_End, DMC03_End, DMC04_End, DMC05_End
 .import DMC06_End, DMC07_End, DMC08_End, DMC09_End
@@ -204,6 +206,8 @@ start:
 	jsr X16_APU_reset
 
 	jsr X16_init_dynamic_chr
+
+	jsr X16_create_masking_sprites
 
 	jsr X16_expand_dmc
 
@@ -372,6 +376,86 @@ dmcends:
 	.word DMC07_End
 	.word DMC08_End
 	.word DMC09_End
+.endproc
+
+.proc X16_create_masking_sprites
+	VERA_SET_ADDR (LEFT_VERT_PIPE_MASK_SPRITE), 1
+	lda bgbanks+$60
+	sta X16::Reg::RAMBank
+	lda bgpages+$60
+	sta Temp_Var2
+	lda #$D0
+	sta Temp_Var1
+
+	jsr copy_tile
+
+	inc Temp_Var2
+
+	jsr copy_tile
+
+	VERA_SET_ADDR (RIGHT_VERT_PIPE_MASK_SPRITE), 1
+	lda bgbanks+$60
+	sta X16::Reg::RAMBank
+	lda bgpages+$60
+	sta Temp_Var2
+	lda #$E0
+	sta Temp_Var1
+
+	jsr copy_tile
+
+	inc Temp_Var2
+
+	jsr copy_tile
+
+	VERA_SET_ADDR (LEFT_KAIZO_BLOCK_MASK_SPRITE), 1
+	lda bgbanks+$60
+	sta X16::Reg::RAMBank
+	lda bgpages+$60
+	clc
+	adc #$05
+	sta Temp_Var2
+	lda #$80
+	sta Temp_Var1
+
+	jsr copy_tile
+
+	lda #$90
+	sta Temp_Var1
+
+	jsr copy_tile
+
+	lda #$A0
+	sta Temp_Var1
+
+	jsr copy_tile
+
+	lda #$B0
+	sta Temp_Var1
+
+	jsr copy_tile
+
+	rts
+
+copy_tile:
+	ldy #0
+tile_loop:
+	lda (Temp_Var1),y
+	sta Temp_Var3
+.repeat 2
+.repeat 2
+	asl
+	asl
+	asl Temp_Var3
+	rol
+	asl Temp_Var3
+	rol
+.endrepeat
+	sta Vera::Reg::Data0
+.endrepeat
+	iny
+	cpy #16
+	bcc tile_loop
+	rts
 .endproc
 
 .proc X16_load_tanooki_bin

@@ -1574,13 +1574,26 @@ PRG005_A760:
 PRG005_A773:
 
 	; Mask sprite pattern
+.ifdef NES
 	LDA #$77
+.endif
+.ifdef X16
+	lda #$00 ; canary value for a special mask sprite on X16
+.endif
 	STA Sprite_RAM-$07,Y
 	STA Sprite_RAM-$03,Y
 
 	; Mask sprite attribute
+.ifdef NES
 	LDA #$22
+.endif
+.ifdef X16
+	lda #$00 ; $00 = canary value for left vertical pipe strip
+.endif
 	STA Sprite_RAM-$06,Y
+.ifdef X16
+	inc      ; counterpart to above
+.endif
 	STA Sprite_RAM-$02,Y
 
 	; Copy Sprite X
