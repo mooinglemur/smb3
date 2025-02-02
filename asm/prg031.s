@@ -59,6 +59,10 @@
 .import IntIRQ_32PixelPartition_Part2, Randomize, PRG030_SUB_9F40
 ; far imports
 .import FAR022_UpdSel_Roulette
+.ifdef X16 ; procedural overrides
+	.import X16_pt0_idx_active
+	.import X16_activate_tilemap
+.endif
 ; exports
 .export Clear_Nametable_Short, DynJump, IntIRQ_32PixPart_HideSprites, IntIRQ_32PixelPartition_Part3
 .export IntIRQ_Finish_NoDis, PRG031_F499, PRG031_FA3C, PRGROM_Change_A000, PRGROM_Change_Both2
@@ -1619,11 +1623,11 @@ PRG031_F4E3:
 
 	; "Normal" update ($C0)
 
-	LDA #$00	 ; A = 0
 .ifdef NES
+	LDA #$00	 ; A = 0
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
-.endif
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
+.endif
 .ifdef X16 ; this is the order on X16
 	LDA Horz_Scroll
 	sta_PPU_SCROLL	; Horizontal Scroll set
@@ -1631,6 +1635,9 @@ PRG031_F4E3:
 	CLC
 	ADC Vert_Scroll_Off	; Apply vertical offset (used for??)
 	sta_PPU_SCROLL		; Vertical scroll set
+
+	lda #$18
+	sta_PPU_CTL2
 
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
 .endif
@@ -2319,6 +2326,7 @@ PRG031_F7F8:
 
 	; Load status bar graphics and hide any sprites from appearing over the status bar
 
+.ifdef NES
 	; Load two parts of Status Bar
 	LDA #MMC3_2K_TO_PPU_0000
 	sta_MMC3_COMMAND
@@ -2331,7 +2339,6 @@ PRG031_F7F8:
 	LDA #MMC3_1K_TO_PPU_1000
 	sta_MMC3_COMMAND
 
-.ifdef NES
 	; Use blank tiles for all sprite graphics
 	LDA SpriteHideCHR_1000
 	sta_MMC3_PAGE
@@ -2351,6 +2358,12 @@ PRG031_F7F8:
 	LDA #$18	 ;
 	sta_PPU_CTL2	 ; Sprites + BG now visible
 .endif
+.ifdef X16
+	; activate preloaded status bar banks
+	ldy #9
+	jsr X16_activate_tilemap
+.endif
+
 	JMP PRG031_F8B3
 
 PRG031_F871:
@@ -2476,6 +2489,7 @@ PRG031_F8E0:
 
 	; Load status bar graphics and hide any sprites from appearing over the status bar
 
+.ifdef NES
 	; Load two parts of Status Bar
 	LDA #MMC3_2K_TO_PPU_0000
 	sta_MMC3_COMMAND
@@ -2488,7 +2502,6 @@ PRG031_F8E0:
 	LDA #MMC3_1K_TO_PPU_1000
 	sta_MMC3_COMMAND
 
-.ifdef NES
 	; Use blank tiles for all sprite graphics
 	LDA SpriteHideCHR_1000
 	sta_MMC3_PAGE
@@ -2504,6 +2517,11 @@ PRG031_F8E0:
 	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1C00
 	sta_MMC3_PAGE
+.endif
+.ifdef X16
+	; activate preloaded status bar banks
+	ldy #9
+	jsr X16_activate_tilemap
 .endif
 
 	JMP PRG031_F997	 ; Jump to PRG031_F997
@@ -2693,7 +2711,6 @@ PRG031_FA41:
 	sty_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR	; ... so now we're reading at $0B00
 	lda_PPU_VRAM_DATA
-.endif
 
 	; This loads graphics into the "BG" side (PT1)
 	; I think the only reason they're using labeled constants
@@ -2727,6 +2744,12 @@ PRG031_FA41:
 
 	LDA #$18	 ;
 	sta_PPU_CTL2	 ; Sprites + BG now visible
+.endif
+.ifdef X16
+	; activate preloaded status bar banks
+	ldy #9
+	jsr X16_activate_tilemap
+.endif
 	LDA PPU_CTL1_Copy
 	ORA PPU_CTL1_Mod	; Combine bits from PPU_CTL1_Copy into PPU_CTL1_Mod
 	sta_PPU_CTL1	 ; Update the PPU_CTL1 register..
@@ -2790,6 +2813,7 @@ PRG031_FAEA:
 	; is so they could put this code in multiple spots, but it'd
 	; stay in sync if they needed to change the CHRROM banks.
 	; But that'd be the job of an assembler label, wouldn't it??
+.ifdef NES
 	LDA #MMC3_2K_TO_PPU_0000
 	sta_MMC3_COMMAND
 	LDA StatusBarCHR_0000
@@ -2814,6 +2838,12 @@ PRG031_FAEA:
 	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1C00
 	sta_MMC3_PAGE
+.endif
+.ifdef X16
+	; activate preloaded status bar banks
+	ldy #9
+	jsr X16_activate_tilemap
+.endif
 
 PRG031_FB34:
 	lda_PPU_STAT	 ;
@@ -2957,7 +2987,6 @@ PRG031_FBE7:
 	sty_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR	; ... so now we're reading at $0B00
 	lda_PPU_VRAM_DATA
-.endif
 
 	; This loads graphics into the "BG" side (PT1)
 	; I think the only reason they're using labeled constants
@@ -2991,6 +3020,12 @@ PRG031_FBE7:
 
 	LDA #$18	 ;
 	sta_PPU_CTL2	 ; Sprites + BG now visible
+.endif
+.ifdef X16
+	; activate preloaded status bar banks
+	ldy #9
+	jsr X16_activate_tilemap
+.endif
 
 	LDA PPU_CTL1_Copy
 	ORA PPU_CTL1_Mod	; Combine bits from PPU_CTL1_Copy into PPU_CTL1_Mod
@@ -3768,6 +3803,12 @@ PRG031_FF80:
 	JMP IntReset_Part2	; Rest of Reset continues in the $8000 bank...
 
 PT2_Full_CHRROM_Switch:	 ; $FFAD
+.ifdef X16
+	; bring previous bg pattern back into effect (don't let the status bar pattern linger)
+	ldy X16_pt0_idx_active
+	jsr X16_activate_tilemap
+	; then we can worry about activating new banks
+.endif
 	; This subroutine does a full pattern table switchout
 	LDY #$05	 ; Loop Y from 5 to 0, effecting all pattern selections
 

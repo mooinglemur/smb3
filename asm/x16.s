@@ -131,6 +131,7 @@
 .export X16_sty_PPU_SCROLL
 .export X16_sty_PPU_VRAM_ADDR
 
+.export X16_pt0_idx_active
 .export X16_pt1a_idx_active
 .export X16_pt1b_idx_active
 .export X16_pt1c_idx_active
@@ -138,6 +139,8 @@
 
 .export X16_nes_interrupt_inhibit
 .export X16_current_blank_tile
+
+.export X16_activate_tilemap
 
 .export PPUADDR_L
 .export PPUADDR_H
@@ -177,7 +180,7 @@ X16_pt0a_loaded:
 X16_pt0b_loaded:
 	.res 10
 X16_pt0_lru:
-	.res 10
+	.res 9
 X16_pt0_idx_active:
 	.res 1
 
@@ -504,17 +507,18 @@ loop2:
 	dex
 	bpl loop2
 
-	ldx #0
-	ldy #$76
-	sty X16_pt0a_loaded
+	ldx #9
+	ldy #$5c
+	sty X16_pt0a_loaded+9
 	jsr X16_load_bgtiles_a
 
-	ldx #0
-	ldy #$78
-	sty X16_pt0b_loaded
+	ldx #9
+	ldy #$5e
+	sty X16_pt0b_loaded+9
 	jsr X16_load_bgtiles_b
 
-	stz X16_pt0_idx_active
+	lda #9
+	sta X16_pt0_idx_active
 
 	ldx #0
 	ldy #0
@@ -889,7 +893,7 @@ pt0a:
 	sei
 	stx @CMP1
 	; try to find a slot with the already loaded banks
-	ldy #10
+	ldy #9
 @loop1:
 	dey
 	bmi @nomatch
@@ -904,11 +908,11 @@ pt0a:
 	; we found it
 @found:
 	sty X16_pt0_idx_active
-	jsr activate_tilemap
+	jsr X16_activate_tilemap
 	plp
 	jmp end
 @nomatch:
-	ldx X16_pt0_lru+9 ; grab the least recently used index
+	ldx X16_pt0_lru+8 ; grab the least recently used index
 	lda @CMP1
 	sta X16_pt0a_loaded,x
 	tay
@@ -916,19 +920,19 @@ pt0a:
 
 	ldx X16_pt0_idx_active
 	lda X16_pt0b_loaded,x
-	ldx X16_pt0_lru+9
+	ldx X16_pt0_lru+8
 	sta X16_pt0b_loaded,x
 	tay
 	jsr X16_load_bgtiles_b
 
-	ldy X16_pt0_lru+9
+	ldy X16_pt0_lru+8
 	bra @found
 pt0b:
 	php
 	sei
 	stx @CMP1
 	; try to find a slot with the already loaded banks
-	ldy #10
+	ldy #9
 @loop1:
 	dey
 	bmi @nomatch
@@ -943,11 +947,11 @@ pt0b:
 	; we found it
 @found:
 	sty X16_pt0_idx_active
-	jsr activate_tilemap
+	jsr X16_activate_tilemap
 	plp
 	bra end
 @nomatch:
-	ldx X16_pt0_lru+9 ; grab the least recently used index
+	ldx X16_pt0_lru+8 ; grab the least recently used index
 	lda @CMP1
 	sta X16_pt0b_loaded,x
 	tay
@@ -955,12 +959,12 @@ pt0b:
 
 	ldx X16_pt0_idx_active
 	lda X16_pt0a_loaded,x
-	ldx X16_pt0_lru+9
+	ldx X16_pt0_lru+8
 	sta X16_pt0a_loaded,x
 	tay
 	jsr X16_load_bgtiles_a
 
-	ldy X16_pt0_lru+9
+	ldy X16_pt0_lru+8
 	bra @found
 pt1a:
 	php
@@ -1037,7 +1041,9 @@ end:
 	rts
 panic:
 	stp
-activate_tilemap:
+.endproc
+
+.proc X16_activate_tilemap
 	tya
 	asl
 	asl
@@ -1046,8 +1052,11 @@ activate_tilemap:
 	adc #<(((VERA_TILE_BASE >> 11) << 2) | $00)
 	sta Vera::Reg::L0TileBase
 	sta Vera::Reg::L1TileBase
+	; skip the LRU update for statusbar tilemap
+	cpy #9
+	beq @end
 	; update the LRU
-	ldx #10
+	ldx #9
 	tya
 @loop1:
 	dex
@@ -1093,6 +1102,8 @@ activate_tilemap:
 	sty X16_current_blank_tile
 @end:
 	rts
+panic:
+	stp
 blank_tile_per_chrbank:
 	.byte $FF, $D6, $A0, $93, $85, $BF, $C0, $87
 	.byte $85, $E4, $00, $FF, $00, $00, $00, $CF
