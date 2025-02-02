@@ -13,6 +13,9 @@
 ;---------------------------------------------------------------------------
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
+.ifdef X16
+.include "../inc/x16.inc"
+.endif
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var8
@@ -1394,6 +1397,7 @@ PRG029_D33D:
 
 
 PRG029_D33E:
+
 	LDA Level_GetWandState
 	CMP #$03
 	BLS PRG029_D361	 ; If Level_GetWandState < 3 (wand grabbed), jump to PRG029_D361
@@ -1554,8 +1558,25 @@ PRG029_D3EB:
 PRG029_D3EC:
 
 	; Nothing to do with pipes...
-
+.ifdef NES
 	JMP PRG008_A224	 ; Jump to PRG008_A224
+.endif
+.ifdef X16
+	jmp X16_PRG029_unwind_far_call_jmp_to_PRG008_A224
+.pushseg
+.segment "PRG029LOW"
+X16_PRG029_unwind_far_call_jmp_to_PRG008_A224:
+	pla
+	pla
+	pla
+	pla
+	pla ; leave two bytes so that PRG008_A224 can pull off the last two
+	lda #8
+	sta X16::Reg::RAMBank
+	jmp PRG008_A224
+.popseg
+.endif
+
 
 
 	; When Player has grabbed wand, offset from Player X/Y by suit / power-up

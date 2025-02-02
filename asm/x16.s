@@ -52,6 +52,14 @@
 	.import stx_PAPU_RAMP2
 	.import sty_PAPU_RAMP1
 	.import sty_PAPU_RAMP2
+
+	.import sta_PAPU_MODADDR
+	.import sta_PAPU_MODLEN
+	.import sta_PAPU_MODCTL
+
+	.import dmcbank
+	.import dmcptr_h
+	.import dmcptr_l
 .endscope
 
 .import bgbanks, bgpages
@@ -163,11 +171,11 @@ PPUSTATUS:
 ; and provides a way to handle dynamic loading
 
 X16_pt0a_loaded:
-	.res 8
+	.res 10
 X16_pt0b_loaded:
-	.res 8
+	.res 10
 X16_pt0_lru:
-	.res 8
+	.res 10
 X16_pt0_idx_active:
 	.res 1
 
@@ -193,6 +201,7 @@ start:
 	bcs nobin
 
 	jsr X16_PPURESET
+	jsr X16_APU_reset
 
 	jsr X16_init_dynamic_chr
 
@@ -268,11 +277,11 @@ outerloop:
 	lda dmcends+1,y
 	sta endptr_h
 	lda destbank
-	sta dmcbank,x
+	sta NESPort::dmcbank,x
 	lda destptr
-	sta dmcptr_l,x
+	sta NESPort::dmcptr_l,x
 	lda destptr+1
-	sta dmcptr_h,x
+	sta NESPort::dmcptr_h,x
 innerloop:
 	ldy #30
 	sty X16::Reg::RAMBank
@@ -288,7 +297,19 @@ destbank = * - 1
 	inc srcptr
 	bne :+
 	inc srcptr+1
-:	lda srcptr+1
+:	; taper off the end of the sample if we're too far from zero
+	lda endptr_l
+	sec
+	sbc srcptr
+	tay
+	lda endptr_h
+	sbc srcptr+1
+	bne after_taper
+	cpy level
+	bcs after_taper
+	dec level
+after_taper:
+	lda srcptr+1
 	cmp #$ff
 endptr_h = * - 1
 	bcc innerloop
@@ -298,7 +319,7 @@ endptr_l = * - 1
 	bcc innerloop
 	inx
 	cpx #9
-	bcc outerloop
+	jcc outerloop
 	rts
 output:
 	pha
@@ -389,7 +410,7 @@ loop1:
 	dex
 	bpl loop1
 
-	ldx #7
+	ldx #9
 loop2:
 	lda #$ff
 	sta X16_pt0a_loaded,x
@@ -723,6 +744,9 @@ X16_ldx_PPU_STAT:
 X16_PPURESET:
 	PJFAR NESPort::PPURESET, 31
 
+X16_APU_reset:
+	PJFAR NESPort::APU_reset, 31
+
 X16_sta_FRAMECTR_CTL:
 	PJFAR NESPort::sta_FRAMECTR_CTL, 31
 
@@ -781,7 +805,7 @@ pt0a:
 	sei
 	stx @CMP1
 	; try to find a slot with the already loaded banks
-	ldy #8
+	ldy #10
 @loop1:
 	dey
 	bmi @nomatch
@@ -800,7 +824,7 @@ pt0a:
 	plp
 	jmp end
 @nomatch:
-	ldx X16_pt0_lru+7 ; grab the least recently used index
+	ldx X16_pt0_lru+9 ; grab the least recently used index
 	lda @CMP1
 	sta X16_pt0a_loaded,x
 	tay
@@ -808,19 +832,19 @@ pt0a:
 
 	ldx X16_pt0_idx_active
 	lda X16_pt0b_loaded,x
-	ldx X16_pt0_lru+7
+	ldx X16_pt0_lru+9
 	sta X16_pt0b_loaded,x
 	tay
 	jsr X16_load_bgtiles_b
 
-	ldy X16_pt0_lru+7
+	ldy X16_pt0_lru+9
 	bra @found
 pt0b:
 	php
 	sei
 	stx @CMP1
 	; try to find a slot with the already loaded banks
-	ldy #8
+	ldy #10
 @loop1:
 	dey
 	bmi @nomatch
@@ -839,7 +863,7 @@ pt0b:
 	plp
 	bra end
 @nomatch:
-	ldx X16_pt0_lru+7 ; grab the least recently used index
+	ldx X16_pt0_lru+9 ; grab the least recently used index
 	lda @CMP1
 	sta X16_pt0b_loaded,x
 	tay
@@ -847,12 +871,12 @@ pt0b:
 
 	ldx X16_pt0_idx_active
 	lda X16_pt0a_loaded,x
-	ldx X16_pt0_lru+7
+	ldx X16_pt0_lru+9
 	sta X16_pt0a_loaded,x
 	tay
 	jsr X16_load_bgtiles_a
 
-	ldy X16_pt0_lru+7
+	ldy X16_pt0_lru+9
 	bra @found
 pt1a:
 	php
@@ -939,7 +963,7 @@ activate_tilemap:
 	sta Vera::Reg::L0TileBase
 	sta Vera::Reg::L1TileBase
 	; update the LRU
-	ldx #8
+	ldx #10
 	tya
 @loop1:
 	dex
@@ -1024,13 +1048,13 @@ X16_sta_PAPU_FT2:
 	PJFAR NESPort::sta_PAPU_FT2, 31
 
 X16_sta_PAPU_MODADDR:
-	rts
+	PJFAR NESPort::sta_PAPU_MODADDR, 31
 
 X16_sta_PAPU_MODCTL:
-	rts
+	PJFAR NESPort::sta_PAPU_MODCTL, 31
 
 X16_sta_PAPU_MODLEN:
-	rts
+	PJFAR NESPort::sta_PAPU_MODLEN, 31
 
 X16_sta_PAPU_NCTL1:
 	PJFAR NESPort::sta_PAPU_NCTL1, 31
@@ -1113,13 +1137,6 @@ X16_sty_PPU_SCROLL:
 
 X16_sty_PPU_VRAM_ADDR:
 	PJFAR NESPort::sty_PPUADDR, 31
-
-dmcptr_l:
-	.res 9
-dmcptr_h:
-	.res 9
-dmcbank:
-	.res 9
 
 .endif
 

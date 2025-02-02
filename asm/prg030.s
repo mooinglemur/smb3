@@ -4766,7 +4766,15 @@ PRG030_98EE:
 	; Upper 3 bits of Temp_Var15 are ALL set... i.e. Temp_Var15 = 111x xxxx
 	; *****************
 
+.ifdef X16
+	lda #14
+	sta X16::Reg::RAMBank
+.endif
 	JSR LoadLevel_StoreJctStart 	; Temp_Var16 and LL_ShapeDef define junction start positions
+.ifdef X16
+	lda PAGE_A000
+	sta X16::Reg::RAMBank
+.endif
 	JMP PRG030_98EE	 		; Loop around
 
 PRG030_991E:

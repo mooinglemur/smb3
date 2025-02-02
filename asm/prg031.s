@@ -211,7 +211,7 @@ DMC_MODADDR_LUT:
 	MADR DMC09	; Sample 15 (DMC09 even slower)
 .endif
 .ifdef X16
-	.byte 1,2,3,2,4,5,5,6,6,7,7,5,8,9,9,9
+	.byte 0,1,2,1,3,4,4,5,5,6,6,4,7,8,8,8
 .endif
 
 DMC_MODLEN_LUT:
@@ -1710,9 +1710,9 @@ PRG031_F51D:
 	; status bar scroll split
 	php
 	sei
-	lda #<381
+	lda #<384
 	sta Vera::Reg::IRQLineL
-	lda #(>381) << 7
+	lda #(>384) << 7
 	tsb Vera::Reg::IEN
 	plp
 .endif
@@ -2218,13 +2218,13 @@ IntIRQ:	 ; $F795 IRQ Interrupt (scanline from MMC3)
 
 	; Jump to the Reset instead...
 	JMP (Temp_Var1)
-.endif
 
 PRG031_F7B0:
 	LDA PAPU_MODCTL_Copy
 	PHA		 ; Save A
 	AND #$7f	 ; Basically don't disturb DMC, but disable interrupt, if active
 	sta_PAPU_MODCTL	 ;
+.endif
 
 	LDA Raster_Effect	 ; Get status bar mode
 
@@ -2261,9 +2261,18 @@ PRG031_F7DF:
 
 IntIRQ_Vertical:
 	sta_MMC3_IRQENABLE ; Active IRQ
+.ifdef X16
+	lda_PPU_STAT
+	LDA #$00	 ;
+	sta_PPU_SCROLL	 ; Horizontal Scroll = 0
+	LDA #$ef
+	sta_PPU_SCROLL	 ; Vertical Scroll updated
+.endif
+.ifdef NES
 	NOP		 ;
 	NOP		 ;
 	NOP		 ;
+.endif
 	LDY #$0b	 ; Y = $0B
 	LDA Level_Tileset ; A = current tileset
 	CMP #17
@@ -2292,7 +2301,6 @@ PRG031_F7F8:
 
 .ifdef NES
 	stx_PPU_CTL2	 ; Sprites + BG invisible
-.endif
 	lda_PPU_STAT	 ;
 
 	; Because vertical scroll will not change after frame begins (second write to
@@ -2300,7 +2308,6 @@ PRG031_F7F8:
 	; vertical scrolling is to change the nametable address that the PPU is reading
 	; at to where we would like it to be...
 	; In this case, the location of the beginning of the status bar!
-.ifdef NES
 	sty_PPU_VRAM_ADDR	 ; This is $0B unless tileset = $11, which it is then $03
 	LDA #$00
 	sta_PPU_VRAM_ADDR	; ... so we're now reading at $1100 or $0300
@@ -2321,6 +2328,7 @@ PRG031_F7F8:
 	LDA #MMC3_1K_TO_PPU_1000
 	sta_MMC3_COMMAND
 
+.ifdef NES
 	; Use blank tiles for all sprite graphics
 	LDA SpriteHideCHR_1000
 	sta_MMC3_PAGE
@@ -2339,6 +2347,7 @@ PRG031_F7F8:
 
 	LDA #$18	 ;
 	sta_PPU_CTL2	 ; Sprites + BG now visible
+.endif
 	JMP PRG031_F8B3
 
 PRG031_F871:
@@ -2374,16 +2383,20 @@ PRG031_F871:
 	LDA SpriteMTCHR_1C00
 	sta_MMC3_PAGE
 
+	; XXX do we need to reblit sprites here for X16?
+
 PRG031_F8B3:
 	LDA PPU_CTL1_Copy
 	ORA PPU_CTL1_Mod	; Combine bits from PPU_CTL1_Copy into PPU_CTL1_Mod
 	sta_PPU_CTL1	 ; Store result into actual register
 	lda_PPU_STAT	 ;
 
+.ifdef NES
 	LDA #$00	 ;
 	sta_PPU_SCROLL	 ; Horizontal Scroll = 0
 	LDA Vert_Scroll ;
 	sta_PPU_SCROLL	 ; Vertical Scroll updated
+.endif
 
 IntIRQ_Finish:
 	sta_MMC3_IRQDISABLE ; Disable the IRQ generation
@@ -2391,8 +2404,10 @@ IntIRQ_Finish:
 IntIRQ_Finish_NoDis:
 	LDA PAGE_CMD	 ; Get old page command
 	sta_MMC3_COMMAND ; Issue it
+.ifdef NES
 	PLA		 ; Restore A (PAPU_MODCTL_Copy)
 	sta_PAPU_MODCTL	 ; Set DMC back to normal
+.endif
 
 	; Restore the other registers
 	PLA
@@ -2407,6 +2422,15 @@ IntIRQ_Finish_NoDis:
 IntIRQ_Standard:	; $F8DB
 	sta_MMC3_IRQENABLE ; Enable IRQ generation
 
+.ifdef X16 ; status bar is fixed for X16
+	lda_PPU_STAT
+	LDA #$00
+	sta_PPU_SCROLL
+	LDA #$ef ;
+	sta_PPU_SCROLL
+.endif
+
+.ifdef NES
 	; Some kind of delay loop?
 	LDX #$02	 ; X = 2
 PRG031_F8E0:
@@ -2414,7 +2438,6 @@ PRG031_F8E0:
 	DEX		 ; X--
 	BNE PRG031_F8E0	 ; While X > 0, loop
 
-.ifdef NES
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$00
 	sta_PPU_VRAM_ADDR
@@ -2422,18 +2445,15 @@ PRG031_F8E0:
 	stx_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR
-.endif
 
-.ifdef NES
 	stx_PPU_CTL2	 ; Hide BG + Sprites
-.endif
 	lda_PPU_STAT	 ;
 
 	; Because vertical scroll will not change after frame begins (second write to
 	; PPU_SCROLL will always be unused until next frame), the hack for MMC3 split
 	; vertical scrolling is to change the nametable address that the PPU is reading
 	; at to where we would like it to be...
-.ifdef NES
+
 	LDY #$07
 	sty_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR	; ... so we're now reading at $0700
@@ -2520,14 +2540,15 @@ PRG031_F997:
 	ORA #$01	 ; Force $2400 nametable address
 	sta_PPU_CTL1	 ; Set it in the register
 	lda_PPU_STAT	 ;
+.ifdef NES
 	LDA #$00	 ;
 	sta_PPU_SCROLL	 ; Horizontal scroll = 0
 	LDA Vert_Scroll ;
 	sta_PPU_SCROLL	 ; Vertical scroll update as-is
+.endif
 	JMP IntIRQ_Finish	 ; Clean up IRQ
 
 IntIRQ_32PixelPartition:	; $F9B3
-
 	; Lotta no-ops??
 	NOP
 	NOP

@@ -526,14 +526,12 @@ Player_DrawAndDoActions29:
 	INC Player_InPipe	 ; Player_InPipe = 1
 
 PRG008_A224:
-
 	; If Player did NOT enter a pipe, we jump here...
 
 	; Pull return address (so we do NOT return to the original Player_DrawAndDoActions
 	; call, thus not setting Player_InPipe flag... seems like a stupid way to
 	; conditionalize that, but hey, I didn't program in the 80s...)
 
-	; XXX ensure none of our far calls will break with this
 	PLA
 	PLA
 

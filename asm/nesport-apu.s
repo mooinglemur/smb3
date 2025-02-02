@@ -1,5 +1,7 @@
 .ifdef X16
 
+.macpack longbranch
+
 .include "../inc/x16.inc"
 
 .export sta_PAPU_CTL1       ; $4000
@@ -29,8 +31,16 @@
 .export stx_PAPU_EN
 .export sta_FRAMECTR_CTL    ; $4017
 
+.export sta_PAPU_MODADDR
+.export sta_PAPU_MODCTL
+.export sta_PAPU_MODLEN
+
 .export APU_reset
 .export APU_tick
+
+.export dmcbank
+.export dmcptr_l
+.export dmcptr_h
 
 .segment "NESPORT"
 
@@ -138,6 +148,7 @@ clock_end:
 	sta qclock
 	bmi clock_loop
 apu_out:
+	;jmp dmc
 
 	VERA_SET_ADDR Vera::VRAM_psg, 1
 
@@ -216,6 +227,20 @@ apu_out:
 	; Waveform (includes 3 for noise)
 	lda #$c0
 	sta Vera::Reg::Data0
+
+dmc:
+	; DPCM channel
+	lda dmc_enabled
+	beq end
+
+	lda dmc_restart
+	jne dmc_setup ; get out of here and don't come back
+
+	lda dmc_playing
+	beq end
+
+	; DPCM channel is currently playing something, continue on this frame
+	jmp dmc_loop
 
 end:
 	rts
@@ -507,7 +532,7 @@ tri_lin:
 	beq tri_lin_noload
 	stz tri+TriState::LinearMute
 	lda tri+TriState::LinearCounterSetup
-	beq
+	beq :+
 	dec ; this seems to solve random issues with hanging triangles but it might be clipping regular notes too
 :	sta tri+TriState::LinearCounter
 	bra tri_lin_loaded
@@ -1073,6 +1098,7 @@ t2:
 
 .proc sta_PAPU_EN
 	php
+	sei
 	pha
 	sta tmp0
 sq1_chk:
@@ -1110,10 +1136,19 @@ noi_chk:
 	beq noi_off
 	lda #1
 	sta noi+NoiState::Enabled
-	bra end
+	bra dmc_chk
 noi_off:
 	stz noi+NoiState::Enabled
 	stz noi+NoiState::LengthCounter
+dmc_chk:
+	lda tmp0
+	and #$10
+	beq dmc_off
+	lda #$80
+	sta dmc_enabled
+	bra end
+dmc_off:
+	stz dmc_enabled
 end:
 	pla
 	plp
@@ -1129,6 +1164,123 @@ end:
 	plx
 	pla
 	plp
+	rts
+.endproc
+
+.proc sta_PAPU_MODCTL
+	php
+	pha
+	and #$0f
+	sta dmc_rate
+	pla
+	plp
+	rts
+.endproc
+
+.proc sta_PAPU_MODADDR
+	php
+	pha
+	sta dmc_idx
+	sec
+	ror dmc_restart
+	pla
+	plp
+	rts
+.endproc
+
+.proc sta_PAPU_MODLEN
+	sta dmc_len
+	rts
+.endproc
+
+.proc dmc_setup
+	ldy dmc_idx
+	cpy #9
+	bcs invalid
+
+	lda dmcbank,y
+	sta dmc_curbank
+	lda dmcptr_l,y
+	sta dmc_curptr_l
+	lda dmcptr_h,y
+	sta dmc_curptr_h
+	lda #$80
+	sta dmc_playing
+	lda dmc_len
+	lsr
+	sta dmc_remain_h
+	lda #0
+	ror
+	clc
+	adc #8
+	sta dmc_remain_l
+	lda #$0C
+	sta Vera::Reg::AudioCtrl
+	stz dmc_restart
+	bra dmc_loop
+invalid:
+	stz dmc_restart
+	rts
+.endproc
+
+.proc dmc_loop ; this looks a lot like ZSMKit's routine
+	ldy dmc_rate
+	ldx apu2pcmrate,y
+	stx Vera::Reg::AudioRate
+	stx RR ; allow restore of rate later in case we're doing the initial load
+	dex
+	lda Vera::Reg::ISR
+	and #$08 ; AFLOW
+	beq slow
+fast:
+	lda pcmrate_fast,y
+	bra calc_bytes
+slow:
+	lda pcmrate_slow,y
+calc_bytes:
+	; do the << 2 base amount
+	stz tmp1
+	asl
+	rol tmp1
+	asl
+	rol tmp1
+	sta tmp0
+
+	bit Vera::Reg::AudioCtrl
+	bvc :+
+	stz Vera::Reg::AudioRate
+:	lda dmc_remain_l
+	sec
+	sbc tmp0
+	lda dmc_remain_h
+	sbc tmp1
+	bcs normal_load ; borrow clear, sufficient bytes by default
+
+	; we have fewer bytes remaining than we were going to send
+	ldx dmc_remain_l
+	ldy dmc_remain_h
+
+	; say that we're done playing so we don't re-enter after
+	stz dmc_playing
+	bra loadit
+normal_load:
+	; decrement remaining
+	lda dmc_remain_l
+	sec
+	sbc tmp0
+	sta dmc_remain_l
+	lda dmc_remain_h
+	sbc tmp1
+	sta dmc_remain_h
+
+after_taper:
+	ldx tmp0
+	ldy tmp1
+loadit:
+	jsr _load_fifo
+	lda #$80 ; this is self-mod to restore the rate in case we loaded while empty and temporarily set the rate to zero
+RR = *- 1
+	sta Vera::Reg::AudioRate
 	rts
 .endproc
 
@@ -1157,6 +1309,25 @@ noitbl:
 	.word $2E73,$24F1,$18B1,$1278
 	.word $0C50,$093A,$049D,$024E
 
+pcmrate_fast:
+	.byte $13, $15, $17, $19
+	.byte $1A, $1E, $22, $24
+	.byte $29, $2F, $36, $3C
+	.byte $47, $5B, $69, $8D
+
+pcmrate_slow:
+	.byte $11, $12, $16, $17
+	.byte $19, $1C, $21, $22
+	.byte $27, $2E, $34, $3A
+	.byte $45, $58, $67, $8A
+
+apu2pcmrate:
+	.byte $0B, $0C, $0E, $0F
+	.byte $10, $12, $15, $16
+	.byte $19, $1D, $21, $25
+	.byte $2C, $38, $41, $57
+
+
 vars:
 sq:
 sq1:
@@ -1172,6 +1343,24 @@ qclock:
 qclocks_per_frame:
 	.res 1
 clock_count:
+	.res 1
+
+dmc_rate:
+	.res 1
+dmc_idx:
+	.res 1
+dmc_len:
+	.res 1
+dmc_restart:
+	.res 1
+dmc_playing:
+	.res 1
+dmc_enabled:
+	.res 1
+
+dmc_remain_l:
+	.res 1
+dmc_remain_h:
 	.res 1
 
 tmp0:
@@ -1191,5 +1380,152 @@ tmp6:
 end_vars:
 
 .assert * - vars < 256, error, "APU vars > 255 bytes"
+
+.segment "X16BSS"
+dmcptr_l:
+	.res 9
+dmcptr_h:
+	.res 9
+dmcbank:
+	.res 9
+
+dmc_curptr_l:
+	.res 1
+dmc_curptr_h:
+	.res 1
+dmc_curbank:
+	.res 1
+
+.segment "NESPORTLOW"
+
+; Imported from ZSound by way of ZSMKit, a very efficient FIFO filler routine
+; starts at pcm_cur_* and then updates their values at the end
+.proc _load_fifo
+	__CPX		= $e0	; opcode for cpx immediate
+	__BNE		= $d0
+
+	; self-mod the page of the LDA below to the current page of pcm_cur_h
+	lda dmc_curptr_h
+	sta data_page0
+	sta data_page1
+	sta data_page2
+	sta data_page3
+
+	; page-align
+	txa             ;.A now holds the low-byte of n-bytes to copy
+	ldx dmc_curptr_l   ;.X now points at the page-aligned offset
+	; add the delta to bytes_left
+	clc
+	adc dmc_curptr_l
+	sta bytes_left
+	bcc :+
+	iny
+:	lda dmc_curbank ; load the bank we'll be reading from
+	sta X16::Reg::RAMBank
+	; determine whether we have > $FF bytes to copy. If $100 or more, then
+	; use the full-page dynamic comparator. Else use the last-page comparator.
+	cpy #0
+	beq last_page   ; if 0, then use the last_page comparator.
+	; self-mod the instruction at dynamic_comparator to:
+	; BNE copy_byte
+	lda #__BNE
+	sta dynamic_comparator
+	lda #.lobyte(copy_byte0-dynamic_comparator-2)
+	sta dynamic_comparator+1
+	; compute num-steps % 4 (the mod4 is done by shifting the 2 LSB into N and C)
+	txa
+enter_loop:
+	ror
+	ror
+	bcc :+
+	bmi copy_byte3  ; 18
+	bra copy_byte2  ; 20
+:	bmi copy_byte1  ; 19
+
+copy_byte0:
+	lda $FF00,x
+	data_page0 = (*-1)
+	sta Vera::Reg::AudioData
+	inx
+copy_byte1:
+	lda $FF00,x
+	data_page1 = (*-1)
+	sta Vera::Reg::AudioData
+	inx
+copy_byte2:
+	lda $FF00,x
+	data_page2 = (*-1)
+	sta Vera::Reg::AudioData
+	inx
+copy_byte3:
+	lda $FF00,x
+	data_page3 = (*-1)
+	sta Vera::Reg::AudioData
+	inx
+dynamic_comparator:
+	bne copy_byte0
+	; the above instruction is modified to CPX #(bytes_left) on the last page of data
+	bne copy_byte0  ; branch for final page's CPX result.
+	cpx #0
+	bne done        ; .X can only drop out of the loop on non-zero during the final page.
+	; Thus X!=0 means we just finished the final page. Done.
+	; advance data pointer before checking if done on a page offset of zero.
+	lda data_page0
+	inc
+	cmp #$c0
+	beq do_bankwrap
+no_bankwrap:
+	; update the self-mod for all 4 iterations of the unrolled loop
+	sta data_page0
+	sta data_page1
+	sta data_page2
+	sta data_page3
+check_done:
+	cpy #0		; .Y = high byte of "bytes_left"
+	beq done	; .X must be zero as well if we're here. Thus 0 bytes left. Done.
+	dey
+	bne copy_byte0	; more than one page remains. Continue with full-page mode copy.
+last_page:
+	lda bytes_left
+	beq done		; if bytes_left=0 then we're done at offset 0x00, so exit.
+	; self-mod the instruction at dynamic_comparator to be:
+	; CPX #(bytes_left)
+	sta dynamic_comparator+1
+	lda #__CPX
+	sta dynamic_comparator
+	; Compute the correct loop entry point with the new exit index
+	; i.e. the last page will start at x == 0, but we won't necessarily
+	; end on a value x % 4 == 0, so the first entry from here into
+	; the 4x unrolled loop is potentially short in order to make up
+	; for it.
+	; Find: bytes_left - .X
+	txa
+	eor #$ff
+	sec	; to carry in the +1 for converting 2s complement of .X
+	adc bytes_left
+	; .A *= -1 to align it with the loop entry jump table
+	eor #$ff
+	inc
+	bra enter_loop
+
+done:
+	ldy X16::Reg::RAMBank
+	lda #31
+	sta X16::Reg::RAMBank
+	lda data_page0
+	sta dmc_curptr_h
+	stx dmc_curptr_l
+	sty dmc_curbank
+	rts
+
+do_bankwrap:
+	lda #$a0
+	inc X16::Reg::RAMBank
+	bra no_bankwrap
+
+bytes_left:
+	.byte 0
+.endproc
+
 
 .endif

@@ -719,6 +719,7 @@ Map_UnusedGOFlag:     ; Set at map initialization or if Player gets Game Over an
 
 .ifdef X16
 .segment "WORLDMAPVARS"
+	.res 16
 .endif
 ; unused ($C8-$CB)
 	.res 4

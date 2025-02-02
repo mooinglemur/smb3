@@ -2206,6 +2206,6 @@ FALLRATE_OBJECTMAX             = $60 ; Maximum Y velocity falling rate of an obj
 
 ; X16 Constants here
 VERA_SPRITE_BASE  = $00000  ; 32 2K regions of 64 8x8 4bpp sprites
-VERA_TILE_BASE    = $10000  ; 8 4K regions 
-VERA_MAP_BASE_NT0 = $18000  ; 8K 64x64 tile map
-VERA_MAP_BASE_NT1 = $1A000  ; 8K 64x64 tile map
+VERA_TILE_BASE    = $10000  ; 10 4K regions 
+VERA_MAP_BASE_NT0 = $1A000  ; 8K 64x64 tile map
+VERA_MAP_BASE_NT1 = $1C000  ; 8K 64x64 tile map
