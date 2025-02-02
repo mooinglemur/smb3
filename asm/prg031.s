@@ -2262,11 +2262,14 @@ PRG031_F7DF:
 IntIRQ_Vertical:
 	sta_MMC3_IRQENABLE ; Active IRQ
 .ifdef X16
-	lda_PPU_STAT
+	; XXX we are really tight here on emulator, not sure about hardware, right on the edge of one line and the next
+;	lda_PPU_STAT
 	LDA #$00	 ;
 	sta_PPU_SCROLL	 ; Horizontal Scroll = 0
 	LDA #$ef
 	sta_PPU_SCROLL	 ; Vertical Scroll updated
+	LDA #$08	 ;
+	sta_PPU_CTL2	 ; BG only, hide sprites
 .endif
 .ifdef NES
 	NOP		 ;
@@ -2422,12 +2425,15 @@ IntIRQ_Finish_NoDis:
 IntIRQ_Standard:	; $F8DB
 	sta_MMC3_IRQENABLE ; Enable IRQ generation
 
-.ifdef X16 ; status bar is fixed for X16
+.ifdef X16 ; status bar is fixed scroll for X16
 	lda_PPU_STAT
 	LDA #$00
 	sta_PPU_SCROLL
 	LDA #$ef ;
 	sta_PPU_SCROLL
+
+	lda #$08
+	sta_PPU_CTL2
 .endif
 
 .ifdef NES
@@ -2482,6 +2488,7 @@ PRG031_F8E0:
 	LDA #MMC3_1K_TO_PPU_1000
 	sta_MMC3_COMMAND
 
+.ifdef NES
 	; Use blank tiles for all sprite graphics
 	LDA SpriteHideCHR_1000
 	sta_MMC3_PAGE
@@ -2497,6 +2504,7 @@ PRG031_F8E0:
 	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1C00
 	sta_MMC3_PAGE
+.endif
 
 	JMP PRG031_F997	 ; Jump to PRG031_F997
 
@@ -2534,8 +2542,10 @@ PRG031_F955:
 	sta_MMC3_PAGE
 
 PRG031_F997:
+.ifdef NES
 	LDA #$18	 ; A | 18 (BG + SPR)
 	sta_PPU_CTL2	 ; Sprites/BG are visible
+.endif
 	LDA PPU_CTL1_Copy	 ; PPU_CTL1 copy
 	ORA #$01	 ; Force $2400 nametable address
 	sta_PPU_CTL1	 ; Set it in the register
