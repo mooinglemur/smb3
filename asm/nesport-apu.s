@@ -555,10 +555,10 @@ tri_lin_end:
 
 
 tri_lc:
-	lda tri+TriState::LengthCounterHalt
-	bne tri_lc_end
 	lda tri+TriState::LengthCounter
 	beq tri_lc_zero
+	lda tri+TriState::LengthCounterHalt
+	bne tri_lc_end
 	dec tri+TriState::LengthCounter
 	bra tri_lc_end
 tri_lc_zero:
