@@ -53,14 +53,19 @@
 .import Level_AScrlConfig, Level_Tile_Head, Player_IsHolding, Level_Tileset, Map_ReturnStatus
 .import PatTable_BankSel, Pipe_TransYDelta, RandomN, Level_GetWandState, Tile_Mem, Splash_DisTimer
 ; imports from PRG008
-.import PipeMove_SetPlayerFrame, PipeMove_SetPlayerFrame, Player_GetTileAndSlope, PRG008_A38E
-.import Player_WalkFramesByPUp, Player_KuriboFrame, Player_ClimbFrame, PRG008_A224, Player_DoScrolling
-.import Airship_JumpFrameByPup, Player_ApplyXVelocity, Player_ApplyYVelocity, Player_GrowFrames
-.import AutoScroll_CalcPlayerY
+.import PRG008_A224, Airship_JumpFrameByPup, Player_GrowFrames
 ; imports from PRG030
 .import Tile_Mem_Addr, Tile_Mem_AddrVH, Tile_Mem_AddrVL, LevelJct_GetVScreenH
 ; imports from PRG031
 .import DynJump
+; far imports
+.import FAR008_PRG008_A38E
+.import FAR008_PipeMove_SetPlayerFrame
+.import FAR008_Player_GetTileAndSlope
+.import FAR008_Player_DoScrolling
+.import FAR008_Player_ApplyXVelocity
+.import FAR008_Player_ApplyYVelocity
+.import FAR008_AutoScroll_CalcPlayerY
 ; exports
 .export BlockChange_Do, M12ASegData1B, M12ASegData1C, M12ASegData1D, M12ASegData1E, M12ASegData1F
 .export M12ASegData20, M12ASegData21, M12ASegData22, M12ASegData23, M2BSegData07, M2BSegData08
@@ -70,6 +75,30 @@
 
 
 .segment "PRG029"
+.ifdef X16
+	; Copies from in PRG008
+Player_WalkFramesByPUp:
+	.byte PF_WALKSMALL_BASE, PF_WALKSMALL_BASE+1, PF_WALKSMALL_BASE, PF_WALKSMALL_BASE+1	; 0 - Small
+	.byte PF_WALKBIG_BASE, PF_WALKBIG_BASE+1, PF_WALKBIG_BASE+2, PF_WALKBIG_BASE+1		; 1 - Big
+	.byte PF_WALKBIG_BASE, PF_WALKBIG_BASE+1, PF_WALKBIG_BASE+2, PF_WALKBIG_BASE+1		; 2 - Fire
+	.byte PF_WALKSPECIAL_BASE, PF_WALKSPECIAL_BASE+1, PF_WALKSPECIAL_BASE+2, PF_WALKSPECIAL_BASE+1	; 3 - Leaf
+	.byte PF_WALKSPECIAL_BASE, PF_WALKSPECIAL_BASE+1, PF_WALKSPECIAL_BASE+2, PF_WALKSPECIAL_BASE+1	; 4 - Frog
+	.byte PF_WALKSPECIAL_BASE, PF_WALKSPECIAL_BASE+1, PF_WALKSPECIAL_BASE+2, PF_WALKSPECIAL_BASE+1	; 5 - Tanooki
+	.byte PF_WALKBIG_BASE, PF_WALKBIG_BASE+1, PF_WALKBIG_BASE+2, PF_WALKBIG_BASE+1		; 6 - Hammer
+
+Player_KuriboFrame:
+	.byte PF_KURIBO_SMALL, PF_KURIBO_BIG	; First value is for small, the other for everything else
+
+Player_ClimbFrame:
+	.byte PF_CLIMB_SMALL	; Small
+	.byte PF_CLIMB_BIG	; Big
+	.byte PF_CLIMB_BIG	; Fire
+	.byte PF_CLIMB_BIG	; Leaf
+	.byte PF_CLIMB_FROG	; Frog
+	.byte PF_CLIMB_BIG	; Tanooki
+	.byte PF_CLIMB_BIG	; Hammer
+
+.endif
 
 M2BSegData14:
 	.byte $98, $56, $56, $90, $54, $56, $94, $7E, $98, $56, $5A, $5A, $90, $58, $5A, $94 ; $C000 - $C00F
@@ -1091,7 +1120,7 @@ Player_DrawAndDoActions:
 	LDA Level_AScrlConfig
 	BEQ PRG029_D1CD	 		; If Level_AScrlConfig = 0 (no auto scroll going on), jump to PRG029_D1CD
 
-	JSR AutoScroll_CalcPlayerY	; Adjust Player_Y and Player_YHi for auto scroll
+	JSR FAR008_AutoScroll_CalcPlayerY	; Adjust Player_Y and Player_YHi for auto scroll
 
 PRG029_D1CD:
 	RTS		 ; Return
@@ -1323,8 +1352,8 @@ AirshipCtl_Catch:
 	BLT PRG029_D2FF	 ; If Player_X < $36, jump to PRG029_D2FF
 
 	; Apply Player's velocities
-	JSR Player_ApplyYVelocity
-	JSR Player_ApplyXVelocity
+	JSR FAR008_Player_ApplyYVelocity
+	JSR FAR008_Player_ApplyXVelocity
 
 	LDA Player_YVel
 	CLC
@@ -1373,7 +1402,7 @@ AirshipCtl_LandOnDeck:
 	LDA Level_AScrlConfig
 	BEQ PRG029_D33D	 ; If autoscroll not enabled, jump to PRG029_D33D
 
-	JSR Player_ApplyYVelocity	 ; Apply Player's Y velocity
+	JSR FAR008_Player_ApplyYVelocity	 ; Apply Player's Y velocity
 
 	LDA Player_YVel
 	BMI PRG029_D330	 	; If Player's Y velocity is negative (still rising), jump to PRG029_D330
@@ -1388,7 +1417,7 @@ PRG029_D330:
 	ADC #$04
 	STA Player_YVel ; Player_YVel += 4 (Player falling to airship)
 
-	JSR Player_DoScrolling	; Update scrolling at Player's position
+	JSR FAR008_Player_DoScrolling	; Update scrolling at Player's position
 
 	JSR PRG029_D2F5	 ; Mid-air frame as appropriate
 
@@ -1662,7 +1691,7 @@ PRG029_D457:
 	AND #$02
 	BEQ PRG029_D468	 ; If (Player_FlipBits & 2) = 0, jump to PRG029_D468
 
-	JSR Player_ApplyYVelocity	 ; Apply Y velocity
+	JSR FAR008_Player_ApplyYVelocity	 ; Apply Y velocity
 
 	; Used by airship only (the "caught anchor" frames)
 	LDY Player_Suit
@@ -1677,7 +1706,7 @@ PRG029_D468:
 	ORA Player_FlipBits
 	STA Player_FlipBits	 ; Level_EndFlipBits |= Level_EndFlipBits[Y]
 
-	JSR Player_ApplyXVelocity ; Apply X Velocity
+	JSR FAR008_Player_ApplyXVelocity ; Apply X Velocity
 
 	LDA Counter_1
 	AND #$06
@@ -1796,7 +1825,7 @@ Pipe_Move_Down:
 	LDA #$30
 	STA Player_YVel 	; Player_YVel = $30
 
-	JSR Player_ApplyYVelocity ; Apply Player's Y velocity
+	JSR FAR008_Player_ApplyYVelocity ; Apply Player's Y velocity
 	JSR PipeMove_UpDown	 ; Move through pipe vertically
 
 	LDA Event_Countdown
@@ -1952,7 +1981,13 @@ PRG029_D58A:
 	INC Level_PipeExitDir	 ; Otherwise, Level_PipeExitDir = 2 (exiting down)
 
 PRG029_D598:
-	JMP PRG008_A38E	 ; Jump to PRG008_A38E (Player exits pipe)
+.ifdef NES
+	JMP FAR008_PRG008_A38E	 ; Jump to PRG008_A38E (Player exits pipe)
+.endif
+.ifdef X16
+	jsr FAR008_PRG008_A38E
+	rts
+.endif
 
 PRG029_D59B:
 	; X = 0 (going down) or 1 (going up)
@@ -1963,7 +1998,7 @@ PRG029_D59B:
 	LDA #$08
 	STA Temp_Var11	 ; Temp_Var11 = 8
 
-	JSR Player_GetTileAndSlope	; Get tile
+	JSR FAR008_Player_GetTileAndSlope	; Get tile
 	SEC
 	SBC #TILE1_PIPETB4_L
 	CMP #$02
@@ -2131,7 +2166,7 @@ PRG029_D65B:
 	LDA PipeTransit_XYOffsets+1,Y
 	STA Temp_Var11	 ; Temp_Var11 = X offset
 
-	JSR Player_GetTileAndSlope	; Get tile
+	JSR FAR008_Player_GetTileAndSlope	; Get tile
 	STA Temp_Var1		 ; Store into Temp_Var1
 
 	SEC
@@ -2197,7 +2232,14 @@ PRG029_D6AB:
 	LDA Level_PipeExitDirTable,Y
 	STA Level_PipeExitDir
 
-	JMP PRG008_A38E	 ; Jump to PRG008_A38E
+.ifdef NES
+	JMP FAR008_PRG008_A38E	 ; Jump to PRG008_A38E
+.endif
+.ifdef X16
+	jsr FAR008_PRG008_A38E
+	rts
+.endif
+
 
 Player_Die_JumpTable:
 	.word Player_Die_NotDying	; 0 - Player isn't dying!  Do nothing
@@ -2350,7 +2392,7 @@ PRG029_D768:
 
 	LDX #$00	 ; X = 0 (?)
 
-	JSR Player_ApplyYVelocity	 ; Applies Player's Y velocity
+	JSR FAR008_Player_ApplyYVelocity	 ; Applies Player's Y velocity
 
 PRG029_D771:
 	LDA #PF_DIE
@@ -2369,7 +2411,7 @@ PipeMove_LeftRight:
 	LDA PipeMove_XVel,Y	 	; Get appropriate X velocity
 	STA Player_XVel	 	; Set it!
 
-	JSR Player_ApplyXVelocity 	; Apply Player's X velocity
+	JSR FAR008_Player_ApplyXVelocity 	; Apply Player's X velocity
 
 	; A little "step up" into the pipe
 	DEC Player_Y
@@ -2399,9 +2441,9 @@ PipeMove_UpDown:
 	LDA PipeMove_YVel,Y	 	; Get appropriate Y velocity
 	STA Player_YVel	 	; Set it!
 
-	JSR Player_ApplyYVelocity	; Apply Player's Y velocity
+	JSR FAR008_Player_ApplyYVelocity	; Apply Player's Y velocity
 
-	JSR PipeMove_SetPlayerFrame	; Set appropriate frame for pipe traversal
+	JSR FAR008_PipeMove_SetPlayerFrame	; Set appropriate frame for pipe traversal
 	JMP Player_Draw	 		; Jump to draw Player!
 
 Player_StopMovement:

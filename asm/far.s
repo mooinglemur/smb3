@@ -6,6 +6,15 @@
 .import X16_PJFAR_outbound
 .import X16_PJFAR_return
 
+; PRG008 imports
+.import AutoScroll_CalcPlayerY
+.import PRG008_A38E
+.import PipeMove_SetPlayerFrame
+.import Player_ApplyXVelocity
+.import Player_ApplyYVelocity
+.import Player_DoScrolling
+.import Player_GetTileAndSlope
+
 ; PRG010 imports
 .import FX_MonoFlash_By_MapTick
 .import Map_GetTile
@@ -115,6 +124,13 @@
 .import ToadHouse_ChestPressB
 
 ; exports
+.export FAR008_AutoScroll_CalcPlayerY
+.export FAR008_PRG008_A38E
+.export FAR008_PipeMove_SetPlayerFrame
+.export FAR008_Player_ApplyXVelocity
+.export FAR008_Player_ApplyYVelocity
+.export FAR008_Player_DoScrolling
+.export FAR008_Player_GetTileAndSlope
 .export FAR010_FX_MonoFlash_By_MapTick
 .export FAR010_Map_GetTile
 .export FAR010_Map_W8DarknessUpdate
@@ -211,6 +227,14 @@
 .export FAR029_ToadHouse_ChestPressB
 
 .ifdef NES
+
+	FAR008_AutoScroll_CalcPlayerY := AutoScroll_CalcPlayerY
+	FAR008_PRG008_A38E := PRG008_A38E
+	FAR008_PipeMove_SetPlayerFrame := PipeMove_SetPlayerFrame
+	FAR008_Player_ApplyXVelocity := Player_ApplyXVelocity
+	FAR008_Player_ApplyYVelocity := Player_ApplyYVelocity
+	FAR008_Player_DoScrolling := Player_DoScrolling
+	FAR008_Player_GetTileAndSlope := Player_GetTileAndSlope
 	FAR010_FX_MonoFlash_By_MapTick := FX_MonoFlash_By_MapTick
 	FAR010_Map_GetTile := Map_GetTile
 	FAR010_Map_W8DarknessUpdate := Map_W8DarknessUpdate
@@ -310,6 +334,27 @@
 .ifdef X16
 .include "../inc/x16.inc"
 .segment "X16BRIDGE"
+
+FAR008_AutoScroll_CalcPlayerY:
+	PJFAR AutoScroll_CalcPlayerY, 8
+
+FAR008_PRG008_A38E:
+	PJFAR PRG008_A38E, 8
+
+FAR008_PipeMove_SetPlayerFrame:
+	PJFAR PipeMove_SetPlayerFrame, 8
+
+FAR008_Player_ApplyXVelocity:
+	PJFAR Player_ApplyXVelocity, 8
+
+FAR008_Player_ApplyYVelocity:
+	PJFAR Player_ApplyYVelocity, 8
+
+FAR008_Player_DoScrolling:
+	PJFAR Player_DoScrolling, 8
+
+FAR008_Player_GetTileAndSlope:
+	PJFAR Player_GetTileAndSlope, 8
 
 FAR010_FX_MonoFlash_By_MapTick:
 	PJFAR FX_MonoFlash_By_MapTick, 10

@@ -130,11 +130,18 @@ Player_WalkFramesByPUp:
 	.byte PF_WALKSPECIAL_BASE, PF_WALKSPECIAL_BASE+1, PF_WALKSPECIAL_BASE+2, PF_WALKSPECIAL_BASE+1	; 5 - Tanooki
 	.byte PF_WALKBIG_BASE, PF_WALKBIG_BASE+1, PF_WALKBIG_BASE+2, PF_WALKBIG_BASE+1		; 6 - Hammer
 
+.ifdef X16
+.pushseg
+.segment "PRG029"
+.endif
 	; Frames used during the "power up" sequence from small -> Big
 Player_GrowFrames:
 	.byte PF_WALKBIG_BASE+2, PF_MIDGROW_HALFWAY, PF_WALKBIG_BASE+2, PF_MIDGROW_HALFWAY, PF_WALKBIG_BASE+2
 	.byte PF_MIDGROW_HALFWAY, PF_MIDGROW_SMALL, PF_MIDGROW_HALFWAY, PF_MIDGROW_SMALL, PF_MIDGROW_HALFWAY
 	.byte PF_MIDGROW_SMALL, PF_MIDGROW_HALFWAY
+.ifdef X16
+.popseg
+.endif
 
 	; Stores frame to be used while traversing a pipe
 	; Order is small, small + kuribo, other, other + kuribo
@@ -211,6 +218,10 @@ Player_ClimbFrame:
 	.byte PF_CLIMB_BIG	; Tanooki
 	.byte PF_CLIMB_BIG	; Hammer
 
+.ifdef X16
+.pushseg
+.segment "PRG029"
+.endif
 	; Airship jump frame used by power up
 Airship_JumpFrameByPup:
 	.byte PF_JUMPFALLSMALL		; Small
@@ -220,6 +231,9 @@ Airship_JumpFrameByPup:
 	.byte PF_WALKSPECIAL_BASE+2	; Frog
 	.byte PF_JUMPRACCOON		; Tanooki
 	.byte PF_JUMPBIG		; Hammer
+.ifdef X16
+.popseg
+.endif
 
 Player_VibeDisableFrame:
 	.byte PF_WALKSMALL_BASE		; Small

@@ -37,6 +37,7 @@
 .import Map_Intro_CurStripe, Map_Intro_NTOff, Map_Intro_ATOff, World_Map_Tile
 .import Scroll_Temp, Objects_XHi, Objects_X, Objects_Y, Level_Tile
 .endif
+.importzp Player_XVel
 ; BSS imports (low RAM and cart SRAM)
 .import Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, Scroll_ToVRAMHi, Scroll_LastCol8, Scroll_PatStrip
 .import Map_DrawPanState, Map_Starman, Map_Power_Disp, Map_W8D_VAddrH, Map_W8D_VAddrL, Map_W8D_VAddrH2
@@ -2899,6 +2900,12 @@ PRG010_CE78:
 PRG010_CEA7:
 	LDA #$10
 	STA Map_Operation	; Map_Operation = $10 (begin "enter level" effect)
+.ifdef X16
+	stz Player_XVel  ; XXX not sure if this is the best place to do this.
+	                 ; due to how ZP overlaps, this gets location messed with by
+					 ; the star effect on the world map
+.endif
+
 
 PRG010_CEAC:
 	LDX Player_Current	; X = Player_Current
