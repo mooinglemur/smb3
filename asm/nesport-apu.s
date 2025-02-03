@@ -119,6 +119,7 @@ loop:
 	sec
 	sbc qclocks_per_frame
 	sta qclock
+
 	; this function will clear the L/R channels of the square (pulse) wave channels
 	; if there was a prior write on the square wave channel's period high byte.
 	;
@@ -131,7 +132,9 @@ loop:
 	; Then at least one VERA audio clock must elapse before setting the volume again,
 	; which is 1/48828.125 seconds, or roughly 20.5µs.  This would equate to 164 CPU
 	; clock cycles.  As of the writing of this comment, about 3000 cycles elapse in
-	; between the return of this function and the output code below, so we're in good shape.
+	; between the return of this function and the output code below, so we're in good
+	; shape, even if we improve the long division routine, and even if we're running
+	; with an overclocked CPU.
 	jsr sq12_phase_reset
 clock_loop:
 	lda clock_count
@@ -159,7 +162,7 @@ clock_end:
 	inc clock_count
 	lda qclock
 	clc
-	adc #$05 
+	adc #$05
 	sta qclock
 	bmi clock_loop
 apu_out:
@@ -269,15 +272,15 @@ apu2vera:
 ; Reads the values of tmp0-tmp1 as apu freq (divisor)
 ; Loads the conversion constant dividend "300274" to tmp2-tmp4
 ; Uses tmp5-tmp6 to store the remainder
-; Output is in dividend (ZPX16_2-3)
+; Output is in dividend (tmp2-tmp3) and loaded into X/Y
 ;
 ; Runs a reasonably fast 24bit/16bit division routine
 ; but there may be room for improvement since we don't use all 24 bits
 ; in the dividend (but rather 19), and similarly we don't use all 16 bits in the
-; divisor input (but rather 11).  
+; divisor input (but rather 11)
 ; Does that mean we could save 5 iterations with a little pre-ROL?
-; nes apu freq = 300274.060421 / vera psg freq
-; vera psg freq = 300274.060421 / nes apu freq
+; nes apu period = 300274.060421 / vera psg freq
+; vera psg freq = 300274.060421 / nes apu period
 
 	divisor = tmp0
 	dividend = tmp2
