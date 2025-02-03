@@ -13,6 +13,7 @@
 .import X16_pt1d_idx_active
 
 .import X16_current_blank_tile
+.import X16_hzscroll_offset
 
 ; needed in the main flow so they're defined there
 .import PPUCTRL
@@ -174,10 +175,10 @@ clearloop:
 	bpl clearloop
 
 do_4_3:
-; Set the horizontal zoom (40 tiles wide)
+; Set the horizontal zoom (32 tiles wide)
 	stz Vera::Reg::Ctrl
 
-	lda #64
+	lda #51
 	sta Vera::Reg::DCHScale
 
 ; Set the vertical zoom (30 tiles high)
@@ -376,8 +377,12 @@ spridx_cont:
 
 	lda $ff03,x
 OAM_2 = (*-1)
+	sec
+	sbc X16_hzscroll_offset
 	sta Vera::Reg::Data0 ; X pos
-	stz Vera::Reg::Data0 ; no high X position
+	lda #0
+	sbc #0
+	sta Vera::Reg::Data0 ; no high X position
 	lda $ff00,x
 OAM_3 = (*-1)
 	inc ; sprites are a row late on NES
@@ -425,8 +430,12 @@ OAM_4b = (*-1)
 	sta Vera::Reg::Data0
 	lda $ff03,x
 OAM_2b = (*-1)
+	sec
+	sbc X16_hzscroll_offset
 	sta Vera::Reg::Data0 ; X pos
-	stz Vera::Reg::Data0 ; no high X position
+	lda #0
+	sbc #0
+	sta Vera::Reg::Data0 ; no high X position (normally)
 	lda $ff00,x
 OAM_3b = (*-1)
 	inc ; sprites are a row late on NES
@@ -1024,10 +1033,13 @@ vert:
 horiz:
 	pla
 	sta PPUSCROLL_H
+	clc
+	adc X16_hzscroll_offset
 	sta Vera::Reg::L0HScrollL
 	sta Vera::Reg::L1HScrollL
 	lda PPUCTRL
 	and #1
+	adc #0
 	sta Vera::Reg::L0HScrollH
 	sta Vera::Reg::L1HScrollH
 	inc PPUSCROLL_LATCH

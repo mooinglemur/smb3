@@ -137,6 +137,8 @@
 .export X16_pt1c_idx_active
 .export X16_pt1d_idx_active
 
+.export X16_hzscroll_offset
+
 .export X16_nes_interrupt_inhibit
 .export X16_current_blank_tile
 
@@ -196,6 +198,9 @@ X16_pt1b_idx_active:
 X16_pt1c_idx_active:
 	.res 1
 X16_pt1d_idx_active:
+	.res 1
+
+X16_hzscroll_offset:
 	.res 1
 
 .segment "X16STARTUP"
@@ -694,6 +699,24 @@ READPAGE3 = * - 1
 	pha
 	lda Vera::Reg::AddrH
 	pha
+
+	; apply PPUMASK border
+	lda #2
+	sta Vera::Reg::Ctrl
+	lda PPUMASK
+	and #2
+	beq hide
+show:
+	stz Vera::Reg::DCHStart
+	stz X16_hzscroll_offset
+	bra after_border
+hide:
+	lda #5
+	sta Vera::Reg::DCHStart
+	lda #8
+	sta X16_hzscroll_offset
+after_border:
+	stz Vera::Reg::Ctrl
 
 	; run the kernal handler first
 	lda #>after_kernal_handler
