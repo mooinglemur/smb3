@@ -3050,7 +3050,7 @@ PRG031_FBE7:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 PRGROM_Change_Both:	; $FC6F
-
+.ifdef NES
 	; Setting PRG ROM C000 to page specified in PAGE_C000
 	LDA #MMC3_8K_TO_PRG_C000	; Changing PRG ROM at C000
 	sta_MMC3_COMMAND 		; Set MMC3 command
@@ -3062,6 +3062,11 @@ PRGROM_Change_Both:	; $FC6F
 	sta_MMC3_COMMAND 		; Set MMC3 command
 	LDA PAGE_A000	 		; Page @ PAGE_A000
 	sta_MMC3_PAGE	 		; Set MMC3 page
+.endif
+.ifdef X16
+	lda PAGE_A000
+	sta X16::Reg::RAMBank
+.endif
 
 	RTS		 ; Return
 

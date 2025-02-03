@@ -719,7 +719,7 @@ Map_UnusedGOFlag:     ; Set at map initialization or if Player gets Game Over an
 
 .ifdef X16
 .segment "WORLDMAPVARS"
-	.res 16
+	.res 32
 .endif
 ; unused ($C8-$CB)
 	.res 4
@@ -872,6 +872,7 @@ Level_GndLUT_Addr := Pipe_PlayerX
 
 .ifdef X16
 .segment "GAMEPLAYVARS"
+	.res 2 ; to maintain distance
 .endif
 
 ; unused ($86)
