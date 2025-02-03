@@ -574,6 +574,9 @@ tri_lc_end:
 	sei
 	stz tmp0
 
+	lda dmc_enabled
+	cmp #0
+	rol tmp0
 	lda noi+NoiState::LengthCounter
 	cmp #0
 	rol tmp0

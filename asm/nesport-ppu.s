@@ -339,7 +339,7 @@ end:
 	dec
 start:
 	sta MASK
-	VERA_SET_ADDR Vera::VRAM_sprattr, 1
+	VERA_SET_ADDR (Vera::VRAM_sprattr), 1
 	ldx #0
 loop:
 	clc
