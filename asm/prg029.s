@@ -100,6 +100,11 @@ Player_ClimbFrame:
 
 .endif
 
+
+.ifdef X16
+.pushseg
+.segment "PRG029LOW"
+.endif
 M2BSegData14:
 	.byte $98, $56, $56, $90, $54, $56, $94, $7E, $98, $56, $5A, $5A, $90, $58, $5A, $94 ; $C000 - $C00F
 	.byte $7E, $98, $5A, $00, $98, $5C, $5C, $90, $5A, $5C, $94, $7E, $98, $5C, $60, $60 ; $C010 - $C01F
@@ -241,7 +246,9 @@ M12ASegData23:
 	.byte $AA, $7E, $C4, $02, $C0, $02, $02, $C4, $02, $02, $02, $02, $02, $02, $00, $A4 ; $C5C0 - $C5CF
 	.byte $06, $A0, $06, $06, $A4, $06, $07, $01, $06, $07, $07, $06, $7E, $06, $8D, $7E ; $C5D0 - $C5DF
 	.byte $7E, $08, $88, $08, $8D, $09, $09, $09, $94, $08
-
+.ifdef X16
+.popseg
+.endif
 
 .ifdef NES
 	;; BEGIN HUGE UNUSED SPACE
