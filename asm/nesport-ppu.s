@@ -386,7 +386,9 @@ OAM_2 = (*-1)
 	lda $ff00,x
 OAM_3 = (*-1)
 	inc ; sprites are a row late on NES
-	sta Vera::Reg::Data0 ; Y pos
+	bne :+
+	dec ; (except when already 255)
+:	sta Vera::Reg::Data0 ; Y pos
 	stz Vera::Reg::Data0 ; high Y position
 	lda $ff02,x ; [7] V-flip, [6] H-flip, [5] Priority, [1:0] Palette idx
 OAM_4 = (*-1)

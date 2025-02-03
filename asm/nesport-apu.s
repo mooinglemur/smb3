@@ -68,6 +68,7 @@
 		EnvLoop             .byte
 	.endunion
 	Enabled                 .byte
+	PhaseReset              .byte
 .endstruct
 
 .struct TriState
@@ -118,6 +119,20 @@ loop:
 	sec
 	sbc qclocks_per_frame
 	sta qclock
+	; this function will clear the L/R channels of the square (pulse) wave channels
+	; if there was a prior write on the square wave channel's period high byte.
+	;
+	; This effectively does a phase reset on the pulse wave, and emulates the behavior
+	; of the NES APU.
+	;
+	; In SMB3, this is evident when the sound effect played at the end of the level
+	; when it's converting the remaining timer value to score.
+	;
+	; Then at least one VERA audio clock must elapse before setting the volume again,
+	; which is 1/48828.125 seconds, or roughly 20.5µs.  This would equate to 164 CPU
+	; clock cycles.  As of the writing of this comment, about 3000 cycles elapse in
+	; between the return of this function and the output code below, so we're in good shape.
+	jsr sq12_phase_reset
 clock_loop:
 	lda clock_count
 	and #$01
@@ -567,6 +582,21 @@ tri_lc_zero:
 tri_lc_end:
 	rts
 
+sq12_phase_reset:
+	VERA_SET_ADDR ((Vera::VRAM_psg)+2), 3
+	lda sq1+SQState::PhaseReset
+	beq @1
+	stz Vera::Reg::Data0
+	stz sq1+SQState::PhaseReset
+	bra @2
+@1:	lda Vera::Reg::Data0
+@2:	lda sq2+SQState::PhaseReset
+	beq @3
+	stz Vera::Reg::Data0
+	stz sq2+SQState::PhaseReset
+@3:
+	rts
+
 .endproc
 
 .proc lda_PAPU_EN
@@ -686,6 +716,8 @@ end:
 	pha
 	and #$07
 	sta sq+SQState::Period+1,y
+	lda #$80
+	sta sq+SQState::PhaseReset,y
 	pla
 	lsr
 	lsr
@@ -1402,7 +1434,7 @@ dmc_curbank:
 .segment "NESPORTLOW"
 
 ; Imported from ZSound by way of ZSMKit, a very efficient FIFO filler routine
-; starts at pcm_cur_* and then updates their values at the end
+; starts at dmc_cur* and then updates their values at the end
 .proc _load_fifo
 	__CPX		= $e0	; opcode for cpx immediate
 	__BNE		= $d0
