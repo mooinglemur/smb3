@@ -528,7 +528,12 @@ PAGE_C000_ByTileset: ; $83D6
 
 	; List of A000 pages to switch to by Level_Tileset
 PAGE_A000_ByTileset: ; $83E9
+.ifdef NES
 	.byte 11, 15, 21, 16, 17, 19, 18, 18, 18, 20, 23, 19, 17, 19, 13, 26, 26, 26, 9
+.endif
+.ifdef X16
+	.byte 11, 15, 21, 16, 17, 19, 18, 18, 18, 20, 23, 19, 17, 19, 13, 22, 22, 22, 14
+.endif
 
 	; The normal level VROM page cycle set
 PT2_Anim:	.byte $60, $62, $64, $66
@@ -1634,6 +1639,10 @@ PRG030_89D1:
 	LDA #$00
 	sta_MMC3_MIRROR
 
+.ifdef X16
+	lda #22
+	sta X16::Reg::RAMBank
+.endif
 	JSR Roulette_DrawShapes	 	; Draw in the Roulette Shapes
 	JSR Roulette_DrawBorderSprites	; Draw the sprite borders
 
@@ -2223,7 +2232,15 @@ BonusGame_Loop:
 
 PRG030_8D23:
 	JSR BonusGame_Do	 ; Run the Bonus Game
+.ifdef X16
+	lda #26
+	sta X16::Reg::RAMBank
+.endif
 	JSR StatusBar_Fill_Score ; Update score
+.ifdef X16
+	lda #22
+	sta X16::Reg::RAMBank
+.endif
 
 	LDA Level_ExitToMap
 	BEQ BonusGame_Loop	 ; If Level_ExitToMap = 0, loop!!
@@ -5189,6 +5206,7 @@ TileLayoutPage_ByTileset:
 	.byte BANK_Tile_Layout_TS5_TS11_TS13	; 13 - coin heaven / sky level [19]
 	.byte BANK_Tile_Layout_TS14		; 14 - underground [13]
 
+.ifdef NES
 	; THESE VALUES ARE WRONG!  Appears that they were not maintained?
 	; It doesn't matter because these specialized cases go where they need to anyway!
 	.byte 23				; 15 - bonus game intro (WRONG: Should be 22)
@@ -5201,6 +5219,15 @@ TileLayoutPage_ByTileset:
 	;.byte BANK(Tile_Layout_TS15_TS16_TS17)	; 16 - spade game sliders [22]
 	;.byte BANK(Tile_Layout_TS15_TS16_TS17)	; 17 - N-spade [22]
 	;.byte BANK(Tile_Layout_TS18)		; 18 - 2P Vs [14]
+.endif
+.ifdef X16
+	.byte BANK_Tile_Layout_TS15_TS16_TS17	; 15 - bonus game intro [22]
+	.byte BANK_Tile_Layout_TS15_TS16_TS17	; 16 - spade game sliders [22]
+	.byte BANK_Tile_Layout_TS15_TS16_TS17	; 17 - N-spade [22]
+	.byte BANK_Tile_Layout_TS18		; 18 - 2P Vs [14]
+.endif
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Scroll_Dirty_Update

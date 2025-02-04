@@ -13,6 +13,10 @@
 ;---------------------------------------------------------------------------
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
+.ifdef X16
+.include "../inc/x16.inc"
+.import PAGE_A000
+.endif
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var10
@@ -1684,7 +1688,23 @@ LL_Lava:
 LoadLevel_Lava:
 	LDY #$00	 ; Y = 0
 
+.ifdef X16
+	jsr PRG014_ldai_Level_LayPtr_AddrL_y
+.pushseg
+.segment "PRG014LOW"
+PRG014_ldai_Level_LayPtr_AddrL_y:
+	lda PAGE_A000
+	sta X16::Reg::RAMBank
+.endif
 	LDA (Level_LayPtr_AddrL),Y	 ; Get another byte from layout
+.ifdef X16
+	pha
+	lda #14
+	sta X16::Reg::RAMBank
+	pla
+	rts
+.popseg
+.endif
 	STA Temp_Var3			 ; Store it into Temp_Var3
 
 	; Level_LayPtr_Addr++
@@ -2173,7 +2193,12 @@ LL_FollowBlock:
 
 LoadLevel_TopDecoBlocks:
 	LDY #$00	 		; Y = 0
+.ifdef NES
 	LDA (Level_LayPtr_AddrL),Y	; Get next byte
+.endif
+.ifdef X16
+	jsr PRG014_ldai_Level_LayPtr_AddrL_y
+.endif
 	STA Temp_Var3		 	; Store into Temp_Var3
 
 	; Level_LayPtr_Addr++
@@ -3054,7 +3079,12 @@ LL_RunGround_Offset:
 LoadLevel_GroundRun:
 	LDY #$00	 ; Y = 0
 
+.ifdef NES
 	LDA (Level_LayPtr_AddrL),Y
+.endif
+.ifdef X16
+	jsr PRG014_ldai_Level_LayPtr_AddrL_y
+.endif
 	STA Temp_Var3		 ; Get next byte from layout -> Temp_Var3 (width of run)
 
 	; Level_LayPtr_Addr += 1
@@ -4194,7 +4224,12 @@ LL_DecoGroundMid:
 
 LoadLevel_DecoGround:
 	LDY #$00	 ; Y = 0
+.ifdef NES
 	LDA (Level_LayPtr_AddrL),Y	 ; Get another byte from the layout stream
+.endif
+.ifdef X16
+	jsr PRG014_ldai_Level_LayPtr_AddrL_y
+.endif
 	STA Temp_Var3		 	; Store into Temp_Var3 (width of rectangle)
 
 	; Level_LayPtr_Addr++
@@ -4292,7 +4327,12 @@ LL_DecoCeiling:		.byte $FF, TILE3_CEILING, TILE3_WCEILING
 
 LoadLevel_DecoCeiling:
 	LDY #$00	 		; Y = 0
+.ifdef NES
 	LDA (Level_LayPtr_AddrL),Y	; Get byte from layout stream
+.endif
+.ifdef X16
+	jsr PRG014_ldai_Level_LayPtr_AddrL_y
+.endif
 	STA Temp_Var3		 	; Store it into Temp_Var3 (width of rectangle)
 
 	; Level_LayPtr_Addr++
@@ -4395,7 +4435,12 @@ LL_BGMid:	.byte TILE3_SKY, TILE3_UNDERGROUND, TILE3_WATER
 
 LoadLevel_BGOrWater:
 	LDY #$00	 ; Y = 0
+.ifdef NES
 	LDA (Level_LayPtr_AddrL),Y	 ; Get another byte from the layout stream
+.endif
+.ifdef X16
+	jsr PRG014_ldai_Level_LayPtr_AddrL_y
+.endif
 	STA Temp_Var3		 	; Store into Temp_Var3 (width of rectangle)
 
 	; Level_LayPtr_Addr++

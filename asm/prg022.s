@@ -2616,16 +2616,39 @@ UpdSel_Roulette:
 
 	; Performing some work that got skipped because we diverted here in the interrupt
 
-	LDA #$00	 ; A = 0
 .ifdef NES
+	LDA #$00	 ; A = 0
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
-.endif
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
+.endif
+.ifdef X16 ; X16 does this first
+	lda_PPU_STAT
+
+	LDA #$00
+	sta_PPU_SCROLL
+	sta_PPU_SCROLL
+
+	php
+	sei
+	lda #<64
+	sta Vera::Reg::IRQLineL
+	lda #$80
+	trb Vera::Reg::IEN
+	lda #2
+	sta Vera::Reg::ISR ; ACK any pending line IRQs
+	plp
+
+	INT_CLI
+	cli ; actually allow line IRQs to interrupt this interrupt code in this mode
+	JSR PT2_Full_CHRROM_Switch
+.endif
 
 	LDA #>Sprite_RAM	 ; A = 2
 	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
 
+.ifdef NES
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
+.endif
 
 	LDA Graphics_Queue
 	ASL A
@@ -2666,6 +2689,7 @@ UpdSel_Roulette:
 	LDA #$a8
 	sta_PPU_CTL1
 
+.ifdef NES
 	lda_PPU_STAT
 
 	LDA #$00
@@ -2674,13 +2698,10 @@ UpdSel_Roulette:
 
 	lda_PPU_STAT
 
-.ifdef NES
 	LDA #$ff
 	sta_MMC3_IRQCNT
 	sta_MMC3_IRQLATCH
-.endif
 
-.ifdef NES
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$00
 	sta_PPU_VRAM_ADDR
@@ -2705,19 +2726,7 @@ UpdSel_Roulette:
 	sta_MMC3_IRQCNT
 	sta_MMC3_IRQLATCH
 .endif
-.ifdef X16
-	php
-	sei
-	lda #<64
-	sta Vera::Reg::IRQLineL
-	lda #$80
-	trb Vera::Reg::IEN
-	lda #2
-	sta Vera::Reg::ISR ; ACK any pending line IRQs
-	plp
-.endif
 	sta_MMC3_IRQENABLE
-
 	INT_CLI		; Enable maskable interrupts
 
 	JSR Read_Joypads	 ; Updates both joypads in RAM
@@ -2772,9 +2781,15 @@ PRG022_CF7C:
 	JSR FAR028_Sound_Engine_Begin
 
 	; Change A000 back to whatever it was before the sound engine
+.ifdef NES
 	JSR PRGROM_Change_A000
+.endif
 
 	INC Counter_1	 ; Simply increments every frame, used for timing
+
+.ifdef X16
+	rts ; unwind our FAR call, will exit the interrupt over there
+.endif
 
 	; Pull (pop) the three temp vars from the stack
 	PLA

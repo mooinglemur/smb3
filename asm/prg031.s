@@ -1595,7 +1595,13 @@ PRG031_F4B3:
 PRG031_F4BD:
 	CMP #$40	 ;
 	BNE PRG031_F4C4	 ; If Update_Select <> $40 (Spade Game), jump to PRG031_F4C4
+.ifdef NES
 	JMP FAR022_UpdSel_Roulette	 ; Otherwise, jump to UpdSel_Roulette
+.endif
+.ifdef X16
+	jsr FAR022_UpdSel_Roulette
+	jmp X16_gamenmi_exit
+.endif
 
 PRG031_F4C4:
 	CMP #$00	 ;
@@ -1762,6 +1768,9 @@ PRG031_F567:
 	LDA PAGE_CMD
 	sta_MMC3_COMMAND
 
+.ifdef X16
+X16_gamenmi_exit:
+.endif
 	; Pull (pop) the three temp vars from the stack
 	PLA
 	STA Temp_Var3
@@ -2773,8 +2782,18 @@ Roulette_RasterDelay:
 	; This table tells how many lines to skip to the next row.
 	; Apparently they didn't really take advantage of the potential
 	; for this functionality, however, as all values are equal!
+.ifdef NES
 Roulette_RasterDiv:	; Raster_State = 0,1,2
 	.byte $34, $34, $34
+.endif
+.ifdef X16
+Roulette_RasterDiv_L:
+	.byte <164, <266, <384
+Roulette_RasterDiv_H:
+	.byte <((>164)<<7)
+	.byte <((>266)<<7)
+	.byte <((>384)<<7)
+.endif
 
 	.byte $00	; Not used, would be Raster_State = 3
 
@@ -2790,18 +2809,39 @@ IntIRQ_SpadeGame:
 	BEQ PRG031_FAE7	 ; If Raster_State = 3, jump to PRG031_FAE7
 
 	; Based on the current Raster_State, set next scanline delay
+.ifdef NES
 	LDA Roulette_RasterDiv,Y
 	sta_MMC3_IRQCNT
 	sta_MMC3_IRQENABLE
+.endif
+.ifdef X16
+	php
+	sei
+	lda Roulette_RasterDiv_L,Y
+	sta Vera::Reg::IRQLineL
+	lda Vera::Reg::IEN
+	and #$7f
+	ora Roulette_RasterDiv_H,Y
+	sta Vera::Reg::IEN
+	lda #2
+	sta Vera::Reg::ISR ; ACK any pending line IRQs
+	plp
+	sta_MMC3_IRQENABLE
+	INT_CLI
+	lda #$20 ; disable layer 1
+	trb Vera::Reg::DCVideo
+.endif
 
 PRG031_FAE7:
 
+.ifdef NES
 	; Another of these common delay loops, this time dynamic...
 	LDX Roulette_RasterDelay,Y	 ; Get value based on Raster_State
 PRG031_FAEA:
 	NOP		 ; ?
 	DEX		 ; X--
 	BNE PRG031_FAEA	 ; While > 0, loop...
+.endif
 
 	CPY #$03	 ;
 	BNE PRG031_FB34	 ; If Raster_State <> 3, jump to PRG031_FB34

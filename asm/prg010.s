@@ -18,6 +18,9 @@
 .include "../inc/x16.inc"
 .endif
 
+; XXX
+.import Inventory_Items
+
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var11
 .importzp Temp_Var12, Temp_Var13, Temp_Var14, Temp_Var15, Temp_Var16, Horz_Scroll_Hi, Counter_1
@@ -899,6 +902,12 @@ PRG010_C413:
 	LDA Inventory_Open
 	EOR #$01
 	STA Inventory_Open	; Toggle the Inventory_Open flag
+
+	;;; DEBUG
+	lda #7
+	sta Inventory_Items
+	lda #12
+	sta Inventory_Items+1
 
 	JMP WorldMap_UpdateAndDraw	; Jump into WorldMap_UpdateAndDraw...
 
