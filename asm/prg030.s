@@ -6261,7 +6261,7 @@ PRG030_9F52:
 .endif
 
 IntIRQ_32PixelPartition_Part5:
-
+.ifdef NES
 	; Some kind of delay loop?
 	LDX #$13	 ; X = $13
 PRG030_9F80:
@@ -6274,20 +6274,19 @@ PRG030_9F80:
 	NOP
 	NOP
 
-.ifdef NES
 	sta_MMC3_IRQLATCH ; Latch A (last set to 27!)
 .endif
 .ifdef X16
-	; status bar scroll split at 384?
 	php
 	sei
-	lda #<384
+	lda #<382
 	sta Vera::Reg::IRQLineL
-	lda #(>384) << 7
+	lda #(>382) << 7
 	tsb Vera::Reg::IEN
 	lda #2
 	sta Vera::Reg::ISR ; ACK any pending line IRQs
 	plp
+	INT_CLI
 .endif
 	sta_MMC3_IRQENABLE ; Enable IRQ again
 	JMP PRG031_FA3C	 ; Jump to PRG031_FA3C
@@ -6305,6 +6304,7 @@ IntIRQ_32PixelPartition_Part2:	; $9FA0
 
 PRG030_9FAA:
 
+.ifdef NES
 	; I think the following NOPs and loop are to help synchronize the IRQ
 	; routine if it didn't perform the IntIRQ_32PixPart_HideSprites step
 	NOP
@@ -6316,6 +6316,7 @@ PRG030_9FAF:
 	NOP		 ; ?
 	DEX		 ; X--
 	BPL PRG030_9FAF	 ; While X > 0, loop
+.endif
 
 	JMP IntIRQ_32PixelPartition_Part3
 

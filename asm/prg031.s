@@ -1988,15 +1988,27 @@ PRG031_F631:
 	JMP PRG031_F567	 ;
 
 UpdSel_32PixPart:
-	LDA #$00	 ; A = 0
 .ifdef NES
+	LDA #$00	 ; A = 0
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
-.endif
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
+.endif
+.ifdef X16 ; X16 needs this order
+	LDA #$18 ; enable both tiles and sprites
+	sta_PPU_CTL2
 
+	LDA Horz_Scroll
+	sta_PPU_SCROLL	; Horizontal Scroll set
+	LDA Vert_Scroll
+	sta_PPU_SCROLL	; Vertical scroll set
+
+	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
+.endif
 	LDA #>Sprite_RAM	 ; A = 2
 	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
+.ifdef NES
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
+.endif
 
 	LDA VBlank_Tick
 	BNE PRG031_F6BC	 		; If VBlank_Tick <> 0, jump to PRG031_F6BC
@@ -2047,10 +2059,12 @@ PRG031_F6BC:
 	sta_PPU_CTL1	; Set above settings
 	lda_PPU_STAT	; read PPU status to reset the high/low latch
 
+.ifdef NES
 	LDA Horz_Scroll
 	sta_PPU_SCROLL	; Horizontal Scroll set
 	LDA Vert_Scroll
 	sta_PPU_SCROLL	; Vertical scroll set
+.endif
 
 	; 32 pixel partition begins at line 160
 .ifdef NES
@@ -2060,7 +2074,7 @@ PRG031_F6BC:
 .endif
 	sta_MMC3_IRQENABLE	; Start the IRQ counter
 .ifdef X16
-	; status bar scroll split at 384?
+	; waterline split
 	php
 	sei
 	lda #<320
@@ -2593,6 +2607,7 @@ PRG031_F997:
 	JMP IntIRQ_Finish	 ; Clean up IRQ
 
 IntIRQ_32PixelPartition:	; $F9B3
+.ifdef NES
 	; Lotta no-ops??
 	NOP
 	NOP
@@ -2600,6 +2615,7 @@ IntIRQ_32PixelPartition:	; $F9B3
 	NOP
 	NOP
 	NOP
+.endif
 
 	LDA Raster_State ; Get current state of the Raster op
 	BEQ PRG031_F9C1	 ; If Raster_State = 0, go to PRG031_F9C1 (at the 32 pixel partition)
@@ -2608,6 +2624,7 @@ IntIRQ_32PixelPartition:	; $F9B3
 PRG031_F9C1:
 	; At the 32 pixel partition
 
+.ifdef NES
 	; Some kind of delay loop?
 	LDX #$15	 ; X = $15
 PRG031_F9C3:
@@ -2623,24 +2640,33 @@ PRG031_F9C3:
 	; PPU_SCROLL will always be unused until next frame), the hack for MMC3 split
 	; vertical scrolling is to change the nametable address that the PPU is reading
 	; at to where we would like it to be...
-.ifdef NES
 	LDY #$0a	 ; Y = $0A
 	LDA #$80	 ; A = $80
 	sty_PPU_VRAM_ADDR	 ;
 	sta_PPU_VRAM_ADDR	 ; ... so we're now reading at $0A80, the top of the last two rows of tiles
 	lda_PPU_VRAM_DATA	 ;
 .endif
+.ifdef X16
+	lda_PPU_STAT
+	lda Horz_Scroll
+	sta_PPU_SCROLL
+	lda #$ef
+	sta_PPU_SCROLL
+.endif
 
 	JMP IntIRQ_32PixelPartition_Part2	; Jump to IntIRQ_32PixelPartition_Part2
 
+.ifdef NES
 	; Something removed?
 	NOP
 	NOP
 	NOP
 	NOP
+.endif
 
 IntIRQ_32PixPart_HideSprites:	; $F9E3
 
+.ifdef NES
 	; This part is skippable based on a flag; only loads
 	; Pattern Table 2 in this case...
 	LDA #MMC3_1K_TO_PPU_1000
@@ -2659,7 +2685,11 @@ IntIRQ_32PixPart_HideSprites:	; $F9E3
 	sta_MMC3_COMMAND
 	LDA SpriteHideCHR_1C00
 	sta_MMC3_PAGE
-
+.endif
+.ifdef X16
+	lda #$08	 ;
+	sta_PPU_CTL2	 ; BG + Sprites now visible
+.endif
 
 IntIRQ_32PixelPartition_Part3:
 	lda_PPU_STAT
@@ -2667,19 +2697,25 @@ IntIRQ_32PixelPartition_Part3:
 	ORA PPU_CTL1_Mod	; Combine bits from PPU_CTL1_Copy into PPU_CTL1_Mod
 	sta_PPU_CTL1	 ; Stored to the register!
 
+.ifdef NES
 	LDA Horz_Scroll
 	sta_PPU_SCROLL	 ; Set horizontal scroll
 	LDA Vert_Scroll
 	sta_PPU_SCROLL	 ; Set vertical scroll
+.endif
 
+.ifdef NES
 	LDA #$18	 ;
 	sta_PPU_CTL2	 ; BG + Sprites now visible
+.endif
 
 	INC Raster_State ; Raster_State = 1
 
+.ifdef NES
 	LDA #27		 ;
 	sta_MMC3_IRQCNT	 ; Next interrupt in 27 lines
 	sta_MMC3_IRQDISABLE	 ; Disable IRQ...
+.endif
 	JMP IntIRQ_32PixelPartition_Part5	 ; Jump to IntIRQ_32PixelPartition_Part5
 
 	; Dead code?  Or maybe timing/cycle filler
@@ -2694,6 +2730,7 @@ PRG031_FA3C:
 	JMP IntIRQ_Finish_NoDis	 ; Jump to IntIRQ_Finish_NoDis
 
 PRG031_FA3F:
+.ifdef NES
 	; The part we do when Raster_State = 1 (the 2nd IRQ interrupt split)
 
 	; Some kind of delay loop?
@@ -2703,7 +2740,6 @@ PRG031_FA41:
 	DEX		 ; X--
 	BNE PRG031_FA41 ; While X > 0, loop
 
-.ifdef NES
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$00
 	sta_PPU_VRAM_ADDR
@@ -2711,18 +2747,13 @@ PRG031_FA41:
 	stx_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR
-.endif
-
-.ifdef NES
 	stx_PPU_CTL2	 ; Sprites + BG hidden
-.endif
 	lda_PPU_STAT	 ;
 
 	; Because vertical scroll will not change after frame begins (second write to
 	; PPU_SCROLL will always be unused until next frame), the hack for MMC3 split
 	; vertical scrolling is to change the nametable address that the PPU is reading
 	; at to where we would like it to be...
-.ifdef NES
 	LDY #$0b
 	sty_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR	; ... so now we're reading at $0B00
@@ -2762,6 +2793,15 @@ PRG031_FA41:
 	sta_PPU_CTL2	 ; Sprites + BG now visible
 .endif
 .ifdef X16
+	lda_PPU_STAT
+	lda #$00
+	sta_PPU_SCROLL
+	lda #$ef
+	sta_PPU_SCROLL
+
+	LDA #$08
+	sta_PPU_CTL2 ; hide sprites
+
 	; activate preloaded status bar banks
 	ldy #9
 	jsr X16_activate_tilemap
@@ -2770,11 +2810,12 @@ PRG031_FA41:
 	ORA PPU_CTL1_Mod	; Combine bits from PPU_CTL1_Copy into PPU_CTL1_Mod
 	sta_PPU_CTL1	 ; Update the PPU_CTL1 register..
 	lda_PPU_STAT	 ;
-
+.ifdef NES
 	LDA #$00	 ;
 	sta_PPU_SCROLL	 ; Horizontal scroll locked at zero
 	LDA Vert_Scroll
 	sta_PPU_SCROLL	 ; Vertical scroll as-is
+.endif
 	LDA #$00	 ;
 	STA Raster_State ; Clear Raster_State (no more effects)
 	JMP IntIRQ_Finish	 ; Clean up IRQ
