@@ -54,6 +54,9 @@
 .import PatTable_BankSel, Pipe_TransYDelta, RandomN, Level_GetWandState, Tile_Mem, Splash_DisTimer
 ; imports from PRG008
 .import PRG008_A224, Airship_JumpFrameByPup, Player_GrowFrames
+.ifdef NES
+.import Player_WalkFramesByPUp, Player_KuriboFrame, Player_ClimbFrame
+.endif
 ; imports from PRG030
 .import Tile_Mem_Addr, Tile_Mem_AddrVH, Tile_Mem_AddrVL, LevelJct_GetVScreenH
 ; imports from PRG031

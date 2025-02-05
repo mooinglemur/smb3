@@ -903,11 +903,13 @@ PRG010_C413:
 	EOR #$01
 	STA Inventory_Open	; Toggle the Inventory_Open flag
 
+.ifdef X16
 	;;; DEBUG
 	lda #7
 	sta Inventory_Items
 	lda #12
 	sta Inventory_Items+1
+.endif
 
 	JMP WorldMap_UpdateAndDraw	; Jump into WorldMap_UpdateAndDraw...
 
