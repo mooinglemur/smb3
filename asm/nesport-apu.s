@@ -372,10 +372,10 @@ noi_get_output_level_end:
 
 
 noi_lc:
-	lda noi+NoiState::LengthCounterHalt
-	bne noi_lc_end
 	lda noi+NoiState::LengthCounter
 	beq noi_lc_zero
+	lda noi+NoiState::LengthCounterHalt
+	bne noi_lc_end
 	dec noi+NoiState::LengthCounter
 	bra noi_lc_end
 noi_lc_zero:
@@ -441,10 +441,10 @@ sq_get_output_level_end:
 
 
 sq_lc:
-	lda sq+SQState::LengthCounterHalt,x
-	bne sq_lc_end
 	lda sq+SQState::LengthCounter,x
 	beq sq_lc_zero
+	lda sq+SQState::LengthCounterHalt,x
+	bne sq_lc_end
 	dec sq+SQState::LengthCounter,x
 	bra sq_lc_end
 sq_lc_zero:
