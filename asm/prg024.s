@@ -5746,6 +5746,8 @@ Ending_Credits:
 	LDA #$20
 	STA Raster_Effect
 
+	; XXX HERE!
+
 	; Clears a lot of page 0 RAM
 	LDX #$f4	 ; X = $F4
 PRG024_BB9D:

@@ -3685,6 +3685,15 @@ PRG031_FEC3:
 	eor #$ff
 	sta Temp_Var1
 
+	;;; DEBUG
+	.import Player_Suit
+	txa
+	and #$30
+	bne :+
+	lda #PLAYERSUIT_HAMMER
+	sta Player_Suit
+:
+
 	lda #1
 	jsr X16::Kernal::JOYSTICK_GET
 	eor #$ff
