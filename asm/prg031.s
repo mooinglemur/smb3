@@ -20,6 +20,7 @@
 .ifdef X16
 .include "../inc/x16.inc"
 .import X16_nes_interrupt_inhibit
+.import X16_reblit_sprite_idx
 .endif
 
 ; ZP imports
@@ -2408,7 +2409,13 @@ PRG031_F871:
 	LDA SpriteMTCHR_1C00
 	sta_MMC3_PAGE
 
-	; XXX do we need to reblit sprites here for X16?
+.ifdef X16 ; reblit sprites here
+	LDA #$18
+	sta_PPU_CTL2
+
+	lda #>Sprite_RAM
+	jsr X16_reblit_sprite_idx
+.endif
 
 PRG031_F8B3:
 	LDA PPU_CTL1_Copy

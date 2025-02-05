@@ -39,6 +39,8 @@
 .export sty_PPUADDR
 .export sty_PPUSCROLL
 
+.export reblit_sprite_idx
+
 ; Variables here
 tmp0:
 	.res 1
@@ -449,6 +451,78 @@ OAM_3b = (*-1)
 	sta Vera::Reg::Data0
 	bra return
 .endproc
+
+.proc reblit_sprite_idx
+	; .A contains the high byte of the OAM shadow
+	sta OAM_1a
+	sta OAM_1b
+	sta OAM_2
+
+	lda #$3f
+	ldx PPUCTRL_SP16
+	beq start
+	dec
+start:
+	sta MASK
+	VERA_SET_ADDR (Vera::VRAM_sprattr), 1
+	ldx #0
+loop:
+	clc
+	lda $ff01,x
+OAM_1a = (*-1)
+	beq masking_sprite
+	and #$3f ; $3f: 0-63 per region (or $3e: even numbers only if SP16).  Self-modded above.
+MASK = (*-1)
+	bit $ff01,x
+OAM_1b = (*-1)
+	bpl bottomhalf
+	bvc third
+fourth:
+	ldy X16_pt1d_idx_active
+	adc spr_addrl_offset,y
+	bra spridx_cont
+third:
+	ldy X16_pt1c_idx_active
+	adc spr_addrl_offset,y
+	bra spridx_cont
+bottomhalf:
+	bvc first
+second:
+	ldy X16_pt1b_idx_active
+	adc spr_addrl_offset,y
+	bra spridx_cont
+first:
+	ldy X16_pt1a_idx_active
+	adc spr_addrl_offset,y
+spridx_cont:
+	sta Vera::Reg::Data0
+	lda spr_addrm_offset,y
+	sta Vera::Reg::Data0 ; high index
+	lda $ff03,x
+OAM_2 = (*-1)
+	sec
+	sbc X16_hzscroll_offset
+	sta Vera::Reg::Data0 ; X pos
+	lda Vera::Reg::AddrL
+	clc
+	adc #5
+	sta Vera::Reg::AddrL
+	bcc return
+	inc Vera::Reg::AddrM
+return:
+	inx
+	inx
+	inx
+	inx
+	bne loop
+
+	rts
+masking_sprite: ; skip over masking sprite
+	lda Vera::Reg::Data0
+	lda Vera::Reg::Data1
+	bra return
+.endproc
+
 
 masking_spr_addr_l:
 	.byte <(LEFT_VERT_PIPE_MASK_SPRITE >> 5)

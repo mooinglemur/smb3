@@ -23,6 +23,7 @@
 	.import stx_PPUMASK
 	.import sty_PPUADDR
 	.import sty_PPUSCROLL
+	.import reblit_sprite_idx
 	; APU
 	.import APU_tick
 	.import APU_reset
@@ -143,6 +144,8 @@
 .export X16_current_blank_tile
 
 .export X16_activate_tilemap
+
+.export X16_reblit_sprite_idx
 
 .export PPUADDR_L
 .export PPUADDR_H
@@ -1255,6 +1258,10 @@ X16_sty_PPU_SCROLL:
 
 X16_sty_PPU_VRAM_ADDR:
 	PJFAR NESPort::sty_PPUADDR, 31
+
+X16_reblit_sprite_idx:
+	PJFAR NESPort::reblit_sprite_idx, 31
+
 
 .endif
 
