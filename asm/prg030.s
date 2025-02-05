@@ -3358,8 +3358,16 @@ PRG030_9257:
 PRG030_927E:
 	JSR GraphicsBuf_Prep_And_WaitVSync	; This is probably just using it to VSync
 	JSR Sprite_RAM_Clear	 		; Clear sprites!
+.ifdef X16
+	lda #10
+	sta X16::Reg::RAMBank
+.endif
 	JSR GameOver_Loop	 		; Do Gameover stuff
 	JSR World5_Sky_AddCloudDeco	 	; World 5 sky area gets an extra cloud sprite (strange?)
+.ifdef X16
+	lda PAGE_A000
+	sta X16::Reg::RAMBank
+.endif
 
 	LDA GameOver_State
 

@@ -903,14 +903,6 @@ PRG010_C413:
 	EOR #$01
 	STA Inventory_Open	; Toggle the Inventory_Open flag
 
-.ifdef X16
-	;;; DEBUG
-	lda #7
-	sta Inventory_Items
-	lda #12
-	sta Inventory_Items+1
-.endif
-
 	JMP WorldMap_UpdateAndDraw	; Jump into WorldMap_UpdateAndDraw...
 
 PRG010_C43C:
@@ -3013,6 +3005,45 @@ PRG010_CEF4:
 	JMP PRG010_CEAC	 		; Jump to PRG010_CEAC
 
 WorldMap_UpdateAndDraw:
+.ifdef X16
+; 1 = Mushroom
+; 2 = Flower
+; 3 = Leaf
+; 4 = Frog
+; 5 = Tanooki
+; 6 = Hammer
+; 7 = Judgem's cloud
+; 8 = P-Wing
+; 9 = Star
+; A = Anchor
+; B = Hammer
+; C = Warp Whistle
+; D = Music Box
+	;;; DEBUG
+	lda #7
+	sta Inventory_Items
+	lda #12
+	sta Inventory_Items+1
+	lda #2
+	sta Inventory_Items+2
+	lda #3
+	sta Inventory_Items+3
+	lda #5
+	sta Inventory_Items+4
+	lda #6
+	sta Inventory_Items+5
+	lda #8
+	sta Inventory_Items+6
+	lda #9
+	sta Inventory_Items+7
+	lda #10
+	sta Inventory_Items+8
+	lda #11
+	sta Inventory_Items+9
+	lda #13
+	sta Inventory_Items+10
+.endif
+
 	LDY Player_Current 	; Y = Player_Current
 
 	LDA Map_UnusedPlayerVal2,Y	; A = Map_UnusedPlayerVal2
