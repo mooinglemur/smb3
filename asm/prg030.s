@@ -1765,6 +1765,11 @@ PRG030_8A79:
 	LDA #$05
 	JSR Video_Do_Update
 
+.ifdef X16 ; we switched over to 22 at some point on X16
+	lda #26
+	sta X16::Reg::RAMBank
+.endif
+
 	JSR StatusBar_Update_Cards	 ; Update status bar cards
 	JSR StatusBar_UpdateValues	 ; Update other status bar stuff
 	JSR StatusBar_Fill_MorL	 	 ; Patch in correct M or L on status bar
@@ -1802,8 +1807,16 @@ PRG030_8A79:
 PRG030_8AC0:
 	JSR GraphicsBuf_Prep_And_WaitVSync	; VSync
 
+.ifdef X16
+	lda #22
+	sta X16::Reg::RAMBank
+.endif
 	JSR NSpade_DoGame	 ; Run N-Spade game
 
+.ifdef X16 ; we switched over to 22 above
+	lda #26
+	sta X16::Reg::RAMBank
+.endif
 	JSR StatusBar_UpdateValues	 ; Update status bar
 
 	LDA Level_ExitToMap
@@ -2367,7 +2380,7 @@ PRG030_8DB2:
 	BNE PRG030_BDA6	 ; If Y <> $FF (underflow), loop!
 .endif
 .ifdef X16
-	bpl PRG030_BDA9
+	bpl PRG030_BDA6
 
 	ldy #(Horz_Scroll-Ending2_IntCmd)
 X16_PRG030_Clear_COMMONHIZP:

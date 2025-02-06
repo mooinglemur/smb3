@@ -418,6 +418,12 @@ sq_env_end:
 
 
 sq_get_output_level:
+	lda sq+SQState::Period+1,x
+	bne sq_cont_mute_checks
+	lda sq+SQState::Period,x
+	cmp #8
+	bcc sq_get_output_level_muted
+sq_cont_mute_checks:
 	lda sq+SQState::SweepMute,x
 	bne sq_get_output_level_muted
 	lda sq+SQState::LengthMute,x
@@ -462,14 +468,13 @@ sq_lc_end:
 sq_sweep:
 	lda sq+SQState::SweepReload,x
 	beq sq_no_reload
-	lda #0
-	sta sq+SQState::SweepReload,x
+	stz sq+SQState::SweepReload,x
 	jmp sq_do_sweep
 sq_no_reload:
 	lda sq+SQState::SweepCounter,x
 	beq sq_do_sweep
 	dec sq+SQState::SweepCounter,x
-	jmp sq_sweep_end
+	rts
 sq_do_sweep:
 	lda sq+SQState::SweepPeriod,x
 	sta sq+SQState::SweepCounter,x
@@ -508,8 +513,7 @@ sq_sweep_add: ; pitch goes down
 	adc tmp1
 	sta tmp1
 sq_sweep_overflow_chk:
-	lda #0 ; Clear mute flag
-	sta sq+SQState::SweepMute,x
+	stz sq+SQState::SweepMute,x ; Clear mute flag
 	lda tmp1
 	bit #%11111000
 	beq sq_sweep_enable_chk

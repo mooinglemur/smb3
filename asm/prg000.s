@@ -1775,7 +1775,7 @@ PRG000_C85C:
 	CMP #$10
 	BGE PRG000_C832	 ; If object is detecting way too low (out of range), jump to PRG000_C832 (no tile detected)
 
-	ADC #$60		; +$60
+	ADC #>Tile_Mem		; +$60
 	STA Temp_Var2		 ; -> Temp_Var2
 
 	; ObjTile_DetXHi = Objects_XHi (should be zero)
@@ -1793,7 +1793,16 @@ PRG000_C85C:
 	LSR A
 	LSR A
 	ORA Temp_Var3
+.ifdef X16
+	clc
+	adc #<Tile_Mem
+.endif
 	STA Temp_Var1	 ; -> Temp_Var1
+.ifdef X16
+	bcc :+
+	inc Temp_Var2
+:
+.endif
 
 	LDY #$00	 ; Y = 0 (additional offset not used)
 

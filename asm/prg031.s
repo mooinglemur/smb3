@@ -1795,12 +1795,21 @@ UpdSel_Vertical:
 
 	; COMPARE TO PRG031_F4E3
 
-	LDA #$00	 ; A = 0
 .ifdef NES
+	LDA #$00	 ; A = 0
 	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
-.endif
 	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
+.endif
 .ifdef X16  ; this is the order on the X16
+	LDA PPU_CTL2_Copy	; Get current PPU_CTL2 settings in RAM
+	ORA #$18	; A | 18 (BG + SPR)
+	sta_PPU_CTL2	; Sprites/BG are forced to be visible regardless of PPU_CTL2_Copy
+
+	LDA Horz_Scroll_Hi	; ?? Can specify bits? (I think this is a mistake, and this will be zero on vertical level anyway)
+	ORA #%10101000	; Generate VBlank Resets, use 8x16 sprites, sprites use PT2
+	sta_PPU_CTL1	; Set above settings
+	lda_PPU_STAT	; read PPU status to reset the high/low latch
+
 	LDA Horz_Scroll
 	sta_PPU_SCROLL	 ; Horizontal Scroll set
 	LDA Vert_Scroll
@@ -1852,18 +1861,18 @@ PRG031_F5D3:
 	sta_PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
 	sta_PPU_VRAM_ADDR	;
 	sta_PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
-.endif
 
 	LDA PPU_CTL2_Copy	; Get current PPU_CTL2 settings in RAM
 	ORA #$18	; A | 18 (BG + SPR)
 	sta_PPU_CTL2	; Sprites/BG are forced to be visible regardless of PPU_CTL2_Copy
+.endif
 
+.ifdef NES
 	LDA Horz_Scroll_Hi	; ?? Can specify bits? (I think this is a mistake, and this will be zero on vertical level anyway)
 	ORA #%10101000	; Generate VBlank Resets, use 8x16 sprites, sprites use PT2
 	sta_PPU_CTL1	; Set above settings
 	lda_PPU_STAT	; read PPU status to reset the high/low latch
 
-.ifdef NES
 	LDA Horz_Scroll
 	sta_PPU_SCROLL	 ; Horizontal Scroll set
 	LDA Vert_Scroll
@@ -2290,17 +2299,21 @@ PRG031_F7DF:
 	BEQ IntIRQ_Vertical	 ; For vertical type levels
 	JMP IntIRQ_Standard	 ; Otherwise, just do the standard thing (status bar used in level and map)
 
-IntIRQ_Vertical:
+IntIRQ_Vertical: ; this label is wrong, this is the standard IntIRQ
 	sta_MMC3_IRQENABLE ; Active IRQ
 .ifdef X16
 	; XXX we are really tight here on emulator, not sure about hardware, right on the edge of one line and the next
-;	lda_PPU_STAT
+	lda_PPU_STAT
+	lda Level_Tileset
+	cmp #17 ; N-Spade
+	beq :+
 	LDA #$00	 ;
 	sta_PPU_SCROLL	 ; Horizontal Scroll = 0
 	LDA #$ef
 	sta_PPU_SCROLL	 ; Vertical Scroll updated
 	LDA #$08	 ;
 	sta_PPU_CTL2	 ; BG only, hide sprites
+:
 .endif
 .ifdef NES
 	NOP		 ;
@@ -2331,9 +2344,6 @@ PRG031_F7F8:
 	sta_PPU_VRAM_ADDR
 	sta_PPU_VRAM_ADDR
 	sta_PPU_VRAM_ADDR
-.endif
-
-.ifdef NES
 	stx_PPU_CTL2	 ; Sprites + BG invisible
 	lda_PPU_STAT	 ;
 
@@ -2395,6 +2405,7 @@ PRG031_F871:
 
 	; Load status bar graphics and hide any sprites from appearing over the status bar
 
+.ifdef NES
 	; Load two parts of Status Bar
 	LDA #MMC3_2K_TO_PPU_0000
 	sta_MMC3_COMMAND
@@ -2403,9 +2414,15 @@ PRG031_F871:
 	LDA #MMC3_2K_TO_PPU_0800
 	sta_MMC3_COMMAND
 	LDA StatusBarMTCHR_0800
+	sta_MMC3_PAGE
+.endif
+.ifdef X16
+	; activate preloaded status bar banks
+	ldy #9
+	jsr X16_activate_tilemap
+.endif
 
 	; Load sprite graphics appropriate for World Map / Toad House / N-Spade
-	sta_MMC3_PAGE
 	LDA #MMC3_1K_TO_PPU_1000
 	sta_MMC3_COMMAND
 	LDA SpriteMTCHR_1000
@@ -2465,10 +2482,14 @@ IntIRQ_Finish_NoDis:
 
 	RTI		 ; End of IRQ interrupt!
 
-IntIRQ_Standard:	; $F8DB
+IntIRQ_Standard:	; $F8DB  ; This label is wrong, this is the vertical one
 	sta_MMC3_IRQENABLE ; Enable IRQ generation
 
 .ifdef X16 ; status bar is fixed scroll for X16
+	LDA PPU_CTL1_Copy	 ; PPU_CTL1 copy
+	ORA #$01	 ; Force $2400 nametable address
+	sta_PPU_CTL1	 ; Set it in the register
+
 	lda_PPU_STAT
 	LDA #$00
 	sta_PPU_SCROLL
@@ -2593,12 +2614,10 @@ PRG031_F997:
 .ifdef NES
 	LDA #$18	 ; A | 18 (BG + SPR)
 	sta_PPU_CTL2	 ; Sprites/BG are visible
-.endif
 	LDA PPU_CTL1_Copy	 ; PPU_CTL1 copy
 	ORA #$01	 ; Force $2400 nametable address
 	sta_PPU_CTL1	 ; Set it in the register
 	lda_PPU_STAT	 ;
-.ifdef NES
 	LDA #$00	 ;
 	sta_PPU_SCROLL	 ; Horizontal scroll = 0
 	LDA Vert_Scroll ;

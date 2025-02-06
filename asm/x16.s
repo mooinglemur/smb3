@@ -268,7 +268,6 @@ nobin:
 .endproc
 
 .proc X16_expand_dmc
-	stz $9fba
 	; initialize state
 	lda #$3B
 	sta destbank
@@ -305,10 +304,13 @@ srcptr = * - 2
 	ldy #$ff
 destbank = * - 1
 	sty X16::Reg::RAMBank
-.repeat 8
+	ldy #8
+o8loop:
 	lsr
 	jsr output
-.endrepeat
+	dey
+	bne o8loop
+
 	inc srcptr
 	bne :+
 	inc srcptr+1
@@ -322,7 +324,7 @@ destbank = * - 1
 	bne after_taper
 	cpy level
 	bcs after_taper
-	dec level
+	sty level
 after_taper:
 	lda srcptr+1
 	cmp #$ff
@@ -335,6 +337,13 @@ endptr_l = * - 1
 	inx
 	cpx #9
 	jcc outerloop
+	ldy #0
+fill0:
+	clc
+	jsr output
+	dey
+	bne fill0
+
 	rts
 output:
 	pha

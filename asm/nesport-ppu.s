@@ -315,6 +315,14 @@ end:
 	ror
 	ror
 	sta PPUCTRL_HMIRROR
+	beq vmirror
+	lda #<(VERA_MAP_BASE_NT1 >> 9)
+	sta Vera::Reg::L1MapBase
+	bra end
+vmirror:
+	lda #<(VERA_MAP_BASE_NT0 >> 9)
+	sta Vera::Reg::L1MapBase
+end:
 	pla
 	plp
 	rts
