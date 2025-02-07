@@ -27,7 +27,11 @@
 .importzp Map_HandTrap_XHi, Map_WWOrHT_X, Map_WWOrHT_Cnt, Map_WWOrHT_Dir, Map_WarpWind_FX
 .importzp Map_StarFX_State, World_Map_Twirl, Map_Skid_DeltaY, Map_Skid_DeltaFracY, Map_Skid_FracY
 .importzp Map_Skid_DeltaX, Map_Skid_DeltaFracX, Map_Skid_FracX, Map_Skid_FracCarry, Map_Skid_Count
-.importzp Map_Skid_Counter, Map_Skid_TravDirs, Map_StarsX, Map_StarsY, Map_StarsOutRad, Map_StarsXSteps
+.importzp Map_Skid_Counter, Map_Skid_TravDirs
+.ifdef NES
+.importzp Map_StarsX, Map_StarsY, Map_StarsOutRad
+.endif
+.importzp Map_StarsXSteps
 .importzp Map_StarsRadCnt, Map_StarsCenterX, Map_StarsCenterY, Map_StarsDeltaR, Map_StarsConst9
 .importzp Map_StarsAnimCnt, Map_StarsFrame, Map_StarsPattern, Map_StarsLandRad, Map_StarsYSteps
 .importzp Map_StarsRadius, Map_StarsState, Map_SkidBack
@@ -84,6 +88,14 @@
 
 
 .segment "PRG011"
+.ifdef X16 ; let's put them in here for X16
+Map_StarsX:
+	.res 8
+Map_StarsY:
+	.res 8
+Map_StarsOutRad:
+	.res 1
+.endif
 
 PRG011_A000:
 	.byte $00, $01, $02, $03, $04, $05, $06, $07
@@ -3482,7 +3494,6 @@ PRG011_B3B1:
 
 	; ******!!!
 	; NOTE: Don't actually return to caller; return to caller's caller!
-	; XXX ensure none of our far calls will break with this
 	PLA
 	PLA
 	RTS		 ; Return

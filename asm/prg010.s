@@ -2903,12 +2903,6 @@ PRG010_CE78:
 PRG010_CEA7:
 	LDA #$10
 	STA Map_Operation	; Map_Operation = $10 (begin "enter level" effect)
-.ifdef X16
-	stz Player_XVel  ; XXX not sure if this is the best place to do this.
-	                 ; due to how ZP overlaps, this gets location messed with by
-					 ; the star effect on the world map
-.endif
-
 
 PRG010_CEAC:
 	LDX Player_Current	; X = Player_Current

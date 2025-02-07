@@ -66,6 +66,7 @@
 .import __WORLDMAPVARS_LOAD__, __WORLDMAPVARS_SIZE__
 .import __TITLEVARS_LOAD__, __TITLEVARS_SIZE__
 .endif
+.import __GENSRAM_LOAD__
 ; BSS imports (low RAM and cart SRAM)
 .import Update_Select, Raster_Effect, Debug_Flag, Sprite_RAM, Graphics_BufCnt, Graphics_Buffer
 .import World_Num_Debug, Level_JctCtl, Bonus_GameHost, Bonus_KTPrize, CineKing_Frame, SndCur_Level1
@@ -2187,8 +2188,13 @@ PRG024_AB04:
 	LDA Video_Upd_Table2+1,Y
 	STA Video_Upd_AddrH
 .endif
-
+.ifdef X16
+	INT_SEI ; this update may overrun IRQ due to slower sta PPUDATA emulation, which wouldn't happen on NES hardware
+.endif
 	JSR Video_Misc_Updates2	; Load those graphics!
+.ifdef X16
+	INT_CLI
+.endif
 
 	DEC Title_EventGrafX	; Title_EventGrafX--
 
@@ -2507,12 +2513,21 @@ Title_Do1P2PMenu:
 	CMP #(PAD_A | PAD_B)
 	BNE PRG024_AC42	 ; If Player 2 is not holding A+B, jump to PRG024_AC42
 
+	;;; DEBUG
+.ifdef X16
+	lda #$80
+	sta Debug_Flag
+	lda #7
+	sta Title_State
+.endif
+.ifdef NES
 	; NOTE: This probably WAS the debug menu activation...
 	NOP
 	NOP
 	NOP
 	NOP
 	NOP
+.endif
 
 PRG024_AC42:
 	; Title_ResetCnt and Title_ResetCnt2 gang together to form a large countdown timer
@@ -5748,6 +5763,7 @@ Ending_Credits:
 
 	; XXX HERE!
 
+.ifdef NES
 	; Clears a lot of page 0 RAM
 	LDX #$f4	 ; X = $F4
 PRG024_BB9D:
@@ -5768,6 +5784,21 @@ PRG024_BBA1:
 PRG024_BBAA:
 	CPX #<-1
 	BNE PRG024_BB9D	 ; While X >= 0, loop!
+.endif
+.ifdef X16
+	ldx #$56
+loop1b:
+	stz $a9, x
+	dex
+	bpl loop1b
+
+	ldx #$75
+loop2b:
+	stz __TITLEVARS_LOAD__-1, x
+	dex
+	bne loop2b
+.endif
+
 
 	; This clears some of the title screen area memory
 	LDX #$15	 ; X = $15
@@ -6009,11 +6040,12 @@ PRG024_BCAE:
 	STA Map_Unused7992
 
 	; Temp_Var1 = 0
-	LDY #$00
+	LDY #<(__GENSRAM_LOAD__+$1F00)
+.assert <(__GENSRAM_LOAD__+$1F00) = 0, error, "Some code requires Tile_Mem to be page-aligned"
 	STY Temp_Var1
 
 	; Temp_Var2 = $7F
-	LDA #$7f
+	LDA #>(__GENSRAM_LOAD__+$1F00)
 	STA Temp_Var2
 
 	; Clearing RAM $7FFF through $6000
@@ -6027,7 +6059,7 @@ PRG024_BCD4:
 	DEC Temp_Var2	 ; Temp_Var2-- (previous page of RAM)
 
 	LDA Temp_Var2
-	CMP #$5f
+	CMP #>(__GENSRAM_LOAD__-$0100)
 	BNE PRG024_BCD4	 ; While Temp_Var2 <> $5F, loop
 
 
@@ -6251,18 +6283,14 @@ Ending2_PrepEndPic:
 .pushseg
 .segment "PRG024LOW"
 X16_PRG024_Load_EndPicByWorld:
-	lda X16::Reg::RAMBank
-	pha
-	lda #25
-	sta X16::Reg::RAMBank
+	inc X16::Reg::RAMBank
 .endif
 	LDA EndPicByWorld_H,Y
 	STA Temp_Var2
 	LDA EndPicByWorld_L,Y
 	STA Temp_Var1
 .ifdef X16
-	pla
-	sta X16::Reg::RAMBank
+	dec X16::Reg::RAMBank
 	rts
 .popseg
 .endif
@@ -6271,7 +6299,19 @@ X16_PRG024_Load_EndPicByWorld:
 	LDX #$00	 ; X = 0 (Ending_CmdBuffer index)
 PRG024_BDF0:
 	; Next command byte -> Temp_Var16
+.ifdef X16
+	jsr X16_PRG024_ldai_Temp_Var1_y
+.pushseg
+.segment "PRG024LOW"
+X16_PRG024_ldai_Temp_Var1_y:
+	inc X16::Reg::RAMBank
+.endif
 	LDA (Temp_Var1),Y
+.ifdef X16
+	dec X16::Reg::RAMBank
+	rts
+.popseg
+.endif
 	STA Temp_Var16
 
 	AND #$80
@@ -6427,6 +6467,13 @@ Ending2_AddSprites:
 
 	LDY Ending2_CurWorld	; Y = current world we're depicting
 
+.ifdef X16
+	jsr X16_PRG024_setup_ending_sprites
+.pushseg
+.segment "PRG024LOW"
+X16_PRG024_setup_ending_sprites:
+	inc X16::Reg::RAMBank
+.endif
 	; Load pattern tables required for this world picture sprites
 	LDA Ending2_EndPicPatTable2,Y
 	STA PatTable_BankSel+2
@@ -6454,6 +6501,11 @@ PRG024_BEBE:
 
 	DEY		 ; Y--
 	BPL PRG024_BEBE	 ; While Y >= 0, loop
+.ifdef X16
+	dec X16::Reg::RAMBank
+	rts
+.popseg
+.endif
 
 	INC Ending2_PicState	 ; Ending2_PicState = 7
 
@@ -6607,18 +6659,18 @@ Ending2_PicVRAM_NextLineWrap:
 PRG024_BF5D:
 	RTS		 ; Return
 
-	; PatTable_BankSel+X values (sprite pattern tables) loaded per "world" of ending picture
-Ending2_EndPicPatTable2:	.byte $57, $53, $51, $00, $43, $02, $44, $54
-Ending2_EndPicPatTable3:	.byte $00, $04, $00, $76, $76, $76, $04, $76
-Ending2_EndPicPatTable4:	.byte $57, $4E, $1A, $1A, $00, $0B, $00, $00
-Ending2_EndPicPatTable5:	.byte $4F, $4F, $00, $00, $4F, $4F, $4F, $00
-
 ; avoid splitting up these tables
 ; on X16, they'll all be in PRG025 rather than spanning across
 ; multiple banks
 .ifdef X16
 .segment "PRG025PRE"
 .endif
+
+	; PatTable_BankSel+X values (sprite pattern tables) loaded per "world" of ending picture
+Ending2_EndPicPatTable2:	.byte $57, $53, $51, $00, $43, $02, $44, $54
+Ending2_EndPicPatTable3:	.byte $00, $04, $00, $76, $76, $76, $04, $76
+Ending2_EndPicPatTable4:	.byte $57, $4E, $1A, $1A, $00, $0B, $00, $00
+Ending2_EndPicPatTable5:	.byte $4F, $4F, $00, $00, $4F, $4F, $4F, $00
 
 	; Split address, parallel tables for the starting address of the end picture sprite lists for each world
 Ending2_EndPicSpriteListH:

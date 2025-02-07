@@ -37,7 +37,10 @@
 .exportzp World_Map_Y, World_Map_XHi, World_Map_X, World_Map_Move, World_Map_Dir, Map_UnusedPlayerVal, Map_UnusedPlayerVal2, Map_WWOrHT_Y, Map_HandTrap_XHi
 .exportzp Map_WWOrHT_X, Map_WWOrHT_Cnt, Map_WWOrHT_Dir, Map_WarpWind_FX, Map_StarFX_State, World_Map_Twirl, Map_Skid_DeltaY, Map_Skid_DeltaFracY
 .exportzp Map_Skid_FracY, Map_Skid_DeltaX, Map_Skid_DeltaFracX, Map_Skid_FracX, Map_Skid_FracCarry, Map_Skid_Count, Map_Skid_Counter, Map_Skid_TravDirs
-.exportzp Map_StarsX, Map_StarsY, Map_StarsOutRad, Map_StarsXSteps, Map_StarsRadCnt, Map_StarsCenterX, Map_StarsCenterY, Map_StarsDeltaR, Map_StarsConst9
+.ifdef NES
+.exportzp Map_StarsX, Map_StarsY, Map_StarsOutRad
+.endif
+.exportzp Map_StarsXSteps, Map_StarsRadCnt, Map_StarsCenterX, Map_StarsCenterY, Map_StarsDeltaR, Map_StarsConst9
 .exportzp Map_StarsAnimCnt, Map_StarsFrame, Map_StarsPattern, Map_StarsLandRad, Map_StarsYSteps, Map_StarsRadius, Map_StarsState, Map_SkidBack
 .exportzp Map_UnusedGOFlag
 .ifdef NES
@@ -664,12 +667,17 @@ Map_Skid_TravDirs:
 ; unused ($99-$9A)
 	.res 2
 
+.ifdef NES
 Map_StarsX:           ; $9B-$A2 During World Intro, X position of each star
 	.res 8
 Map_StarsY:           ; $A3-$AA During World Intro, Y position of each star
 	.res 8
 Map_StarsOutRad:      ; During World Intro, stars take off radius (0 = smallest, increments for larger)
 	.res 1
+.endif
+.ifdef X16
+	.res 17
+.endif
 
 ; unused ($AC-$AE)
 	.res 3

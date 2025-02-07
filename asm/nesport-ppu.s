@@ -217,11 +217,11 @@ end:
 	lda PPUADDR_H
 	and #$23
 	cmp #$23
-	bne non_attr
+	bne do_read
 
 	ldy PPUADDR_L
 	cpy #$c0
-	bcc non_attr
+	bcc do_read
 
 	bit PPUCTRL_HMIRROR
 	bmi hmirror
@@ -231,20 +231,20 @@ vmirror:  ; NT0 is at $2000 or $2800
 	bne at1
 at0:
 	lda attribute_table_0_raw-$C0,y
-	pha
-	bra end
+	tay
+	bra do_read
 at1:
 	lda attribute_table_1_raw-$C0,y
-	pha
-	bra end
+	tay
+	bra do_read
 hmirror:  ; NT0 is at $2000 or $2400
 	lda PPUADDR_H
 	and #$08
 	bne at1
 	bra at0
-non_attr:
+do_read:
 	lda PPUDATA_BUFFER
-	stz PPUDATA_BUFFER
+	sty PPUDATA_BUFFER
 	pha
 end:
 	jsr auto_increment
@@ -1011,12 +1011,10 @@ next_row:
 	and #$04
 	bne add32
 
-	clc
-	lda PPUADDR_L
-	adc #1
-	sta PPUADDR_L
+	inc PPUADDR_L
+	bne end
 	lda PPUADDR_H
-	adc #0
+	inc
 	and #$3F
 	sta PPUADDR_H
 	bra end
