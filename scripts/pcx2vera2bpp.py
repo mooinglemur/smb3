@@ -16,7 +16,7 @@ def main(argv):
                     for pxcol in range(8):
                         xx = (tile % tcols) * 8 + pxcol
                         yy = (tile // tcols) * 8 + pxrow
-                        bpb = (bpb << 2) | (img.getpixel([xx,yy]) & 0x03)
+                        bpb = (bpb << 2) | (img.getpixel((xx,yy)) & 0x03)
                         if pxcol % 4 == 3:
                             bp.append(bpb & 0xff)
                             bpb = 0

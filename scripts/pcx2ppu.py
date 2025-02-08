@@ -18,8 +18,8 @@ def main(argv):
                     for pxcol in range(8):
                         xx = (tile % tcols) * 8 + pxcol
                         yy = (tile // tcols) * 8 + pxrow
-                        bp1b = (bp1b << 1) | (img.getpixel([xx,yy]) & 0x01)
-                        bp2b = (bp2b << 1) | ((img.getpixel([xx,yy]) & 0x02) >> 1)
+                        bp1b = (bp1b << 1) | (img.getpixel((xx,yy)) & 0x01)
+                        bp2b = (bp2b << 1) | ((img.getpixel((xx,yy)) & 0x02) >> 1)
                     bp1.append(bp1b & 0xff)
                     bp2.append(bp2b & 0xff)
                 chrasm.write("  .byte " + ", ".join([f"${int(xs):02X}" for xs in bp1+bp2]) + "\n")
