@@ -73,7 +73,7 @@ PPU_SPR_PAL     = $3F10 ; 3F10-3F1F
 ; 6-7   duty cycle type (unused on noise channel)
 
 ; Duty cycles:
-; 00 = a weak, grainy tone.  (12.5% Duty), 01 = a solid mid-strength tone. (25% Duty), 
+; 00 = a weak, grainy tone.  (12.5% Duty), 01 = a solid mid-strength tone. (25% Duty),
 ; 10 = a strong, full tone (50% Duty), 11 = sounds a lot like 01 (25% Duty negated)
 
 PAPU_CTL1       = $4000 ; pAPU Pulse 1 Control Register.
@@ -147,7 +147,7 @@ PAPU_NFREQ2     = $400F ; pAPU Noise Frequency Register 2.
 ; Bits 6-7: this is the playback mode.
 ;       00 - play DMC sample until length counter reaches 0 (see $4013)
 ;       x1 - loop the DMC sample (x = immaterial)
-;       10 - play DMC sample until length counter reaches 0, then generate a CPU 
+;       10 - play DMC sample until length counter reaches 0, then generate a CPU
 PAPU_MODCTL     = $4010 ; pAPU Delta Modulation Control Register.
 
 PAPU_MODDA      = $4011 ; pAPU Delta Modulation D/A Register.
@@ -164,7 +164,7 @@ PAPU_MODLEN     = $4013 ; pAPU Delta Modulation Data Length Register.
 ; 5     unknown
 ; 6     frame IRQ status (active when set)
 ; 7     DMC's IRQ status (active when set)
-; 
+;
 ; write
 ; -----
 ; 0     rectangle wave channel 1 enable
@@ -195,7 +195,7 @@ JOYPAD          = $4016
 ; Changes the frame counter that changes updates on sound; any write resets
 ; the frame counter, good for synchronizing sound with VBlank etc.
 ; 0        4, 0,1,2,3, 0,1,2,3,..., etc.
-; 1        0,1,2,3,4, 0,1,2,3,4,..., etc. 
+; 1        0,1,2,3,4, 0,1,2,3,4,..., etc.
 ; bit 6 - enable frame IRQs (when zero)
 ; bit 7 - 0 = 60 IRQs a frame / 1 = 48 IRQs a frame (obviously need bit 6 clear to use)
 ; Interestingly, both of the above are clear on bootup, meaning IRQs are being generated,
@@ -217,7 +217,7 @@ FRAMECTR_CTL    = $4017
 ;  * 4 - Swap one 1 KB VROM bank at PPU $1800.
 ;  * 5 - Swap one 1 KB VROM bank at PPU $1C00.
 ;  * 6 - Swap PRG-ROM bank at either $8000 or $C000 based on bit 6.
-;  * 7 - Swap PRG-ROM bank at either $A000 
+;  * 7 - Swap PRG-ROM bank at either $A000
 ;
 ;  Bit 6 - If 0, enables swapping at $8000 and $A000, otherwise enables
 ;  swapping at $C000 and $A000.  (NOTE: This is what SMB3 uses, so we only
@@ -976,8 +976,8 @@ OBJ_CHEEPCHEEPBEGIN     = $B4   ; (Level_Event = 1) Begins swarm of cheep cheeps
 OBJ_GREENCHEEPBEGIN     = $B5   ; (Level_Event = 2) Begins Spike Cheeps floating by
 OBJ_LAKITUFLEE          = $B6   ; (Level_Event = 3) Causes active Lakitu to flee
 OBJ_PARABEETLESBEGIN    = $B7   ; (Level_Event = 4) Begins Green and red parabeetles flyby
-OBJ_CLOUDSINBGBEGIN     = $B8   ; (Level_Event = 5) Begins floating clouds in background 
-OBJ_WOODPLATFORMBEGIN   = $B9   ; (Level_Event = 6) Begins random wooden platforms 
+OBJ_CLOUDSINBGBEGIN     = $B8   ; (Level_Event = 5) Begins floating clouds in background
+OBJ_WOODPLATFORMBEGIN   = $B9   ; (Level_Event = 6) Begins random wooden platforms
 OBJ_TREASUREBOXAPPEAR   = $BA   ; (Level_Event = 7) Causes treasure box to appear
 OBJ_CANCELEVENT         = $BB   ; (Level_Event = 8) Cancels Level_Event (sets to zero)
 
@@ -1943,7 +1943,7 @@ TILE11_QBLOCKP_LR       = $5E   ; Giant [?] block (with leaf) lower right
 
 TILE11_SKY              = $80
 
-TILE11_HILL_PEAK        = $89   ; Giant hill peak 
+TILE11_HILL_PEAK        = $89   ; Giant hill peak
 TILE11_HILL_LSLOPE      = $8A   ; Giant hill left slope
 TILE11_HILL_MID         = $8B   ; Giant hill filler
 TILE11_HILL_RSLOPE      = $8C   ; Giant hill right slope
@@ -2159,7 +2159,7 @@ TILE15_TABLE_LR         = $D3   ; Table lower left
 
 
 ; Tileset 18 (2P Vs)
-; NOTE: Several tiles 
+; NOTE: Several tiles
 TILE18_BLACK            = $02   ; Black tile
 
 TILE18_MSTATUS_UL       = $44
@@ -2184,16 +2184,19 @@ TILE18_LADDER           = $C0   ; Ladder (used in final variation)
 TILE18_BOUNCEBLOCK      = $C1   ; Block that bounces when Player hits underneath it
 TILE18_BOUNCEDBLOCK     = $C2   ; Temporary tile for when block has been bounced
 
-BANK_Tile_Layout_TS0           = 12
-BANK_Tile_Layout_TS1           = 15
-BANK_Tile_Layout_TS2           = 21
-BANK_Tile_Layout_TS3           = 16
-BANK_Tile_Layout_TS4_TS12      = 17
-BANK_Tile_Layout_TS5_TS11_TS13 = 19
-BANK_Tile_Layout_TS6_TS7_TS8   = 18
-BANK_Tile_Layout_TS9           = 20
-BANK_Tile_Layout_TS10          = 23
-BANK_Tile_Layout_TS14          = 13
+BANK_Tile_Layout_TS0            = 12
+BANK_Tile_Layout_TS1            = 15
+BANK_Tile_Layout_TS2            = 21
+BANK_Tile_Layout_TS3            = 16
+BANK_Tile_Layout_TS4_TS12       = 17
+BANK_Tile_Layout_TS5_TS11_TS13  = 19
+BANK_Tile_Layout_TS6_TS7_TS8    = 18
+BANK_Tile_Layout_TS9            = 20
+BANK_Tile_Layout_TS10           = 23
+BANK_Tile_Layout_TS14           = 13
+BANK_Tile_Layout_TS15_TS16_TS17 = 22
+BANK_Tile_Layout_TS18           = 14
+
 
 ; Some constants specific to title screen; they don't really match up with the gameplay
 FALL_NORMAL                    = 5 ; Normal fall rate added to 'Y'
@@ -2203,3 +2206,14 @@ FALL_OBJECT                    = 4 ; Fall rate for objects
 FALLRATE_TAILWAGMAX            = 8 ; Maximum Y velocity falling rate when wagging raccoon tail
 FALLRATE_MAX                   = $40 ; Maximum Y velocity falling rate
 FALLRATE_OBJECTMAX             = $60 ; Maximum Y velocity falling rate of an object
+
+; X16 Constants here
+VERA_SPRITE_BASE  = $00000  ; 32 2K regions of 64 8x8 4bpp sprites
+VERA_TILE_BASE    = $10000  ; 10 4K regions 
+VERA_MAP_BASE_NT0 = $1A000  ; 8K 64x64 tile map
+VERA_MAP_BASE_NT1 = $1C000  ; 8K 64x64 tile map
+
+LEFT_VERT_PIPE_MASK_SPRITE     = $1E000
+RIGHT_VERT_PIPE_MASK_SPRITE    = $1E040
+LEFT_KAIZO_BLOCK_MASK_SPRITE   = $1E080
+RIGHT_KAIZO_BLOCK_MASK_SPRITE  = $1E0C0

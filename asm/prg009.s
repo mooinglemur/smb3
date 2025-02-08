@@ -17,9 +17,23 @@
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var7, Temp_Var8
 .importzp Temp_Var9, Temp_Var10, Temp_Var13, Temp_Var14, Temp_Var15, Temp_Var16, Level_ExitToMap
-.importzp Counter_1, Controller1Press, Controller1, Vert_Scroll, Vs_State, Vs_IsPaused, Player_XHi
-.importzp Player_YHi, Player_X, Player_Y, Player_SpriteX, Player_SpriteY, Player_XVel, Player_HaltGame
+.importzp Counter_1, Controller1Press, Controller1, Vert_Scroll
+.importzp Vs_State, Vs_IsPaused
+.ifdef NES
+.importzp Player_XHi
+.importzp Player_YHi
+.endif
+.ifdef X16
+.import Player_XHi
+.import Player_YHi
+.endif
+.importzp Player_X, Player_Y, Player_SpriteX, Player_SpriteY, Player_XVel, Player_HaltGame
+.ifdef NES
 .importzp Player_InAir, Level_Tile, Player_Suit
+.endif
+.ifdef X16
+.import Player_InAir, Level_Tile, Player_Suit
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Update_Select, Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, Update_Request, SndCur_Pause
 .import Sound_QPlayer, Sound_QLevel1, Sound_QLevel2, Sound_QMusic1, Sound_QMap, Sound_QPause
@@ -59,9 +73,9 @@
 .export Vs_2PVsPauseHandler
 
 
-.ifdef NES
+
 .segment "PRG009"
-.endif
+
 	; Number of lives per card combination; mainly to give the 2, 3, 5
 Vs_LivesReward:
 	.byte $00, $02, $03, $01, $05, $01, $01, $01	; None, Mushroom, Flower, Mix, Star, Mix, Mix, Mix
@@ -83,7 +97,7 @@ Vs_CardAwardLives:
 
 	JSR PRG009_A026
 
-	LDX #<(Inventory_Cards2 - Inventory_Cards)	; Offset to Luigi's cards 
+	LDX #<(Inventory_Cards2 - Inventory_Cards)	; Offset to Luigi's cards
 	LDY #$01	 ; Y = 1
 
 PRG009_A026:
@@ -113,7 +127,7 @@ PRG009_A03E:
 	LDY Inventory_Cards,X	 ; Get first card
 
 	LDA Vs_CardWeight,Y	 ; Get first card bit value
- 
+
 	LDY Inventory_Cards+1,X	 ; Get second card
 	ORA Vs_CardWeight,Y	 ; OR with second
 
@@ -174,7 +188,7 @@ Vs_xUpPattern_L:	.byte $F3, $71, $73, $FF, $65	; 1, 2, 3, INVALID, 5 lives
 Vs_xUpPattern_R:	.byte $FF, $67, $67, $FF, $67	; 1, 2, 3, INVALID, 5 lives
 
 Vs_xUp_SprRAMOff:	.byte $B0, $B8	; Sprite RAM offset for the "x Up"
-	
+
 Vs_DrawxUps:
 	LDX #$01	 ; X = 1
 PRG009_A09E:
@@ -188,7 +202,7 @@ PRG009_A09E:
 	RTS		 ; Return
 
 Vs_xUpDraw:
-	LDA Vs_xUpCnt,X	 
+	LDA Vs_xUpCnt,X
 	BEQ PRG009_A0B5	 ; If this "x Up" is not in use, jump to PRG009_A0B5 (RTS)
 
 	CMP #$20
@@ -271,7 +285,7 @@ Card_XOffset:	.byte 0, 16, 32
 
 	; Pattern for card sprite by card face
 Card_Patterns:	.byte $E7, $E9, $EB
-	
+
 
 Vs_DrawPlayerCards:
 	; Temp_Var1 = 0 (Sprite RAM offset for cards)
@@ -331,7 +345,7 @@ PRG009_A138:
 PRG009_A144:
 	LDA #SPR_PAL3
 
-PRG009_A146: 
+PRG009_A146:
 	; Set left/right card sprite attributes
 	STA Sprite_RAM+$D2,Y
 	ORA #SPR_HFLIP
@@ -413,7 +427,7 @@ PRG009_A188:
 	CLC
 	ADC Vs_PlayerCoins,Y	 ; Offset to specific coin they just got
 	STA Graphics_Buffer-4,X	 ; Set this as the VRAM low
-	
+
 	DEX		 	; X--
 	STX Graphics_BufCnt	; Update Graphics_BufCnt
 
@@ -425,7 +439,7 @@ PRG009_A188:
 
 
 Vs_2PVsPauseHandler:
-	LDA SndCur_Pause	 
+	LDA SndCur_Pause
 	BNE PRG009_A1DC	 ; If playing pause sound, jump to PRG009_A1DC
 
 	LDA Controller1Press
@@ -502,7 +516,7 @@ Vs_EnemySetByGameType:
 	.byte <((VsES_SStepAll - Vs_5EnemySets) / 5)	;  6: Sidestepper Only
 	.byte <((VsES_SpinyAll - Vs_5EnemySets) / 5)	;  7: Coin Fountain
 	.byte <((VsES_SpinyAll - Vs_5EnemySets) / 5)	;  8: Spiny Only
-	.byte <((VsES_FFlyAll - Vs_5EnemySets) / 5)	;  9: Fighter Fly Only 
+	.byte <((VsES_FFlyAll - Vs_5EnemySets) / 5)	;  9: Fighter Fly Only
 	.byte <((VsES_SStepAll - Vs_5EnemySets) / 5)	; 10: Sidestepper Only
 	.byte <((VsES_SpinyAll - Vs_5EnemySets) / 5)	; 11: Ladder and [?] blocks (ENEMY SET NOT USED)
 
@@ -545,7 +559,7 @@ PRG009_A204:
 	.word Vs_DoNothing	;  6: Sidestepper Only
 	.word Vs_DoNothing 	;  7: Coin Fountain
 	.word Vs_DoNothing	; 8: Spiny Only
-	.word Vs_DoNothing	; 9: Fighter Fly Only 
+	.word Vs_DoNothing	; 9: Fighter Fly Only
 	.word Vs_DoNothing	; 10: Sidestepper Only
 	.word Vs_HideCoins	; 11: Ladder and [?] blocks
 
@@ -657,7 +671,7 @@ Vs_2PVsRun:
 	.word Vs_GameTypical	;  6: Sidestepper Only
 	.word Vs_GameFountain	;  7: Coin Fountain
 	.word Vs_GameTypical	;  8: Spiny Only
-	.word Vs_GameTypical	;  9: Fighter Fly Only 
+	.word Vs_GameTypical	;  9: Fighter Fly Only
 	.word Vs_GameTypical	; 10: Sidestepper Only
 	.word Vs_GameLadder	; 11: Ladder and [?] blocks
 
@@ -824,7 +838,7 @@ PRG009_A39F:
 
 PRG009_A3AD:
 	LDA Inventory_Cards,Y
-	TAY		 ; Y = current card face 
+	TAY		 ; Y = current card face
 	CLC
 	ADC #(VSOBJID_MUSHROOMCARD-1)
 	STA Vs_ObjectId,X	; Set proper object ID for the card
@@ -875,8 +889,8 @@ PRG009_A3DA:
 	RTS		 ; Return
 
 Vs_PlayerMove:
-	LDX #$01	
-PRG009_A3F3: 
+	LDX #$01
+PRG009_A3F3:
 	STX Vs_CurIndex
 
 	LDA a:Vs_IsPaused
@@ -908,7 +922,7 @@ PRG009_A40B:
 	RTS		 ; Return
 
 Vs_PlayerDoMovements:
-	LDA Vs_PlayerHaltTimer,X	 
+	LDA Vs_PlayerHaltTimer,X
 	BEQ PRG009_A424	 ; If Player is not halted, jump to PRG009_A424
 
 	DEC Vs_PlayerHaltTimer,X	 ; Vs_PlayerHaltTimer--
@@ -929,7 +943,7 @@ PRG009_A424:
 
 PRG009_A431:
 
-	; NOTE: If you RTS here, you can see the game operate where a dead Player 
+	; NOTE: If you RTS here, you can see the game operate where a dead Player
 	; is allowed to resume!  Interesting lost effect... (see around PRG009_A79A)
 
 	; Flag to exit to map!
@@ -1042,12 +1056,12 @@ Vs_PlayerWallEnable:
 	.byte $00	;  6: Sidestepper Only
 	.byte $01	;  7: Coin Fountain
 	.byte $00	;  8: Spiny Only
-	.byte $00	;  9: Fighter Fly Only 
+	.byte $00	;  9: Fighter Fly Only
 	.byte $00	; 10: Sidestepper Only
 	.byte $01	; 11: Ladder and [?] blocks
 
 VsPlayer_Normal:
-	LDA Vs_PlayerBumpTimer	 
+	LDA Vs_PlayerBumpTimer
 	BNE PRG009_A4CF	 ; If Vs_PlayerBumpTimer <> 0, jump to PRG009_A4CF
 
 	LDA Controller1,X
@@ -1274,7 +1288,7 @@ PRG009_A58D:
 	; Table of values that gives Player a different jump height based on movement speed
 Vs_PlayerJumpHeightBySpd:
 	.byte <-$42, <-$42, <-$42, <-$42, <-$42, <-$42, <-$42, <-$36, <-$38, <-$3A, <-$3C, <-$3E, <-$40, <-$42
-	
+
 PRG009_A5AD:
 
 	; No POW block occuring
@@ -1478,8 +1492,8 @@ PRG009_A689:
 	; Add to Vs_PlayerWalkCnt based on how fast Player is moving
 	LDA Vs_PlayerWalkCnt,X
 	CLC
-	ADC Vs_WalkCntRate,Y	
-	STA Vs_PlayerWalkCnt,X	
+	ADC Vs_WalkCntRate,Y
+	STA Vs_PlayerWalkCnt,X
 	BCC PRG009_A69B	 ; If didn't overflow, jump to PRG009_A69B
 
 	INC Vs_PlayerWalkFrame,X	 ; Otherwise, toggle walk frame
@@ -1539,7 +1553,7 @@ PRG009_A6D5:
 
 
 VsPlayer_Climbing:
-	LDA Controller1,X	 
+	LDA Controller1,X
 	AND #(PAD_UP | PAD_DOWN)
 	BEQ PRG009_A6FE	 ; If Player is pressing neither up nor down, jump to PRG009_A6FE
 
@@ -1644,7 +1658,7 @@ PRG009_A754:
 	STA Vs_PlayerYVel,X
 	STA Vs_PlayerJumped,X
 
-PRG009_A764: 
+PRG009_A764:
 
 	; Set climbing frame
 	LDA #$07
@@ -1665,7 +1679,7 @@ PRG009_A764:
 VsPlayer_Dying:
 
 	; Set dying frame!
-	LDA #$06	 
+	LDA #$06
 	STA Vs_PlayerFrame,X
 
 	JSR Vs_PlayerDraw	 ; Draw Player
@@ -1714,7 +1728,7 @@ PRG009_A79A:
 PRG009_A7B3:
 	RTS		 ; Return
 
-Vs_DetStatLoopXOff:	
+Vs_DetStatLoopXOff:
 	.byte $08	; 0: ceiling hit (left)
 	.byte $08	; 1: ceiling hit (right)
 	.byte $02	; 2: left wall hit
@@ -1757,7 +1771,7 @@ Vs_DetStatLoopUnderHit:
 	; against the tiles that construct the 2P Vs battle field
 Vs_CollideAgainstWorld:
 	; Temp_Var14 = player/object detection status bits
-	LDA Vs_PlayerDetStat,X	 
+	LDA Vs_PlayerDetStat,X
 	STA Temp_Var14
 
 	; Clear all Player/object detection info
@@ -1781,7 +1795,7 @@ PRG009_A7E4:
 
 	LDA Vs_ObjectId-2,X
 	CMP #VSOBJID_COIN
-	BNE PRG009_A801	 ; If this is not a coin, jump to PRG009_A801 
+	BNE PRG009_A801	 ; If this is not a coin, jump to PRG009_A801
 
 	; Y += 6
 	TYA
@@ -1819,7 +1833,7 @@ PRG009_A814:
 
 	JMP PRG009_A931	 ; Otherwise, Jump to PRG009_A931
 
-PRG009_A828: 
+PRG009_A828:
 	CPX #$02
 	BGE PRG009_A865	 ; If X >= 2 (Object, not Player), jump to PRG009_A931
 
@@ -1844,7 +1858,7 @@ PRG009_A828:
 	STA Vs_PlayerBlkHit,X
 
 	LDA Vs_PlayerY,X
-	AND #$f0	 ; Align to grid 
+	AND #$f0	 ; Align to grid
 	STA Vs_PlayerBlkHitY,X	 ; -> Vs_PlayerBlkHitY
 
 	LDA Vs_PlayerX,X
@@ -2000,7 +2014,7 @@ PRG009_A907:
 	ORA Vs_DetStatLoop,Y
 	STA Vs_PlayerDetStat,X
 
-	CPX #$02 
+	CPX #$02
 	BLT PRG009_A91D	 ; If X < 2 (Player, not object), jump to PRG009_A91D
 
 	; Objects only...
@@ -2110,7 +2124,7 @@ Vs_EraseLastTile:
 Vs_GetTileAndCheckSolid:
 
 	; Calculate a row/column offset
-	LDA Temp_Var2		 
+	LDA Temp_Var2
 	LSR A
 	LSR A
 	LSR A
@@ -2140,7 +2154,7 @@ Vs_GetTileAndCheckSolid:
 Vs_ObjectCollideAgainstWorld:
 
 	; Vs_CollideAgainstWorld supports objects when X >= 2
-	TXA		 
+	TXA
 	CLC
 	ADC #$02
 	TAX
@@ -2239,7 +2253,7 @@ PRG009_AA2A:
 PRG009_AA36:
 	LDX Vs_CurIndex	 ; X = Player index
 
-	; Seems like the better option would be to check the current frame or for 
+	; Seems like the better option would be to check the current frame or for
 	; both patterns being the same like elsewhere, but whatever!
 	LDA Vs_PlayerState,X
 	CMP #$02
@@ -2306,7 +2320,7 @@ PRG009_AA87:
 VsPlayer_BounceOffOtherXVel:
 	.byte $10, <-$10, $10, <-$10
 
-	; These tables are designed so that they can be index by 
+	; These tables are designed so that they can be index by
 	; Mario or Luigi and values correctly set by situation
 VsPlayer_BounceOffOtherYVel:
 	.byte <-$30, $00, <-$30
@@ -2316,7 +2330,7 @@ VsPlayer_BounceOffOtherDizzy:
 
 VsPlayer_BounceOffOtherSnd:
 	.byte $00, SND_PLAYERSWIM, $00
-	
+
 PRG009_AA95:
 	LDA Vs_PlayerY
 	SEC
@@ -2432,7 +2446,7 @@ PRG009_AB15:
 
 VsPlayer_CalcBoundBox:
 
-	; Expected input: 
+	; Expected input:
 	;	X = 0 for Mario, X = 1 for Luigi
 	;	Y = 0 for Mario's bounding box, Y = 4 for Luigi's bounding box
 	;
@@ -2469,7 +2483,7 @@ VsPlayer_CalcBoundBox:
 Vs_CheckBoxCollision:
 
 	; Backup 'X'
-	TXA		 
+	TXA
 	PHA
 
 	LDX #$01	 ; X = 1 (do both bounding boxes)
@@ -2590,7 +2604,7 @@ PRG009_ABE2:
 	LDA Vs_SpawnCnt2
 	LSR A
 	AND #$01
-	TAY		 ; Y = 0 or 1 
+	TAY		 ; Y = 0 or 1
 
 	; Set starting position of horizontal fireball
 	LDA Vs_HFireballXVel,Y
@@ -2629,7 +2643,7 @@ PRG009_ABE2:
 
 
 Vs_PrepareNewObject:
-	LDA #$00	 
+	LDA #$00
 	STA Vs_ObjectYHi,X
 	STA Vs_ObjectVar1,X
 	STA Vs_ObjectTileL,X
@@ -2678,7 +2692,7 @@ PRG009_AC3E:
 	.word Vs_SpawnSidestepper
 
 Vs_SpawnSidestepper:
-	JSR Vs_SpawnSpiny	 
+	JSR Vs_SpawnSpiny
 	TXA
 	BMI PRG009_AC7F	 ; If no object slot was available, jump to PRG009_AC7F (RTS)
 
@@ -2701,7 +2715,7 @@ PRG009_AC7F:
 	RTS		 ; Return
 
 Vs_SpawnFighterFly:
-	JSR Vs_SpawnSpiny	 
+	JSR Vs_SpawnSpiny
 	TXA
 	BMI PRG009_AC8B	 ; If no object slot was available, jump to PRG009_AC8B (RTS)
 
@@ -2790,7 +2804,7 @@ Vs_ObjectSprRAMOffsets:
 	.byte $38, $90, $40, $88, $48, $80, $50, $78, $58, $70, $60
 
 Vs_ObjectsUpdateAndDraw:
-	; This rotates the Sprite RAM offset selections to mitigate sprite 
+	; This rotates the Sprite RAM offset selections to mitigate sprite
 	; scanline overload blanking, as used elsewhere in SMB3...
 	DEC Vs_ObjectSprRAMSel	 ; Vs_ObjectSprRAMSel--
 	BPL PRG009_AD00	 ; If Vs_ObjectSprRAMSel >= 0, jump to PRG009_AD00
@@ -2804,7 +2818,7 @@ PRG009_AD00:
 PRG009_AD02:
 	STX Vs_CurIndex	 ; Update Vs_CurIndex with current object index
 
-	; Calculate the Sprite RAM offset 
+	; Calculate the Sprite RAM offset
 	TXA
 	CLC
 	ADC Vs_ObjectSprRAMSel
@@ -2927,7 +2941,7 @@ Vs_KickedBlock:
 	CMP #$7d
 	BGE PRG009_ADB9	 ; If block is falling >= $7D, jump to PRG009_ADB9
 
-PRG009_ADB0: 
+PRG009_ADB0:
 
 	; Y Vel += 3
 	INC Vs_ObjectYVel,X
@@ -3017,7 +3031,7 @@ Vs_CoinPats:
 	; Coin collected "twinkle" patterns
 Vs_CoinTwinklePats:
 	.byte $91, $91, $91, $95, $91, $95, $95, $95
-	
+
 
 Vs_Coin:
 	LDY Vs_EnemyGetUpTimer,X
@@ -3032,7 +3046,7 @@ Vs_Coin:
 
 PRG009_AE3A:
 	LDA Vs_TimeToExit
-	ORA a:Vs_IsPaused	
+	ORA a:Vs_IsPaused
 	ORA Vs_ObjHaltTimer,X
 	BNE PRG009_AE6C	 ; If exiting, paused, or coin is halted, jump to PRG009_AE6C
 
@@ -3126,7 +3140,7 @@ PRG009_AEA1:
 
 	; Set right coin twinkle sprite pattern
 	CLC
-	ADC #$02	 ; +2 
+	ADC #$02	 ; +2
 	STA Sprite_RAM+$05,Y
 
 	LDX Vs_CurIndex	 ; X = object index
@@ -3545,7 +3559,7 @@ Vs_ObjectPalette:
 	.byte SPR_PAL3	; Fighter Fly
 	.byte SPR_PAL3	; Horizontal Fireball
 	.byte SPR_PAL3	; Game Ender Fireball
-	.byte SPR_PAL3	; Fountain Fireball 
+	.byte SPR_PAL3	; Fountain Fireball
 	.byte SPR_PAL3	; Coin
 	.byte SPR_PAL3	; Mushroom card
 	.byte SPR_PAL3	; Flower card
@@ -3561,14 +3575,14 @@ Vs_ObjectBasePatIndex:
 	.byte <(Vs_PatFFly - Vs_ObjPatterns)	; Fighter Fly
 	.byte <(Vs_PatFBall - Vs_ObjPatterns)	; Horizontal Fireball
 	.byte <(Vs_PatFBall - Vs_ObjPatterns)	; Game Ender Fireball
-	.byte <(Vs_PatFBall - Vs_ObjPatterns)	; Fountain Fireball 
+	.byte <(Vs_PatFBall - Vs_ObjPatterns)	; Fountain Fireball
 	.byte <(Vs_PatCoin - Vs_ObjPatterns)	; Coin
 	.byte <(Vs_PatMush - Vs_ObjPatterns)	; Mushroom card
 	.byte <(Vs_PatFlower - Vs_ObjPatterns)	; Flower card
 	.byte <(Vs_PatStar - Vs_ObjPatterns)	; Star card
 	.byte <(Vs_PatKBlock - Vs_ObjPatterns)	; Kicked block (from [?] block match)
 
-	; 0 = Sprites unchanged 
+	; 0 = Sprites unchanged
 	; 1 = Mirror both on odd frame
 	; 2 = Mirrored object
 Vs_ObjectDrawStyle:
@@ -3578,7 +3592,7 @@ Vs_ObjectDrawStyle:
 	.byte $02	; Fighter Fly
 	.byte $00	; Horizontal Fireball
 	.byte $00	; Game Ender Fireball
-	.byte $00	; Fountain Fireball 
+	.byte $00	; Fountain Fireball
 	.byte $00	; Coin
 	.byte $02	; Mushroom card
 	.byte $02	; Flower card
@@ -3591,7 +3605,7 @@ Vs_ObjectDrawStyle:
 	;.byte $0C	; Fighter Fly
 	;.byte $08	; Horizontal Fireball
 	;.byte $08	; Game Ender Fireball
-	;.byte $08	; Fountain Fireball 
+	;.byte $08	; Fountain Fireball
 	;.byte $10	; Coin
 	;.byte $12	; Mushroom card
 	;.byte $14	; Flower card
@@ -3876,7 +3890,7 @@ PRG009_B227:
 
 PRG009_B23D:
 
-	; Set left and right patterns 
+	; Set left and right patterns
 	LDA Vs_ObjPatterns,X
 	STA Sprite_RAM+$01,Y
 	LDA Vs_ObjPatterns+1,X
@@ -3889,12 +3903,12 @@ PRG009_B249:
 Vs_ObjectBumpOffOthers:
 	CPX #$00
 	BEQ PRG009_B264	 ; If this is the first object slot, jump to PRG009_B264 (RTS)
-	
+
 	; This limits how intensely we run this routine
 	TXA
 	CLC
 	ADC Counter_1
-	LSR A		
+	LSR A
 	BCC PRG009_B264	 ; If carry not set, jump to PRG009_B264 (RTS)
 
 	; object index -> 'Y'
@@ -4117,7 +4131,7 @@ PRG009_B365:
 	TXA
 	CLC
 	ADC Counter_1
-	LSR A		
+	LSR A
 	BCS PRG009_B34C	 ; If carry set, jump to PRG009_B34C (RTS)
 
 	LDA Vs_ObjectId,X
@@ -4162,7 +4176,7 @@ PRG009_B38D:
 	CMP #VSOBJID_MUSHROOMCARD
 	BLT PRG009_B3AB	 ; If object is not one of the cards, jump to PRG009_B3AB
 
-	; BUG!! 
+	; BUG!!
 	; Many know it as the "Fire card" glitch, where a kicked [?] block can be
 	; "collected" as a "card" when the game is paused while the block is touching
 	; a Player; this is the initial cause of it, that we use the card handler for
@@ -4287,12 +4301,12 @@ PRG009_B3FC:
 	TYA
 	STA Vs_ObjectDir,X
 
-PRG009_B43B: 
+PRG009_B43B:
 	LDX Vs_CurIndex	 ; Restore X as current object index
 	RTS		 ; Return
 
 ; $B43F
-	DEY		 ; Y-- 
+	DEY		 ; Y--
 	JSR PRG009_ACC2	 ; Partial re-init
 
 PRG009_B443:
@@ -4679,7 +4693,7 @@ PRG009_B5F5:
 	STA Sprite_RAM+$17
 
 	LDA Vs_POWHits
-	ASL A	
+	ASL A
 	TAY	 ; Y = Vs_POWHits * 2
 
 	; Set POW block sprite patterns
@@ -4710,14 +4724,14 @@ PRG009_B62D:
 	; Calculate POW block's bounding box
 	LDA #Vs_POW_Y
 	STA Temp_Var5
-	LDA #Vs_POW_X 
+	LDA #Vs_POW_X
 	STA Temp_Var6
 	LDA #16
 	STA Temp_Var8
 	LDY Vs_POWHits
 	SEC
 	SBC Vs_POWHeight,Y
-	STA Temp_Var7	
+	STA Temp_Var7
 
 	JSR Vs_CheckBoxCollision
 	BCC PRG009_B6AD	 ; If Player and POW block are not touching, jump to PRG009_B6AD
@@ -4795,7 +4809,7 @@ Vs_FireballYVelLimit:	.byte <-$10, $10
 
 Vs_FireballXLimit:
 	.byte 232, 8
-	
+
 Vs_Fireballs:
 	LDA Vs_EnemyGetUpTimer,X
 	BEQ PRG009_B6C9	 ; If Vs_EnemyGetUpTimer = 0, jump to  PRG009_B6C9
@@ -5055,7 +5069,7 @@ Vs_EraseBlockHitTile:
 	STA Temp_Var15
 	STA Temp_Var16
 
-PRG009_B822:	
+PRG009_B822:
 	LDY Graphics_BufCnt	 ; Y = current graphics buffer counter
 
 	; Temp_Var4 = 8
@@ -5101,9 +5115,9 @@ PRG009_B822:
 	STA Graphics_Buffer+$03,Y
 	LDA Temp_Var14
 	STA Graphics_Buffer+$04,Y
-	LDA Temp_Var15	
+	LDA Temp_Var15
 	STA Graphics_Buffer+$08,Y
-	LDA Temp_Var16	
+	LDA Temp_Var16
 	STA Graphics_Buffer+$09,Y
 
 	; Terminator
@@ -5126,7 +5140,7 @@ Vs_BumpBlockApplyYVel:
 	BPL PRG009_B888
 
 Vs_ObjectApplyXVel:
-	TXA		 
+	TXA
 	CLC
 	ADC #<(Vs_ObjectXVel - Vs_ObjectYVel + 2)	; +2 so to get passed the Vs_PlayerXVel vars
 	BPL PRG009_B888
@@ -5147,7 +5161,7 @@ PRG009_B888:
 
 Vs_ApplyXVel:
 	; Update X velocity instead of Y velocity
-	TXA		 
+	TXA
 	CLC
 	ADC #<(Vs_PlayerXVel - Vs_PlayerYVel)
 	TAX
@@ -5159,12 +5173,12 @@ Vs_ApplyXVel:
 
 Vs_ApplyYVel:
 	LDA Vs_PlayerYVel,X	; Get Velocity
-	ASL A		 
-	ASL A		 
-	ASL A		 
+	ASL A
+	ASL A
+	ASL A
 	ASL A		 	; Fractional part shifted up
 	CLC
-	ADC Vs_PlayerYVelFrac,X	 
+	ADC Vs_PlayerYVelFrac,X
 	STA Vs_PlayerYVelFrac,X	; Add to Player/Object's vel fractional accumulator
 
 	PHP		 ; Save CPU status
@@ -5204,7 +5218,7 @@ PRG009_B8CF:
 
 	; Updates random number pool for 2P Vs
 Vs_Randomize:
-	LDA Vs_Random	 
+	LDA Vs_Random
 	ASL A
 	ASL A
 	SEC
@@ -5296,7 +5310,7 @@ AScroll_MoveEndLoopSelect:
 	.byte $04	;  6 World 6 Airship
 	.byte $00	;  7 World 5-6
 	.byte $00	;  8
-	.byte $00	;  9 
+	.byte $00	;  9
 	.byte $00	;  A World 6-7
 	.byte $04	;  B World 1 Airship
 	.byte $04	;  C World 7 Airship
@@ -5309,7 +5323,7 @@ AScroll_MoveEndLoopSelect:
 	.byte $00	; 13 World 8 Tank 1
 	.byte $00	; 14 World 8 Tank 2
 
-	; Movement command selected by "Level_AScrlVar" 
+	; Movement command selected by "Level_AScrlVar"
 	; Bits 0-1: (0 to 3) Acceleration selection (from AScroll_VelAccel) for vertical auto scroll velocity
 	; Bits 2-3: (0 to 3) Acceleration selection (from AScroll_VelAccel) for horizontal auto scroll velocity
 	; Bits 4-7: -> Level_AScrlLoopSel
@@ -5442,21 +5456,21 @@ PRG009_BBB3:
 
 
 AutoScroll_Horizontal:
-	LDX #$00	; X = 0 
+	LDX #$00	; X = 0
 	JSR AutoScroll_ApplyHVel	 ; Apply auto scroll horizontal velocity
 
 	LDA Level_AScrlLimitSel
 	CMP #$11
 	BNE PRG009_BBC5	 ; If Level_AScrlLimitSel <> $11 (Coin Ship), jump to PRG009_BBC5
 
-	PHA		 ; Save Level_AScrlLimitSel 
+	PHA		 ; Save Level_AScrlLimitSel
 
 	JSR CoinShip_CoinGlow	 ; Do the glowing coin effect on the Coin Ship
 
 	PLA		 ; Restore Level_AScrlLimitSel
 
 PRG009_BBC5:
-	CMP #$0e	 
+	CMP #$0e
 	BNE PRG009_BBCC	 ; If Level_AScrlLimitSel <> $0E (World 8 Battleship), jump to PRG009_BBCC
 
 	JSR Setup32PixPartWater	 ; World 8 Battleship needs its muddy water
@@ -5465,7 +5479,7 @@ PRG009_BBCC:
 	JSR AScroll_MovePlayer	 ; Moves Player as necessary with auto scroll
 
 	LDA Level_AScrlTimer
-	LSR A		 
+	LSR A
 	BCS PRG009_BC0B	 ; Every other tick, jump to PRG009_BC0B (RTS)
 
 	PHA		 ; Save timer / 2 value
@@ -5557,7 +5571,7 @@ PRG009_BC31:
 PRG009_BC3A:
 	LDY Level_AScrlLoopSel	 ; Y = Level_AScrlLoopSel
 
-	LDA Level_AScrlLoopCurMove	 
+	LDA Level_AScrlLoopCurMove
 	CMP AScroll_MovementLoopStart-1,Y
 	BNE PRG009_BC55	 ; If Level_AScrlLoopCurMove <> terminating index, jump to PRG009_BC55
 
@@ -5606,7 +5620,7 @@ PRG009_BC76:
 PRG009_BC7C:
 	PHA		 ; Save AScroll_Movement[Y]
 
-	LSR A		 
+	LSR A
 	LSR A		 ; Get bits 3,2 -> 1,0
 	AND #$03
 	TAY		 ; Y = 0 to 3
@@ -5619,7 +5633,7 @@ PRG009_BC7C:
 
 	PLA		 ; Restore movement
 
-	AND #$03	 
+	AND #$03
 	TAY		 ; Y = 0 to 3
 
 	; Accelerate vertical auto scroll velocity
@@ -5677,7 +5691,7 @@ PRG009_BCCA:
 	; Player is pressing against either horizontal edge
 
 	LDA Level_AScrlHVel	; Get the horizontal scroll velocity
-	CLC		
+	CLC
 	SBC Player_XVel	; Difference against Player's X velocity
 	EOR Player_SpriteX	; Check sign of difference against Player's Sprite X
 	BMI PRG009_BCF1	 	; Basically determines if Player should be pushed by the scroll; if not, jump to PRG009_BCF1
@@ -5740,7 +5754,7 @@ PRG009_BD0E:
 	CLC
 	ADC Player_X
 	STA Player_X
-	TYA	
+	TYA
 	ADC Player_XHi
 	STA Player_XHi
 
@@ -5928,8 +5942,8 @@ PRG009_BDDB:
 	STA Temp_Var1
 	LDA Tile_Mem_Addr+1,Y
 	CLC
-	ADC Temp_Var3	
-	STA Temp_Var2	
+	ADC Temp_Var3
+	STA Temp_Var2
 
 	; Compute row/column offset
 	LDA Temp_Var10
@@ -5960,7 +5974,7 @@ PRG009_BDDB:
 PRG009_BE28:
 	JSR Player_GetHurt	; Player touched hurtful tile!
 
-PRG009_BE2B: 
+PRG009_BE2B:
 
 	; Auto scroll effects enabled, but no horizontal auto scroll
 	LDA #(ASCONFIG_ENABLE | ASCONFIG_HDISABLE)
@@ -6022,7 +6036,7 @@ PRG009_BE74:
 
 Setup32PixPartWater:
 	LDA #UPDATERASTER_32PIXPART	; For Update_Select; use the "32 pixel partition" style (water along the bottom)
-	JSR PRG009_BDD0	  
+	JSR PRG009_BDD0
 
 	LDA Player_AboveTop
 	BNE PRG009_BEA0	 ; If Player is above the top of screen, jump to PRG009_BEA0 (RTS)
@@ -6115,7 +6129,7 @@ PRG009_BEEC:
 	LDA Level_AScrlLoopSel
 	ROL A
 	TAY		 ; Y = (Level_AScrlLoopSel << 1) | carry
- 
+
 	; Level_AScrlPosH += 4
 	LDA Level_AScrlPosH
 	CLC
@@ -6126,7 +6140,7 @@ PRG009_BEEC:
 
 	INC Level_AScrlPosHHi	 ; Otherwise, apply carry
 
-PRG009_BF01: 
+PRG009_BF01:
 	AND #$f0	 ; Align horizontal auto scroll coordinate to grid
 
 	CMP AutoScroll_URDiagonalLimits-2,Y
@@ -6142,14 +6156,14 @@ PRG009_BF01:
 PRG009_BF10:
 	LDY AScrlURDiag_WrapState	 ; Y = AScrlURDiag_WrapState
 	INY		 ; Y++
-	CPY #$04	 
+	CPY #$04
 	BLT PRG009_BF1A	 ; If Y < 4, jump to PRG009_BF1A
 
 PRG009_BF18:
 	LDY #$00	 ; Y = 0
 
 PRG009_BF1A:
-	STY AScrlURDiag_WrapState	 ; Update AScrlURDiag_WrapState 
+	STY AScrlURDiag_WrapState	 ; Update AScrlURDiag_WrapState
 
 PRG009_BF1D:
 	JMP AScroll_MovePlayer	 ; Move Player with the scroll and don't come back!
@@ -6188,7 +6202,7 @@ PRG009_BF42:
 
 	PHA		 ; Save integer of velocity
 
-	ADC Level_AScrlPosH,X 
+	ADC Level_AScrlPosH,X
 	STA Level_AScrlPosH,X ; Add with carry
 
 	TYA		 ; A = $00 or $FF as appropriate

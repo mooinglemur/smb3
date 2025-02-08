@@ -1,39 +1,19 @@
-UC = $(shell echo '$1' | tr '[:lower:]' '[:upper:]')
 
-PROJECT	:= smb3-nes
-AS		:= ca65
-LD		:= ld65
-MKDIR	:= mkdir -p
-RMDIR	:= rmdir -p
-CONFIG  := ./$(PROJECT).cfg
-ASFLAGS	:= --cpu 6502 -g -D NES
-LDFLAGS	:= -C $(CONFIG)
-SRC		:= ./asm
-INC		:= ./inc
-OBJ		:= ./obj
-CHRS    = $(addprefix $(SRC)/chr, $(addsuffix .s, $(shell seq -w 0 127)))
-SRCS	= $(wildcard $(SRC)/*.s)
-OBJS    = $(sort $(patsubst $(SRC)/%.s,$(OBJ)/%.o,$(SRCS) $(CHRS)))
-EXE		:= $(call UC,$(PROJECT).NES)
-MAPFILE := ./$(PROJECT).map
-SYMFILE := ./$(PROJECT).sym
+default: message
 
-default: all
+message:
+	@printf 'Choose a target: use "make nes" or "make x16".\n'
 
-all: $(EXE)
+nes:
+	if [ -f obj/chrspr000.o ]; then make clean; fi
+	make -f Makefile-nes
 
-$(EXE): $(CHRS) $(OBJS) $(CONFIG)
-	$(LD) $(LDFLAGS) $(OBJS) -m $(MAPFILE) -Ln $(SYMFILE) -o $@
+x16:
+	if [ -f obj/chr000.o ]; then make clean; fi
+	make -f Makefile-x16
 
-$(SRC)/chr%.s: ./CHR/chr%.pcx
-	./scripts/pcx2ppu.py $< $@ CHR$*
-
-$(OBJ)/%.o: $(SRC)/%.s $(INC)/*.inc | $(OBJ)
-	$(AS) $(ASFLAGS) $< -o $@
-
-$(OBJ):
-	$(MKDIR) $@
-
-.PHONY: clean
 clean:
-	$(RM) $(EXE) $(OBJS) $(MAPFILE) $(SYMFILE) $(CHRS)
+	make -f Makefile-nes clean
+	make -f Makefile-x16 clean
+
+.PHONY: message clean

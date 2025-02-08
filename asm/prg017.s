@@ -23,14 +23,8 @@
 ; imports from PRG006
 .import W601O, W707O, W609_UnderO, W607_EndO, W606_UnderO, Unused7_EndO, W604_CoinHeavO, W104_EndO
 .import Empty_ObjLayout, W602_EndO, W605_UnderO, W6F2_AltO, W306_EndO, W302_EndO
-; imports from PRG014
-.import LoadLevel_NextColumn, LoadLevel_EndGoal, LoadLevel_PowerBlock, LoadLevel_Door2
-.import LoadLevel_LittleCloudRun, LoadLevel_Jelectro, LoadLevel_Conveyor, LoadLevel_DonutLifts
-.import LoadLevel_VTransitPipeRun, LoadLevel_IceBricks, LoadLevel_TopDecoBlocks, LoadLevel_CCBridge
-.import LoadLevel_Cannon, LoadLevel_HLeftWallPipeRun, LoadLevel_HRightWallPipeRun
-.import LoadLevel_VCeilingPipeRun, LoadLevel_VGroundPipeRun, LoadLevel_BlockRun
-.import LoadLevel_Path625B2T, LoadLevel_Path625T2B, LoadLevel_Path45B2T, LoadLevel_Path45T2B
-.import LoadLevel_PathVertical, LoadLevel_PathHorizontal
+; imports from PRG014 (PRG014LOW segment on X16)
+.import LoadLevel_NextColumn
 ; imports from PRG015 (Plains)
 .import W707L, W104_EndL
 ; imports from PRG016 (Hills)
@@ -41,15 +35,38 @@
 .import LevelLoad, Tile_Mem_ClearA, Tile_Mem_ClearB
 ; imports from PRG031
 .import DynJump
+; far imports
+.import FAR014_LoadLevel_BlockRun
+.import FAR014_LoadLevel_CCBridge
+.import FAR014_LoadLevel_Cannon
+.import FAR014_LoadLevel_Conveyor
+.import FAR014_LoadLevel_DonutLifts
+.import FAR014_LoadLevel_Door2
+.import FAR014_LoadLevel_EndGoal
+.import FAR014_LoadLevel_HLeftWallPipeRun
+.import FAR014_LoadLevel_HRightWallPipeRun
+.import FAR014_LoadLevel_IceBricks
+.import FAR014_LoadLevel_Jelectro
+.import FAR014_LoadLevel_LittleCloudRun
+.import FAR014_LoadLevel_Path45B2T
+.import FAR014_LoadLevel_Path45T2B
+.import FAR014_LoadLevel_Path625B2T
+.import FAR014_LoadLevel_Path625T2B
+.import FAR014_LoadLevel_PathHorizontal
+.import FAR014_LoadLevel_PathVertical
+.import FAR014_LoadLevel_PowerBlock
+.import FAR014_LoadLevel_TopDecoBlocks
+.import FAR014_LoadLevel_VCeilingPipeRun
+.import FAR014_LoadLevel_VGroundPipeRun
+.import FAR014_LoadLevel_VTransitPipeRun
 ; exports
 .export LeveLoad_FixedSizeGen_TS4_TS12, LevelLoad_TS4_TS12, LoadLevel_Generator_TS4_TS12
 .export Tile_Attributes_TS4_TS12, Tile_Layout_TS4_TS12, W104L, W106L, W1UNL, W302L, W306L, W505L
 .export W601L, W602L, W603L, W604L, W605L, W606L, W607L, W609L, W610L, W6F2L, W6HBA, W6HBB, W707_MainL
 
 
-.ifdef NES
 .segment "PRG017"
-.endif
+
 Tile_Layout_TS4_TS12:
 	; This defines the individual 8x8 blocks used to construct one of the tiles
 	; Referenced by Address_Per_Tileset, addressed by Level_Tileset
@@ -94,7 +111,7 @@ Tile_Layout_TS4_TS12:
 	.byte $AA, $AB, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Tiles $E0 - $EF
 	.byte $C1, $06, $E1, $06, $F2, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Tiles $F0 - $FF
 
-	; Upper right 8x8 pattern per tile	
+	; Upper right 8x8 pattern per tile
 	.byte $FC, $FC, $07, $07, $07, $EA, $07, $07, $07, $45, $07, $48, $4A, $07, $11, $11 ; Tiles $00 - $0F
 	.byte $29, $61, $39, $63, $65, $09, $67, $FC, $FC, $FC, $23, $FC, $6A, $13, $FC, $0D ; Tiles $10 - $1F
 	.byte $0D, $7F, $01, $01, $19, $01, $FF, $FF, $FF, $FF, $FF, $FF, $4E, $FF, $BA, $BA ; Tiles $20 - $2F
@@ -131,7 +148,7 @@ Tile_Layout_TS4_TS12:
 	.byte $C3, $08, $E3, $08, $F3, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Tiles $F0 - $FF
 
 Tile_Attributes_TS4_TS12:
-	.byte $1F, $4A, $8A, $F0, $2E, $4A, $8D, $F0 
+	.byte $1F, $4A, $8A, $F0, $2E, $4A, $8D, $F0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LevelLoad_TS4_TS12
@@ -139,14 +156,14 @@ Tile_Attributes_TS4_TS12:
 ; Entry point for loading level layout data for Level_Tileset = 4/12
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LevelLoad_TS4_TS12:
-	LDY #$00	 
+	LDY #$00
 
 PRG017_A40A:
 	LDA #TILE4_SKY
 	JSR Tile_Mem_ClearB
 
-	; Tile TILE4_SKY_STOPGEN appears as sky; this specific loop will 
-	; generate them  across the top of the level.  The point being, 
+	; Tile TILE4_SKY_STOPGEN appears as sky; this specific loop will
+	; generate them  across the top of the level.  The point being,
 	; I believe, is to prevent a "to ground" type generator from
 	; overflowing by having it stop at this tile...
 	LDA #TILE4_SKY_STOPGEN
@@ -180,17 +197,17 @@ LoadLevel_Generator_TS4_TS12:
 
 	LDA Temp_Var15
 	AND #%11100000
-	LSR A		
-	LSR A		
-	LSR A		
-	LSR A		
-	LSR A		
+	LSR A
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	TAX		 	; X = upper 3 bits of Temp_Var15 (0-7) (selects a multiple of 15 as the base)
 
 	LDA LL_ShapeDef
-	LSR A	
-	LSR A	
-	LSR A	
+	LSR A
+	LSR A
+	LSR A
 	LSR A			; A = upper 4 bits of LL_ShapeDef shifted down
 	CLC
 	ADC PRG017_A427,X	; Add multiple of 15
@@ -212,53 +229,53 @@ LoadLevel_Generator_TS4_TS12:
 	.word LoadLevel_BushBunch		;  4 - Put down a run of a bunch of bushes
 	.word LoadLevel_LargeGreenOrSnow	;  5 - Generate large green platform
 	.word LoadLevel_LargeGreenOrSnow	;  6 - Generate large snowy platform
-	.word LoadLevel_PathHorizontal		;  7 - Horizontal moving platform path
-	.word LoadLevel_PathVertical		;  8 - Vertical moving platform path
-	.word LoadLevel_Path45T2B		;  9 - 45 degree top-to-bottom moving platform path
-	.word LoadLevel_Path45B2T		; 10 - 45 degree bottom-to-top moving platform path
+	.word FAR014_LoadLevel_PathHorizontal		;  7 - Horizontal moving platform path
+	.word FAR014_LoadLevel_PathVertical		;  8 - Vertical moving platform path
+	.word FAR014_LoadLevel_Path45T2B		;  9 - 45 degree top-to-bottom moving platform path
+	.word FAR014_LoadLevel_Path45B2T		; 10 - 45 degree bottom-to-top moving platform path
 	.word LoadLevel_CloudRun17		; 11 - Run of the clouds
-	.word LoadLevel_Path625T2B		; 12 - 62.5 degree top-to-bottom moving platform path
-	.word LoadLevel_Path625B2T		; 13 - 62.5 degree bottom-to-top moving platform path
+	.word FAR014_LoadLevel_Path625T2B		; 12 - 62.5 degree top-to-bottom moving platform path
+	.word FAR014_LoadLevel_Path625B2T		; 13 - 62.5 degree bottom-to-top moving platform path
 	.word LoadLevel_LongCloud		; 14 - Long cloud platform
-	.word LoadLevel_BlockRun		; 15 - Run of bricks
-	.word LoadLevel_BlockRun		; 16 - Run of '?' blocks with a coin
-	.word LoadLevel_BlockRun		; 17 - Run of bricks with a coin
-	.word LoadLevel_BlockRun		; 18 - Run of wood blocks
-	.word LoadLevel_BlockRun		; 19 - Run of green note blocks (?)
-	.word LoadLevel_BlockRun		; 20 - Run of note blocks
-	.word LoadLevel_BlockRun		; 21 - Run of bouncing wood blocks
-	.word LoadLevel_BlockRun		; 22 - Run of coins
-	.word LoadLevel_VGroundPipeRun		; 23 - Vertical ground pipe 1 (alt level)
-	.word LoadLevel_VGroundPipeRun		; 24 - Vertical ground pipe 2 (Big [?] area)
-	.word LoadLevel_VGroundPipeRun		; 25 - Vertical ground pipe 3 (no entrance)
-	.word LoadLevel_VCeilingPipeRun		; 26 - Vertical ceiling pipe 1 (alt level)
-	.word LoadLevel_VCeilingPipeRun		; 27 - Vertical ceiling pipe 2 (no entrance)
-	.word LoadLevel_HRightWallPipeRun	; 28 - Horizontal right-hand wall pipe (alt level)
-	.word LoadLevel_HRightWallPipeRun	; 29 - Horizontal right-hand wall pipe (no entrance)
-	.word LoadLevel_HLeftWallPipeRun	; 30 - Horizontal left-hand wall pipe (alt level)
-	.word LoadLevel_HLeftWallPipeRun	; 31 - Horizontal left-hand wall pipe (no entrance)
-	.word LoadLevel_Cannon			; 32 - Bullet bill cannon
-	.word LoadLevel_CCBridge		; 33 - Cheep-Cheep style 'oo' bridge
-	.word LoadLevel_CCBridge		; 34 - Would result in empty tiles?  (form of 33)
-	.word LoadLevel_TopDecoBlocks		; 35 - Top-Deco Rectangle Waterfall
-	.word LoadLevel_TopDecoBlocks		; 36 - Top-Deco Rectangle Left waving water pool
-	.word LoadLevel_TopDecoBlocks		; 37 - Top-Deco Rectangle No current waving water pool
-	.word LoadLevel_TopDecoBlocks		; 38 - Top-Deco Rectangle Right waving water pool
-	.word LoadLevel_TopDecoBlocks		; 39 - Top-Deco Rectangle Water wrong-way BG
-	.word LoadLevel_TopDecoBlocks		; 40 - Top-Deco Rectangle Diamond blocks (not really any deco on top)
-	.word LoadLevel_TopDecoBlocks		; 41 - Top-Deco Rectangle Sand ground 
-	.word LoadLevel_TopDecoBlocks		; 42 - Top-Deco Rectangle orange block??
-	.word LoadLevel_IceBricks		; 43 - Run of ice blocks
-	.word LoadLevel_VTransitPipeRun		; 44 - Vertical in-level transit pipe
+	.word FAR014_LoadLevel_BlockRun		; 15 - Run of bricks
+	.word FAR014_LoadLevel_BlockRun		; 16 - Run of '?' blocks with a coin
+	.word FAR014_LoadLevel_BlockRun		; 17 - Run of bricks with a coin
+	.word FAR014_LoadLevel_BlockRun		; 18 - Run of wood blocks
+	.word FAR014_LoadLevel_BlockRun		; 19 - Run of green note blocks (?)
+	.word FAR014_LoadLevel_BlockRun		; 20 - Run of note blocks
+	.word FAR014_LoadLevel_BlockRun		; 21 - Run of bouncing wood blocks
+	.word FAR014_LoadLevel_BlockRun		; 22 - Run of coins
+	.word FAR014_LoadLevel_VGroundPipeRun		; 23 - Vertical ground pipe 1 (alt level)
+	.word FAR014_LoadLevel_VGroundPipeRun		; 24 - Vertical ground pipe 2 (Big [?] area)
+	.word FAR014_LoadLevel_VGroundPipeRun		; 25 - Vertical ground pipe 3 (no entrance)
+	.word FAR014_LoadLevel_VCeilingPipeRun		; 26 - Vertical ceiling pipe 1 (alt level)
+	.word FAR014_LoadLevel_VCeilingPipeRun		; 27 - Vertical ceiling pipe 2 (no entrance)
+	.word FAR014_LoadLevel_HRightWallPipeRun	; 28 - Horizontal right-hand wall pipe (alt level)
+	.word FAR014_LoadLevel_HRightWallPipeRun	; 29 - Horizontal right-hand wall pipe (no entrance)
+	.word FAR014_LoadLevel_HLeftWallPipeRun	; 30 - Horizontal left-hand wall pipe (alt level)
+	.word FAR014_LoadLevel_HLeftWallPipeRun	; 31 - Horizontal left-hand wall pipe (no entrance)
+	.word FAR014_LoadLevel_Cannon			; 32 - Bullet bill cannon
+	.word FAR014_LoadLevel_CCBridge		; 33 - Cheep-Cheep style 'oo' bridge
+	.word FAR014_LoadLevel_CCBridge		; 34 - Would result in empty tiles?  (form of 33)
+	.word FAR014_LoadLevel_TopDecoBlocks		; 35 - Top-Deco Rectangle Waterfall
+	.word FAR014_LoadLevel_TopDecoBlocks		; 36 - Top-Deco Rectangle Left waving water pool
+	.word FAR014_LoadLevel_TopDecoBlocks		; 37 - Top-Deco Rectangle No current waving water pool
+	.word FAR014_LoadLevel_TopDecoBlocks		; 38 - Top-Deco Rectangle Right waving water pool
+	.word FAR014_LoadLevel_TopDecoBlocks		; 39 - Top-Deco Rectangle Water wrong-way BG
+	.word FAR014_LoadLevel_TopDecoBlocks		; 40 - Top-Deco Rectangle Diamond blocks (not really any deco on top)
+	.word FAR014_LoadLevel_TopDecoBlocks		; 41 - Top-Deco Rectangle Sand ground
+	.word FAR014_LoadLevel_TopDecoBlocks		; 42 - Top-Deco Rectangle orange block??
+	.word FAR014_LoadLevel_IceBricks		; 43 - Run of ice blocks
+	.word FAR014_LoadLevel_VTransitPipeRun		; 44 - Vertical in-level transit pipe
 	.word LoadLevel_IceBlocks		; 45 - Run of ice blocks
 	.word LoadLevel_IceBlocks		; 46 - Run of frozen munchers
 	.word LoadLevel_IceBlocks		; 47 - Run of frozen coins
-	.word LoadLevel_DonutLifts		; 48 - Run of donut lifts
-	.word LoadLevel_Conveyor		; 49 - Run of left conveyor
-	.word LoadLevel_Conveyor		; 50 - Run of right conveyor
-	.word LoadLevel_Jelectro		; 51 - Run of solid black tiles
+	.word FAR014_LoadLevel_DonutLifts		; 48 - Run of donut lifts
+	.word FAR014_LoadLevel_Conveyor		; 49 - Run of left conveyor
+	.word FAR014_LoadLevel_Conveyor		; 50 - Run of right conveyor
+	.word FAR014_LoadLevel_Jelectro		; 51 - Run of solid black tiles
 	.word LoadLevel_LargeIceBlocks		; 52 - Run of large 2x2 ice blocks
-	.word LoadLevel_LittleCloudRun		; 53 - Put in a run of those little smiling Judgem's type clouds
+	.word FAR014_LoadLevel_LittleCloudRun		; 53 - Put in a run of those little smiling Judgem's type clouds
 	.word LoadLevel_Muncher17		; 54 - Long run of munchers
 
 
@@ -266,8 +283,8 @@ LoadLevel_Generator_TS4_TS12:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LeveLoad_FixedSizeGen_TS4_TS12
 ;
-; Much simpler generators that are fixed-size, commonly used for 
-; just single tile placement styles (although a couple relatively 
+; Much simpler generators that are fixed-size, commonly used for
+; just single tile placement styles (although a couple relatively
 ; complex ones exist in here as well)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LeveLoad_FixedSizeGen_TS4_TS12:
@@ -279,11 +296,11 @@ LeveLoad_FixedSizeGen_TS4_TS12:
 
 	LDA Temp_Var15
 	AND #%11100000
-	LSR A		
+	LSR A
 	CLC
-	ADC LL_ShapeDef	
+	ADC LL_ShapeDef
 	TAX		 	; Resultant index is put into 'X'
-	JSR DynJump	 
+	JSR DynJump
 
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word LoadLevel_LilCloud		;  0 - Inserts little background cloud
@@ -291,7 +308,7 @@ LeveLoad_FixedSizeGen_TS4_TS12:
 	.word LoadLevel_SuspensionCableR	;  2 - Right hooked suspension cable
 	.word LoadLevel_SuspensionCableL	;  3 - Left hooked suspension cable
 	.word LoadLevel_FatTrunk		;  4 - Fat trunk
-	.word LoadLevel_Door2			;  5 - Door style 2
+	.word FAR014_LoadLevel_Door2			;  5 - Door style 2
 	.word LoadLevel_PlatformPuller		;  6 - Unknown?? Alternate puller?
 	.word LoadLevel_PlatformPuller		;  7 - Platform puller tile
 	.word $0000				;  8 - NULL?
@@ -302,32 +319,32 @@ LeveLoad_FixedSizeGen_TS4_TS12:
 	.word $0000				; 13 - NULL?
 	.word $0000				; 14 - NULL?
 	.word $0000				; 15 - NULL?
-	.word LoadLevel_PowerBlock		; 16 - ? block with flower
-	.word LoadLevel_PowerBlock		; 17 - ? block with leaf 
-	.word LoadLevel_PowerBlock		; 18 - ? block with star
-	.word LoadLevel_PowerBlock		; 19 - ? block with coin OR star
-	.word LoadLevel_PowerBlock		; 20 - ? block with coin (??)
-	.word LoadLevel_PowerBlock		; 21 - Muncher Plant!
-	.word LoadLevel_PowerBlock		; 22 - Brick with flower
-	.word LoadLevel_PowerBlock		; 23 - Brick with leaf
-	.word LoadLevel_PowerBlock		; 24 - Brick with star
-	.word LoadLevel_PowerBlock		; 25 - Brick with coin OR star
-	.word LoadLevel_PowerBlock		; 26 - Brick with 10-coin
-	.word LoadLevel_PowerBlock		; 27 - Brick with 1-up
-	.word LoadLevel_PowerBlock		; 28 - Brick with vine
-	.word LoadLevel_PowerBlock		; 29 - Brick with P-Switch
-	.word LoadLevel_PowerBlock		; 30 - Invisible coin
-	.word LoadLevel_PowerBlock		; 31 - Invisible 1-up
-	.word LoadLevel_PowerBlock		; 32 - Invisible note
-	.word LoadLevel_PowerBlock		; 33 - Note block with flower
-	.word LoadLevel_PowerBlock		; 34 - Note block with leaf
-	.word LoadLevel_PowerBlock		; 35 - Note block with star
-	.word LoadLevel_PowerBlock		; 36 - Wood block with flower
-	.word LoadLevel_PowerBlock		; 37 - Wood block with leaf
-	.word LoadLevel_PowerBlock		; 38 - Wood block with star
-	.word LoadLevel_PowerBlock		; 39 - Invisible note to coin heaven
-	.word LoadLevel_PowerBlock		; 40 - P-Switch
-	.word LoadLevel_EndGoal			; 41 - The end goal
+	.word FAR014_LoadLevel_PowerBlock		; 16 - ? block with flower
+	.word FAR014_LoadLevel_PowerBlock		; 17 - ? block with leaf
+	.word FAR014_LoadLevel_PowerBlock		; 18 - ? block with star
+	.word FAR014_LoadLevel_PowerBlock		; 19 - ? block with coin OR star
+	.word FAR014_LoadLevel_PowerBlock		; 20 - ? block with coin (??)
+	.word FAR014_LoadLevel_PowerBlock		; 21 - Muncher Plant!
+	.word FAR014_LoadLevel_PowerBlock		; 22 - Brick with flower
+	.word FAR014_LoadLevel_PowerBlock		; 23 - Brick with leaf
+	.word FAR014_LoadLevel_PowerBlock		; 24 - Brick with star
+	.word FAR014_LoadLevel_PowerBlock		; 25 - Brick with coin OR star
+	.word FAR014_LoadLevel_PowerBlock		; 26 - Brick with 10-coin
+	.word FAR014_LoadLevel_PowerBlock		; 27 - Brick with 1-up
+	.word FAR014_LoadLevel_PowerBlock		; 28 - Brick with vine
+	.word FAR014_LoadLevel_PowerBlock		; 29 - Brick with P-Switch
+	.word FAR014_LoadLevel_PowerBlock		; 30 - Invisible coin
+	.word FAR014_LoadLevel_PowerBlock		; 31 - Invisible 1-up
+	.word FAR014_LoadLevel_PowerBlock		; 32 - Invisible note
+	.word FAR014_LoadLevel_PowerBlock		; 33 - Note block with flower
+	.word FAR014_LoadLevel_PowerBlock		; 34 - Note block with leaf
+	.word FAR014_LoadLevel_PowerBlock		; 35 - Note block with star
+	.word FAR014_LoadLevel_PowerBlock		; 36 - Wood block with flower
+	.word FAR014_LoadLevel_PowerBlock		; 37 - Wood block with leaf
+	.word FAR014_LoadLevel_PowerBlock		; 38 - Wood block with star
+	.word FAR014_LoadLevel_PowerBlock		; 39 - Invisible note to coin heaven
+	.word FAR014_LoadLevel_PowerBlock		; 40 - P-Switch
+	.word FAR014_LoadLevel_EndGoal			; 41 - The end goal
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LoadLevel_PlatformPuller
@@ -395,61 +412,61 @@ LL_BigWoodBlocks:
 	.byte TILE12_SNOWGREEN_UR, TILE4_LARGEBLOCK_LM
 
 LoadLevel_BigWoodBlocks:
-	; Backup Map_Tile_AddrL/H into Temp_Var1/2 
-	LDA Map_Tile_AddrL 
-	STA Temp_Var1 
-	LDA Map_Tile_AddrH 
+	; Backup Map_Tile_AddrL/H into Temp_Var1/2
+	LDA Map_Tile_AddrL
+	STA Temp_Var1
+	LDA Map_Tile_AddrH
 	STA Temp_Var2
- 
-	LDX #$00	 ; LARGEWOOD 
 
-	LDA LL_ShapeDef 
-	AND #$f0	 
-	CMP #$20	 
-	BEQ PRG017_A568	 ; Decision to use X = 0 or X = 2 (LARGEWOOD or LARGEBLOCK) 
+	LDX #$00	 ; LARGEWOOD
 
-	LDX #$02	 ; LARGEBLOCK 
+	LDA LL_ShapeDef
+	AND #$f0
+	CMP #$20
+	BEQ PRG017_A568	 ; Decision to use X = 0 or X = 2 (LARGEWOOD or LARGEBLOCK)
+
+	LDX #$02	 ; LARGEBLOCK
 
 PRG017_A568:
-	LDA LL_ShapeDef	  
-	AND #$0f	  
+	LDA LL_ShapeDef
+	AND #$0f
 	STA Temp_Var3		 ; Temp_Var3 = lower 4 bits of LL_ShapeDef (width of run)
- 
+
 	LDY TileAddr_Off	 ; Y = TileAddr_Off
-	
-	LDA LL_BigWoodBlocks,X	 ; Get left edge tile 
+
+	LDA LL_BigWoodBlocks,X	 ; Get left edge tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 	JMP PRG017_A57F	 	; Jump to PRG017_A57F
- 
+
 PRG017_A57A:
-	LDA LL_BigWoodBlocks+4,X ; Get middle tile 
+	LDA LL_BigWoodBlocks+4,X ; Get middle tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 PRG017_A57F:
-	JSR LoadLevel_NextColumn ; Next column 
-	DEC Temp_Var3		 ; Temp_Var3-- 
+	JSR LoadLevel_NextColumn ; Next column
+	DEC Temp_Var3		 ; Temp_Var3--
 	BNE PRG017_A57A	 	 ; While Temp_Var3 > 0, loop
- 
-	LDA LL_BigWoodBlocks+8,X ; Get right edge tile 
+
+	LDA LL_BigWoodBlocks+8,X ; Get right edge tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 	; Go to next row by adding 16
-	LDA TileAddr_Off 
+	LDA TileAddr_Off
 	CLC
-	ADC #16 
-	STA TileAddr_Off 
-	LDA Temp_Var2 
-	ADC #$00 
-	STA Map_Tile_AddrH 
-	
-	LDA Temp_Var1 
+	ADC #16
+	STA TileAddr_Off
+	LDA Temp_Var2
+	ADC #$00
+	STA Map_Tile_AddrH
+
+	LDA Temp_Var1
 	STA Map_Tile_AddrL	; Restore just the lower part of the video address (new line, original column)
- 
-	INX		 ; X++ 
-	TXA		  
-	AND #$01 
+
+	INX		 ; X++
+	TXA
+	AND #$01
 	BNE PRG017_A568	 ; Only loop once
- 
+
 	RTS		 ; Return
 
 
@@ -462,12 +479,12 @@ PRG017_A57F:
 LoadLevel_LittleBushRun17:
 	; Backup Map_Tile_AddrL/H into Temp_Var1/2
 	LDA Map_Tile_AddrL
-	STA Temp_Var1	
+	STA Temp_Var1
 	LDA Map_Tile_AddrH
-	STA Temp_Var2	
+	STA Temp_Var2
 
 	LDA LL_ShapeDef
-	AND #$0f	
+	AND #$0f
 	STA Temp_Var3	 ; Temp_Var3 = lower 4 bits of LL_ShapeDef (width of run)
 
 	TAX		; X = width
@@ -507,7 +524,7 @@ PRG017_A5D8:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LoadLevel_BushBunch:
 	LDA LL_ShapeDef
-	AND #$0f	
+	AND #$0f
 	STA Temp_Var3		; Temp_Var3 = lower 4 bits of LL_ShapeDef (width of run)
 
 	LDY TileAddr_Off ; Y = TileAddr_Off
@@ -555,20 +572,20 @@ LoadLevel_LargeGreenOrSnow:
 	LDA Map_Tile_AddrL
 	STA Temp_Var1
 	LDA Map_Tile_AddrH
-	STA Temp_Var2	
+	STA Temp_Var2
 
 	LDX #$00	 ; X = 0 (green block)
 
-	LDA LL_ShapeDef	 
-	AND #$f0	 
-	CMP #$60	 
+	LDA LL_ShapeDef
+	AND #$f0
+	CMP #$60
 	BEQ PRG017_A61B	 ; Depending on entry, jump to PRG017_A61B
 
 	LDX #$02	 ; X = 2 (snow block)
 
 PRG017_A61B:
 	LDA LL_ShapeDef
-	AND #$0f	
+	AND #$0f
 	STA Temp_Var3	 	; Temp_Var3 = lower 4 bits of LL_ShapeDef (width of platform)
 
 	LDY TileAddr_Off	 ; Y = TileAddr_Off
@@ -600,7 +617,7 @@ PRG017_A638:
 	JSR LL17_ReturnTileAndNextRow	 ; Return to beginning, then go to next row
 
 	TXA
-	ORA #$01	 
+	ORA #$01
 	TAX		 ; X |= 1 (all subsequent passes generate the "lower" tiles)
 	JMP PRG017_A61B	 ; Jump to PRG017_A61B
 
@@ -625,8 +642,8 @@ LoadLevel_LongCloud:
 	LDA Map_Tile_AddrH
 	STA Temp_Var2
 
-	LDA LL_ShapeDef	
-	AND #$0f	
+	LDA LL_ShapeDef
+	AND #$0f
 	STA Temp_Var3	 ; Temp_Var3 = lower 4 bits of LL_ShapeDef (width of run)
 
 	LDY TileAddr_Off	 ; Y = TileAddr_Off
@@ -656,7 +673,7 @@ PRG017_A67A:
 	JSR LL17_ReturnTileAndNextRow	 ; Return to beginning, then go to next row
 
 	INX		 ; X++
-	CPX #$02	 
+	CPX #$02
 	BNE PRG017_A669	 ; If X <> 2, loop!
 
 	RTS		 ; Return
@@ -676,10 +693,10 @@ LoadLevel_IceBlocks:
 
 	SEC
 	SBC #$10
-	LSR A	
-	LSR A	
-	LSR A	
-	LSR A	
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	TAX		 ; X = relative index
 
 	PLA		 ; Restore LL_ShapeDef
@@ -713,8 +730,8 @@ LoadLevel_LargeIceBlocks:
 	LDA Map_Tile_AddrH
 	STA Temp_Var2
 
-	LDA LL_ShapeDef	
-	AND #$0f	
+	LDA LL_ShapeDef
+	AND #$0f
 	STA Temp_Var3		 ; Temp_Var3 = lower 4 bits of LL_ShapeDef (width of run)
 
 	LDY TileAddr_Off	 ; Y = TileAddr_Off
@@ -722,7 +739,7 @@ LoadLevel_LargeIceBlocks:
 	LDX #$00	 	; X = 0
 
 PRG017_A6CB:
-	LDA Temp_Var3	
+	LDA Temp_Var3
 	STA Temp_Var4		 ; Temp_Var4 = Temp_Var3
 
 PRG017_A6CF:
@@ -740,7 +757,7 @@ PRG017_A6CF:
 	JSR LL17_ReturnTileAndNextRow	 ; Return to beginning, then go to next row
 
 	INX		 ; X++
-	CPX #$02	 
+	CPX #$02
 	BNE PRG017_A6CB	 ; If X <> 2, loop!
 
 	RTS		 ; Return
@@ -790,7 +807,7 @@ PRG017_A717:
 
 	JSR LL17_ReturnTileAndNextRow	 ; Return to beginning, then go to next row
 	INX		 	; X++
-	CPX #$02	 
+	CPX #$02
 	BNE PRG017_A706	 	; If X <> 2, loop!
 
 	RTS		 ; Return
@@ -812,7 +829,7 @@ LoadLevel_LilCloud:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LoadLevel_WideCloud
 ;
-; Inserts a wide background cloud 
+; Inserts a wide background cloud
 ; Tileset 4 only
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LoadLevel_WideCloud:
@@ -855,7 +872,7 @@ PRG017_A759:
 	CMP #TILE4_SKY
 	BNE PRG017_A772			; If not sky, jump to PRG017_A772 (RTS)
 
-	LDA LL_SuspensionCables+2,X	 ; Get proper cable tile 
+	LDA LL_SuspensionCables+2,X	 ; Get proper cable tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 PRG017_A764:
@@ -866,7 +883,7 @@ PRG017_A764:
 	SBC #16
 	TAY
 	LDA Map_Tile_AddrH
-	SBC #$00	 
+	SBC #$00
 	STA Map_Tile_AddrH
 
 	JMP PRG017_A759	 ; Jump to PRG017_A759
@@ -886,19 +903,19 @@ LoadLevel_FatTrunk:
 
 PRG017_A776:
 	LDA (Map_Tile_AddrL),Y	 ; Get tile here
-	CMP #TILE4_SKY	
+	CMP #TILE4_SKY
 	BNE PRG017_A78E	 	; If tile is not sky, jump to PRG017_A78E (RTS)
 
 	LDA #TILE4_FATTRUNK	; Fat trunk tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 	; Jump to next row by adding 16 to offset
-	TYA	
+	TYA
 	CLC
 	ADC #16
-	TAY	
+	TAY
 	LDA Map_Tile_AddrH
-	ADC #$00	 
+	ADC #$00
 	STA Map_Tile_AddrH
 
 	JMP PRG017_A776	 	; Jump to PRG017_A776
@@ -920,7 +937,7 @@ PRG017_A795:
 	STA (Map_Tile_AddrL),Y	 	; Store into tile mem
 	JSR LoadLevel_NextColumn	; Next column
 	DEX		 ; X--
-	CPX #$ff	
+	CPX #$ff
 	BNE PRG017_A795	 ; While X > 0, loop!
 
 	RTS		 ; Return
@@ -958,7 +975,7 @@ LL17_ReturnTileAndNextRow:
 	STA TileAddr_Off
 	TAY
 	LDA Map_Tile_AddrH
-	ADC #$00	 
+	ADC #$00
 	STA Map_Tile_AddrH
 	STA Temp_Var2	; Update Map_Tile_AddrH backup
 

@@ -41,7 +41,7 @@
 ; The Odd Game
 ;	"If an odd number appears, I'll let you play the Roulette Game."
 ;
-; The Even Game	
+; The Even Game
 ;	"If an even number appears, I'll let you play the Card Game."
 ;
 ; Koopa Troopa's "Prize" Game
@@ -90,7 +90,7 @@
 ;---------------------------------------------------------------------------
 ; This attempts to give you "something."  Literally what it does is add 1
 ; to the lowest byte of the Player-specific score storage.  But not in an
-; appropriate way with carry-arithmetic.  So most likely this was not 
+; appropriate way with carry-arithmetic.  So most likely this was not
 ; really what was supposed to be getting incremented; it likely was giving
 ; you one more of "something."  Whether or not that "something" was
 ; actually obtained is unclear, especially since the incomplete messsage
@@ -128,10 +128,10 @@
 ; also interesting is the code for playing the Odd/Even game is still
 ; present but logically inaccessible; the values that originally selected
 ; to play the Odd/Even games have now actually been replaced by the Spade
-; and N-Spade respectively!  (Further suggesting the connection.)  
+; and N-Spade respectively!  (Further suggesting the connection.)
 ;
-; But the code and lookup tables that make the game possible still exist, 
-; and the way they play out now is that "winning" the Odd game sets 
+; But the code and lookup tables that make the game possible still exist,
+; and the way they play out now is that "winning" the Odd game sets
 ; Bonus_DieCnt to 5 and the Even game forces it to 6.  This would be used
 ; to determine which game you got to play after that...
 ;
@@ -149,14 +149,14 @@
 ; set up to work are the Odd/Even Games, which intended to proceed to the
 ; Roulette (Spade) or Card (N-Spade) games in "Round 2."
 ;
-; At the end of all the "Host Greet" strings, there is a value that gets 
+; At the end of all the "Host Greet" strings, there is a value that gets
 ; pushed into Bonus_Round2.  This determines what Round 2 will be!
 ;
 ; In summary (example for Odd/Even):
 ;	Round 1: Get instructed and play Odd/Even Game; if you win...
 ;	Round 2: Previous dialog is erased, get instructed and play Roulette/Card Game
 ;
-; The code was likely possibly considering that other games would have a 
+; The code was likely possibly considering that other games would have a
 ; "Round 2" component, but this never materialized... but some hints of what
 ; other "Round 2" things may have occurred are hinted by some of the strings
 ;
@@ -183,7 +183,7 @@
 ; running the die game.  The die game should probably be disabled in this
 ; case, but there's just no logic for that.
 ;
-; A possible suggestion is that this was a trading game (using the unknown 
+; A possible suggestion is that this was a trading game (using the unknown
 ; "Round 2" string which is loosely translated as "Give Something?"), where
 ; you gave the Koopa Troopa an item and you got whatever was in the
 ; "Mystery Box", perhaps to your benefit or chagrin.  But this is only a guess.
@@ -198,24 +198,33 @@
 ;
 ; Bonus_GameType = BONUS_UNUSED_DDDD actually sets a special variable
 ; Bonus_DDDD = 1 when you exit the bonus loop... interesting!!
-; 
+;
 ; There is an unused variable Roulette_Turns which when greater than zero,
 ; gives you additional spins if you should lose the Roulette game!  This is
 ; likely the unused "Play three times" message (BonusGame_UNUSED_Etc1)
-; 
+;
 ; "Hey you! How about lending me your clothes?
 ; No dice?
 ; What a drag"
 ; -- Possible in-joke no one got after all these years? :P
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
+.include "../inc/nesswitch.inc"
+.ifdef X16
+.include "../inc/x16.inc"
+.endif
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var3, Temp_Var4, Temp_Var5, Temp_Var6, Temp_Var10, Temp_Var11
 .importzp Temp_Var12, Temp_Var13, Temp_Var15, Temp_Var16, Level_ExitToMap, Counter_1, PPU_CTL2_Copy
 .importzp Pad_Holding, Pad_Input, Roulette_RowIdx, Graphics_Queue, Map_Tile_AddrL, BonusText_BaseL
-.importzp BonusText_BaseH, Video_Upd_AddrL, Video_Upd_AddrH, BonusCoins_State, BonusDie_Y, BonusDie_X
-.importzp BonusDie_YVel, BonusDie_YVelFrac, Level_Tile
+.importzp BonusText_BaseH, Video_Upd_AddrL, Video_Upd_AddrH, BonusCoins_State, Level_Tile
+.ifdef NES
+.importzp BonusDie_Y, BonusDie_X, BonusDie_YVel, BonusDie_YVelFrac
+.endif
+.ifdef X16
+.import BonusDie_Y, BonusDie_X, BonusDie_YVel, BonusDie_YVelFrac
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Update_Select, Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, Coins_Earned, Update_Request
 .import Roulette_Pos, Roulette_PosHi, Roulette_ShapeLock, Roulette_ConfigRun, Roulette_ConfigState
@@ -236,14 +245,15 @@
 .import Map_Previous_Y, Map_Previous_XHi, Map_Previous_X, Bonus_DiePos, Map_Previous_Dir
 .import Roulette_Unused7A5F, Roulette_Unused7A5F_Delta, Inventory_Cards, Card_ActiveSet
 .import Roulette_Lives
-; imports from PRG026
-.import Palette_PrepareFadeOut, StatusBar_UpdateValues, Video_Misc_Updates
-; imports from PRG028
-.import Sound_Engine_Begin
 ; imports from PRG030
 .import Randomize, Bonus_Prize1, Tile_Mem_Addr, LevelLoad, Tile_Mem_ClearA,Tile_Mem_ClearB
 ; imports from PRG031
 .import Player_GetItem, PRGROM_Change_A000, Read_Joypads, PT2_Full_CHRROM_Switch, DynJump
+; far imports
+.import FAR026_Palette_PrepareFadeOut
+.import FAR026_StatusBar_UpdateValues
+.import FAR026_Video_Misc_Updates
+.import FAR028_Sound_Engine_Begin
 ; exports
 .export Background_Tiles, BonusGameBox_SpriteXs, BonusGameBox_SpriteYs, BonusGameBox_SpriteYs_End
 .export BonusGame_Do, BonusUNKTALL_Tiles, BonusUNKTALL_Tiles_End, Bonus_InstBoxBot, Bonus_InstBoxLine1
@@ -259,10 +269,13 @@
 .export QBoxOrange_Tiles, QBoxOrange_Tiles_End, Roulette_DrawBorderSprites, Roulette_DrawShapes
 .export Tile_Layout_TS15_TS16_TS17, UpdSel_Roulette, Video_NSpadeBG, Video_RoulBordAttr
 
-
-.ifdef NES
-.segment "PRG022"
+.ifdef X16
+.import X16_nes_interrupt_inhibit
 .endif
+
+
+.segment "PRG022"
+
 Tile_Layout_TS15_TS16_TS17:
 	; This defines the individual 8x8 blocks used to construct one of the tiles
 	; Referenced by Address_Per_Tileset, addressed by Level_Tileset
@@ -307,7 +320,7 @@ Tile_Layout_TS15_TS16_TS17:
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Tiles $E0 - $EF
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Tiles $F0 - $FF
 
-	; Upper right 8x8 pattern per tile	
+	; Upper right 8x8 pattern per tile
 	.byte $FD, $FD, $FD, $FE, $FD, $A4, $A4, $FD, $FE, $FF, $FD, $FF, $FF, $FF, $FF, $FF ; Tiles $00 - $0F
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Tiles $10 - $1F
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Tiles $20 - $2F
@@ -373,7 +386,7 @@ PRG022_C40E:
 	; Only BonusLayout_Typical is ever possibly loaded, the other ones are never touched.
 	; See PRG012 for the indexing instruction; too bad it's fixed at Y = 0...
 Bonus_LayoutData:
-	.word BonusLayout_Typical	; 0: Mario and Table; The only bonus game we ever saw 
+	.word BonusLayout_Typical	; 0: Mario and Table; The only bonus game we ever saw
 	.word BonusLayout_NoTable	; 1: Mario only; for the die game perhaps?
 	.word BonusLayout_BlueBox	; 2: Mario and blue box; maybe Koopa Troopa's prize game?
 	.word BonusLayout_Empty1	; 3: Empty/unused, who knows
@@ -393,12 +406,12 @@ LoadLevel_Generator_TS151617:
 
 	; NOTE: This is not a  "complete" Generator as in the other level banks,
 	; but that's because of the simplicity (there's only one!)
-	
+
 	LDA LL_ShapeDef
-	LSR A	
-	LSR A	
-	LSR A	
-	LSR A	
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	TAX
 
 	DEX
@@ -412,8 +425,8 @@ LoadLevel_Generator_TS151617:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LeveLoad_FixedSizeGen_TS151617
 ;
-; Much simpler generators that are fixed-size, commonly used for 
-; just single tile placement styles (although a couple relatively 
+; Much simpler generators that are fixed-size, commonly used for
+; just single tile placement styles (although a couple relatively
 ; complex ones exist in here as well)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LeveLoad_FixedSizeGen_TS151617:
@@ -443,7 +456,7 @@ BonusTable_Tiles:
 	.byte TILE15_TABLE_UL, TILE15_TABLE_UM, TILE15_TABLE_UR
 	.byte TILE15_TABLE_LL, TILE15_TABLE_LM, TILE15_TABLE_LR
 
-	
+
 LoadLevel_Table:
 
 	; Temp_Var1 = 0
@@ -454,15 +467,15 @@ PRG022_C4B2:
 
 	; Left table tile -> Temp_Var2
 	LDA BonusTable_Tiles,X
-	STA Temp_Var2	
+	STA Temp_Var2
 
 	; Middle table tile -> Temp_Var3
 	LDA BonusTable_Tiles+1,X
-	STA Temp_Var3	
+	STA Temp_Var3
 
 	; Right table tile -> Temp_Var4
 	LDA BonusTable_Tiles+2,X
-	STA Temp_Var4	
+	STA Temp_Var4
 
 	; Temp_Var1 += 3
 	TXA
@@ -530,10 +543,10 @@ LoadLevel_Background:
 	LDX #$00
 	STX Temp_Var12
 PRG022_C51E:
-	LDX Temp_Var12	
+	LDX Temp_Var12
 
 	LDA Background_Layout,X
-	STA Temp_Var1	
+	STA Temp_Var1
 
 	CMP #$ff
 	BNE PRG022_C52A	 ; If not yet hit $FF value, jump to PRG022_C52A
@@ -676,12 +689,12 @@ PRG022_C5A0:
 BonusUNKTALL_Tiles:
 	.byte TILE15_UNKTALL_UL,	TILE15_UNKTALL_UR
 	.byte TILE15_UNKTALL_R1L,	TILE15_UNKTALL_R1R
-	.byte TILE15_UNKTALL_R2L,	TILE15_UNKTALL_R2R 
+	.byte TILE15_UNKTALL_R2L,	TILE15_UNKTALL_R2R
 	.byte TILE15_UNKTALL_LL,	TILE15_UNKTALL_LR
 BonusUNKTALL_Tiles_End:
 
 LoadLevel_UNKTALL:
-	LDX #$00		; X = 0 
+	LDX #$00		; X = 0
 	LDY TileAddr_Off	; Y = TileAddr_Off
 
 PRG022_C5CB:
@@ -691,7 +704,7 @@ PRG022_C5CB:
 
 PRG022_C5CF:
 	LDA BonusUNKTALL_Tiles,X
-	STA (BonusText_BaseL),Y	
+	STA (BonusText_BaseL),Y
 
 	INY		 ; Y++ (next grid tile, DANGEROUS!)
 	INX		 ; X++
@@ -903,7 +916,7 @@ PRG022_C681:
 
 ; FIXME: Anyone want to claim this?
 ; $C6A4
-	LDA Temp_Var6		 
+	LDA Temp_Var6
 	STA BonusText_BaseH
 
 	LDY TileAddr_Off
@@ -918,7 +931,7 @@ PRG022_C681:
 	AND #$10
 	BEQ PRG022_C6BA
 
-	INY	
+	INY
 
 PRG022_C6BA:
 	STY Temp_Var10
@@ -928,7 +941,7 @@ PRG022_C6BA:
 	ADC #$b0
 	STA BonusText_BaseL
 	LDA BonusText_BaseH
-	ADC Temp_Var10	
+	ADC Temp_Var10
 	STA BonusText_BaseH
 	STA Temp_Var6
 
@@ -996,7 +1009,7 @@ HostToad_SpriteXs:
 HostToad_DrawSprites:
 
 	; Temp_Var11 = $95 (starting pattern of Toad Host sprites)
-	LDA #$95	 
+	LDA #$95
 	STA Temp_Var11
 
 	LDY #$00	 ; Y = 0
@@ -1150,7 +1163,7 @@ Bonus_KTPrizePattern:
 
 	; Draws the box and the "prize" for Koopa Troopa's "Prize" Game
 Draw_KTPrizeGameBox:
-	STA Temp_Var11	 
+	STA Temp_Var11
 
 
 	; Draw the game box first
@@ -1170,7 +1183,7 @@ PRG022_C7E1:
 
 	INY		 ; Y++ (next sprite RAM byte)
 
-	; Set palette of this sprite 
+	; Set palette of this sprite
 	LDA #SPR_PAL0
 	STA Sprite_RAM+$10,Y
 
@@ -1202,7 +1215,7 @@ PRG022_C7E1:
 
 	; Temp_Var12 = Bonus_PrizeX
 	LDA Bonus_PrizeX
-	STA Temp_Var12	
+	STA Temp_Var12
 
 	LDX #$01	 ; X = 1 (the two sprites that make up the prize)
 PRG022_C818:
@@ -1226,13 +1239,13 @@ PRG022_C818:
 	INY		 ; Y++ (next sprite byte)
 
 	; Store prize sprite X
-	LDA Temp_Var12	
+	LDA Temp_Var12
 	STA Sprite_RAM+$10,Y
 
 	INY		 ; Y++ (next sprite byte)
 
 	; Temp_Var12 += 8
-	LDA Temp_Var12	
+	LDA Temp_Var12
 	CLC
 	ADC #$08
 	STA Temp_Var12
@@ -1348,7 +1361,7 @@ PRG022_C8A0:
 	JSR DynJump
 
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
-	.word Bonus_Init	; 0: Draw the dialog box, initialize the greeting text, 
+	.word Bonus_Init	; 0: Draw the dialog box, initialize the greeting text,
 	.word Bonus_DoHostText	; 1: Giving instructions for ALL UNUSED GAMES (then initializing the "prize"!)
 	.word Bonus_DieRotate	; 2: Rotating die logic; press 'A' and you may get a prize by the game type (or so it was intended)
 	.word Bonus_GetDiePrize	; 3: Get your die prize!  (If you "won") Includes the "coin confetti"
@@ -1570,7 +1583,7 @@ Bonus_InitRound2:
 
 	LDX Graphics_BufCnt	 ; X = Graphics_BufCnt
 	LDY #$02	 ; Y = 2 (0, 1, 2; three lines of dialog)
-PRG022_C9B4: 
+PRG022_C9B4:
 	; Set VRAM high for line blanking
 	LDA Round2LineBlank_VRAMH,Y
 	STA Graphics_Buffer+$00,X
@@ -1666,7 +1679,7 @@ Bonus_InstBoxLine1:
 	; Left edge
 	vaddr $28C4
 	.byte $01, $92
-	
+
 	; Middle
 	vaddr $28C5
 	.byte VU_REPEAT | $18, $FE
@@ -1682,7 +1695,7 @@ Bonus_InstBoxLine2:
 	; Left edge
 	vaddr $28E4
 	.byte $01, $92
-	
+
 	; Middle
 	vaddr $28E5
 	.byte VU_REPEAT | $18, $FE
@@ -1698,7 +1711,7 @@ Bonus_InstBoxLine3:
 	; Left edge
 	vaddr $2904
 	.byte $01, $92
-	
+
 	; Middle
 	vaddr $2905
 	.byte VU_REPEAT | $18, $FE
@@ -1827,7 +1840,7 @@ BonusGame_UNUSED6_Text:
 	; UNUSED (Japanese) "2, return (?)"
 	; English mangled display "2 cTnj"
 BonusGame_UNUSED7_Text:
-	;       2         c    T    n    j    
+	;       2         c    T    n    j
 	.byte $9E, $FE, $D2, $C3, $DD, $D9
 
 	; (Terminator, value into Bonus_Round2)
@@ -1853,7 +1866,7 @@ BonusGame_UNUSED_Etc0:
 	; UNUSED (Japanese) "Play three times!" (This apparently was for the Roulette game; would set Roulette_Turns)
 	; English mangled display "3FB rojBPnf"
 BonusGame_UNUSED_Etc1:
-	;       3    F    B         r    o    j    B    P    n    f    
+	;       3    F    B         r    o    j    B    P    n    f
 	.byte $9F, $B5, $B1, $FE, $CB, $DE, $D9, $B1, $BF, $DD, $D5
 
 	; (Terminator)
@@ -1862,10 +1875,10 @@ BonusGame_UNUSED_Etc1:
 	; UNUSED (Japanese) "Chance to twice" / "Set aside two identical cards"
 	; English mangled display "QmyMZ 2FB" / "EULn F-Tnp" / "2uB ASSJngm"
 BonusGame_UNUSED_Etc2:
-	;       Q    m    y    M    Z         2    F    B    
+	;       Q    m    y    M    Z         2    F    B
     	.byte $C0, $8C, $DC, $BC, $C9, $FE, $9E, $B5, $B1, $00
 
-	;       E    U    L    n         F    -    T    n    p    
+	;       E    U    L    n         F    -    T    n    p
 	.byte $B4, $C4, $BB, $DD, $FE, $B5, $E5, $C3, $DD, $DF, $00
 
 	;       2    u    B         A    S    S    J    n    g    m
@@ -1896,7 +1909,7 @@ BonusGame_UNUSED_Etc4:
 	; UNUSED (Japanese) "Play three times!"
 	; English mangled display "3FB rojBPnf"
 BonusGame_UNUSED_Etc5:
-	;       3    F    B         r    o    j    B    P    n    f    
+	;       3    F    B         r    o    j    B    P    n    f
 	.byte $9F, $B5, $B1, $FE, $CB, $DE, $D9, $B1, $BF, $DD, $D5
 
 	; (Terminator)
@@ -1905,10 +1918,10 @@ BonusGame_UNUSED_Etc5:
 	; UNUSED (Japanese) "Chance to twice" / "Set aside two identical cards"
 	; English mangled display "QmyMZ 2FB" / "EULn F-Tnp" / "2uB ASSJngm"
 BonusGame_UNUSED_Etc6:
-	;       Q    m    y    M    Z         2    F    B    
+	;       Q    m    y    M    Z         2    F    B
     	.byte $C0, $8C, $DC, $BC, $C9, $FE, $9E, $B5, $B1, $00
 
-	;       E    U    L    n         F    -    T    n    p    
+	;       E    U    L    n         F    -    T    n    p
 	.byte $B4, $C4, $BB, $DD, $FE, $B5, $E5, $C3, $DD, $DF, $00
 
 	;       2    u    B         A    S    S    J    n    g    m
@@ -1920,7 +1933,7 @@ BonusGame_UNUSED_Etc6:
 	; UNUSED (Japanese) "2, return (?)"
 	; English mangled display "2 cTnj"
 BonusGame_UNUSED_Etc7:
-	;       2         c    T    n    j    
+	;       2         c    T    n    j
 	.byte $9E, $FE, $D2, $C3, $DD, $D9
 
 	; (Terminator)
@@ -1933,7 +1946,7 @@ BonusGame_UNUSED_Etc7:
 	; It forces the Player to a different map position ??
 	; And marks them as having died in the bonus game ??!
 	;
-	; Since it references Bonus_KTPrize, it MAY have been Koopa Troopa's 
+	; Since it references Bonus_KTPrize, it MAY have been Koopa Troopa's
 	; "Prize" Game... but death?  I'm not sure the prize is worth it! D:
 
 Bonus_Return2Row:	.byte $50, $40, $80, $60	; Literally Map Y
@@ -2001,9 +2014,9 @@ PRG022_CC18:
 	BEQ Bonus_DrawDie	; If Player is not pressing 'A', just go draw the Die
 
 	; Player pressed 'A'...
-	
+
 	LDA #$00
-	STA Bonus_DieCnt ; Bonus_DieCnt = 0 
+	STA Bonus_DieCnt ; Bonus_DieCnt = 0
 	STA Bonus_UnusedFlag ; Bonus_UnusedFlag = 0
 
 
@@ -2041,7 +2054,7 @@ PRG022_CC34:
 
 PRG022_CC44:
 
-	; End of the Odd or Even game!  Whether you won or lost, the die will now fly away.  
+	; End of the Odd or Even game!  Whether you won or lost, the die will now fly away.
 	; If you won, you go on to "Round 2"; if you lost, bail to world map.
 
 	; Bonus_GameState = 4
@@ -2077,7 +2090,7 @@ PRG022_CC57:
 Bonus_DrawDie:
 
 	; Set left/right die sprites Y
-	LDA BonusDie_Y		 
+	LDA BonusDie_Y
 	STA Sprite_RAM+$F8
 	STA Sprite_RAM+$FC
 
@@ -2110,7 +2123,7 @@ Bonus_DrawDie:
 	; ?? Is this another message?
 PRG022_CC84:
 	.byte $CB, $DE, $E5, $BB, $E7, $FE, $B3, $E5, $FF, $60
-	
+
 ; FIXME: Anyone want to claim this?
 ; Seems like it would display a short message maybe (above)
 ; $CC8E
@@ -2139,7 +2152,7 @@ PRG022_CC9D:
 
 PRG022_CCB0:
 	CMP #$ff
-	BNE PRG022_CCC2	
+	BNE PRG022_CCC2
 
 	LDA #$35
 	STA Bonus_UnusedVL
@@ -2180,7 +2193,7 @@ PRG022_CCED:
 
 
 Bonus_DieFlyAway:
-	LDA Counter_1		 
+	LDA Counter_1
 	AND #$01
 	BNE PRG022_CD03	 ; Every other tick, jump to PRG022_CD03
 
@@ -2210,9 +2223,9 @@ PRG022_CD03:
 
 PRG022_CD0E:
 	LDA BonusDie_YVel	; Get die Velocity
-	ASL A		 
-	ASL A		 
-	ASL A		 
+	ASL A
+	ASL A
+	ASL A
 	ASL A		 	; Fractional part shifted up
 	STA Temp_Var1		; -> Temp_Var1
 
@@ -2237,7 +2250,7 @@ PRG022_CD22:
 	LDA BonusDie_Y
 	ADC Temp_Var2
 	STA BonusDie_Y
- 
+
 	LDA BonusDie_Y
 	CMP #$f8
 	BLT PRG022_CD50	 ; If bonus die hasn't wrapped, jump to PRG022_CD50
@@ -2250,7 +2263,7 @@ PRG022_CD22:
 	LDA #$00
 	STA BonusDie_YVel
 
-	; Bonus_UnusedFlag = 0 
+	; Bonus_UnusedFlag = 0
 	STA Bonus_UnusedFlag
 
 	LDA Bonus_DieCnt
@@ -2398,7 +2411,7 @@ PRG022_CDD3:
 BonusCoin_ApplyXVel:
 
 	; Offset to coin X velocity
-	TYA		 
+	TYA
 	CLC
 	ADC #<(Bonus_CoinsXVelFrac - Bonus_CoinsYVelFrac)
 	TAY
@@ -2416,7 +2429,7 @@ BonusCoin_ApplyXVel:
 
 BonusCoin_ApplyYVel:
 	; Note: This check is superfluous because of the following one!
-	LDA Bonus_CoinsYVel,Y	 
+	LDA Bonus_CoinsYVel,Y
 	BMI BonusCoin_ApplyVel	 ; If coin is moving upward, apply velocity to coin and don't come back
 
 	CMP #$40
@@ -2428,9 +2441,9 @@ BonusCoin_ApplyYVel:
 
 BonusCoin_ApplyVel:
 	LDA Bonus_CoinsYVel,Y	; Get coin Velocity
-	ASL A		 
-	ASL A		 
-	ASL A		 
+	ASL A
+	ASL A
+	ASL A
 	ASL A		 	; Fractional part shifted up
 	STA Temp_Var1		; -> Temp_Var1
 
@@ -2545,7 +2558,7 @@ Roulette_DrawBorderSprites:
 PRG022_CE83:
 
 	; Set Sprite Ys
-	LDA Temp_Var1	
+	LDA Temp_Var1
 	STA Sprite_RAM+$04,Y
 	STA Sprite_RAM+$08,Y
 	STA Sprite_RAM+$0C,Y
@@ -2582,7 +2595,7 @@ PRG022_CE83:
 	TYA
 	SEC
 	SBC #12		; -12 (3 sprites prior)
-	TAY	
+	TAY
 
 	BPL PRG022_CE83	 ; While Y >= 0, loop!
 
@@ -2603,14 +2616,40 @@ UpdSel_Roulette:
 
 	; Performing some work that got skipped because we diverted here in the interrupt
 
+.ifdef NES
 	LDA #$00	 ; A = 0
-	STA PPU_CTL2	 ; Hide sprites and bg (most importantly)
-	STA PPU_SPR_ADDR ; Resets to sprite 0 in memory
+	sta_PPU_CTL2	 ; Hide sprites and bg (most importantly)
+	sta_PPU_SPR_ADDR ; Resets to sprite 0 in memory
+.endif
+.ifdef X16 ; X16 does this first
+	lda_PPU_STAT
 
-	LDA #$02	 ; A = 2
-	STA SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
+	LDA #$00
+	sta_PPU_SCROLL
+	sta_PPU_SCROLL
 
+	php
+	sei
+	lda #<64
+	sta Vera::Reg::IRQLineL
+	lda #$80
+	trb Vera::Reg::IEN
+	lda #2
+	sta Vera::Reg::ISR ; ACK any pending line IRQs
+	plp
+
+	INT_CLI
+	sta_MMC3_IRQENABLE
+	cli ; actually allow line IRQs to interrupt this interrupt code in this mode
+	JSR PT2_Full_CHRROM_Switch
+.endif
+
+	LDA #>Sprite_RAM	 ; A = 2
+	sta_SPR_DMA	 ; DMA sprites from RAM @ $200 (probably trying to blank them out)
+
+.ifdef NES
 	JSR PT2_Full_CHRROM_Switch	 ; Set up PT2 (Sprites) CHRROM
+.endif
 
 	LDA Graphics_Queue
 	ASL A
@@ -2622,7 +2661,7 @@ UpdSel_Roulette:
 	LDA Video_Upd_TableRoulette+1,X
 	STA Video_Upd_AddrH
 
-	JSR Video_Misc_Updates	 ; Various updates other than scrolling (palettes, status bar, etc.)
+	JSR FAR026_Video_Misc_Updates	 ; Various updates other than scrolling (palettes, status bar, etc.)
 
 	; Graphics_Queue = 0
 	LDA #$00
@@ -2631,60 +2670,65 @@ UpdSel_Roulette:
 	STA Graphics_BufCnt	; Reset Graphics_Buffer counter
 	STA Graphics_Buffer+$00	; Terminate it
 
-	LDA PPU_STAT
+	lda_PPU_STAT
 
+.ifdef NES
 	; Unknown hardware thing?  Is this for synchronization?
-	LDX #$3f	 	; 
-	STX PPU_VRAM_ADDR	; Access PPU address #3Fxx
-	LDA #$00	 	; 
-	STA PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
-	STA PPU_VRAM_ADDR	; 
-	STA PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
+	LDX #$3f	 	;
+	stx_PPU_VRAM_ADDR	; Access PPU address #3Fxx
+	LDA #$00	 	;
+	sta_PPU_VRAM_ADDR	; Access PPU address #3F00 (palettes?)
+	sta_PPU_VRAM_ADDR	;
+	sta_PPU_VRAM_ADDR	; Now accessing $0000 (Pattern tables?)
+.endif
 
 	LDA PPU_CTL2_Copy
 	ORA #%00011000
-	STA PPU_CTL2	 ; Show BG+Sprites
+	sta_PPU_CTL2	 ; Show BG+Sprites
 
 	; Generate VBlank Resets, use 8x16 sprites, sprites use PT2
 	LDA #$a8
-	STA PPU_CTL1
+	sta_PPU_CTL1
 
-	LDA PPU_STAT
+.ifdef NES
+	lda_PPU_STAT
 
 	LDA #$00
-	STA PPU_SCROLL
-	STA PPU_SCROLL
+	sta_PPU_SCROLL
+	sta_PPU_SCROLL
 
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	LDA #$ff
-	STA MMC3_IRQCNT
-	STA MMC3_IRQLATCH
+	sta_MMC3_IRQCNT
+	sta_MMC3_IRQLATCH
 
 	; Unknown hardware thing?  Is this for synchronization?
 	LDA #$00
-	STA PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA #$10
-	STA PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA #$00
-	STA PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA #$10
-	STA PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA #$00
-	STA PPU_VRAM_ADDR
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
+.endif
 
+.ifdef NES
 	; Fire on scanline 32
 	LDA #$20
-	STA MMC3_IRQCNT
-	STA MMC3_IRQLATCH
-	STA MMC3_IRQENABLE
-
-	CLI		; Enable maskable interrupts
+	sta_MMC3_IRQCNT
+	sta_MMC3_IRQLATCH
+.endif
+	sta_MMC3_IRQENABLE
+	INT_CLI		; Enable maskable interrupts
 
 	JSR Read_Joypads	 ; Updates both joypads in RAM
 
@@ -2716,29 +2760,39 @@ PRG022_CF7C:
 
 	JSR Roulette_DoGame	 ; Actually run the Roulette game
 
+.ifdef NES
 	; Switch to page 26 @ A000
 	LDA #MMC3_8K_TO_PRG_A000
-	STA MMC3_COMMAND
-	LDA #26		
-	STA MMC3_PAGE	 
+	sta_MMC3_COMMAND
+	LDA #26
+	sta_MMC3_PAGE
+.endif
 
-	JSR StatusBar_UpdateValues	 ; Update Status Bar (not really used)
+	JSR FAR026_StatusBar_UpdateValues	 ; Update Status Bar (not really used)
 
+.ifdef NES
 	; Switch to page 28 @ A000
 	LDA #MMC3_8K_TO_PRG_A000
-	STA MMC3_COMMAND
-	LDA #28	
-	STA MMC3_PAGE	 
+	sta_MMC3_COMMAND
+	LDA #28
+	sta_MMC3_PAGE
+.endif
 
 	; Jump to the sound engine, newly inserted at page A000!
-	JSR Sound_Engine_Begin
+	JSR FAR028_Sound_Engine_Begin
 
-	; Change A000 back to whatever it was before the sound engine 
+	; Change A000 back to whatever it was before the sound engine
+.ifdef NES
 	JSR PRGROM_Change_A000
+.endif
 
 	INC Counter_1	 ; Simply increments every frame, used for timing
 
-	; Pull (pop) the three temp vars from the stack 
+.ifdef X16
+	rts ; unwind our FAR call, will exit the interrupt over there
+.endif
+
+	; Pull (pop) the three temp vars from the stack
 	PLA
 	STA Temp_Var3
 	PLA
@@ -2823,7 +2877,7 @@ Roulette_ConfigPPUCTL2:
 
 	INC Roulette_ConfigState	; Roulette_ConfigState = 1
 
-	RTS		 ; Return 
+	RTS		 ; Return
 
 Roulette_ConfigTurns:
 	INC Roulette_ConfigRun	; Roulette_ConfigRun = 1
@@ -3234,7 +3288,7 @@ Roulette_FadeOut:
 
 	INC Roulette_StopState	 ; Roulette_StopState = 1
 
-	JMP Palette_PrepareFadeOut	 ; Prepare to fade out
+	JMP FAR026_Palette_PrepareFadeOut	 ; Prepare to fade out
 
 PRG022_D250:
 	JSR Roulette_DoFadeOut	 ; Do palette fade out
@@ -3251,7 +3305,7 @@ PRG022_D52B:
 Roulette_ExitToMap:
 
 	; Cancel the natural fade out that comes from exiting to map
-	LDA #$01	 
+	LDA #$01
 	STA FadeOut_Cancel
 
 	; Exit to map!
@@ -3425,9 +3479,9 @@ PRG022_D33C:
 Roulette_MoveRow:
 
 	LDA Roulette_Speed,X	; Get this Roulette row speed
-	ASL A		 
-	ASL A		 
-	ASL A		 
+	ASL A
+	ASL A
+	ASL A
 	ASL A		 	; Fractional part shifted up
 	STA Temp_Var2		; -> Temp_Var2
 
@@ -3445,7 +3499,7 @@ PRG022_D353:
 	; NOTE: Other versions of the fractional accumulator usually merge this
 	; part up with the sign extension application, which is probably better :)
 	LDY #$00	 ; Y = 0 (positive high part)
-	CMP #$00	 
+	CMP #$00
 	BPL PRG022_D35C	 ; If the whole part is positive, jump to PRG022_D35C
 	DEY		 ; Y = $FF (negative high part)
 PRG022_D35C:
@@ -3537,14 +3591,14 @@ PRG022_D57D:
 	LDA #$80
 	STA Temp_Var1
 PRG022_D581:
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	; Set VRAM address high
-	STY PPU_VRAM_ADDR
+	sty_PPU_VRAM_ADDR
 
 	; Set VRAM address low
 	LDA Temp_Var1
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	; Fills in a row with the pinkish "background" color
 	LDX #31		; X = 31 (32 tiles per row)
@@ -3552,7 +3606,7 @@ PRG022_D58E:
 
 	; Insert a background tile
 	LDA #$fe
-	STA PPU_VRAM_DATA
+	sta_PPU_VRAM_DATA
 
 	DEX		 ; X--
 	BPL PRG022_D58E	 ; While X >= 0, loop!
@@ -3600,25 +3654,25 @@ PRG022_D5BB:
 	ASL A
 	TAX
 
-	; Load starting address of Roulette shape 
+	; Load starting address of Roulette shape
 	LDA Roulette_Shapes,X
 	STA Temp_Var3
 	LDA Roulette_Shapes+1,X
 	STA Temp_Var4
 
 PRG022_D5C9:
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	; Set VRAM address
 	LDA Temp_Var1
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 	LDA Temp_Var2
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	LDX #$00	; X = 0
 PRG022_D5D8:
 	LDA (Temp_Var3),Y	; Get pattern for shape
-	STA PPU_VRAM_DATA	; Store into VRAM
+	sta_PPU_VRAM_DATA	; Store into VRAM
 
 	INY		; Y++ (next shape pattern)
 	INX		; X++ (column counter)
@@ -3706,7 +3760,7 @@ PRG022_D643:
 
 
 Card_InitGame:
-	LDA Card_InitState	 
+	LDA Card_InitState
 	JSR DynJump
 
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
@@ -3743,7 +3797,7 @@ PRG022_D668:
 Card_RenderDeck:
 	; Temp_Var11 = Card_Index
 	LDY Card_Index
-	STY Temp_Var11	
+	STY Temp_Var11
 
 	LDA Card_ActiveSet,Y
 	AND #$80
@@ -4062,7 +4116,7 @@ PRG022_D83D:
 
 Card_HandleMismatch:
 	; Card_FlipFrame = 0
-	LDA #$00	 
+	LDA #$00
 	STA Card_FlipFrame
 
 	; Temp_Var12 = 1
@@ -4199,8 +4253,8 @@ PRG022_D8D8:
 
 Card_Shuffle:
 	; Temp_Var11 = 2 (3 shuffle operations)
-	LDA #$02	 
-	STA Temp_Var11	
+	LDA #$02
+	STA Temp_Var11
 PRG022_D8E2:
 	JSR Randomize
 	AND #$1f
@@ -4211,7 +4265,7 @@ PRG022_D8E8:
 
 	; Temp_Var12 = 15th card
 	LDA Card_ActiveSet+14
-	STA Temp_Var12	
+	STA Temp_Var12
 
 	LDX #$0D	 ; X = $0D
 PRG022_D8EF:
@@ -4224,7 +4278,7 @@ PRG022_D8EF:
 	BPL PRG022_D8EF	; While X >= 0, loop!
 
 	; Set the original 15th card as the first card
-	LDA Temp_Var12	
+	LDA Temp_Var12
 	STA Card_ActiveSet
 
 	DEY		 ; Y--
@@ -4234,7 +4288,7 @@ PRG022_D8EF:
 PRG022_D902:
 	; First card -> Temp_Var12
 	LDA Card_ActiveSet,X
-	STA Temp_Var12	
+	STA Temp_Var12
 
 	; Sixth card -> first
 	LDA Card_ActiveSet+5,X
@@ -4242,10 +4296,10 @@ PRG022_D902:
 
 	; Eleventh card -> sixth
 	LDA Card_ActiveSet+10,X
-	STA Card_ActiveSet+5,X	
+	STA Card_ActiveSet+5,X
 
 	; Former first card -> Eleventh
-	LDA Temp_Var12	
+	LDA Temp_Var12
 	STA Card_ActiveSet+10,X
 
 	; X -= 2
@@ -4272,13 +4326,13 @@ PRG022_D923:
 
 	; Get VRAM address of this card -> Card_VRAM_H/L
 	LDA Card_VRAMHi,Y
-	STA Card_VRAM_H	
+	STA Card_VRAM_H
 	LDA Card_VRAMLo,Y
-	STA Card_VRAM_L	
+	STA Card_VRAM_L
 
 	LDY #$00	 ; Y = 0
 	LDX #$03	 ; X = 0
-PRG022_D93E: 
+PRG022_D93E:
 
 	; Patch card VRAM Hi into graphics buffer
 	LDA Card_VRAM_H
@@ -4287,7 +4341,7 @@ PRG022_D93E:
 	INY		 ; Y++ (next graphics buffer byte)
 
 	; Patch card VRAM Lo into graphics buffer
-	LDA Card_VRAM_L	
+	LDA Card_VRAM_L
 	STA Graphics_Buffer+$00,Y
 
 	; Y += 6 (next card row in buffer commands)
@@ -4320,7 +4374,7 @@ PRG022_D93E:
 	TAY		 ; Y = face * 4
 
 	; Add the four patterns making up the card face
-	LDA Card_FacePatterns,Y	
+	LDA Card_FacePatterns,Y
 	STA Graphics_Buffer+$0B
 	INY		 ; Y++ (next graphics buffer byte)
 	LDA Card_FacePatterns,Y
@@ -4336,7 +4390,7 @@ PRG022_D93E:
 
 	; Temp_Var13 = card face attribute
 	LDA Card_FaceAttribute,Y
-	STA Temp_Var13	
+	STA Temp_Var13
 
 	LDA Temp_Var11
 	CMP #6
@@ -4422,9 +4476,9 @@ PRG022_D9F1:
 
 	; Get VRAM address of this card -> Card_VRAM_H/L
 	LDA Card_VRAMHi,Y
-	STA Card_VRAM_H	
+	STA Card_VRAM_H
 	LDA Card_VRAMLo,Y
-	STA Card_VRAM_L	
+	STA Card_VRAM_L
 
 	LDY #$00	 ; Y = 0
 	LDX #$03	 ; X = 3 (4 rows of patterns per card)
@@ -4437,7 +4491,7 @@ PRG022_DA0C:
 	INY		 ; Y++ (next graphics buffer byte)
 
 	; Patch card VRAM Lo into graphics buffer
-	LDA Card_VRAM_L	
+	LDA Card_VRAM_L
 	STA Graphics_Buffer+$00,Y
 
 	; Y += 6 (next card row in buffer commands)
@@ -4493,7 +4547,7 @@ PRG022_DA0C:
 
 ; FIXME: Anyone want to claim this??
 ; This seems like it'd have displayed matched pairs perhaps or even just debug data
-; $DA62 
+; $DA62
 	LDY #$00	 ; Y = 0
 
 	; Temp_Var11 = 11
@@ -4504,7 +4558,7 @@ PRG022_DA0C:
 
 	; Card face -> Temp_Var12
 	LDA Card_ActiveSet,X
-	STA Temp_Var12	
+	STA Temp_Var12
 
 	ASL A
 	ASL A
@@ -4621,15 +4675,15 @@ PRG022_DAF7:
 
 	; Get VRAM address of this card -> Card_VRAM_H/L
 	LDA Card_VRAMHi,Y
-	STA Card_VRAM_H	
+	STA Card_VRAM_H
 	LDA Card_VRAMLo,Y
-	STA Card_VRAM_L	
+	STA Card_VRAM_L
 
 	LDA #(CardBlackout_BufCmds_End - CardBlackout_BufCmds - 1)
 	STA Graphics_BufCnt
 
 	LDY #$00	 ; Y = 0
-	LDX #$03	 ; X = 3 
+	LDX #$03	 ; X = 3
 PRG022_DB17:
 	; Patch card VRAM Hi into graphics buffer
 	LDA Card_VRAM_H
@@ -4638,7 +4692,7 @@ PRG022_DB17:
 	INY		 ; Y++ (next graphics buffer byte)
 
 	; Patch card VRAM Lo into graphics buffer
-	LDA Card_VRAM_L	
+	LDA Card_VRAM_L
 	STA Graphics_Buffer+$00,Y
 
 	; Y += 6 (next card row in buffer commands)
@@ -4849,7 +4903,7 @@ PRG022_DC1D:
 Card_DrawSelectSprite:
 
 	; Set sprite Y
-	LDA Card_SelectY	 
+	LDA Card_SelectY
 	STA Sprite_RAM+$04,Y
 
 	INY	; Y++ (next Sprite RAM offset)
@@ -4891,15 +4945,15 @@ Card_DrawCursor:
 	LDX #$00	 ; X = 0
 	LDY #$00	 ; Y = 0
 PRG022_DC52:
-	JSR Card_DrawSelectSprite	 ; Draw just a sprite 
- 
+	JSR Card_DrawSelectSprite	 ; Draw just a sprite
+
 	; Card_SelectX += 8
 	LDA Card_SelectX
 	CLC
 	ADC #$08
 	STA Card_SelectX
 
-	CPX #$04	
+	CPX #$04
 	BLT PRG022_DC52	; While X < 4, loop
 
 	; Card_SelectY += 16
@@ -4934,8 +4988,8 @@ PRG022_DC52:
 	STA Card_SelectX
 
 PRG022_DC8F:
-	JSR Card_DrawSelectSprite	 ; Draw just a sprite 
- 
+	JSR Card_DrawSelectSprite	 ; Draw just a sprite
+
 	; Card_SelectX += 8
 	LDA Card_SelectX
 	CLC

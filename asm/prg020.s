@@ -23,12 +23,8 @@
 ; imports from PRG006
 .import W204O, W20FO, W20F_AltO, W203_ExitO, W205O, W201O, W709_EndO, Empty_ObjLayout, W301_ExitO
 .import W2PY_InsideO
-; imports from PRG014
-.import LoadLevel_NextColumn, LoadLevel_EndGoal, LoadLevel_PowerBlock, LoadLevel_Door2
-.import LoadLevel_HRightWallPipeRun3, LoadLevel_LittleCloudRun, LoadLevel_VTransitPipeRun
-.import LoadLevel_IceBricks, LoadLevel_TopDecoBlocks, LoadLevel_CCBridge, LoadLevel_Cannon
-.import LoadLevel_HLeftWallPipeRun, LoadLevel_HRightWallPipeRun, LoadLevel_VCeilingPipeRun
-.import LoadLevel_VGroundPipeRun, LoadLevel_BlockRun
+; imports from PRG014 (PRG014LOW on X16)
+.import LoadLevel_NextColumn
 ; imports from PRG015 (Plains)
 .import W301_ExitL
 ; imports from PRG016 (Hills)
@@ -39,6 +35,22 @@
 .import LoadLevel_Set_TileMemAddr, LevelLoad, Tile_Mem_ClearA, Tile_Mem_ClearB
 ; imports from PRG031
 .import DynJump
+; far imports
+.import FAR014_LoadLevel_BlockRun
+.import FAR014_LoadLevel_CCBridge
+.import FAR014_LoadLevel_Cannon
+.import FAR014_LoadLevel_Door2
+.import FAR014_LoadLevel_EndGoal
+.import FAR014_LoadLevel_HLeftWallPipeRun
+.import FAR014_LoadLevel_HRightWallPipeRun
+.import FAR014_LoadLevel_HRightWallPipeRun3
+.import FAR014_LoadLevel_IceBricks
+.import FAR014_LoadLevel_LittleCloudRun
+.import FAR014_LoadLevel_PowerBlock
+.import FAR014_LoadLevel_TopDecoBlocks
+.import FAR014_LoadLevel_VCeilingPipeRun
+.import FAR014_LoadLevel_VGroundPipeRun
+.import FAR014_LoadLevel_VTransitPipeRun
 ; exports
 .export LeveLoad_FixedSizeGen_TS9, LevelLoad_TS9, LoadLevel_Generator_TS9, Tile_Attributes_TS9
 .export Tile_Layout_TS9, Unused8_EndL, W201L, W202_ExitL, W203L, W204L, W205L, W20FL, W2HBA, W2PYL
@@ -46,9 +58,8 @@
 
 
 
-.ifdef NES
 .segment "PRG020"
-.endif
+
 Tile_Layout_TS9:
 	; This defines the individual 8x8 blocks used to construct one of the tiles
 	; Referenced by Address_Per_Tileset, addressed by Level_Tileset
@@ -93,7 +104,7 @@ Tile_Layout_TS9:
 	.byte $AB, $AB, $19, $69, $61, $57, $9C, $64, $FF, $FF, $FF, $FF, $FF, $A5, $ED, $E4 ; Tiles $E0 - $EF
 	.byte $54, $06, $E1, $06, $55, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Tiles $F0 - $FF
 
-	; Upper right 8x8 pattern per tile	
+	; Upper right 8x8 pattern per tile
 	.byte $FC, $FC, $FF, $07, $07, $EA, $26, $07, $26, $07, $2A, $4B, $4D, $4B, $4F, $4B ; Tiles $00 - $0F
 	.byte $FD, $FE, $01, $03, $22, $FC, $FF, $FC, $FC, $FC, $46, $FC, $1C, $47, $FC, $FF ; Tiles $10 - $1F
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $21, $FF, $BA, $BA ; Tiles $20 - $2F
@@ -151,7 +162,7 @@ PRG020_A40A:
 PRG020_A416:
 	LDA #TILE9_BRICK_UM	; Used as standard ground
 	JSR Tile_Mem_ClearB
-	INY	
+	INY
 	CPY #$f0
 	BNE PRG020_A416
 
@@ -174,17 +185,17 @@ LoadLevel_Generator_TS9:
 
 	LDA Temp_Var15
 	AND #%11100000
-	LSR A		
-	LSR A		
-	LSR A		
-	LSR A		
-	LSR A		
+	LSR A
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	TAX		 	; X = upper 3 bits of Temp_Var15 (0-7) (selects a multiple of 15 as the base)
 
 	LDA LL_ShapeDef
-	LSR A	
-	LSR A	
-	LSR A	
+	LSR A
+	LSR A
+	LSR A
 	LSR A			; A = upper 4 bits of LL_ShapeDef shifted down
 	CLC
 	ADC PRG020_A423,X	; Add multiple of 15
@@ -214,42 +225,42 @@ LoadLevel_Generator_TS9:
 	.word LoadLevel_BiggerBlocksDiagRect	; 12 - Creates a rectangle of bigger blocks which shift diagonal left each line
 	.word LoadLevel_BiggestBlockDiaRect	; 13 - Creates a rectangle of biggest blocks which shift diagonal left each line
 	.word LoadLevel_ThinGround		; 14 - "Thin ground" with edges (UNUSED??)
-	.word LoadLevel_BlockRun		; 15 - Run of bricks
-	.word LoadLevel_BlockRun		; 16 - Run of '?' blocks with a coin
-	.word LoadLevel_BlockRun		; 17 - Run of bricks with a coin
-	.word LoadLevel_BlockRun		; 18 - Run of wood blocks
-	.word LoadLevel_BlockRun		; 19 - Run of green note blocks (?)
-	.word LoadLevel_BlockRun		; 20 - Run of note blocks
-	.word LoadLevel_BlockRun		; 21 - Run of bouncing wood blocks
-	.word LoadLevel_BlockRun		; 22 - Run of coins
-	.word LoadLevel_VGroundPipeRun		; 23 - Vertical ground pipe 1 (alt level)
-	.word LoadLevel_VGroundPipeRun		; 24 - Vertical ground pipe 2 (Big [?] area)
-	.word LoadLevel_VGroundPipeRun		; 25 - Vertical ground pipe 3 (no entrance)
-	.word LoadLevel_VCeilingPipeRun		; 26 - Vertical ceiling pipe 1 (alt level)
-	.word LoadLevel_VCeilingPipeRun		; 27 - Vertical ceiling pipe 2 (no entrance)
-	.word LoadLevel_HRightWallPipeRun	; 28 - Horizontal right-hand wall pipe (alt level)
-	.word LoadLevel_HRightWallPipeRun	; 29 - Horizontal right-hand wall pipe (no entrance)
-	.word LoadLevel_HLeftWallPipeRun	; 30 - Horizontal left-hand wall pipe (alt level)
-	.word LoadLevel_HLeftWallPipeRun	; 31 - Horizontal left-hand wall pipe (no entrance)
-	.word LoadLevel_Cannon			; 32 - Bullet bill cannon
-	.word LoadLevel_CCBridge		; 33 - Cheep-Cheep style 'oo' bridge
-	.word LoadLevel_CCBridge		; 34 - Would result in empty tiles?  (form of 33)
-	.word LoadLevel_TopDecoBlocks		; 35 - Top-Deco Rectangle Waterfall
-	.word LoadLevel_TopDecoBlocks		; 36 - Top-Deco Rectangle Left waving water pool
-	.word LoadLevel_TopDecoBlocks		; 37 - Top-Deco Rectangle No current waving water pool
-	.word LoadLevel_TopDecoBlocks		; 38 - Top-Deco Rectangle Right waving water pool
-	.word LoadLevel_TopDecoBlocks		; 39 - Top-Deco Rectangle Water wrong-way BG
-	.word LoadLevel_TopDecoBlocks		; 40 - Top-Deco Rectangle Diamond blocks (not really any deco on top)
-	.word LoadLevel_TopDecoBlocks		; 41 - Top-Deco Rectangle Sand ground 
-	.word LoadLevel_TopDecoBlocks		; 42 - Top-Deco Rectangle orange block??
-	.word LoadLevel_IceBricks		; 43 - Run of ice bricks
-	.word LoadLevel_VTransitPipeRun		; 44 - Vertical in-level transit pipe
+	.word FAR014_LoadLevel_BlockRun		; 15 - Run of bricks
+	.word FAR014_LoadLevel_BlockRun		; 16 - Run of '?' blocks with a coin
+	.word FAR014_LoadLevel_BlockRun		; 17 - Run of bricks with a coin
+	.word FAR014_LoadLevel_BlockRun		; 18 - Run of wood blocks
+	.word FAR014_LoadLevel_BlockRun		; 19 - Run of green note blocks (?)
+	.word FAR014_LoadLevel_BlockRun		; 20 - Run of note blocks
+	.word FAR014_LoadLevel_BlockRun		; 21 - Run of bouncing wood blocks
+	.word FAR014_LoadLevel_BlockRun		; 22 - Run of coins
+	.word FAR014_LoadLevel_VGroundPipeRun		; 23 - Vertical ground pipe 1 (alt level)
+	.word FAR014_LoadLevel_VGroundPipeRun		; 24 - Vertical ground pipe 2 (Big [?] area)
+	.word FAR014_LoadLevel_VGroundPipeRun		; 25 - Vertical ground pipe 3 (no entrance)
+	.word FAR014_LoadLevel_VCeilingPipeRun		; 26 - Vertical ceiling pipe 1 (alt level)
+	.word FAR014_LoadLevel_VCeilingPipeRun		; 27 - Vertical ceiling pipe 2 (no entrance)
+	.word FAR014_LoadLevel_HRightWallPipeRun	; 28 - Horizontal right-hand wall pipe (alt level)
+	.word FAR014_LoadLevel_HRightWallPipeRun	; 29 - Horizontal right-hand wall pipe (no entrance)
+	.word FAR014_LoadLevel_HLeftWallPipeRun	; 30 - Horizontal left-hand wall pipe (alt level)
+	.word FAR014_LoadLevel_HLeftWallPipeRun	; 31 - Horizontal left-hand wall pipe (no entrance)
+	.word FAR014_LoadLevel_Cannon			; 32 - Bullet bill cannon
+	.word FAR014_LoadLevel_CCBridge		; 33 - Cheep-Cheep style 'oo' bridge
+	.word FAR014_LoadLevel_CCBridge		; 34 - Would result in empty tiles?  (form of 33)
+	.word FAR014_LoadLevel_TopDecoBlocks		; 35 - Top-Deco Rectangle Waterfall
+	.word FAR014_LoadLevel_TopDecoBlocks		; 36 - Top-Deco Rectangle Left waving water pool
+	.word FAR014_LoadLevel_TopDecoBlocks		; 37 - Top-Deco Rectangle No current waving water pool
+	.word FAR014_LoadLevel_TopDecoBlocks		; 38 - Top-Deco Rectangle Right waving water pool
+	.word FAR014_LoadLevel_TopDecoBlocks		; 39 - Top-Deco Rectangle Water wrong-way BG
+	.word FAR014_LoadLevel_TopDecoBlocks		; 40 - Top-Deco Rectangle Diamond blocks (not really any deco on top)
+	.word FAR014_LoadLevel_TopDecoBlocks		; 41 - Top-Deco Rectangle Sand ground
+	.word FAR014_LoadLevel_TopDecoBlocks		; 42 - Top-Deco Rectangle orange block??
+	.word FAR014_LoadLevel_IceBricks		; 43 - Run of ice bricks
+	.word FAR014_LoadLevel_VTransitPipeRun		; 44 - Vertical in-level transit pipe
 	.word LoadLevel_DesertPillar		; 45 - Chain followed by pillar tiles (?)
 	.word LoadLevel_MiscDesertTiles		; 46 - Run of cactus tiles
 	.word LoadLevel_MiscDesertTiles		; 47 - Run of spikes upward
 	.word LoadLevel_MiscDesertTiles		; 48 - Run of spikes downward
 	.word LoadLevel_MiscDesertTiles		; 49 - Run of block things
-	.word LoadLevel_LittleCloudRun		; 50 - Put in a run of those little smiling Judgem's type clouds
+	.word FAR014_LoadLevel_LittleCloudRun		; 50 - Put in a run of those little smiling Judgem's type clouds
 	.word LoadLevel_ChainLeft		; 51 - Left side chain
 	.word LoadLevel_ChainRight		; 52 - Right side chain
 	.word LoadLevel_SkyH_Unused		; 53 - Same functionality as 56, but not used??
@@ -257,14 +268,14 @@ LoadLevel_Generator_TS9:
 	.word LoadLevel_SkyV			; 55 - Run of sky tiles verticall
 	.word LoadLevel_SkyH			; 56 - Run of sky tiles horizontally
 	.word LoadLevel_20UNK			; 57 - Vertical run of unknown tile $F4
-	.word LoadLevel_HRightWallPipeRun3	; 58 - Horizontal right-hand wall pipe 3 (no entrance)
+	.word FAR014_LoadLevel_HRightWallPipeRun3	; 58 - Horizontal right-hand wall pipe 3 (no entrance)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LeveLoad_FixedSizeGen_TS9
 ;
-; Much simpler generators that are fixed-size, commonly used for 
-; just single tile placement styles (although a couple relatively 
+; Much simpler generators that are fixed-size, commonly used for
+; just single tile placement styles (although a couple relatively
 ; complex ones exist in here as well)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LeveLoad_FixedSizeGen_TS9:
@@ -276,11 +287,11 @@ LeveLoad_FixedSizeGen_TS9:
 
 	LDA Temp_Var15
 	AND #%11100000
-	LSR A		
+	LSR A
 	CLC
-	ADC LL_ShapeDef	
+	ADC LL_ShapeDef
 	TAX		 	; Resultant index is put into 'X'
-	JSR DynJump	 
+	JSR DynJump
 
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word LoadLevel_SmallBlock_Pyramid	;  0 - Builds a pyramid out of small blocks
@@ -294,37 +305,37 @@ LeveLoad_FixedSizeGen_TS9:
 	.word LoadLevel_PipeworkXtra		;  8 - Pipeworks cracked pipe tile
 	.word LoadLevel_PipeworksGround		;  9 - Pipeworks ground junction
 	.word LoadLevel_DesertCloud		; 10 - Cloud
-	.word LoadLevel_Door2			; 11 - Door style 2
+	.word FAR014_LoadLevel_Door2			; 11 - Door style 2
 	.word LoadLevel_BackgroundPyramid	; 12 - Constructs background pyramid
 	.word $0000				; 13 - NULL?
 	.word $0000				; 14 - NULL?
 	.word $0000				; 15 - NULL?
-	.word LoadLevel_PowerBlock		; 16 - ? block with flower
-	.word LoadLevel_PowerBlock		; 17 - ? block with leaf 
-	.word LoadLevel_PowerBlock		; 18 - ? block with star
-	.word LoadLevel_PowerBlock		; 19 - ? block with coin OR star
-	.word LoadLevel_PowerBlock		; 20 - ? block with coin (??)
-	.word LoadLevel_PowerBlock		; 21 - Muncher Plant!
-	.word LoadLevel_PowerBlock		; 22 - Brick with flower
-	.word LoadLevel_PowerBlock		; 23 - Brick with leaf
-	.word LoadLevel_PowerBlock		; 24 - Brick with star
-	.word LoadLevel_PowerBlock		; 25 - Brick with coin OR star
-	.word LoadLevel_PowerBlock		; 26 - Brick with 10-coin
-	.word LoadLevel_PowerBlock		; 27 - Brick with 1-up
-	.word LoadLevel_PowerBlock		; 28 - Brick with vine
-	.word LoadLevel_PowerBlock		; 29 - Brick with P-Switch
-	.word LoadLevel_PowerBlock		; 30 - Invisible coin
-	.word LoadLevel_PowerBlock		; 31 - Invisible 1-up
-	.word LoadLevel_PowerBlock		; 32 - Invisible note
-	.word LoadLevel_PowerBlock		; 33 - Note block with flower
-	.word LoadLevel_PowerBlock		; 34 - Note block with leaf
-	.word LoadLevel_PowerBlock		; 35 - Note block with star
-	.word LoadLevel_PowerBlock		; 36 - Wood block with flower
-	.word LoadLevel_PowerBlock		; 37 - Wood block with leaf
-	.word LoadLevel_PowerBlock		; 38 - Wood block with star
-	.word LoadLevel_PowerBlock		; 39 - Invisible note to coin heaven
-	.word LoadLevel_PowerBlock		; 40 - P-Switch
-	.word LoadLevel_EndGoal			; 41 - The end goal
+	.word FAR014_LoadLevel_PowerBlock		; 16 - ? block with flower
+	.word FAR014_LoadLevel_PowerBlock		; 17 - ? block with leaf
+	.word FAR014_LoadLevel_PowerBlock		; 18 - ? block with star
+	.word FAR014_LoadLevel_PowerBlock		; 19 - ? block with coin OR star
+	.word FAR014_LoadLevel_PowerBlock		; 20 - ? block with coin (??)
+	.word FAR014_LoadLevel_PowerBlock		; 21 - Muncher Plant!
+	.word FAR014_LoadLevel_PowerBlock		; 22 - Brick with flower
+	.word FAR014_LoadLevel_PowerBlock		; 23 - Brick with leaf
+	.word FAR014_LoadLevel_PowerBlock		; 24 - Brick with star
+	.word FAR014_LoadLevel_PowerBlock		; 25 - Brick with coin OR star
+	.word FAR014_LoadLevel_PowerBlock		; 26 - Brick with 10-coin
+	.word FAR014_LoadLevel_PowerBlock		; 27 - Brick with 1-up
+	.word FAR014_LoadLevel_PowerBlock		; 28 - Brick with vine
+	.word FAR014_LoadLevel_PowerBlock		; 29 - Brick with P-Switch
+	.word FAR014_LoadLevel_PowerBlock		; 30 - Invisible coin
+	.word FAR014_LoadLevel_PowerBlock		; 31 - Invisible 1-up
+	.word FAR014_LoadLevel_PowerBlock		; 32 - Invisible note
+	.word FAR014_LoadLevel_PowerBlock		; 33 - Note block with flower
+	.word FAR014_LoadLevel_PowerBlock		; 34 - Note block with leaf
+	.word FAR014_LoadLevel_PowerBlock		; 35 - Note block with star
+	.word FAR014_LoadLevel_PowerBlock		; 36 - Wood block with flower
+	.word FAR014_LoadLevel_PowerBlock		; 37 - Wood block with leaf
+	.word FAR014_LoadLevel_PowerBlock		; 38 - Wood block with star
+	.word FAR014_LoadLevel_PowerBlock		; 39 - Invisible note to coin heaven
+	.word FAR014_LoadLevel_PowerBlock		; 40 - P-Switch
+	.word FAR014_LoadLevel_EndGoal			; 41 - The end goal
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -396,7 +407,7 @@ PRG020_A55A:
 	CPX #$04
 	BEQ PRG020_A56B	 ; If X = 4, jump to PRG020_A56B
 
-	CPX #$08	 
+	CPX #$08
 	BNE PRG020_A55A	 ; If X <> 8, loop!
 
 PRG020_A56B:
@@ -409,7 +420,7 @@ PRG020_A56B:
 
 	LDA Temp_Var4
 	CLC
-	ADC #$04	
+	ADC #$04
 	STA Temp_Var4	; Temp_Var4 += 4 (next row of tiles)
 
 	TAX
@@ -451,7 +462,7 @@ PRG020_A5A6:
 	STA Temp_Var6		 ; Temp_Var6 = Temp_Var5
 
 PRG020_A5AD:
-	LDA LL_BiggerBlock,X	 ; Get big block tile 
+	LDA LL_BiggerBlock,X	 ; Get big block tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 	JSR LoadLevel_NextColumn	 ; Next column
@@ -480,7 +491,7 @@ PRG020_A5C2:
 	ADC #$06
 	STA Temp_Var4	 ; Temp_Var4 += 6 (next row)
 
-	TAX		
+	TAX
 	CPX #18
 	BNE PRG020_A5A6	 ; While X <> 18, loop
 
@@ -493,7 +504,7 @@ PRG020_A5C2:
 ; Generates 1-16 side-by-side biggest blocks
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LL_BiggestBlock:
-	.byte TILE9_BIGBLOCK_UL, TILE9_BIGBLOCK_UM, TILE9_BIGBLOCK_UM, TILE9_BIGBLOCK_UM, TILE9_BIGBLOCK_UM, TILE9_BIGBLOCK_UM, TILE9_BIGBLOCK_UM, TILE9_BIGBLOCK_UR 
+	.byte TILE9_BIGBLOCK_UL, TILE9_BIGBLOCK_UM, TILE9_BIGBLOCK_UM, TILE9_BIGBLOCK_UM, TILE9_BIGBLOCK_UM, TILE9_BIGBLOCK_UM, TILE9_BIGBLOCK_UM, TILE9_BIGBLOCK_UR
 	.byte TILE9_BIGBLOCK_ML, TILE9_BIGBLOCK_MM, TILE9_BIGBLOCK_MM, TILE9_BIGBLOCK_MM, TILE9_BIGBLOCK_MM, TILE9_BIGBLOCK_MM, TILE9_BIGBLOCK_MM, TILE9_BIGBLOCK_MR
 	.byte TILE9_BIGBLOCK_ML, TILE9_BIGBLOCK_MM, TILE9_BIGBLOCK_MM, TILE9_BIGBLOCK_MM, TILE9_BIGBLOCK_MM, TILE9_BIGBLOCK_MM, TILE9_BIGBLOCK_MM, TILE9_BIGBLOCK_MR
 	.byte TILE9_BIGBLOCK_LL, TILE9_BIGBLOCK_LM, TILE9_BIGBLOCK_LM, TILE9_BIGBLOCK_LM, TILE9_BIGBLOCK_LM, TILE9_BIGBLOCK_LM, TILE9_BIGBLOCK_LM, TILE9_BIGBLOCK_LR
@@ -552,7 +563,7 @@ PRG020_A62B:
 	ADC #$08
 	STA Temp_Var4	 ; Temp_Var4 += 8 (next row)
 
-	TAX		
+	TAX
 	CPX #32
 	BNE PRG020_A60B	 ; While X <> 32, loop
 
@@ -577,10 +588,10 @@ PRG020_A64A:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 	; Go to next row by adding 16
-	TYA		 
+	TYA
 	CLC
-	ADC #$10	 
-	TAY		 
+	ADC #$10
+	TAY
 	LDA Map_Tile_AddrH
 	ADC #$00
 	STA Map_Tile_AddrH
@@ -589,7 +600,7 @@ PRG020_A64A:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 	DEY		 ; Y-- (left one column)
-	TYA	
+	TYA
 	AND #$0f
 	CMP #$0f
 	BNE PRG020_A677	 ; If we haven't crossed left screen boundary, jump to PRG020_A677
@@ -607,7 +618,7 @@ PRG020_A64A:
 	INY
 	TYA
 	ORA #$0f
-	TAY	
+	TAY
 
 PRG020_A677:
 	STY TileAddr_Off	 ; TileAddr_Off = Y
@@ -687,7 +698,7 @@ PRG020_A6BB:
 	CPX #$04
 	BEQ PRG020_A6CC	 ; If X = 4, go to next row
 
-	CPX #$08	
+	CPX #$08
 	BNE PRG020_A6BB	 ; If X <> 8, loop
 
 PRG020_A6CC:
@@ -700,11 +711,11 @@ PRG020_A6CC:
 
 	LDA Temp_Var4
 	CLC
-	ADC #$04	
+	ADC #$04
 	STA Temp_Var4	; Temp_Var4 += 4
 
-	TAX		
-	CPX #$08	
+	TAX
+	CPX #$08
 	BNE PRG020_A6B4	 ; If X <> 8, loop
 
 	RTS		 ; Return
@@ -729,7 +740,7 @@ LoadLevel_BigSandBricks:
 
 	LDX #$00	 ; X = 0
 	STX Temp_Var4	 ; Temp_Var4 = 0 (base index)
- 
+
 	LDA LL_ShapeDef
 	AND #$0f
 	STA Temp_Var5		 ; Temp_Var5 = lower 4 bits of LL_ShapeDef
@@ -770,7 +781,7 @@ PRG020_A723:
 	ADC #$06
 	STA Temp_Var4	 ; Temp_Var4 += 6
 
-	TAX	
+	TAX
 	CPX #18
 	BNE PRG020_A707	 ; While X <> 18, loop
 
@@ -808,7 +819,7 @@ PRG020_A76C:
 	STA Temp_Var6		 ; Temp_Var6 = Temp_Var5
 
 PRG020_A773:
-	LDA LL_BiggerSandBrick,X	; Get sand brick tile 
+	LDA LL_BiggerSandBrick,X	; Get sand brick tile
 	STA (Map_Tile_AddrL),Y	 	; Store into tile mem
 
 	JSR LoadLevel_NextColumn	 ; Next column
@@ -876,8 +887,8 @@ PRG020_A7AB:
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 	DEY		 ; Y-- (previous column)
-	TYA		 
-	AND #$0f	 
+	TYA
+	AND #$0f
 	BNE PRG020_A7D6	 ; If we haven't crossed left screen boundary, jump to PRG020_A7D6
 
 	; Go to previous screen by subtracting $1B0
@@ -972,7 +983,7 @@ PRG020_A7F0:
 	TYA
 	AND #$f0
 	ORA #$0f
-	TAY	
+	TAY
 
 PRG020_A838:
 	STY TileAddr_Off	 ; TileAddr_Off = Y
@@ -1049,7 +1060,7 @@ PRG020_A853:
 	TYA
 	AND #$f0
 	ORA Temp_Var7
-	TAY		
+	TAY
 
 PRG020_A897:
 	STY TileAddr_Off	 ; TileAddr_Off = Y
@@ -1203,12 +1214,12 @@ PRG020_A913:
 	LDA Map_Tile_AddrH
 	SBC #$01
 	STA Map_Tile_AddrH
-	TYA	
+	TYA
 	CLC
 	ADC #$04
 	AND #$f0
 	ORA Temp_Var7
-	TAY	
+	TAY
 
 PRG020_A959:
 	STY TileAddr_Off	 ; TileAddr_Off = Y
@@ -1278,10 +1289,10 @@ PRG020_A991:
 
 PRG020_A995:
 	; Go to next row by adding 16
-	TYA	
+	TYA
 	CLC
 	ADC #16
-	TAY	
+	TAY
 	LDA Map_Tile_AddrH
 	ADC #$00
 	STA Map_Tile_AddrH
@@ -1305,10 +1316,10 @@ LoadLevel_MiscDesertTiles:
 
 	SEC
 	SBC #$20
-	LSR A	
-	LSR A	
-	LSR A	
-	LSR A	
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	TAX		 ; X = relative index
 
 	PLA		 ; Restore LL_ShapeDef
@@ -1376,7 +1387,7 @@ PRG020_A9DB:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LoadLevel_SkyH_Unused
 ;
-; Identical duplicate of LoadLevel_SkyH??  
+; Identical duplicate of LoadLevel_SkyH??
 ; Only difference is they did not appear to use this one!
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LoadLevel_SkyH_Unused:
@@ -1406,7 +1417,7 @@ PRG020_A9F9:
 ;
 ; The generator will ALWAYS GENERATE 5 ROWS of horizontal pipes
 ; at a specified width in multiple of 16 (16, 32, 48, ... 256),
-; at the left edge and roughly the center of each 16 width 
+; at the left edge and roughly the center of each 16 width
 ; segment.  After that, other generators trim to fit.  Each pass
 ; of vertical tiles that hits a horizontal one automatically
 ; generates the corner tile.  So we wind up with:
@@ -1440,10 +1451,10 @@ LoadLevel_Pipeworks:
 	INX
 	TXA
 	AND #$0f
-	ASL A	
-	ASL A	
-	ASL A	
-	ASL A	
+	ASL A
+	ASL A
+	ASL A
+	ASL A
 	STA Temp_Var3	 ; Temp_Var3 = lower 4 bits of LL_ShapeDef incremented and shifted up by 4... (16, 32, 48, 64, ...)
 
 	LDY TileAddr_Off	 ; Y = TileAddr_Off
@@ -1479,9 +1490,9 @@ PRG020_AA22:
 	CLC
 	ADC #64
 	STA TileAddr_Off
-	TAY	
+	TAY
 	LDA Map_Tile_AddrH
-	ADC #$00	
+	ADC #$00
 	STA Map_Tile_AddrH
 	STA Temp_Var2
 
@@ -1529,7 +1540,7 @@ PRG020_AA72:
 	ADC #$00
 	STA Map_Tile_AddrH
 
-	DEX		 ; X-- 
+	DEX		 ; X--
 	BPL PRG020_AA65	 ; While X >= 0, loop
 
 	; Restore Map_Tile_Addr from backup
@@ -1541,7 +1552,7 @@ PRG020_AA72:
 
 	; Move over 8 tiles to next spot
 	LDA TileAddr_Off
-	EOR #$08	 
+	EOR #$08
 	STA TileAddr_Off
 	TAY
 	AND #$08
@@ -1554,7 +1565,7 @@ PRG020_AA72:
 	STA Map_Tile_AddrL
 	STA Temp_Var1
 	LDA Map_Tile_AddrH
-	ADC #$01	 
+	ADC #$01
 	STA Map_Tile_AddrH
 	STA Temp_Var2
 	DEC Temp_Var3	 ; Temp_Var3--
@@ -1630,14 +1641,14 @@ LoadLevel_20UNK:
 	LDY TileAddr_Off	 ; Y = TileAddr_Off
 
 PRG020_AAE6:
-	LDA #$f4	 
+	LDA #$f4
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 
 	; Go to next row by adding 16
 	TYA
 	CLC
 	ADC #$10
-	TAY	
+	TAY
 	LDA Map_Tile_AddrH
 	ADC #$00
 	STA Map_Tile_AddrH
@@ -1650,8 +1661,8 @@ PRG020_AAE6:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LoadLevel_SmallBlock_Pyramid
 ;
-; Constructs a pyramid out of small blocks, but it is very 
-; specific in that it wants to end when the tile offset 
+; Constructs a pyramid out of small blocks, but it is very
+; specific in that it wants to end when the tile offset
 ; exceeds $A0... not sure how to describe that
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LoadLevel_SmallBlock_Pyramid:
@@ -1699,7 +1710,7 @@ PRG020_AB0C:
 	BCC PRG020_AB41	 ; If haven't crossed offset boundary, jump to PRG020_AB41
 
 	LDA Map_Tile_AddrH
-	ADC #$00	 
+	ADC #$00
 	STA Map_Tile_AddrH
 	STA Temp_Var2
 
@@ -1741,7 +1752,7 @@ PRG020_AB61:
 	BEQ PRG020_AB05	 	; On every other jump to PRG020_AB05
 
 	LDA TileAddr_Off
-	CMP #$a0	 
+	CMP #$a0
 	BLT PRG020_AB05	 ; If the tile offset hasn't hit $A0, jump to PRG020_AB05
 
 	RTS		 ; Return
@@ -1777,7 +1788,7 @@ PRG020_AB89:
 	CPX #$04
 	BEQ PRG020_AB9A	 	; If X = 4, jump to PRG020_AB9A
 
-	CPX #$08	 
+	CPX #$08
 	BNE PRG020_AB89	 	; If X <> 8, jump to PRG020_AB89
 
 PRG020_AB9A:
@@ -1800,11 +1811,11 @@ PRG020_AB9A:
 	BCC PRG020_ABC2	 ; If haven't crossed offset boundary, jump to PRG020_ABC2
 
 	LDA Map_Tile_AddrH
-	ADC #$00	 
+	ADC #$00
 	STA Map_Tile_AddrH
-	STA Temp_Var2	
+	STA Temp_Var2
 
-	LDA Temp_Var15	
+	LDA Temp_Var15
 	CLC
 	ADC #16
 	STA Temp_Var15		 ; Temp_Var15 += 16
@@ -1815,7 +1826,7 @@ PRG020_ABC2:
 	ADC #$04
 	STA Temp_Var4	 ; Temp_Var4 += 4
 
-	TAX	
+	TAX
 	CPX #$08
 	BNE PRG020_AB82	 ; If X <> 8, jump to PRG020_AB82
 
@@ -1835,16 +1846,16 @@ PRG020_ABC2:
 	STA Map_Tile_AddrL
 	STA Temp_Var1
 	LDA Map_Tile_AddrH
-	SBC #$01	
+	SBC #$01
 	STA Map_Tile_AddrH
-	STA Temp_Var2	
+	STA Temp_Var2
 
-	INY	
-	INY	
-	TYA	
+	INY
+	INY
+	TYA
 	AND #$f0
 	ORA Temp_Var7
-	TAY		
+	TAY
 
 PRG020_ABF5:
 	STY TileAddr_Off	 ; TileAddr_Off = Y
@@ -1854,13 +1865,13 @@ PRG020_ABF5:
 
 	INC Temp_Var5		 ; Temp_Var5++
 
-	LDA Temp_Var15		
-	AND #$10	 
+	LDA Temp_Var15
+	AND #$10
 	BEQ PRG020_AC0C	 ; On every other jump to PRG020_AC0C
 
-	LDA TileAddr_Off	 ; $AC04 
-	CMP #$90	 ; $AC07 
-	BLT PRG020_AC0C	 ; $AC09 
+	LDA TileAddr_Off	 ; $AC04
+	CMP #$90	 ; $AC07
+	BLT PRG020_AC0C	 ; $AC09
 
 	RTS		 ; Return
 
@@ -1958,7 +1969,7 @@ PRG020_AC61:
 	SEC
 	SBC #$b0
 	STA Map_Tile_AddrL
-	STA Temp_Var1	
+	STA Temp_Var1
 	LDA Map_Tile_AddrH
 	SBC #$01
 	STA Map_Tile_AddrH
@@ -1970,7 +1981,7 @@ PRG020_AC61:
 	TYA
 	AND #$f0
 	ORA Temp_Var7
-	TAY	
+	TAY
 
 PRG020_AC95:
 	STY TileAddr_Off	 ; TileAddr_Off = Y
@@ -2078,20 +2089,20 @@ PRG020_AD05:
 	LDA TileAddr_Off
 	SEC
 	SBC #$04	 ; Move back FOUR columns
-	TAY		
-	AND #$0f	
-	CMP #$0c	
+	TAY
+	AND #$0f
+	CMP #$0c
 	BCC PRG020_AD3A	 ; If haven't crossed screen boundary, jump to PRG020_AD3A
 
 	; Go to previous screen by subtracting $1B0
 	STA Temp_Var7
 	LDA Map_Tile_AddrL
 	SEC
-	SBC #$b0	 
+	SBC #$b0
 	STA Map_Tile_AddrL
 	STA Temp_Var1
 	LDA Map_Tile_AddrH
-	SBC #$01	 
+	SBC #$01
 	STA Map_Tile_AddrH
 	STA Temp_Var2
 
@@ -2100,7 +2111,7 @@ PRG020_AD05:
 	ADC #$04
 	AND #$f0
 	ORA Temp_Var7
-	TAY	
+	TAY
 
 PRG020_AD3A:
 	STY TileAddr_Off	 ; TileAddr_Off = Y
@@ -2111,7 +2122,7 @@ PRG020_AD3A:
 	INC Temp_Var5	 ; Temp_Var5++
 
 	LDA Temp_Var15
-	AND #$10	
+	AND #$10
 	BEQ PRG020_AD51	 ; On every other, jump to PRG020_AD51
 
 	LDA TileAddr_Off
@@ -2121,7 +2132,7 @@ PRG020_AD3A:
 	RTS		 ; Return
 
 PRG020_AD51:
-	JMP PRG020_ACBD	 ; $AD51 
+	JMP PRG020_ACBD	 ; $AD51
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2163,28 +2174,28 @@ PRG020_AD64:
 	ADC #16
 	TAY
 	LDA Map_Tile_AddrH
-	ADC #$00	
+	ADC #$00
 	STA Map_Tile_AddrH
 
 	; Did they forget this is defined as a function?
-	INY		; Next column	 
-	TYA		 
-	AND #$0f	
+	INY		; Next column
+	TYA
+	AND #$0f
 	BNE PRG020_AD9C	 ; If crossed screen boundary, jump to PRG020_AD9C
 
 	; Go to next screen by adding $1B0
 	LDA Map_Tile_AddrL
 	CLC
-	ADC #$b0	 
+	ADC #$b0
 	STA Map_Tile_AddrL
 	LDA Map_Tile_AddrH
-	ADC #$01	 
+	ADC #$01
 	STA Map_Tile_AddrH
 
-	DEY		 
-	TYA		 
-	AND #$f0	 
-	TAY		 
+	DEY
+	TYA
+	AND #$f0
+	TAY
 
 	; Three tall trunk
 PRG020_AD9C:
@@ -2264,7 +2275,7 @@ PRG020_ADDC:
 	BPL PRG020_ADDA	 ; While X >= 0, loop
 
 	LDX Temp_Var3	 ; X = Temp_Var3
-	BEQ PRG020_ADF2	 ; $ADE6 
+	BEQ PRG020_ADF2	 ; $ADE6
 
 PRG020_ADE8:
 	LDA #TILE9_PYRAMIDSH	; Shaded pyramid fill tile
@@ -2288,9 +2299,9 @@ PRG020_ADF2:
 	LDA TileAddr_Off
 	CLC
 	ADC #16
-	TAY	
-	DEY	
-	TYA	
+	TAY
+	DEY
+	TYA
 	AND #$0f
 	CMP #$0f
 	BNE PRG020_AE25		; If haven't crossed boundary, jump to PRG020_AE25
@@ -2302,7 +2313,7 @@ PRG020_ADF2:
 	STA Map_Tile_AddrL
 	STA Temp_Var1
 	LDA Map_Tile_AddrH
-	SBC #$01	
+	SBC #$01
 	STA Map_Tile_AddrH
 	STA Temp_Var2
 
@@ -2310,7 +2321,7 @@ PRG020_ADF2:
 	TYA
 	AND #$f0
 	ORA #$0f
-	TAY	
+	TAY
 
 PRG020_AE25:
 	STY TileAddr_Off	 ; TileAddr_Off = Y
@@ -2327,7 +2338,7 @@ PRG020_AE2F:
 ;
 ; Builds a specific cannon on a platform
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-LL_CannonPlatform:	
+LL_CannonPlatform:
 	.byte TILE9_CANNONBLOCK, TILEA_WOODBLOCK, TILE9_CANNONBLOCK
 LL_CannonPlatform_End:
 
@@ -2359,7 +2370,7 @@ LoadLevel_CannonPlatform:
 	STA Map_Tile_AddrH
 
 	DEY		 ; Y-- previous column
-	TYA	
+	TYA
 	AND #$0f
 	CMP #$0f
 	BNE PRG020_AE6E	 ; If haven't crossed screen boundary, jump to PRG020_AE6E
@@ -2417,7 +2428,7 @@ LL_PipeworkXtra:	.byte TILE9_PIPEWORKS_JCT, TILE9_PIPEWORKS_CRACK
 LoadLevel_PipeworkXtra:
 	LDA LL_ShapeDef
 	SEC
-	SBC #$07	
+	SBC #$07
 	TAX		 ; X = relative index
 
 	LDY TileAddr_Off	 ; Y = TileAddr_Off
@@ -2498,7 +2509,7 @@ PRG020_AED8:
 	; and advance the Level_LayPtr_Addr pointer...
 	; Also backup Map_Tile_AddrL/H into Temp_Var1/2
 LL20_GetLayoutByte_AndBackup:
-	LDY #$00	 
+	LDY #$00
 	LDA (Level_LayPtr_AddrL),Y	; Get another byte from layout data
 	STA Temp_Var3		 	; Store it into Temp_Var3
 
@@ -2521,7 +2532,7 @@ PRG020_AEEC:
 
 	; Same as above, except Temp_Var5 instead of Temp_Var3
 LL20_GetLayoutByte_AndBackup2:
-	LDY #$00	 
+	LDY #$00
 	LDA (Level_LayPtr_AddrL),Y	; Get another byte from layout data
 	STA Temp_Var5		 	; Store into Temp_Var5
 	JMP PRG020_AEEC			; Continue with LL20_GetLayoutByte_AndBackup
@@ -2540,9 +2551,9 @@ LL20_ReturnTileAndNextRow:
 	CLC
 	ADC #16
 	STA TileAddr_Off
-	TAY	
+	TAY
 	LDA Map_Tile_AddrH
-	ADC #$00	
+	ADC #$00
 	STA Map_Tile_AddrH
 	STA Temp_Var2
 

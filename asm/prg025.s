@@ -18,7 +18,7 @@
 .include "../inc/defines.inc"
 
 ; BSS imports (low RAM and cart SRAM)
-.import Graphics_Buffer, Ending_CmdBuffer
+.import Graphics_Buffer
 ; exports
 .export EndPicByWorld_H, EndPicByWorld_L, EndPic_VRAMStart_H, EndPic_VRAMStart_L, Ending2_EndPicSprites3_End
 .export Ending2_EndPicSprites4, Ending2_EndPicSprites4_End, Ending2_EndPicSprites5, Ending2_EndPicSprites5_End
@@ -26,9 +26,9 @@
 .export Ending2_EndPicSprites8, Ending2_EndPicSprites8_End, Video_Upd_Table2
 
 
-.ifdef NES
+
 .segment "PRG025"
-.endif
+
 	.byte           $01, $28
 	.byte $4F, $B7, $01, $20
 	.byte $57, $B5, $01, $18
@@ -277,7 +277,7 @@ Video_Upd_Table2:
 	.word TitleScreen_LogoAttr2	; $21 - Title Screen part 26
 	.word TitleScreen_DarkPal	; $22 - Title Screen part 27 Sequence end
 
-	.word Title_Checkerboard_Floor	; $23 - The black & white squares at the beginning 
+	.word Title_Checkerboard_Floor	; $23 - The black & white squares at the beginning
 	.word Ending_CurtainExtension	; $24 - Slightly longer curtain in ending
 	.word PRG025_CCCE		; $25 - ???
 	.word EndSeq_WorldFadeIn1	; $26 - End pic world fade in effect part 1
@@ -291,34 +291,34 @@ Video_Upd_Table2:
 	.word PRG025_CDE7		; $2E - ???
 	.word PRG025_CE02		; $2F - ???
 	.word PRG025_CE19		; $30 - ???
-	.word PRG025_CE2D		; $31 - 
-	.word PRG025_CE43		; $32 - 
-	.word PRG025_CE57		; $33 - 
-	.word PRG025_CE6D		; $34 - 
-	.word PRG025_CE7B		; $35 - 
-	.word PRG025_CE91		; $36 - 
-	.word PRG025_CE9E		; $37 - 
-	.word PRG025_CEAE		; $38 - 
-	.word PRG025_CEB6		; $39 - 
-	.word PRG025_CEC5		; $3A - 
-	.word PRG025_CEE2		; $3B - 
-	.word PRG025_CEFF		; $3C - 
-	.word PRG025_CF0A		; $3D - 
-	.word PRG025_CF20		; $3E - 
-	.word PRG025_CF43		; $3F - 
-	.word PRG025_CF6B		; $40 - 
-	.word PRG025_CF8A		; $41 - 
-	.word PRG025_CF9E		; $42 - 
-	.word PRG025_CFB2		; $43 - 
-	.word PRG025_CFC8		; $44 - 
-	.word PRG025_CFED		; $45 - 
-	.word PRG025_CFF6		; $46 - 
-	.word PRG025_D009		; $47 - 
-	.word PRG025_D01F		; $48 - 
-	.word PRG025_D035		; $49 - 
-	.word PRG025_D044		; $4A - 
-	.word PRG025_D051		; $4B - 
-	.word PRG025_D059		; $4C - 
+	.word PRG025_CE2D		; $31 -
+	.word PRG025_CE43		; $32 -
+	.word PRG025_CE57		; $33 -
+	.word PRG025_CE6D		; $34 -
+	.word PRG025_CE7B		; $35 -
+	.word PRG025_CE91		; $36 -
+	.word PRG025_CE9E		; $37 -
+	.word PRG025_CEAE		; $38 -
+	.word PRG025_CEB6		; $39 -
+	.word PRG025_CEC5		; $3A -
+	.word PRG025_CEE2		; $3B -
+	.word PRG025_CEFF		; $3C -
+	.word PRG025_CF0A		; $3D -
+	.word PRG025_CF20		; $3E -
+	.word PRG025_CF43		; $3F -
+	.word PRG025_CF6B		; $40 -
+	.word PRG025_CF8A		; $41 -
+	.word PRG025_CF9E		; $42 -
+	.word PRG025_CFB2		; $43 -
+	.word PRG025_CFC8		; $44 -
+	.word PRG025_CFED		; $45 -
+	.word PRG025_CFF6		; $46 -
+	.word PRG025_D009		; $47 -
+	.word PRG025_D01F		; $48 -
+	.word PRG025_D035		; $49 -
+	.word PRG025_D044		; $4A -
+	.word PRG025_D051		; $4B -
+	.word PRG025_D059		; $4C -
 	.word EndSeq_World1Pal		; $4D - Ending pic World 1 full palette
 	.word EndSeq_World2Pal		; $4E - Ending pic World 2 full palette
 	.word EndSeq_World3Pal		; $4F - Ending pic World 3 full palette
@@ -337,7 +337,7 @@ Video_Upd_Table2:
 	.word EndSeq_CurtainFadeIn1	; $5C - Curtain fade in effect part 1
 	.word EndSeq_CurtainFadeIn2	; $5D - Curtain fade in effect part 2
 	.word EndSeq_CurtainFadeIn3	; $5E - Curtain fade in effect part 3
-	.word PRG025_D505		; $5F - 
+	.word PRG025_D505		; $5F -
 
 Title_Load_Palette:
 	; This is the initial palette applied to the title screen
@@ -361,7 +361,7 @@ Title_Checkerboard_Floor:
 	.byte 32	; 32 bytes to follow
 	.byte $15, $15, $16, $16, $15, $15, $16, $16, $15, $15, $16, $16, $15, $15, $16, $16
 	.byte $15, $15, $16, $16, $15, $15, $16, $16, $15, $15, $16, $16, $15, $15, $16, $16
-	
+
 	vaddr $2B20
 	.byte 32	; 32 bytes to follow
 	.byte $E6, $E6, $E7, $E7, $E6, $E6, $E7, $E7, $E6, $E6, $E7, $E7, $E6, $E6, $E7, $E7
@@ -1204,7 +1204,7 @@ EndSeq_PrincessChamber:
 
 	vaddr $2AC4
 	.byte VU_REPEAT | $02, $FF
-	
+
 	vaddr $2ADD
 	.byte $03, $FF, $68, $6A
 
@@ -1309,7 +1309,7 @@ EndSeq_CurtainFadeIn2:
 	.byte $00
 
 
-EndSeq_CurtainFadeIn3: 
+EndSeq_CurtainFadeIn3:
        vaddr $3F00
 	.byte $10, $0F, $0F, $20, $16, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F, $0F
 	.byte $0F

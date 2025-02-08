@@ -25,15 +25,25 @@
 .import W7AirshipO, W6AirshipO, W5AirshipO, W4AirshipO, W3AirshipO, W2AirshipO, W1AirshipO
 .import W6Airship_BossO, W4Airship_BossO, W3Airship_BossO, W2Airship_BossO, W1Airship_BossO
 .import W5Airship_BossO
-; imports from PRG014
-.import LoadLevel_NextColumn, LoadLevel_EndGoal, LoadLevel_PowerBlock, LoadLevel_VTransitPipeRun
-.import LoadLevel_IceBricks, LoadLevel_TopDecoBlocks, LoadLevel_CCBridge, LoadLevel_Cannon
-.import LoadLevel_HLeftWallPipeRun, LoadLevel_HRightWallPipeRun, LoadLevel_VCeilingPipeRun
-.import LoadLevel_VGroundPipeRun, LoadLevel_BlockRun
+; imports from PRG014 (PRG014LOW on X16)
+.import LoadLevel_NextColumn
 ; imports from PRG030
 .import LevelLoad, Tile_Mem_ClearA, Tile_Mem_ClearB
 ; imports from PRG031
 .import DynJump
+; far imports
+.import FAR014_LoadLevel_BlockRun
+.import FAR014_LoadLevel_CCBridge
+.import FAR014_LoadLevel_Cannon
+.import FAR014_LoadLevel_EndGoal
+.import FAR014_LoadLevel_HLeftWallPipeRun
+.import FAR014_LoadLevel_HRightWallPipeRun
+.import FAR014_LoadLevel_IceBricks
+.import FAR014_LoadLevel_PowerBlock
+.import FAR014_LoadLevel_TopDecoBlocks
+.import FAR014_LoadLevel_VCeilingPipeRun
+.import FAR014_LoadLevel_VGroundPipeRun
+.import FAR014_LoadLevel_VTransitPipeRun
 ; exports
 .export CoinShipL, LeveLoad_FixedSizeGen_TS10, LevelLoad_TS10, LoadLevel_Generator_TS10, Tile_Attributes_TS10
 .export Tile_Layout_TS10, W1AirshipL, W1Airship_IntroL, W2AirshipL, W2Airship_IntroL, W3AirshipL, W3Airship_IntroL
@@ -41,9 +51,9 @@
 .export W8AirshipL, W8BSL, W8T1L, W8T2L
 
 
-.ifdef NES
+
 .segment "PRG023"
-.endif
+
 Tile_Layout_TS10:
 	; This defines the individual 8x8 blocks used to construct one of the tiles
 	; Referenced by Address_Per_Tileset, addressed by Level_Tileset
@@ -88,7 +98,7 @@ Tile_Layout_TS10:
 	.byte $AB, $AB, $30, $31, $33, $33, $2A, $2A, $0E, $1E, $2A, $2C, $2A, $2C, $0E, $2E ; Tiles $E0 - $EF
 	.byte $89, $06, $E1, $06, $1E, $3E, $23, $06, $48, $06, $31, $33, $34, $39, $57, $FF ; Tiles $F0 - $FF
 
-	; Upper right 8x8 pattern per tile	
+	; Upper right 8x8 pattern per tile
 	.byte $FF, $FF, $FF, $07, $07, $EA, $FF, $FC, $FD, $FE, $FF, $FF, $FF, $FF, $FF, $FF ; Tiles $00 - $0F
 	.byte $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF ; Tiles $10 - $1F
 	.byte $FF, $FF, $FF, $FF, $41, $44, $6D, $6F, $65, $69, $67, $FC, $4A, $4A, $BA, $BA ; Tiles $20 - $2F
@@ -134,9 +144,9 @@ Tile_Attributes_TS10:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LevelLoad_TS10:
 	; Clear Tile memory
-	LDY #$00	 
+	LDY #$00
 PRG023_A40A:
-	LDA #TILE10_SKY		; just clear everything to sky	 
+	LDA #TILE10_SKY		; just clear everything to sky
 	JSR Tile_Mem_ClearB
 	JSR Tile_Mem_ClearA
 	CPY #$f0
@@ -162,17 +172,17 @@ LoadLevel_Generator_TS10:
 
 	LDA Temp_Var15
 	AND #%11100000
-	LSR A		
-	LSR A		
-	LSR A		
-	LSR A		
-	LSR A		
+	LSR A
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	TAX		 	; X = upper 3 bits of Temp_Var15 (0-7) (selects a multiple of 15 as the base)
 
 	LDA LL_ShapeDef
-	LSR A	
-	LSR A	
-	LSR A	
+	LSR A
+	LSR A
+	LSR A
 	LSR A			; A = upper 4 bits of LL_ShapeDef shifted down
 	CLC
 	ADC PRG023_A419,X	; Add multiple of 15
@@ -202,36 +212,36 @@ LoadLevel_Generator_TS10:
 	.word LoadLevel_MetalSupportRVRun	; 12 - Metal right support vertical
 	.word LoadLevel_WoodFloor		; 13 - Wood floor A 1
 	.word LoadLevel_WoodFloor		; 14 - Wood floor A 2
-	.word LoadLevel_BlockRun		; 15 - Run of bricks
-	.word LoadLevel_BlockRun		; 16 - Run of '?' blocks with a coin
-	.word LoadLevel_BlockRun		; 17 - Run of bricks with a coin
-	.word LoadLevel_BlockRun		; 18 - Run of wood blocks
-	.word LoadLevel_BlockRun		; 19 - Run of green note blocks (?)
-	.word LoadLevel_BlockRun		; 20 - Run of note blocks
-	.word LoadLevel_BlockRun		; 21 - Run of bouncing wood blocks
-	.word LoadLevel_BlockRun		; 22 - Run of coins
-	.word LoadLevel_VGroundPipeRun		; 23 - Vertical ground pipe 1 (alt level)
-	.word LoadLevel_VGroundPipeRun		; 24 - Vertical ground pipe 2 (Big [?] area)
-	.word LoadLevel_VGroundPipeRun		; 25 - Vertical ground pipe 3 (no entrance)
-	.word LoadLevel_VCeilingPipeRun		; 26 - Vertical ceiling pipe 1 (alt level)
-	.word LoadLevel_VCeilingPipeRun		; 27 - Vertical ceiling pipe 2 (no entrance)
-	.word LoadLevel_HRightWallPipeRun	; 28 - Horizontal right-hand wall pipe (alt level)
-	.word LoadLevel_HRightWallPipeRun	; 29 - Horizontal right-hand wall pipe (no entrance)
-	.word LoadLevel_HLeftWallPipeRun	; 30 - Horizontal left-hand wall pipe (alt level)
-	.word LoadLevel_HLeftWallPipeRun	; 31 - Horizontal left-hand wall pipe (no entrance)
-	.word LoadLevel_Cannon			; 32 - Bullet bill cannon
-	.word LoadLevel_CCBridge		; 33 - Cheep-Cheep style 'oo' bridge
-	.word LoadLevel_CCBridge		; 34 - Would result in empty tiles?  (form of 33)
-	.word LoadLevel_TopDecoBlocks		; 35 - Top-Deco Rectangle Waterfall
-	.word LoadLevel_TopDecoBlocks		; 36 - Top-Deco Rectangle Left waving water pool
-	.word LoadLevel_TopDecoBlocks		; 37 - Top-Deco Rectangle No current waving water pool
-	.word LoadLevel_TopDecoBlocks		; 38 - Top-Deco Rectangle Right waving water pool
-	.word LoadLevel_TopDecoBlocks		; 39 - Top-Deco Rectangle Water wrong-way BG
-	.word LoadLevel_TopDecoBlocks		; 40 - Top-Deco Rectangle Diamond blocks (not really any deco on top)
-	.word LoadLevel_TopDecoBlocks		; 41 - Top-Deco Rectangle Sand ground 
-	.word LoadLevel_TopDecoBlocks		; 42 - Top-Deco Rectangle orange block??
-	.word LoadLevel_IceBricks		; 43 - Run of ice bricks
-	.word LoadLevel_VTransitPipeRun		; 44 - Vertical in-level transit pipe
+	.word FAR014_LoadLevel_BlockRun		; 15 - Run of bricks
+	.word FAR014_LoadLevel_BlockRun		; 16 - Run of '?' blocks with a coin
+	.word FAR014_LoadLevel_BlockRun		; 17 - Run of bricks with a coin
+	.word FAR014_LoadLevel_BlockRun		; 18 - Run of wood blocks
+	.word FAR014_LoadLevel_BlockRun		; 19 - Run of green note blocks (?)
+	.word FAR014_LoadLevel_BlockRun		; 20 - Run of note blocks
+	.word FAR014_LoadLevel_BlockRun		; 21 - Run of bouncing wood blocks
+	.word FAR014_LoadLevel_BlockRun		; 22 - Run of coins
+	.word FAR014_LoadLevel_VGroundPipeRun		; 23 - Vertical ground pipe 1 (alt level)
+	.word FAR014_LoadLevel_VGroundPipeRun		; 24 - Vertical ground pipe 2 (Big [?] area)
+	.word FAR014_LoadLevel_VGroundPipeRun		; 25 - Vertical ground pipe 3 (no entrance)
+	.word FAR014_LoadLevel_VCeilingPipeRun		; 26 - Vertical ceiling pipe 1 (alt level)
+	.word FAR014_LoadLevel_VCeilingPipeRun		; 27 - Vertical ceiling pipe 2 (no entrance)
+	.word FAR014_LoadLevel_HRightWallPipeRun	; 28 - Horizontal right-hand wall pipe (alt level)
+	.word FAR014_LoadLevel_HRightWallPipeRun	; 29 - Horizontal right-hand wall pipe (no entrance)
+	.word FAR014_LoadLevel_HLeftWallPipeRun	; 30 - Horizontal left-hand wall pipe (alt level)
+	.word FAR014_LoadLevel_HLeftWallPipeRun	; 31 - Horizontal left-hand wall pipe (no entrance)
+	.word FAR014_LoadLevel_Cannon			; 32 - Bullet bill cannon
+	.word FAR014_LoadLevel_CCBridge		; 33 - Cheep-Cheep style 'oo' bridge
+	.word FAR014_LoadLevel_CCBridge		; 34 - Would result in empty tiles?  (form of 33)
+	.word FAR014_LoadLevel_TopDecoBlocks		; 35 - Top-Deco Rectangle Waterfall
+	.word FAR014_LoadLevel_TopDecoBlocks		; 36 - Top-Deco Rectangle Left waving water pool
+	.word FAR014_LoadLevel_TopDecoBlocks		; 37 - Top-Deco Rectangle No current waving water pool
+	.word FAR014_LoadLevel_TopDecoBlocks		; 38 - Top-Deco Rectangle Right waving water pool
+	.word FAR014_LoadLevel_TopDecoBlocks		; 39 - Top-Deco Rectangle Water wrong-way BG
+	.word FAR014_LoadLevel_TopDecoBlocks		; 40 - Top-Deco Rectangle Diamond blocks (not really any deco on top)
+	.word FAR014_LoadLevel_TopDecoBlocks		; 41 - Top-Deco Rectangle Sand ground
+	.word FAR014_LoadLevel_TopDecoBlocks		; 42 - Top-Deco Rectangle orange block??
+	.word FAR014_LoadLevel_IceBricks		; 43 - Run of ice bricks
+	.word FAR014_LoadLevel_VTransitPipeRun		; 44 - Vertical in-level transit pipe
 	.word LoadLevel_WoodFloor2		; 45 - Wood floor B
 	.word LoadLevel_RopeRailing		; 46 - Rope railing
 	.word LoadLevel_WarGround		; 47 - Run of war ground
@@ -249,8 +259,8 @@ LoadLevel_Generator_TS10:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; LeveLoad_FixedSizeGen_TS10
 ;
-; Much simpler generators that are fixed-size, commonly used for 
-; just single tile placement styles (although a couple relatively 
+; Much simpler generators that are fixed-size, commonly used for
+; just single tile placement styles (although a couple relatively
 ; complex ones exist in here as well)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LeveLoad_FixedSizeGen_TS10:
@@ -262,11 +272,11 @@ LeveLoad_FixedSizeGen_TS10:
 
 	LDA Temp_Var15
 	AND #%11100000
-	LSR A		
+	LSR A
 	CLC
-	ADC LL_ShapeDef	
+	ADC LL_ShapeDef
 	TAX		 	; Resultant index is put into 'X'
-	JSR DynJump	 
+	JSR DynJump
 
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word LoadLevel_AirshipMisc		;  0 - Horizontal screw tile
@@ -285,32 +295,32 @@ LeveLoad_FixedSizeGen_TS10:
 	.word LoadLevel_WallCannonB		; 13 - Wall cannon "backward" (like the slash)
 	.word LoadLevel_MetalSquare		; 14 - Metal support square
 	.word LoadLevel_Black14Rows		; 15 - 14 rows of black
-	.word LoadLevel_PowerBlock		; 16 - ? block with flower
-	.word LoadLevel_PowerBlock		; 17 - ? block with leaf 
-	.word LoadLevel_PowerBlock		; 18 - ? block with star
-	.word LoadLevel_PowerBlock		; 19 - ? block with coin OR star
-	.word LoadLevel_PowerBlock		; 20 - ? block with coin (??)
-	.word LoadLevel_PowerBlock		; 21 - Muncher Plant!
-	.word LoadLevel_PowerBlock		; 22 - Brick with flower
-	.word LoadLevel_PowerBlock		; 23 - Brick with leaf
-	.word LoadLevel_PowerBlock		; 24 - Brick with star
-	.word LoadLevel_PowerBlock		; 25 - Brick with coin OR star
-	.word LoadLevel_PowerBlock		; 26 - Brick with 10-coin
-	.word LoadLevel_PowerBlock		; 27 - Brick with 1-up
-	.word LoadLevel_PowerBlock		; 28 - Brick with vine
-	.word LoadLevel_PowerBlock		; 29 - Brick with P-Switch
-	.word LoadLevel_PowerBlock		; 30 - Invisible coin
-	.word LoadLevel_PowerBlock		; 31 - Invisible 1-up
-	.word LoadLevel_PowerBlock		; 32 - Invisible note
-	.word LoadLevel_PowerBlock		; 33 - Note block with flower
-	.word LoadLevel_PowerBlock		; 34 - Note block with leaf
-	.word LoadLevel_PowerBlock		; 35 - Note block with star
-	.word LoadLevel_PowerBlock		; 36 - Wood block with flower
-	.word LoadLevel_PowerBlock		; 37 - Wood block with leaf
-	.word LoadLevel_PowerBlock		; 38 - Wood block with star
-	.word LoadLevel_PowerBlock		; 39 - Invisible note to coin heaven
-	.word LoadLevel_PowerBlock		; 40 - P-Switch
-	.word LoadLevel_EndGoal			; 41 - The end goal
+	.word FAR014_LoadLevel_PowerBlock		; 16 - ? block with flower
+	.word FAR014_LoadLevel_PowerBlock		; 17 - ? block with leaf
+	.word FAR014_LoadLevel_PowerBlock		; 18 - ? block with star
+	.word FAR014_LoadLevel_PowerBlock		; 19 - ? block with coin OR star
+	.word FAR014_LoadLevel_PowerBlock		; 20 - ? block with coin (??)
+	.word FAR014_LoadLevel_PowerBlock		; 21 - Muncher Plant!
+	.word FAR014_LoadLevel_PowerBlock		; 22 - Brick with flower
+	.word FAR014_LoadLevel_PowerBlock		; 23 - Brick with leaf
+	.word FAR014_LoadLevel_PowerBlock		; 24 - Brick with star
+	.word FAR014_LoadLevel_PowerBlock		; 25 - Brick with coin OR star
+	.word FAR014_LoadLevel_PowerBlock		; 26 - Brick with 10-coin
+	.word FAR014_LoadLevel_PowerBlock		; 27 - Brick with 1-up
+	.word FAR014_LoadLevel_PowerBlock		; 28 - Brick with vine
+	.word FAR014_LoadLevel_PowerBlock		; 29 - Brick with P-Switch
+	.word FAR014_LoadLevel_PowerBlock		; 30 - Invisible coin
+	.word FAR014_LoadLevel_PowerBlock		; 31 - Invisible 1-up
+	.word FAR014_LoadLevel_PowerBlock		; 32 - Invisible note
+	.word FAR014_LoadLevel_PowerBlock		; 33 - Note block with flower
+	.word FAR014_LoadLevel_PowerBlock		; 34 - Note block with leaf
+	.word FAR014_LoadLevel_PowerBlock		; 35 - Note block with star
+	.word FAR014_LoadLevel_PowerBlock		; 36 - Wood block with flower
+	.word FAR014_LoadLevel_PowerBlock		; 37 - Wood block with leaf
+	.word FAR014_LoadLevel_PowerBlock		; 38 - Wood block with star
+	.word FAR014_LoadLevel_PowerBlock		; 39 - Invisible note to coin heaven
+	.word FAR014_LoadLevel_PowerBlock		; 40 - P-Switch
+	.word FAR014_LoadLevel_EndGoal			; 41 - The end goal
 	.word LoadLevel_WoodTipsUnderside	; 42 - Wooden tips
 	.word LoadLevel_WoodTipsUnderside	; 43 - Wooden underside curve
 	.word LoadLevel_TankPrefab1		; 44 - Tank prefabricated 1
@@ -381,8 +391,8 @@ LoadLevel_WoodBodyLong:
 
 	LDA LL_ShapeDef
 	SEC
-	SBC #$20	
-	LSR A		
+	SBC #$20
+	LSR A
 	LSR A
 	LSR A
 	LSR A
@@ -463,7 +473,7 @@ LoadLevel_WoodVertShortRepeat:
 	STA Temp_Var3		 ; Temp_Var3 = lower 4 bits of LL_ShapeDef
 
 PRG023_A5BA:
-	LDX #$02	
+	LDX #$02
 	JSR PRG023_A578	 ; Generate 3 high vertical log
 
 	; Restore Map_Tile_Addr from backup
@@ -877,14 +887,14 @@ LoadLevel_WoodFloor:
 
 	SEC
 	SBC #$e0
-	LSR A	
-	LSR A	
-	LSR A	
-	LSR A	
+	LSR A
+	LSR A
+	LSR A
+	LSR A
 	TAX		 ; X = relative index
 
 	PLA		 ; Restore LL_ShapeDef
-	AND #$0f	 
+	AND #$0f
 	STA Temp_Var3	 ; Temp_Var3 = lower 4 bits of LL_ShapeDef
 
 	LDY TileAddr_Off ; Y = TileAddr_Off
@@ -953,7 +963,7 @@ PRG023_A7A9:
 	JSR LoadLevel_NextColumn	 ; Next column
 
 	DEX		 ; X--
-	BNE PRG023_A7A9	 ; $A7B1 
+	BNE PRG023_A7A9	 ; $A7B1
 
 	LDA #TILE10_ROPERAIL_END
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
@@ -1048,7 +1058,7 @@ PRG023_A816:
 	LDA LL_Crate,X	 	 ; Get crate left tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
 	JMP PRG023_A827	 	 ; Jump to PRG023_A827
- 
+
 PRG023_A822:
 	LDA LL_Crate+3,X	 ; Get crate middle tile
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
@@ -1127,7 +1137,7 @@ PRG023_A86D:
 	JMP PRG023_A85C	 ; Jump to PRG023_A85C
 
 PRG023_A887:
-	BPL PRG023_A85C	 ; $A887 
+	BPL PRG023_A85C	 ; $A887
 	RTS		 ; Return
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1198,13 +1208,13 @@ PRG023_A8CE:
 
 	DEC Temp_Var3	 ; Temp_Var3-- (tile counter decrement)
 	INX		 ; X++
-	TXA		 
-	AND #$01	 
+	TXA
+	AND #$01
 	BNE PRG023_A8CE	 ; New row every 2 tiles
 
 	JSR LL23_ReturnTileAndNextRow	 ; Return to beginning, then go to next row
 
-	LDA Temp_Var3	
+	LDA Temp_Var3
 	BNE PRG023_A8CE	 ; If Temp_Var3 > 0 (tiles to go), loop!
 
 	RTS		 ; Return
@@ -1254,9 +1264,9 @@ LL_WoodTipsUnderside:
 LoadLevel_WoodTipsUnderside:
 	LDY TileAddr_Off ; Y = TileAddr_Off
 
-	LDA LL_ShapeDef	 
+	LDA LL_ShapeDef
 	SEC
-	SBC #$0a	 
+	SBC #$0a
 	TAX		 ; X = relative index
 
 	LDA LL_WoodTipsUnderside,X	; Wooden tips and underside left tile
@@ -1482,7 +1492,7 @@ PRG023_A9E4:
 ; LoadLevel_Black14Rows
 ;
 ; Adds 14 rows of entire-screen-width black tiles; NOTE!  Must be
-; aligned to left edge of screen!  Does not use common "next 
+; aligned to left edge of screen!  Does not use common "next
 ; column" function and doesn't check for wraps...
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LoadLevel_Black14Rows:
@@ -1544,7 +1554,7 @@ PRG023_AA6D:
 	LDA Map_Tile_AddrH
 	STA Temp_Var2
 
-	LDA #$04	 
+	LDA #$04
 	STA Temp_Var4	 ; Temp_Var4 = 4
 
 PRG023_AA79:
@@ -1599,7 +1609,7 @@ LoadLevel_IntroAirship:
 
 PRG023_AB23:
 	LDA LL_IntroAirship,X	 ; Intro airship tile
-	CMP #$ff	 
+	CMP #$ff
 	BEQ PRG023_AB33	 ; If this is the terminator, jump to PRG023_AB33
 
 	STA (Map_Tile_AddrL),Y	 ; Store into tile mem
@@ -1625,7 +1635,7 @@ PRG023_AB33:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 LoadLevel_Ledge:
 	LDX #$00	 ; X = 0
-	JMP PRG023_AB45	 ; Jump to PRG023_AB45 
+	JMP PRG023_AB45	 ; Jump to PRG023_AB45
 
 LL_RockyTiles:	.byte TILE10_LEDGE, TILE10_ROCKYWRENCH_HOLE
 
@@ -1673,14 +1683,14 @@ LoadLevel_MiniShip:
 
 	LDA LL_ShapeDef
 	SEC
-	SBC #$01	
+	SBC #$01
 	TAX		 ; X = relative index
 
 	LDA LL_W8MiniShipRows,X	 ; Get number of rows for this ship
 	STA Temp_Var3		 ; Temp_Var3 holds the rows
 
 	LDA LL_W8MiniShipIndex,X ; Get starting index of mini ship
-	TAX		 
+	TAX
 
 	LDY TileAddr_Off 	; Y = TileAddr_Off
 
@@ -1754,9 +1764,9 @@ LL23_GetLayoutByte_AndBackup:
 
 	; Backup Map_Tile_AddrL/H into Temp_Var1/2
 	LDA Map_Tile_AddrL
-	STA Temp_Var1	
+	STA Temp_Var1
 	LDA Map_Tile_AddrH
-	STA Temp_Var2	
+	STA Temp_Var2
 
 	RTS		 ; Return
 

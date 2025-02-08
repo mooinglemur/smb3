@@ -1,5 +1,5 @@
 ; Original address was $B00F
-; 4-3 entrance 
+; 4-3 entrance
 	.word W403_UnderL	; Alternate level layout
 	.word W403_UnderO	; Alternate object layout
 	.byte LEVEL1_SIZE_03 | LEVEL1_YSTART_170

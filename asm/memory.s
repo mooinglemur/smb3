@@ -9,15 +9,27 @@
 .exportzp Music_Base_L, Music_Base_H, Sound_Sqr_FreqL, Sound_Sqr_FreqH, Sound_Map_EntrV, Sound_Map_EntV2, Music_PatchAdrL, Music_PatchAdrH
 .exportzp Sound_Map_Off
 ; COMMONHIZP
-.exportzp Scroll_OddEven, Controller1Press, Controller2Press, Controller1, Controller2, Vert_Scroll, Horz_Scroll, PPU_CTL1_Copy
+.exportzp Ending2_IntCmd, Scroll_OddEven, Controller1Press, Controller2Press, Controller1, Controller2, Vert_Scroll, Horz_Scroll, PPU_CTL1_Copy
 ; TITLEZP
 .exportzp Title_XPosHi, Title_YPosHi, Title_ObjX, Title_ObjY, Title_ObjXVel, Title_ObjYVel, Title_XPosFrac, Title_YPosFrac
 .exportzp Title_ObjYVelChng, Title_ObjMLFlags, Title_ObjMLMoveDir, Title_ObjMLAnimFrame, Title_ObjMLDirTicks, Title_ObjMLSprite, Title_ObjMLPower
-.exportzp Title_ObjMLSprRAMOff, Title_ObjMLSprVis, Title_ObjMLTailTick, Title_ObjMLHold, Title_ObjMLBonkTick, Title_ObjMLKickTick, Title_ObjMPowerDown
-.exportzp Title_ObjMLStop, Title_CurMLIndex, Ending_Timer, Title_ObjFlags, EndText_Timer , EndText_CPos, Title_ObjStates, EndText_State , Title_State
+.exportzp Title_ObjMLSprRAMOff, Title_ObjMLSprVis, Title_ObjMLTailTick, Title_ObjMLHold
+.ifdef NES
+.exportzp Title_ObjMLBonkTick, Title_ObjMLKickTick, Title_ObjMPowerDown
+.exportzp Title_ObjMLStop
+.exportzp Title_CurMLIndex, Ending_Timer, Title_ObjFlags, EndText_Timer, EndText_CPos, Title_ObjStates, EndText_State , Title_State
 .exportzp Title_ResetCnt, Title_ResetCnt2, Title_ResetTrig, Title_UnusedFlag, Title_Ticker, Title_MActScriptPos, Title_LActScriptPos, Title_MActScriptDelay
 .exportzp Title_LActScriptDelay, Title_MActScriptDirSet, Title_LActScriptDirSet, Title_ObjMLDir, Title_ObjMLQueue, Title_EventIndex, Title_EventGrafX
-.exportzp Title_ObjInitIdx, Title_ObjInitDly, Title_3GlowFlag, Title_3GlowIndex, Ending2_IntCmd, Ending_State, EndText_VL, EndText_VH
+.exportzp Title_ObjInitIdx, Title_ObjInitDly, Title_3GlowFlag, Title_3GlowIndex, Ending_State, EndText_VL, EndText_VH
+.endif
+.ifdef X16
+.export Title_ObjMLBonkTick, Title_ObjMLKickTick, Title_ObjMPowerDown
+.export Title_ObjMLStop
+.export Title_CurMLIndex, Ending_Timer, Title_ObjFlags, EndText_Timer , EndText_CPos, Title_ObjStates, EndText_State , Title_State
+.export Title_ResetCnt, Title_ResetCnt2, Title_ResetTrig, Title_UnusedFlag, Title_Ticker, Title_MActScriptPos, Title_LActScriptPos, Title_MActScriptDelay
+.export Title_LActScriptDelay, Title_MActScriptDirSet, Title_LActScriptDirSet, Title_ObjMLDir, Title_ObjMLQueue, Title_EventIndex, Title_EventGrafX
+.export Title_ObjInitIdx, Title_ObjInitDly, Title_3GlowFlag, Title_3GlowIndex, Ending_State, EndText_VL, EndText_VH
+.endif
 ; ENDINGZP
 .exportzp Ending2_PicState, Ending2_ClearLen, Ending2_ClearPat, Ending2_PicVRAMH, Ending2_PicVRAML, Ending2_QCmdEnd, Ending2_FadeTimer, Ending2_QueueCmd
 .exportzp Ending2_TimerH, Ending2_TimerL, Ending2_CurWorld
@@ -25,21 +37,54 @@
 .exportzp World_Map_Y, World_Map_XHi, World_Map_X, World_Map_Move, World_Map_Dir, Map_UnusedPlayerVal, Map_UnusedPlayerVal2, Map_WWOrHT_Y, Map_HandTrap_XHi
 .exportzp Map_WWOrHT_X, Map_WWOrHT_Cnt, Map_WWOrHT_Dir, Map_WarpWind_FX, Map_StarFX_State, World_Map_Twirl, Map_Skid_DeltaY, Map_Skid_DeltaFracY
 .exportzp Map_Skid_FracY, Map_Skid_DeltaX, Map_Skid_DeltaFracX, Map_Skid_FracX, Map_Skid_FracCarry, Map_Skid_Count, Map_Skid_Counter, Map_Skid_TravDirs
-.exportzp Map_StarsX, Map_StarsY, Map_StarsOutRad, Map_StarsXSteps, Map_StarsRadCnt, Map_StarsCenterX, Map_StarsCenterY, Map_StarsDeltaR, Map_StarsConst9
+.ifdef NES
+.exportzp Map_StarsX, Map_StarsY, Map_StarsOutRad
+.endif
+.exportzp Map_StarsXSteps, Map_StarsRadCnt, Map_StarsCenterX, Map_StarsCenterY, Map_StarsDeltaR, Map_StarsConst9
 .exportzp Map_StarsAnimCnt, Map_StarsFrame, Map_StarsPattern, Map_StarsLandRad, Map_StarsYSteps, Map_StarsRadius, Map_StarsState, Map_SkidBack
-.exportzp Map_UnusedGOFlag, Map_Intro_CurStripe, Map_Intro_NTOff, Map_Intro_ATOff, Map_Airship_DC, Map_Airship_DY, Map_Airship_YNib, Map_Airship_YAcc
+.exportzp Map_UnusedGOFlag
+.ifdef NES
+.exportzp Map_Intro_CurStripe, Map_Intro_NTOff, Map_Intro_ATOff, Map_Airship_DC, Map_Airship_DY, Map_Airship_YNib, Map_Airship_YAcc
 .exportzp Map_Airship_DXHi, Map_Airship_DX, Map_Airship_XNib, Map_Airship_Dir, Map_HideObj, MapPoof_Y, MapPoof_X, Map_UseItem, World_Map_Tile, Scroll_Temp
 .exportzp Player_WalkFrame
+.endif
+.ifdef X16
+.export Map_Intro_CurStripe, Map_Intro_NTOff, Map_Intro_ATOff, Map_Airship_DC, Map_Airship_DY, Map_Airship_YNib, Map_Airship_YAcc
+.export Map_Airship_DXHi, Map_Airship_DX, Map_Airship_XNib, Map_Airship_Dir, Map_HideObj, MapPoof_Y, MapPoof_X, Map_UseItem, World_Map_Tile, Scroll_Temp
+.export Player_WalkFrame
+.endif
 ; BONUSGAMEZP
-.exportzp BonusCoins_State, BonusDie_Y, BonusDie_X, BonusDie_YVel, BonusDie_YVelFrac
+.exportzp BonusCoins_State
+.ifdef NES
+.exportzp BonusDie_Y, BonusDie_X, BonusDie_YVel, BonusDie_YVelFrac
+.endif
+.ifdef X16
+.export BonusDie_Y, BonusDie_X, BonusDie_YVel, BonusDie_YVelFrac
+.endif
 ; VSZP
 .exportzp Vs_State, Vs_IsPaused
 ; GAMEPLAYZP
-.exportzp Player_XHi, Objects_XHi, CineKing_DialogState, Objects_Var4, Pipe_PlayerX, Pipe_PlayerY, Level_GndLUT_Addr, Player_YHi, Objects_YHi, Player_X
-.exportzp Objects_X, CineKing_Var, Objects_Var5, Player_Y, Objects_Y, Player_SpriteX, Objects_SpriteX, Player_SpriteY, Objects_SpriteY, Player_XVel
-.exportzp Objects_XVel, Objects_VarBSS, SlotIndexBackup, Player_HaltGame, Player_YVel, Objects_YVel, Player_InAir, CineKing_Frame2, Objects_DetStat
-.exportzp Player_SprWorkL, Player_SprWorkH, Level_TileOff, Level_Tile, Player_Slopes, Player_XStart, Player_Suit, Player_Frame, Player_FlipBits
+.exportzp Level_GndLUT_Addr, Pipe_PlayerX, Pipe_PlayerY
+.ifdef NES
+.exportzp Player_XHi, Objects_XHi, CineKing_DialogState, Objects_Var4, Player_YHi, Objects_YHi
+.endif
+.ifdef X16
+.export Player_XHi, Objects_XHi, CineKing_DialogState, Objects_Var4, Player_YHi, Objects_YHi
+.endif
+.exportzp Player_X, Objects_X, CineKing_Var, Objects_Var5, Player_Y, Objects_Y, Player_SpriteX, Objects_SpriteX, Player_SpriteY, Objects_SpriteY
+.exportzp Player_XVel
+.exportzp Objects_XVel, Objects_VarBSS, SlotIndexBackup, Player_HaltGame, Player_YVel, Objects_YVel
+.exportzp Player_SprWorkL, Player_SprWorkH
+.ifdef NES
+.exportzp Player_InAir, CineKing_Frame2, Objects_DetStat
+.exportzp Level_TileOff, Level_Tile, Player_Slopes, Player_XStart, Player_Suit, Player_Frame, Player_FlipBits
 .exportzp Player_WagCount, Player_IsDying, Obj01_Flag
+.endif
+.ifdef X16
+.export Player_InAir, CineKing_Frame2, Objects_DetStat
+.export Level_TileOff, Level_Tile, Player_Slopes, Player_XStart, Player_Suit, Player_Frame, Player_FlipBits
+.export Player_WagCount, Player_IsDying, Obj01_Flag
+.endif
 ; ONEPAGE
 .export Update_Select, Raster_Effect, Debug_Flag
 ; OAMSHADOW
@@ -296,7 +341,7 @@ Scroll_VertUpd:       ; Indicates every 8 pixels update up or down, in vertical 
 Scroll_LeftUpd:       ; Indicates every 8 pixels update going to the left, or $FF if screen moves right
 	.res 1
 
-; Prepares to perform a Video_Update when possible, indexes the "Video_Upd_Table" 
+; Prepares to perform a Video_Update when possible, indexes the "Video_Upd_Table"
 ; in PRG030 OR Video_Upd_Table2 in PRG025 (whichever is currently in context)
 ; Also resets the graphics buffer afterward, since the RAM buffer is
 ; constantly being called to possibly perform its own updates after this value
@@ -371,18 +416,22 @@ Controller1:          ; Player 1's controller inputs -- R01 L02 D04 U08 S10 E20 
 Controller2:          ; Player 2's controller inputs -- R01 L02 D04 U08 S10 E20 B40 A80
 	.res 1
 
+.ifdef NES
 ; unused ($F9-FB)
 	.res 3
+.endif
 
 Vert_Scroll:          ; Vertical scroll of name table; typically at $EF (239, basically showing the bottom half)
 	.res 1
 Horz_Scroll:          ; Horizontal scroll of name table
 	.res 1
 
-; unsued ($FE)
+.ifdef NES
+; unused ($FE)
 	.res 1
+.endif
 
-PPU_CTL1_Copy:        ; Holds PPU_CTL1 register data 
+PPU_CTL1_Copy:        ; Holds PPU_CTL1 register data
 	.res 1
 
 ; NOTE: CONTEXT -- Page 0 RAM changes meaning depending on the "context", i.e. what state
@@ -403,7 +452,7 @@ PPU_CTL1_Copy:        ; Holds PPU_CTL1 register data
 
 Title_XPosHi:         ; $75-$7C "High" part of the extended precision X position for all objects
 	.res 8
-Title_YPosHi:         ; $7D-$84 "High" part of the extended precision X position for all objects
+Title_YPosHi:         ; $7D-$84 "High" part of the extended precision Y position for all objects
 	.res 8
 Title_ObjX:           ; $85-$8C Title screen object X positions
 	.res 8
@@ -411,7 +460,7 @@ Title_ObjY:           ; $8D-$94 Title screen object Y positions
 	.res 8
 Title_ObjXVel:        ; $95-$9C X velocities of title screen objects (4.4FP)
 	.res 8
-Title_ObjYVel:        ; $9D-$A3 Y velocities of title screen objects 
+Title_ObjYVel:        ; $9D-$A3 Y velocities of title screen objects
 	.res 8
 Title_XPosFrac:       ; $A5-$AC X position extended precision of objects (provides 4-bit fixed point)
 	.res 8
@@ -422,11 +471,7 @@ Title_ObjYVelChng:    ; $B5-$B6 Mario / Luigi change in Y velocity flag
 Title_ObjMLFlags:     ; $B7-$B8 Mario / Luigi Sprite flags
 	.res 2
 Title_ObjMLMoveDir:   ; 0 = No move, 1 = Left, 2 = Right
-	.res 1
-
-; unused $BA
-	.res 1
-
+	.res 2
 Title_ObjMLAnimFrame: ; $BB-$BC Mario / Luigi animation frame
 	.res 2
 Title_ObjMLDirTicks:  ; $BD-$BE Mario / Luigi animation ticks
@@ -443,6 +488,11 @@ Title_ObjMLTailTick:  ; $C7-$C8 Mario / Luigi tail wagging tick
 	.res 2
 Title_ObjMLHold:      ; $C9-$CA Mario / Luigi holding something flag (when non-zero)
 	.res 2
+
+.ifdef X16
+.segment "TITLEVARS"
+.endif
+
 Title_ObjMLBonkTick:  ; $CB-$CC Mario / Luigi use "bonked" frame while > 0
 	.res 2
 Title_ObjMLKickTick:  ; $CD-$CE Mario / Luigi use kicking frame while > 0
@@ -495,7 +545,7 @@ Title_ObjMLDir:       ; $EA-$EB Mario / Luigi vector direction bitfield (1 = Lef
 	.res 2
 Title_ObjMLQueue:     ; $EC-$ED Mario / Luigi queue to do something ($04 = Luigi's rebound off Mario, $10 = Kick shell, $20 = Begin carrying, $40 = Clear carry/bonk, do kick)
 	.res 2
-Title_EventIndex:     ; Title background event index (dynamic jump index for events on the title 
+Title_EventIndex:     ; Title background event index (dynamic jump index for events on the title
 	.res 1
 Title_EventGrafX:     ; Title background current graphic index to load (loads items from Video_Upd_Table2 in PRG025)
 	.res 1
@@ -512,6 +562,7 @@ Title_3GlowIndex:     ; Index into an array of colors to cause the big '3' on th
 ; Basically don't assume anything here is free space without consulting above as well...
 
 .segment "ENDINGZP": zeropage
+
 Ending2_PicState:     ; Ending part 2 picture loader state
 	.res 1
 Ending2_ClearLen:     ; Length of clear run
@@ -567,7 +618,7 @@ Map_HandTrap_XHi:     ; Hand Trap X Hi (most vars are shared with warp wind, but
 	.res 1
 Map_WWOrHT_X:         ; Warp Whistle wind or Hand Trap X position
 	.res 1
-Map_WWOrHT_Cnt:       ; Warp Whistle wind or Hand Trap counter 
+Map_WWOrHT_Cnt:       ; Warp Whistle wind or Hand Trap counter
 	.res 1
 Map_WWOrHT_Dir:       ; Direction the Warp Whistle wind travels (0 = right, 1 = left)
 	.res 1
@@ -616,12 +667,17 @@ Map_Skid_TravDirs:
 ; unused ($99-$9A)
 	.res 2
 
+.ifdef NES
 Map_StarsX:           ; $9B-$A2 During World Intro, X position of each star
 	.res 8
 Map_StarsY:           ; $A3-$AA During World Intro, Y position of each star
 	.res 8
 Map_StarsOutRad:      ; During World Intro, stars take off radius (0 = smallest, increments for larger)
 	.res 1
+.endif
+.ifdef X16
+	.res 17
+.endif
 
 ; unused ($AC-$AE)
 	.res 3
@@ -630,7 +686,7 @@ Map_StarsXSteps:      ; During World Intro, number of "steps" remaining in the X
 	.res 1
 Map_StarsRadCnt:      ; During World Intro, adds $70 per display frame and adds 1 to the radius when it overflows
 	.res 1
-Map_StarsCenterX:     ; During World Intro, X center of stars 
+Map_StarsCenterX:     ; During World Intro, X center of stars
 	.res 1
 Map_StarsCenterY:     ; During World Intro, Y center of stars
 	.res 1
@@ -669,6 +725,10 @@ Map_SkidBack:         ; Player is skidding back (Map_Player_SkidBack stores whet
 Map_UnusedGOFlag:     ; Set at map initialization or if Player gets Game Over and selects CONTINUE/END, no apparent purpose
 	.res 1
 
+.ifdef X16
+.segment "WORLDMAPVARS"
+	.res 32
+.endif
 ; unused ($C8-$CB)
 	.res 4
 
@@ -736,8 +796,15 @@ Player_WalkFrame:    ; relative, not the same as Player_Frame
 BonusCoins_State:
 	.res 1
 
-; unused ($8C-$C6)
-	.res 59
+; unused ($8C-$BB)
+	.res 48
+
+.ifdef X16
+.segment "BONUSGAMEVARS"
+.endif
+
+; unused ($BC-$C6)
+	.res 11
 
 BonusDie_Y:           ; UNUSED Bonus Game Die (1-6) Y position
 	.res 1
@@ -755,18 +822,32 @@ BonusDie_YVelFrac:    ; UNUSED Bonus Game Die Y Velocity fractional accumulator
 ; ZERO PAGE RAM: 2P VS CONTEXT
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 .segment "VSZP": zeropage
+
 Vs_State:             ; 2P Vs Mode state
 	.res 1
 Vs_IsPaused:          ; If set, 2P Vs is paused
 	.res 1
 
-; unused ($77-$F3)
-	.res 125
+; unused ($77-$BB)
+	.res 69
+
+.ifdef X16
+.segment "VSVARS"
+.endif
+
+; unused ($BC-$F3)
+	.res 56
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; ZERO PAGE RAM: GAMEPLAY CONTEXT
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+.ifdef NES
 .segment "GAMEPLAYZP": zeropage
+.endif
+
+.ifdef X16
+.segment "GAMEPLAYVARS"
+.endif
 
 ; There's a consistent difference of $12 between X and Y; this consistent distancing is meant to be maintained, so leave it alone!
 
@@ -784,6 +865,10 @@ CineKing_DialogState: ; Toad & King Cinematic: When 1, we're doing the text vers
 Objects_Var4:         ; $7F-$83 Generic variable 4 for objects SLOT 0 - 4 ONLY
 	.res 5
 
+.ifdef X16
+.segment "GAMEPLAYZP": zeropage
+.endif
+
 ; Pipe_PlayerX/Y variables in use when traveling through pipes
 Pipe_PlayerX:         ; Stores Player's X when they went into pipe (non-transit)
 	.res 1
@@ -793,6 +878,11 @@ Pipe_PlayerY:         ; Stores Player's Y when they went into pipe (non-transit,
 ; Otherwise, they are replaced with a lookup address
 Level_GndLUT_Addr := Pipe_PlayerX
 
+.ifdef X16
+.segment "GAMEPLAYVARS"
+	.res 2 ; to maintain distance
+.endif
+
 ; unused ($86)
 	.res 1
 
@@ -800,6 +890,9 @@ Player_YHi:           ; Player Y Hi
 	.res 1
 Objects_YHi:          ; $88-$8F Other object's Y Hi positions
 	.res 8
+.ifdef X16
+.segment "GAMEPLAYZP": zeropage
+.endif
 Player_X:             ; Player X
 	.res 1
 Objects_X:            ; $91-$98 Other object's X positions
@@ -845,6 +938,10 @@ Player_YVel:          ; Player's Y Velocity (negative values upward)
 Objects_YVel:         ; $D0-$D7 Other object's Y velocities
 	.res 8
 
+.ifdef X16
+.segment "GAMEPLAYVARS"
+.endif
+
 Player_InAir:         ; When set, Player is in the air
 	.res 1
 
@@ -860,10 +957,17 @@ CineKing_Frame2:      ; Used only by the World 6 King (Seal juggling a crown, th
 Objects_DetStat:      ; $D9-$E0  on screen
 	.res 8
 
+.ifdef X16
+.segment "GAMEPLAYZP": zeropage
+.endif
+
 Player_SprWorkL:      ; Sprite work address low
 	.res 1
 Player_SprWorkH:      ; Sprite work address high
 	.res 1
+.ifdef X16
+.segment "GAMEPLAYVARS"
+.endif
 
 ; unused ($E3)
 	.res 1
@@ -922,8 +1026,10 @@ Update_Select:        ; Changes which path of "update routines" are selected; $0
 Raster_Effect:        ; $00 is standard status bar, $20 is title/ending, $40 = 32 pixel partition, $60 = Spade Bonus Game (3 sliding rows), $80 is nothing (e.g. as in 2P versus), $A0 = ???
 	.res 1
 
+.ifdef NES
 ; unused ($102-$15F)
 	.res 94
+.endif
 
 Debug_Flag:           ; Set to $80 by the debug menu, enables debug functionality like power level cycling and not dying from time over
 	.res 1
@@ -1602,7 +1708,7 @@ Objects_Timer:        ; $0518-$051F "Timer" values; automatically decrements to 
 ; NOTE: Until Timer2 expires, object will not hit other objects.
 ; Probably used as a dampener to keep an object from slaughtering
 ; another bunch of objects TOO quickly!
-Objects_Timer2:       ; $0520-$0527 "Timer" values; automatically decrements to zero 
+Objects_Timer2:       ; $0520-$0527 "Timer" values; automatically decrements to zero
 	.res 8
 
 ; All the Level_BlockChgX/Y values are aligned to nearest 16 (i.e. tile coordinate)
@@ -1734,7 +1840,7 @@ Player_IsDucking:     ; Set when Player is ducking down
 Player_WhiteBlkCnt:   ; White block counter; counts up while Player is standing on white block and holding down
 	.res 1
 
-; Level_PipeMove is set to various values that dictate 
+; Level_PipeMove is set to various values that dictate
 ; how Player is moving within a pipe
 ;
 ; The lower 2 bits form a direction as follows:
@@ -1783,7 +1889,7 @@ Player_Bounce:        ; Set to cause block bounce (upper 4 bits specifies what k
 	.res 1
 Player_BounceDir:     ; Direction of Player bounce -- 0 = Down, 1 = Up, 2 = Left, 3 = Right
 	.res 1
-Player_BounceObj:     ; Set if it was a kicked shelled object that hit the bounce block (i.e. don't bounce the Player if the object is the one that hit) 
+Player_BounceObj:     ; Set if it was a kicked shelled object that hit the bounce block (i.e. don't bounce the Player if the object is the one that hit)
 	.res 1
 Counter_ByPlayerSpd:  ; A counter which increments faster as the Player goes faster
 	.res 1
@@ -1827,7 +1933,7 @@ Player_SandSink:      ; Sinking in quicksand! (holds Y when quicksand hit in upp
 
 ; Player_PartDetEn: "32 Pixel Partition Detection" enabler
 ; When set, if Player Y >= 160, Player detects bottom two rows of tiles implicitly
-; Used with Update_Request = UPDATERASTER_32PIXPART if there's a floor 
+; Used with Update_Request = UPDATERASTER_32PIXPART if there's a floor
 ; (i.e. NOT used in levels with fixed water; for that, see FloatLevel_PlayerWaterStat)
 Player_PartDetEn:
 	.res 1
@@ -1907,7 +2013,7 @@ Level_TimerEn:        ; Set to disable clock (bit 7 will also disable level anim
 Kill_Tally:           ; Counter that increases with each successful hit of an object without touching the ground
 	.res 1
 
-Objects_KillTally:    ; $05F5-$05F9 OBJECT SLOTS 0 - 4 ONLY: Kill_Tally for a kicked shell as it hits other enemies 
+Objects_KillTally:    ; $05F5-$05F9 OBJECT SLOTS 0 - 4 ONLY: Kill_Tally for a kicked shell as it hits other enemies
 	.res 5
 
 PlayerProj_YHi:       ; $05FA-$05FB Player projectile Y Hi
@@ -1939,7 +2045,7 @@ Ending_CmdBuffer:     ; $0600-$06C0 Buffer used during ending sequence
 ; unused ($600-$601)
 	.res 2
 
-Level_Tile_Head:      ; Tile at Player's head 
+Level_Tile_Head:      ; Tile at Player's head
 	.res 1
 Level_Tile_GndL:      ; Tile at Player's feet left
 	.res 1
@@ -2125,8 +2231,8 @@ Objects_QSandCtr:     ; $06EB-$06F2 When enemy has fallen into quicksand, increm
 TileAddr_Off:         ; During level loading, specifies an offset into the current Mem_Tile_Addr setting
 	.res 1
 
-; LevLoad_Unused1-4 are initialized when about to load a level, 
-; but never used.  May have been reserved or intended or 
+; LevLoad_Unused1-4 are initialized when about to load a level,
+; but never used.  May have been reserved or intended or
 ; even debugging, but who knows now...
 LevLoad_Unused1:
 	.res 1
@@ -2205,14 +2311,14 @@ Map_ReturnStatus:     ; When 0, level panel is cleared; otherwise, Player is con
 	.res 1
 MaxPower_Tick:        ; When Player has maximum "power" charge, this counts for the flashing [P]
 	.res 1
-Player_Score:         ; $0715 (H)-$0717 (L) treated as 3-byte integer, with least significant zero on display not part of this value 
+Player_Score:         ; $0715 (H)-$0717 (L) treated as 3-byte integer, with least significant zero on display not part of this value
 	.res 3
 
 ; unused ($718)
 	.res 1
 
 ; Each byte of PatTable_BankSel sets the VROM available at
-; 0000 (first half BG), 0800 (second half BG, typ animated), 
+; 0000 (first half BG), 0800 (second half BG, typ animated),
 ; 1000 (1/4 sprites), 1400 (2/4 sprites), 1800 (3/4 sprites),
 ; and 1C00 (4/4 sprites), respectively
 PatTable_BankSel:     ; $0719-$071E  Provides an array of 6 pages to set the entire Pattern Table [BG_Full_CHRROM_Switch]
@@ -2340,7 +2446,7 @@ Objects_ColorCycle:   ; $0768-$076F Cycles colors of object and decrements to ze
 	.res 8
 
 ; Objects_Var6: Special hardcoded behavior for the following objects ONLY:
-; OBJ_FIRECHOMP, OBJ_CHAINCHOMPFREE, OBJ_BLOOPERCHILDSHOOT, 
+; OBJ_FIRECHOMP, OBJ_CHAINCHOMPFREE, OBJ_BLOOPERCHILDSHOOT,
 ; OBJ_BLOOPERWITHKIDS, or OBJ_FIRESNAKE
 ; ... as the X/Y buffer slot they occupy (see Object_Delete)
 Objects_Var6:         ; $0770-$0774 General purpose variable 6 (except as noted above)
@@ -2431,7 +2537,7 @@ Palette_Term:         ; Set to zero as terminator, per requirement of the Video_
 	.res 1
 ; ********************************************************************************
 
-; BigQBlock_GotIt: 
+; BigQBlock_GotIt:
 ;	Big ? Blocks can only be retrieved once; this is a bitfield that marks which
 ;	ones you've gotten by setting a bit per screen space in the Big ? Block area.
 ;	Basically, if you reenter a Big ? Block area after opening it, it won't reappear!
@@ -2662,7 +2768,7 @@ Vs_PlayerFlashInv:    ; $690C-$690D Mario/Luigi Flashing invicibility (?)
 	.res 2
 Vs_SpawnCnt2:         ; FIXME describe better
 	.res 1
-Vs_TooLongCnt:        ; Increments after each round of spawning; if it overflows, "game ender" fireballs are spawned 
+Vs_TooLongCnt:        ; Increments after each round of spawning; if it overflows, "game ender" fireballs are spawned
 	.res 1
 Vs_CurIndex:          ; Current index (Player or object)
 	.res 1
@@ -2934,7 +3040,7 @@ Level_AScrlMoveRepeat: ; Repeat current move until zero (decrements each full ex
 	.res 1
 Level_AScrlLoopCurMove: ; Current "movement loop" index (into AScroll_MovementLoop)
 	.res 1
-Level_AScrlSclLastDir: ; Auto scroll "Scroll_LastDir" 
+Level_AScrlSclLastDir: ; Auto scroll "Scroll_LastDir"
 	.res 1
 Level_AScrlMoveTicks: ; Counts down to zero, decrements Level_AScrlMoveRepeat (goes to next "movement")
 	.res 1
@@ -2954,9 +3060,9 @@ Level_AScrlHVel:      ; Auto scroll horizontal "velocity"
 	.res 1
 Level_AScrlVVel:      ; Auto scroll vertical "velocity"
 	.res 1
-Level_AScrlHVelFrac:  ; Auto scroll horizontal velocity fractional accumulator 
+Level_AScrlHVelFrac:  ; Auto scroll horizontal velocity fractional accumulator
 	.res 1
-Level_AScrlVVelFrac:  ; Auto scroll vertical velocity fractional accumulator 
+Level_AScrlVVelFrac:  ; Auto scroll vertical velocity fractional accumulator
 	.res 1
 Level_AScrlHVelCarry: ; '1' when last auto scroll H Velocity fraction accumulation rolled over
 	.res 1
@@ -3013,7 +3119,7 @@ Bowser_Tiles:         ; $7A61-$7A62 Bowser's detected tiles (to determine what t
 	.res 2
 Bowser_Counter1:      ; A counter used by Bowser, decrements to zero
 	.res 1
-Bowser_Counter2:      ; A counter used by Bowser, decrements to zero 
+Bowser_Counter2:      ; A counter used by Bowser, decrements to zero
 	.res 1
 Bowser_Counter3:      ; A counter used by Bowser, random setting, decrements to zero
 	.res 1
@@ -3094,7 +3200,7 @@ Object_BufferX:       ; $7C20-$7C3F / $7C40-$7C5F
 Object_BufferY:       ; $7C60-$7C7F / $7C80-$7C9F
 	.res 32*2
 
-; Variables used by Chain Chomps ONLY -- manages the chain links 
+; Variables used by Chain Chomps ONLY -- manages the chain links
 ChainChomp_ChainX1:   ; $7CA0-$7CA4 Chain Link 1 X
 	.res 5
 ChainChomp_ChainX2:   ; $7CA5-$7CA9 Chain Link 2 X
@@ -3211,7 +3317,7 @@ Map_Completions:      ; $7D00-$7D3F (Mario), $7D40-$7D7F (Luigi) Allows a MAX of
 ; B = Hammer
 ; C = Warp Whistle
 ; D = Music Box
-Inventory_Items:      ; $7D80-$7D9B Mario, 4 rows of 7 items 
+Inventory_Items:      ; $7D80-$7D9B Mario, 4 rows of 7 items
 	.res 4*7
 Inventory_Cards:      ; $7D9C-$7D9E Mario, 3 cards
 	.res 3
@@ -3220,7 +3326,7 @@ Inventory_Score:      ; $7D9F-$7DA1 Mario, 3 byte score
 Inventory_Coins:      ; Mario's coins
 	.res 1
 
-Inventory_Items2:     ; $7DA3-$7DBE Luigi, 4 rows of 7 items 
+Inventory_Items2:     ; $7DA3-$7DBE Luigi, 4 rows of 7 items
 	.res 4*7
 Inventory_Cards2:     ; $7DBF-$7DC1 Luigi, 3 cards
 	.res 3
@@ -3335,7 +3441,7 @@ Map_SprRAMOffDistr:   ; A free running counter on the map only which distributes
 ;  6: Sidestepper Only
 ;  7: Coin Fountain
 ;  8: Spiny Only
-;  9: Fighter Fly Only 
+;  9: Fighter Fly Only
 ; 10: Sidestepper Only
 ; 11: Ladder and [?] blocks
 Map_2PVsGame:

@@ -13,11 +13,26 @@
 ;---------------------------------------------------------------------------
 .include "../inc/macros.inc"
 .include "../inc/defines.inc"
+.include "../inc/nesswitch.inc"
 
 ; ZP imports
 .importzp Temp_Var1, Temp_Var2, Temp_Var4, Level_ExitToMap, Counter_1, Pad_Input, Pal_Force_Set12
-.importzp Graphics_Queue, Vert_Scroll, Player_YHi, Player_X, CineKing_Var, Player_Y, Level_Tile
+.importzp Graphics_Queue, Vert_Scroll
+.ifdef NES
+.importzp Player_YHi
+.endif
+.ifdef X16
+.import Player_YHi
+.endif
+.importzp Player_X, CineKing_Var, Player_Y
+.ifdef NES
+.importzp Level_Tile
 .importzp Player_Suit, Player_Frame, Player_FlipBits
+.endif
+.ifdef X16
+.import Level_Tile
+.import Player_Suit, Player_Frame, Player_FlipBits
+.endif
 ; BSS imports (low RAM and cart SRAM)
 .import Sprite_RAM, Graphics_BufCnt, Graphics_Buffer, Fade_Tick, Fade_Level, FadeOut_Cancel, Sound_QMusic1
 .import Sound_QMusic2, Sound_QMap, CineKing_Timer, Level_VertScrollH, Level_VertScroll, Player_Flip
@@ -30,16 +45,16 @@
 .import CineKing_WandYVel, CineKing_WandXVel_Frac
 ; imports from PRG024
 .import DiagBox_RowOffs, DiagBox_RowOffs_End
-; imports from PRG029
-.import Player_Draw
 ; imports from PRG031
 .import PRGROM_Change_C000, DynJump, Sprite_RAM_Clear
+; far imports
+.import FAR029_Player_Draw
 ; exports
 .export CineKing_DoWandReturn, EndWorldLetter_GenerateText, Setup_PalData
 
-.ifdef NES
+
 .segment "PRG027"
-.endif
+
 CineKing_DoWandReturn:
 	LDA CineKing_Timer2
 	BEQ PRG027_A008	 ; If CineKing_Timer2 = 0, jump to PRG027_A008
@@ -71,7 +86,7 @@ PRG027_A01E:
 TAndK_DoState:
 	LDA CineKing_State
 	JSR DynJump
-	
+
 	; THESE MUST FOLLOW DynJump FOR THE DYNAMIC JUMP TO WORK!!
 	.word TAndK_Init		; 0: Initialize vars
 	.word TAndK_DrawDiagBox2	; 1: Draw the dialog box, initialize proper text by Player suit
@@ -121,7 +136,7 @@ PRG027_A052:
 
 	LDY Player_Current	 ; Y = current Player index
 
-	; Set Player's current power up to the world map value 
+	; Set Player's current power up to the world map value
 	; (kind of pointless in this transition, but oh well)
 	LDA World_Map_Power,Y
 	STA Player_Suit
@@ -178,7 +193,7 @@ PRG027_A0B2:
 
 	JSR Letter_GiveIncludedItem	 ; Give item included with letter (if any)
 
-	INC CineKing_State	 ; CineKing_State = 4 
+	INC CineKing_State	 ; CineKing_State = 4
 
 PRG027_A0CD:
 	RTS		 ; Return
@@ -397,7 +412,7 @@ TAndK_DrawDiagBox2:
 
 	LDX Graphics_BufCnt	 ; X = buffer count
 
-	; Set current VRAM address 
+	; Set current VRAM address
 	LDA ToadTalk_VH
 	STA Graphics_Buffer,X
 	LDA ToadTalk_VL
@@ -524,7 +539,7 @@ KingText_Tanooki:
 	;       r    a    c    c    o    o    n    .
 	.byte $CB, $D0, $D2, $D2, $DE, $DE, $DD, $E9, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE
 
-	; 
+	;
 	.byte $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE
 
 	;       P    l    e    a    s    e         t    e    l    l         m    e         y    o    u    r
@@ -533,7 +548,7 @@ KingText_Tanooki:
 	;       n    a    m    e    .
 	.byte $DD, $D0, $DC, $D4, $E9, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE
 
-	; 
+	;
 	.byte $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE
 
 KingText_Hammer:
@@ -554,7 +569,7 @@ KingText_Hammer:
 	;       W    h    a    t         a         d    r    a    g    .
 	.byte $C6, $D7, $D0, $CD, $FE, $D0, $FE, $D3, $CB, $D0, $D6, $E9, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE
 
-	; 
+	;
 	.byte $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE
 
 DiagText_BySuit_L:
@@ -637,7 +652,7 @@ PRG027_A4B9:
 	INC ToadTalk_VH	; Apply carry
 PRG027_A4F5:
 
-	CMP #$67	
+	CMP #$67
 	BNE PRG027_A509  ; If we haven't reached the last character, jump to PRG024_A25B
 
 	LDA #$00
@@ -1021,12 +1036,12 @@ PRG027_A70A:
 
 KingWand_ApplyVel:
 	LDA CineKing_WandXVel,X	; Get Velocity
-	ASL A		 
-	ASL A		 
-	ASL A		 
+	ASL A
+	ASL A
+	ASL A
 	ASL A		 	; Fractional part shifted up
 	CLC
-	ADC CineKing_WandXVel_Frac,X	 
+	ADC CineKing_WandXVel_Frac,X
 	STA CineKing_WandXVel_Frac,X	; Add to object's vel fractional accumulator
 
 	PHP		 ; Save CPU state
@@ -1076,7 +1091,7 @@ TAndK_PlayerFallLandDraw:
 
 	; Player Y > 128...
 
-	LDX Player_YHi	
+	LDX Player_YHi
 	BEQ PRG027_A75B	 ; If Player is vertically on-screen, jump to PRG027_A75B
 
 PRG027_A749:
@@ -1105,7 +1120,7 @@ PRG027_A75E:
 	STA PAGE_C000
 	JSR PRGROM_Change_C000
 
-	JSR Player_Draw		; Draw Player!
+	JSR FAR029_Player_Draw		; Draw Player!
 
 	; Load page 0 @ C000
 	LDA #0
@@ -1122,12 +1137,12 @@ Letter_Bodies:
 	.word Letter_World4	; World 4
 	.word Letter_World5	; World 5
 	.word Letter_World6	; World 6
-	.word Letter_World7	; World 7 
+	.word Letter_World7	; World 7
 
 Letter_World1:
 	; "If you see any" / "ghosts,be careful." / "They will give chase" / "if you turn away." / "I have enclosed a" / "jewel that helps" / "    protect you."
 
-	;       I    f         y    o    u         s    e    e         a    n    y   
+	;       I    f         y    o    u         s    e    e         a    n    y
 	.byte $B8, $D5, $FE, $8C, $DE, $CE, $FE, $CC, $D4, $D4, $FE, $D0, $DD, $8C, $00
 
 	;       g    h    o    s    t    s    ,    b    e         c    a    r    e    f    u    l    .
@@ -1145,7 +1160,7 @@ Letter_World1:
 	;       j    e    w    e    l         t    h    a    t         h    e    l    p    s
 	.byte $D9, $D4, $81, $D4, $DB, $FE, $CD, $D7, $D0, $CD, $FE, $D7, $D4, $DB, $DF, $CC, $00
 
-	;                           p    r    o    t    e    c    t         y    o    u    .    
+	;                           p    r    o    t    e    c    t         y    o    u    .
 	.byte $FE, $FE, $FE, $FE, $DF, $CB, $DE, $CD, $D4, $D2, $CD, $FE, $8C, $DE, $CE, $E9
 
 	; Terminator
@@ -1155,7 +1170,7 @@ Letter_World1:
 Letter_World2:
 	; "You can stomp on" / "your enemies using" / "Goomba's shoe." / "I have enclosed a" / "jewel that helps" / "    protect you."
 
-	;       Y    o    u         c    a    n         s    t    o    m    p         o    n    
+	;       Y    o    u         c    a    n         s    t    o    m    p         o    n
 	.byte $C8, $DE, $CE, $FE, $D2, $D0, $DD, $FE, $CC, $CD, $DE, $DC, $DF, $FE, $DE, $DD, $00
 
 	;       y    o    u    r         e    n    e    m    i    e    s         u    s    i    n    g
@@ -1170,7 +1185,7 @@ Letter_World2:
 	;       j    e    w    e    l         t    h    a    t         h    e    l    p    s
 	.byte $D9, $D4, $81, $D4, $DB, $FE, $CD, $D7, $D0, $CD, $FE, $D7, $D4, $DB, $DF, $CC, $00
 
-	;                           p    r    o    t    e    c    t         y    o    u    .    
+	;                           p    r    o    t    e    c    t         y    o    u    .
 	.byte $FE, $FE, $FE, $FE, $DF, $CB, $DE, $CD, $D4, $D2, $CD, $FE, $8C, $DE, $CE, $E9
 
 	; Terminator
@@ -1201,13 +1216,13 @@ Letter_World3:
 	;       j    e    w    e    l         t    h    a    t         h    e    l    p    s
 	.byte $D9, $D4, $81, $D4, $DB, $FE, $CD, $D7, $D0, $CD, $FE, $D7, $D4, $DB, $DF, $CC, $00
 
-	;       p    r    o    t    e    c    t         y    o    u    .    
+	;       p    r    o    t    e    c    t         y    o    u    .
 	.byte $DF, $CB, $DE, $CD, $D4, $D2, $CD, $FE, $8C, $DE, $CE, $E9
 
 	; Terminator
 	.byte $FF
 
-	
+
 Letter_World4:
 	; "The thief who stole" / "the Whistle has" / "escaped to the east" / "side of the Sand" / "Dunes." / "I have enclosed a" / "jewel that helps" / "protect you."
 
@@ -1220,7 +1235,7 @@ Letter_World4:
 	;       e    s    c    a    p    e    d         t    o         t    h    e         e    a    s    t
 	.byte $D4, $CC, $D2, $D0, $DF, $D4, $D3, $FE, $CD, $DE, $FE, $CD, $D7, $D4, $FE, $D4, $D0, $CC, $CD, $00
 
-	;       s    i    d    e         o    f         t    h    e         S    a    n    d    
+	;       s    i    d    e         o    f         t    h    e         S    a    n    d
 	.byte $CC, $D8, $D3, $D4, $FE, $DE, $D5, $FE, $CD, $D7, $D4, $FE, $C2, $D0, $DD, $D3, $00
 
 	;       D    u    n    e    s    .
@@ -1232,20 +1247,20 @@ Letter_World4:
 	;       j    e    w    e    l         t    h    a    t         h    e    l    p    s
 	.byte $D9, $D4, $81, $D4, $DB, $FE, $CD, $D7, $D0, $CD, $FE, $D7, $D4, $DB, $DF, $CC, $00
 
-	;       p    r    o    t    e    c    t         y    o    u    .    
+	;       p    r    o    t    e    c    t         y    o    u    .
 	.byte $DF, $CB, $DE, $CD, $D4, $D2, $CD, $FE, $8C, $DE, $CE, $E9
 
 	; Terminator
 	.byte $FF
 
-	
+
 Letter_World5:
 	; "Be careful in the" / "Ice World. The" / "creatures trapped in" / "the ice will come to" / "life if warmed." / "I have enclosed a" / "jewel that helps" / "protect you."
 
 	;       B    e         c    a    r    e    f    u    l         i    n         t    h    e
 	.byte $B1, $D4, $FE, $D2, $D0, $CB, $D4, $D5, $CE, $DB, $FE, $D8, $DD, $FE, $CD, $D7, $D4, $00
 
-	;       I    c    e         W    o    r    l    d    .         T    h    e    
+	;       I    c    e         W    o    r    l    d    .         T    h    e
 	.byte $B8, $D2, $D4, $FE, $C6, $DE, $CB, $DB, $D3, $E9, $FE, $C3, $D7, $D4, $00
 
 	;       c    r    e    a    t    u    r    e    s         t    r    a    p    p    e    d         i    n
@@ -1263,7 +1278,7 @@ Letter_World5:
 	;       j    e    w    e    l         t    h    a    t         h    e    l    p    s
 	.byte $D9, $D4, $81, $D4, $DB, $FE, $CD, $D7, $D0, $CD, $FE, $D7, $D4, $DB, $DF, $CC, $00
 
-	;       p    r    o    t    e    c    t         y    o    u    .    
+	;       p    r    o    t    e    c    t         y    o    u    .
 	.byte $DF, $CB, $DE, $CD, $D4, $D2, $CD, $FE, $8C, $DE, $CE, $E9
 
 	; Terminator
@@ -1279,7 +1294,7 @@ Letter_World6:
 	;       r    e    t    r    i    e    v    e         t    h    e         M    a    g    i    c
 	.byte $CB, $D4, $CD, $CB, $D8, $D4, $CF, $D4, $FE, $CD, $D7, $D4, $FE, $BC, $D0, $D6, $D8, $D2, $00
 
-	;       W    h    i    s    t    l    e         h    i    d    d    e    n         i    n    
+	;       W    h    i    s    t    l    e         h    i    d    d    e    n         i    n
 	.byte $C6, $D7, $D8, $CC, $CD, $DB, $D4, $FE, $D7, $D8, $D3, $D3, $D4, $DD, $FE, $D8, $DD, $00
 
 	;       t    h    e         d    a    r    k    n    e    s    s         a    t         t    h    e
@@ -1396,15 +1411,15 @@ PRG027_AB6F:
 	STA Temp_Var1
 
 PRG027_AB74:
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	; Set VRAM High address
 	LDA Letter_VRAMHi,X
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	; Set VRAM Low address
 	LDA Temp_Var1
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	INY		 ; Y++
 
@@ -1415,7 +1430,7 @@ PRG027_AB74:
 	BEQ PRG027_AB96	 ; If character = $FF (letter header terminator), jump to PRG027_AB96
 
 	; Otherwise, push it as a pattern
-	STA PPU_VRAM_DATA
+	sta_PPU_VRAM_DATA
 
 	INC Temp_Var1	 ; Temp_Var1++
 	BNE PRG027_AB74	 ; If Temp_Var1 has not overflowed, jump to PRG027_AB74
@@ -1436,7 +1451,7 @@ PRG027_AB96:
 	LDA Letter_Bodies,X
 	STA Temp_Var1
 	LDA Letter_Bodies+1,X
-	STA Temp_Var2	
+	STA Temp_Var2
 
 	LDY #$00	 ; Y = 0 (letter body offset)
 	LDX #(LetterRow_VRAM_H - LetterRow_VRAM_L - 1)	 ; init X (letter body line index)
@@ -1446,15 +1461,15 @@ PRG027_ABA9:
 	STA Temp_Var4
 
 PRG027_ABAE:
-	LDA PPU_STAT
+	lda_PPU_STAT
 
 	; Set VRAM High address starting for this line
 	LDA LetterRow_VRAM_H,X
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	; Set VRAM Low address starting for this line
 	LDA Temp_Var4
-	STA PPU_VRAM_ADDR
+	sta_PPU_VRAM_ADDR
 
 	LDA (Temp_Var1),Y ; Get next character from letter body
 
@@ -1466,7 +1481,7 @@ PRG027_ABAE:
 	CMP #$ff
 	BEQ PRG027_ABD1	 ; If character = $FF (terminator), jump to PRG027_ABD1 (RTS)
 
-	STA PPU_VRAM_DATA	; Store character as pattern
+	sta_PPU_VRAM_DATA	; Store character as pattern
 
 	INC Temp_Var4	 ; Temp_Var4++
 	BNE PRG027_ABAE	 ; Loop (assumes Temp_Var4 never overflows)
@@ -1490,7 +1505,7 @@ PRG027_ABD1:
 	; but it does not use the PalSel variables and instead forces the first
 	; two palette sets into bg / sprite respectively (too bad, really!)
 
-PalSet_Maps:	
+PalSet_Maps:
 	; Refer to Map_Tile_ColorSets and Map_Object_ColorSets in PRG012 to change these selections
 	.byte $0F, $0F, $30, $3C, $0F, $36, $27, $37, $0F, $21, $2A, $37, $0F, $30, $16, $37	; World 1, 3
 	.byte $0F, $0F, $30, $3C, $0F, $36, $27, $28, $0F, $12, $2A, $28, $0F, $30, $16, $28	; World 2
@@ -1503,7 +1518,7 @@ PalSet_Maps:
 
 	.byte $FF, $16, $36, $0F, $FF, $17, $36, $0F, $FF, $17, $27, $0F, $FF, $30, $16, $0F	; Map object colors used in World 1-7 + 9
 	.byte $FF, $16, $36, $0F, $FF, $17, $36, $0F, $FF, $17, $27, $0F, $FF, $30, $16, $0F	; Map object colors used in World 8
-	.byte $FF, $16, $36, $0F, $FF, $1A, $27, $0F, $FF, $30, $36, $0F, $FF, $16, $30, $0F	; Unused?  (Same as previous anyway) 
+	.byte $FF, $16, $36, $0F, $FF, $1A, $27, $0F, $FF, $30, $36, $0F, $FF, $16, $30, $0F	; Unused?  (Same as previous anyway)
 	.byte $FF, $16, $36, $0F, $FF, $1A, $27, $0F, $FF, $30, $36, $0F, $FF, $16, $30, $0F	; Unused?  (Same as previous anyway)
 
 PalSet_Plains:
@@ -1758,7 +1773,7 @@ BonusGame_PlayerPal:
 	; Player palettes for the bonus game
 	.byte $0F, $16, $30, $36, $0F, $16, $30, $21	; Mario
 	.byte $0F, $1A, $30, $36, $0F, $1A, $30, $31	; Luigi
-	
+
 	.byte $0F, $30, $30, $36, $0F, $30, $30, $17
 
 Map_PlayerPalFix:
@@ -1804,9 +1819,9 @@ Setup_PalData:
 
 	; Point to the palette associated with this tileset!
 	LDA Palette_By_Tileset,Y
-	STA Temp_Var1	
+	STA Temp_Var1
 	LDA Palette_By_Tileset+1,Y
-	STA Temp_Var2	
+	STA Temp_Var2
 
 	LDY Pal_Force_Set12	; Palette override
 	BEQ PRG027_B86D	 	; If Pal_Force_Set12 = 0, jump to PRG027_B86D
@@ -1814,28 +1829,28 @@ Setup_PalData:
 	; If Pal_Force_Set12 <> 0...
 	; Point to the palette associated with this override!
 	LDA Palette_By_Tileset,Y
-	STA Temp_Var1		
+	STA Temp_Var1
 	LDA Palette_By_Tileset+1,Y
-	STA Temp_Var2		
+	STA Temp_Var2
 
 	; Copy 32 bytes of data into Pal_Data
 	LDY #31	 ; Y = 31 (32 bytes total, a whole bg/sprite palette set)
 PRG027_B85E:
 	LDA (Temp_Var1),Y
-	STA Pal_Data,Y	
+	STA Pal_Data,Y
 	DEY		 ; Y--
 	BPL PRG027_B85E	 ; While Y >= 0, loop
 
-	LDA #$00	 
+	LDA #$00
 	STA Pal_Force_Set12 ; Pal_Force_Set12 = 0
 	JMP PRG027_B8F9	 ; Jump to PRG027_B8F9 (RTS)
 
 PRG027_B86D:
 	LDA PalSel_Tile_Colors	 ; A = PalSel_Tile_Colors
-	ASL A		 
-	ASL A		 
-	ASL A		 
-	ASL A		 
+	ASL A
+	ASL A
+	ASL A
+	ASL A
 	TAY			; Y = PalSel_Tile_Colors << 4; basically, offset by an entire 16 bytes (entire bg palette size) based on PalSel_Tile_Colors
 	LDX #$00	 	; X = 0
 
@@ -1845,14 +1860,14 @@ PRG027_B877:
 	STA Pal_Data,X	 	; Store it into Pal_Data
 	INY		 	; Y++
 	INX		 	; X++
-	CPX #16			
+	CPX #16
 	BNE PRG027_B877	 	; While X <> 16, loop!
 
 	LDA PalSel_Obj_Colors
-	ASL A		 
-	ASL A		 
-	ASL A		 
-	ASL A		 
+	ASL A
+	ASL A
+	ASL A
+	ASL A
 	TAY			; Y = PalSel_Obj_Colors << 4; basically, offset by an entire 16 bytes (entire sprite palette size) based on PalSel_Tile_Colors
 
 	; Loop to copy the 16 sprite colors to Pal_Data
@@ -1861,7 +1876,7 @@ PRG027_B88A:
 	STA Pal_Data,X	 	; Store it into Pal_Data
 	INY		 	; Y++
 	INX		 	; X++
-	CPX #32		 
+	CPX #32
 	BNE PRG027_B88A	 	; While X <> 32, loop!
 
 	; Technically all transparent colors are duplicates, but this basically
@@ -1873,14 +1888,14 @@ PRG027_B88A:
 	STA Pal_Data+28
 
 	LDA Level_Tileset
-	CMP #15	 
+	CMP #15
 	BNE PRG027_B8C3	 	; If Level_Tileset <> 15 (Bonus Game intro), jump to PRG027_B8C3
 
 	; Level_Tileset = 15... (the intro to the bonus games)
 	LDA Player_Current
-	ASL A		 
-	ASL A		 
-	ASL A		 
+	ASL A
+	ASL A
+	ASL A
 	TAY		 ; Y = Player_Current << 3
 
 	; This loop copies in the correct palette for the Player
@@ -1888,7 +1903,7 @@ PRG027_B88A:
 	LDX #$00	 ; X = 0
 PRG027_B8B4:
 	LDA BonusGame_PlayerPal,Y
-	STA Pal_Data+4,X	 
+	STA Pal_Data+4,X
 	INY		 ; Y++
 	INX		 ; X++
 	CPX #$08
@@ -1896,7 +1911,7 @@ PRG027_B8B4:
 	JMP PRG027_B8F9	 ; (RTS)
 
 PRG027_B8C3:
-	CMP #$0f	 	; 
+	CMP #$0f	 	;
 	BGE PRG027_B8F9	 	; For all Level_TileSet values greater than $0F, don't do this next patch!
 
 
@@ -1916,9 +1931,9 @@ PRG027_B8CF:
 	BMI PRG027_B8F9	 ; If no match, jump to PRG027_B8F9 (RTS)
 
 PRG027_B8D9:
-	TYA		 
-	ASL A		 
-	ASL A		 
+	TYA
+	ASL A
+	ASL A
 	TAY		 	; Y <<= 2
 
 	; Store the correct power-up suit colors over the Player colors
@@ -1927,11 +1942,11 @@ PRG027_B8D9:
 	LDA InitPals_Per_MapPUp+2,Y
 	STA Pal_Data+18
 	LDA InitPals_Per_MapPUp+1,Y
-	STA Pal_Data+17 
+	STA Pal_Data+17
 
 	; Mario vs Luigi palette fix: $16 is the first byte in Small,
-	; Big, and Starman.  
-	CMP #$16	 
+	; Big, and Starman.
+	CMP #$16
 	BNE PRG027_B8F9	 ; If palette byte is not $16, jump to PRG027_B8F9 (RTS)
 
 	LDA Map_PlayerPalFix,X	; Get correct color for Player
@@ -1942,13 +1957,13 @@ PRG027_B8F9:
 
 
 Palette_PrepareFadeInTK:
-	CLC			; signals to use "fade in" prep code 
+	CLC			; signals to use "fade in" prep code
 
 Palette_PrepareFadeOutTK_Entry:
 	; Set the palette address to the beginning of palettes, $3F00
-	LDA #$3f	 
+	LDA #$3f
 	STA Palette_AddrHi
-	LDA #$00	 
+	LDA #$00
 	STA Palette_AddrLo
 
 	STA Palette_Term	 ; Palette_Term = 0, Terminate the palette data
@@ -1983,26 +1998,26 @@ PRG027_B91C:
 	LDA #$04
 	STA Fade_Tick	 ; Fade_Tick = 4
 
-	LDA #$06	 
+	LDA #$06
 	STA Graphics_Queue	 ; Reset the graphics buffer
 	RTS		 ; Return
 
 
 	; Similar to Palette_DoFadeIn from PRG026, but has some additional functionality
 Palette_DoFadeInTK:
-	LDA Fade_Tick	 
+	LDA Fade_Tick
 	BEQ PRG027_B93A	 ; If Fade_Tick = 0, jump to PRG027_B93A
 	DEC Fade_Tick	 ; Otherwise, Fade_Tick--
 
 PRG027_B93A:
-	LDA Fade_Level	 
+	LDA Fade_Level
 	BEQ PRG027_B982	 ; If Fade_Level = 0, jump to PRG027_B982 (RTS)
 
-	LDA Fade_Tick	 
+	LDA Fade_Tick
 	BNE PRG027_B982	 ; If Fade_Tick <> 0, jump to PRG027_B982 (RTS)
 
-	LDA #$04	
-	STA Fade_Tick	 ; Fade_Tick = 4 (reload) 
+	LDA #$04
+	STA Fade_Tick	 ; Fade_Tick = 4 (reload)
 
 	DEC Fade_Level	 ; Fade_Level--
 
@@ -2023,7 +2038,7 @@ PRG027_B93A:
 PRG027_B95F:
 	LDY #31		 ; Y = 31
 PRG027_ABF8:
-	LDA Palette_Buffer,Y	; Get next byte of palette data 
+	LDA Palette_Buffer,Y	; Get next byte of palette data
 	CMP #$0f	 	; Is this color black?
 	BNE PRG027_B970	 	; If not, jump to PRG027_B970
 
@@ -2044,7 +2059,7 @@ PRG027_B97B:
 	DEY		 ; Y--
 	BPL PRG027_ABF8	 ; While Y >= 0, loop!
 
-	LDA #$06	 
+	LDA #$06
 	STA Graphics_Queue	 ; Queue graphics routine 6
 
 PRG027_B982:
@@ -2056,7 +2071,7 @@ Palette_PrepareFadeOutTK:
 	LDA FadeOut_Cancel
 	BNE PRG027_B98C	 	; If FadeOut_Cancel <> 0, jump to PRG027_B98C (RTS)
 
-	SEC			; signals to use "fade out" prep code		 
+	SEC			; signals to use "fade out" prep code
 	JMP Palette_PrepareFadeOutTK_Entry
 
 PRG027_B98C:
