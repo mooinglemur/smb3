@@ -33,12 +33,12 @@ Requires:
 
 Known issues with the X16 build:
 * Visual glitches:
- * The wrong tileset may show for a single frame immediately after a map or level is loaded
- * Player sprite is not properly occluded when entering or emerging from a pipe
- * Emerging powerups and piranha plants in pipes may show the wrong masking sprite
- * World map visuals are corrupted when scrolled.
- * When having fewer than 10 coins, the tens digit of the coin count may show the wrong glyph in place of a space on the world map
+    * The wrong tileset may show for a single frame immediately after a map or level is loaded
+    * Player sprite is not properly occluded when entering or emerging from a pipe
+    * Emerging powerups and piranha plants in pipes may show the wrong masking sprite
+    * World map visuals are corrupted when scrolled.
+    * When having fewer than 10 coins, the tens digit of the coin count may show the wrong glyph in place of a space on the world map
 * Gameplay issues:
- * Directional lifts and donut blocks may misbehave in vertical levels
- * 2 player versus mode is not working (level loads and then soft-locks)
- * Sorry, the 7-1 wrong warp will not lead to the credits due to the vastly different memory layout. ;)
+    * Directional lifts and donut blocks may misbehave in vertical levels
+    * 2 player versus mode is not working (level loads and then soft-locks)
+    * Sorry, the 7-1 wrong warp will not lead to the credits due to the vastly different memory layout. ;)
