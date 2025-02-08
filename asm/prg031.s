@@ -3082,14 +3082,12 @@ PRG031_FBE7:
 
 .ifdef NES
 	stx_PPU_CTL2	 ; Most importantly, hide BG + Sprites
-.endif
 	lda_PPU_STAT	 ;
 
 	; Because vertical scroll will not change after frame begins (second write to
 	; PPU_SCROLL will always be unused until next frame), the hack for MMC3 split
 	; vertical scrolling is to change the nametable address that the PPU is reading
 	; at to where we would like it to be...
-.ifdef NES
 	LDY #$0b
 	sty_PPU_VRAM_ADDR
 	stx_PPU_VRAM_ADDR	; ... so now we're reading at $0B00

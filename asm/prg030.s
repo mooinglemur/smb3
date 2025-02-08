@@ -823,14 +823,12 @@ PRG030_85A5:
 	JSR SetPages_ByTileset	 ;	A000 = Page 11, C000 = Page 10
 
 .ifdef X16
-	lda X16::Reg::RAMBank
-	pha
 	lda #10
 	sta X16::Reg::RAMBank
 .endif
 	JSR Scroll_Map_SpriteBorder	; Draw sprite-based border on map
 .ifdef X16
-	pla
+	lda PAGE_A000
 	sta X16::Reg::RAMBank
 .endif
 
@@ -906,14 +904,12 @@ PRG030_8617:
 	BEQ PRG030_8625	 	; If World_8_Dark = 0 (not doing the effect), jump to PRG030_8625
 
 .ifdef X16
-	lda X16::Reg::RAMBank
-	pha
 	lda #10
 	sta X16::Reg::RAMBank
 .endif
 	JSR Map_W8DarknessFill	; Fill in the entire screen with black
 .ifdef X16
-	pla
+	lda PAGE_A000
 	sta X16::Reg::RAMBank
 .endif
 
@@ -937,14 +933,12 @@ PRG030_8634:
 
 PRG030_8646:
 .ifdef X16
-	lda X16::Reg::RAMBank
-	pha
 	lda #10
 	sta X16::Reg::RAMBank
 .endif
 	JSR Map_DrawAndPan	 ; Draw and pan map as necessary
 .ifdef X16
-	pla
+	lda PAGE_A000
 	sta X16::Reg::RAMBank
 .endif
 
@@ -969,14 +963,12 @@ PRG030_8646:
 	JSR PRGROM_Change_A000
 
 .ifdef X16
-	lda X16::Reg::RAMBank
-	pha
 	lda #10
 	sta X16::Reg::RAMBank
 .endif
 	JSR Map_IntroAttrSave	; Pick up the current attribute info under the box
 .ifdef X16
-	pla
+	lda PAGE_A000
 	sta X16::Reg::RAMBank
 .endif
 
@@ -995,14 +987,12 @@ PRG030_8676:
 	JSR Video_Do_Update	; Do the World X intro box!
 
 .ifdef X16
-	lda X16::Reg::RAMBank
-	pha
 	lda #10
 	sta X16::Reg::RAMBank
 .endif
 	JSR Map_ConfigWorldIntro	; Apply the world number and lives count
 .ifdef X16
-	pla
+	lda PAGE_A000
 	sta X16::Reg::RAMBank
 .endif
 
@@ -3192,14 +3182,12 @@ PRG030_9185:
 	BPL PRG030_9185	; While X >= 0, loop!
 
 .ifdef X16
-	lda X16::Reg::RAMBank
-	pha
 	lda #10
 	sta X16::Reg::RAMBank
 .endif
 	JSR Scroll_Map_SpriteBorder	 ; Keep that map border going!
 .ifdef X16
-	pla
+	lda PAGE_A000
 	sta X16::Reg::RAMBank
 .endif
 
@@ -3277,14 +3265,12 @@ PRG030_91D1:
 	BEQ PRG030_9214	 	; If World_8_Dark = 0 (not doing the effect), jump to PRG030_9214
 
 .ifdef X16
-	lda X16::Reg::RAMBank
-	pha
 	lda #10
 	sta X16::Reg::RAMBank
 .endif
 	JSR Map_W8DarknessFill	; Fill in the entire screen with black
 .ifdef X16
-	pla
+	lda PAGE_A000
 	sta X16::Reg::RAMBank
 .endif
 
@@ -3301,14 +3287,12 @@ PRG030_9214:
 
 PRG030_9226:
 .ifdef X16
-	lda X16::Reg::RAMBank
-	pha
 	lda #10
 	sta X16::Reg::RAMBank
 .endif
 	JSR Map_DrawAndPan	 ; Draw and pan map as necessary
 .ifdef X16
-	pla
+	lda PAGE_A000
 	sta X16::Reg::RAMBank
 .endif
 
@@ -3326,7 +3310,15 @@ PRG030_9226:
 	STA PAGE_A000
 	JSR PRGROM_Change_A000
 
+.ifdef X16
+	lda #10
+	sta X16::Reg::RAMBank
+.endif
 	JSR Map_IntroAttrSave	; Pick up the current attribute info under the box
+.ifdef X16
+	lda PAGE_A000
+	sta X16::Reg::RAMBank
+.endif
 
 	LDX #$12 		; X = $12 (standard $00 aligned GAME OVER box)
 
@@ -3339,7 +3331,17 @@ PRG030_924B:
 	TXA		 ; A = X
 	JSR Video_Do_Update	 ; Draw up the Game Over! box
 
+.ifdef X16
+	lda X16::Reg::RAMBank
+	pha
+	lda #10
+	sta X16::Reg::RAMBank
+.endif
 	JSR GameOver_PatchPlayerName	 ; Add MARIO/LUIGI to gameover box
+.ifdef X16
+	pla
+	sta X16::Reg::RAMBank
+.endif
 
 	LDA #$00		 ; A = 0 (Graphics buffer push)
 	JSR Video_Do_Update	 ; Push through what's in graphics buffer

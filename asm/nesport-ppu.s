@@ -656,27 +656,6 @@ not_attribute:
 	asl tmp0
 	rol tmp1
 
-	; save attribute byte
-	ldy PPUADDR_L
-	bit PPUCTRL_HMIRROR
-	bmi save_att_hmirror
-save_att_vmirror:  ; NT0 is at $2000 or $2800
-	lda PPUADDR_H
-	and #$04
-	bne at1
-at0:
-	txa
-	sta attribute_table_0_raw-$C0,y
-	bra cont
-save_att_hmirror:  ; NT0 is at $2000 or $2400
-	lda PPUADDR_H
-	and #$08
-	beq at0
-at1:
-	txa
-	sta attribute_table_1_raw-$C0,y
-
-cont:
 	; if vertical mirroring/horizontal arrangement, we write this as is to NT0
 	bit PPUCTRL_HMIRROR
 	bmi hmirror
@@ -826,10 +805,22 @@ is_attribute:
 	; and merge it into the low byte along with the map base
 	tsb tmp0
 
+	ldy PPUADDR_L
 	bit PPUCTRL_HMIRROR
 	bmi attr_hmirror
 
 attr_vmirror:
+	lda PPUADDR_H
+	and #$04
+	bne at1_v
+at0_v:
+	txa
+	sta attribute_table_0_raw-$C0,y
+	bra cont_v
+at1_v:
+	txa
+	sta attribute_table_1_raw-$C0,y
+cont_v:
 	lda tmp0
 	clc
 	adc #<VERA_MAP_BASE_NT0
@@ -857,6 +848,8 @@ attr_hmirror:
 	and #$08
 	bne attr_is_nt1
 attr_is_nt0:
+	txa
+	sta attribute_table_0_raw-$C0,y
 	lda #<VERA_MAP_BASE_NT0
 	clc
 	adc tmp0
@@ -873,6 +866,8 @@ attr_is_nt0:
 	bra attr_nt_write
 
 attr_is_nt1:
+	txa
+	sta attribute_table_1_raw-$C0,y
 	lda #<VERA_MAP_BASE_NT1
 	clc
 	adc tmp0

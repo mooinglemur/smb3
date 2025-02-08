@@ -15,6 +15,7 @@ SRCS	= $(wildcard $(SRC)/*.s)
 EXE		:= $(call UC,$(PROJECT).PRG)
 MAPFILE := ./$(PROJECT).map
 SYMFILE := ./$(PROJECT).sym
+DBGFILE := ./$(PROJECT).dbg
 
 BGBANKS = 008 009 012 013
 BGBANKS += 016 017 020 021 022 023 024 025 028 029
@@ -43,7 +44,7 @@ default: all
 all: $(EXE)
 
 $(EXE): $(BGCHRS) $(SPRCHRS) $(OBJS) $(CONFIG)
-	$(LD) $(LDFLAGS) $(OBJS) -m $(MAPFILE) -Ln $(SYMFILE) -o $@
+	$(LD) $(LDFLAGS) $(OBJS) -m $(MAPFILE) -Ln $(SYMFILE) --dbgfile $(DBGFILE) -o $@
 
 $(SRC)/chrbg%.s: ./CHR/chr%.pcx
 	./scripts/pcx2vera2bpp.py $< $@ CHRBG$*
@@ -62,4 +63,4 @@ $(OBJ):
 
 .PHONY: clean
 clean:
-	$(RM) $(EXE) $(OBJS) $(MAPFILE) $(SYMFILE) $(BGCHRS) $(SPRCHRS) $(CHRLUTS) TANOOKI.BIN
+	$(RM) $(EXE) $(OBJS) $(MAPFILE) $(SYMFILE) $(DBGFILE) $(BGCHRS) $(SPRCHRS) $(CHRLUTS) TANOOKI.BIN
