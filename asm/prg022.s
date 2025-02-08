@@ -2639,6 +2639,7 @@ UpdSel_Roulette:
 	plp
 
 	INT_CLI
+	sta_MMC3_IRQENABLE
 	cli ; actually allow line IRQs to interrupt this interrupt code in this mode
 	JSR PT2_Full_CHRROM_Switch
 .endif

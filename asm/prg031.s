@@ -2855,10 +2855,10 @@ Roulette_RasterDiv:	; Raster_State = 0,1,2
 .endif
 .ifdef X16
 Roulette_RasterDiv_L:
-	.byte <164, <266, <384
+	.byte <172, <278, <384
 Roulette_RasterDiv_H:
-	.byte <((>164)<<7)
-	.byte <((>266)<<7)
+	.byte <((>172)<<7)
+	.byte <((>278)<<7)
 	.byte <((>384)<<7)
 .endif
 
@@ -2948,8 +2948,10 @@ PRG031_FAEA:
 .endif
 .ifdef X16
 	; activate preloaded status bar banks
+	phy
 	ldy #9
 	jsr X16_activate_tilemap
+	ply
 .endif
 
 PRG031_FB34:
