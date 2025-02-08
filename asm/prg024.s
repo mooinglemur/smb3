@@ -2513,13 +2513,6 @@ Title_Do1P2PMenu:
 	CMP #(PAD_A | PAD_B)
 	BNE PRG024_AC42	 ; If Player 2 is not holding A+B, jump to PRG024_AC42
 
-	;;; DEBUG
-.ifdef X16
-	lda #$80
-	sta Debug_Flag
-	lda #7
-	sta Title_State
-.endif
 .ifdef NES
 	; NOTE: This probably WAS the debug menu activation...
 	NOP

@@ -2999,7 +2999,7 @@ PRG010_CEF4:
 	JMP PRG010_CEAC	 		; Jump to PRG010_CEAC
 
 WorldMap_UpdateAndDraw:
-.ifdef X16
+.ifdef NONE
 ; 1 = Mushroom
 ; 2 = Flower
 ; 3 = Leaf

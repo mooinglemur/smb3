@@ -3705,6 +3705,7 @@ PRG031_FEC3:
 	sta Temp_Var1
 
 	;;; DEBUG
+.ifdef NONE
 	.import Player_Suit
 	txa
 	and #$30
@@ -3712,7 +3713,7 @@ PRG031_FEC3:
 	lda #PLAYERSUIT_HAMMER
 	sta Player_Suit
 :
-
+.endif
 	lda #1
 	jsr X16::Kernal::JOYSTICK_GET
 	eor #$ff
