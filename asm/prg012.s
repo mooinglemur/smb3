@@ -207,7 +207,7 @@ Map_Complete_Bits:
 	.byte $80, $40, $20, $10, $08, $04, $02, $01
 
 Map_Removable_Tiles:
-	.byte TILE_ROCKBREAKH, TILE_ROCKBREAKV, TILE_LOCKVERT, TILE_FORT, TILE_ALTFORT, TILE_ALTLOCK, TILE_LOCKHORZ, TILE_RIVERVERT
+	.byte TILE_ROCKBREAKH, TILE_ROCKBREAKV, TILE_LOCKVERT, TILE_FORT, TILE_ALTFORT, TILE_ALTLOCK, TILE_LOCKHORZ, TILE_RIVER_VERT
 MRT_END:	; marker to calculate size -- allows user expansion of Map_Removable_Tiles
 
 Map_RemoveTo_Tiles:

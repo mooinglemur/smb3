@@ -2719,7 +2719,7 @@ PRG010_CDA7:
 Map_EnterSpecialTiles:
 	.byte TILE_TOADHOUSE, TILE_SPADEBONUS, TILE_PIPE, TILE_ALTTOADHOUSE
 	.byte TILE_CASTLEBOTTOM, TILE_SPIRAL, TILE_ALTSPIRAL, TILE_PATHANDNUB
-	.byte TILE_DANCINGFLOWER, TILE_HANDTRAP, TILE_BOWSERCASTLELL
+	.byte TILE_DANCINGFLOWER, TILE_HANDTRAP, TILE_BOWSERCASTLEBL
 
 	; Color table for setting the 2nd entry power up color on the map used for clearing Judgem's cloud!
 	; NOTE: This is a patch table, you'll want it to agree with PRG027's "InitPals_Per_MapPUp"
