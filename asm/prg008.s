@@ -448,6 +448,50 @@ PRG008_A17F:
 
 	JSR Player_Update	 ; WHERE THE PLAYER DOES EVERYTHING!! (Except touch other objects)
 
+; This cheat block doesn't fit on the NES version,
+; only the X16 version, but the code still sticks
+; to legacy 6502 instructions
+.ifdef CHEAT
+	; CHEAT: Hold SELECT and tap direction to receive suit.
+	LDA Pad_Holding
+	AND #PAD_SELECT
+	BEQ @CheatDone		; SELECT not held, skip
+	LDA Pad_Input
+	AND #PAD_UP
+	BNE @Hammer
+	LDA Pad_Input
+	AND #PAD_LEFT
+	BNE @Raccoon
+	LDA Pad_Input
+	AND #PAD_RIGHT
+	BNE @FireFlower
+	LDA Pad_Input
+	AND #PAD_DOWN
+	BEQ @CheatDone
+@Frog:
+	LDA #PLAYERSUIT_FROG+1
+	STA Player_QueueSuit
+	BNE @ContinueCheat
+@FireFlower:
+	LDA #PLAYERSUIT_FIRE+1
+	STA Player_QueueSuit
+	BNE @ContinueCheat
+@Raccoon:
+	LDA #PLAYERSUIT_RACCOON+1
+	STA Player_QueueSuit
+	BNE @ContinueCheat
+@Hammer:
+	LDA #PLAYERSUIT_HAMMER+1	; Player_QueueSuit values are Player_Suit + 1
+	STA Player_QueueSuit	; Queue changing to the Hammer suit
+@ContinueCheat:
+	LDA #$17
+	STA Player_SuitLost	; "Poof" into the new suit
+	LDA Sound_QLevel1
+	ORA #SND_LEVELPOOF
+	STA Sound_QLevel1	; Play the power-up "poof" sound
+@CheatDone:
+.endif
+
 	; If Player is...
 	LDA Player_IsDying	; ... dying ....
 	ORA Level_PipeMove	; ... moving through a pipe ...

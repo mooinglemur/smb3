@@ -1739,7 +1739,11 @@ PRG024_A8C8:
 	BPL PRG024_A8C8	 ; Loop while X >= 0...
 
 	; Set Mario and Luigi's lives to 4
+.ifdef CHEAT
+	LDA #$63
+.else
 	LDA #$04
+.endif
 	STA Player_Lives
 	STA Player_Lives+1
 

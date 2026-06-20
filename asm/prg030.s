@@ -3431,7 +3431,11 @@ PRG030_92B6:
 	BNE PRG030_932A	 ; If Player chose to END, jump to PRG030_932A
 
 	; Player's live reset to 4
+.ifdef CHEAT
+	LDA #$63 ; 99 lives
+.else
 	LDA #$04
+.endif
 	STA Player_Lives,X
 
 	; Set up position variables
